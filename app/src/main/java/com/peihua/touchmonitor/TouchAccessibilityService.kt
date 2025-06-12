@@ -17,29 +17,26 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private var isRunning = false
     private val deviceLocks = CommonDeviceLocks()
     private val times = arrayOf(
+        1_000L,
+        2_000L,
+        3_000L,
+        4_000L,
         5_000L,
         6_000L,
         7_000L,
         8_000L,
         9_000L,
-        10_000L,
-        12_000L,
-        13_000L,
-        15_000L,
-        16_000L,
-        17_000L,
-        19_000L,
-        20_000L,
-        21_000L,
-        22_000L,
-        23_000L,
-        24_000L,
-        25_000L
+        1_000L,
+        2_000L,
+        3_000L,
+        4_000L,
+        5_000L,
     )
+    private val isUpSwipe = arrayOf(true, false)
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
-      val rootNode= rootInActiveWindow
+        val rootNode = rootInActiveWindow
         if (rootNode != null) {
             dLog { "rootNode:$rootNode" }
         }
@@ -58,7 +55,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             while (isRunning) {
                 val width = screenWidth
                 val height = screenHeight
-                performSwipeGesture(width / 2f, height / 2f)
+                performSwipeGesture(width / 2f, height / 2f,isUpSwipe.random())
                 delay(times.random()) // 每2秒执行一次
             }
         }
@@ -74,11 +71,15 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     }
 
     // 定义并执行滑动手势的方法
-    private fun performSwipeGesture(centerX: Float, centerY: Float): Boolean {
+    private fun performSwipeGesture(
+        centerX: Float,
+        centerY: Float,
+        isUpSwipe: Boolean = true,
+    ): Boolean {
         dLog { "center position:($centerX,$centerY)" }
         val path = Path();
-        path.moveTo(centerX.toFloat(), ((centerY * 1.5).toFloat())); //起点坐标。
-        path.lineTo(centerX.toFloat(), ((centerY * 0.5).toFloat())); //终点坐标。
+        path.moveTo(centerX.toFloat(), ((centerY * if (isUpSwipe) 1.5 else 0.5).toFloat())); //起点坐标。
+        path.lineTo(centerX.toFloat(), ((centerY * if (isUpSwipe) 0.5 else 1.5).toFloat())); //终点坐标。
         val builder = GestureDescription.Builder();
 
         val gestureDescription = builder.addStroke(
