@@ -32,7 +32,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         4_000L,
         5_000L,
     )
-    private val isUpSwipe = arrayOf(true,true,true,true, false)
+    private val isUpSwipe = arrayOf(true, true, true, true, false)
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
@@ -52,11 +52,26 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private fun startSwipeTask() {
         launch {
             isRunning = true
+            var oldTime = times.min()
+            var oldSwipe = false
+            val maxTime = times.max()
             while (isRunning) {
                 val width = screenWidth
                 val height = screenHeight
-                performSwipeGesture(width / 2f, height / 2f,isUpSwipe.random())
-                delay(times.random()) // 每2秒执行一次
+                var isSwipe = isUpSwipe.random()
+                performSwipeGesture(width / 2f, height / 2f, isSwipe)
+                var time = times.random()
+                if (oldTime == maxTime) {
+                    oldTime = times.min()
+                }
+                while (oldTime < time) {
+                    time = times.random()
+                    if (oldTime < time) {
+                        break
+                    }
+                }
+                oldTime = time
+                delay(time) // 每2秒执行一次
             }
         }
     }
