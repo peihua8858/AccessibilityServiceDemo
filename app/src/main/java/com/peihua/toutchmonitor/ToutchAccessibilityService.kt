@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
 import android.view.accessibility.AccessibilityEvent
+import com.peihua.toutchmonitor.utils.CommonDeviceLocks
 import com.peihua.toutchmonitor.utils.WorkScope
 import com.peihua.toutchmonitor.utils.dLog
 import com.peihua.toutchmonitor.utils.screenHeight
@@ -11,11 +12,10 @@ import com.peihua.toutchmonitor.utils.screenWidth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Timer
-import java.util.TimerTask
 
 class ToutchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isRunning = false
+    private val deviceLocks = CommonDeviceLocks()
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
     }
@@ -75,13 +75,16 @@ class ToutchAccessibilityService : AccessibilityService(), CoroutineScope by Wor
                 val width = screenWidth
                 val height = screenHeight
                 performSwipeGesture(width / 2f, height / 2f)
-                delay(2000) // 每2秒执行一次
+                delay(5000) // 每2秒执行一次
             }
         }
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        // 开启屏保长亮
+        deviceLocks.acquire(this)
+        // 启动定时执行手势
         startSwipeTask()
         dLog { "onServiceConnected" }
     }
