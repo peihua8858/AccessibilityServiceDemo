@@ -12,6 +12,8 @@ import com.peihua.touchmonitor.utils.screenWidth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isRunning = false
@@ -32,7 +34,9 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         4_000L,
         5_000L,
     )
-    private val isUpSwipe = arrayOf(true, true, true, true, false)
+    private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+    private val mLock = ReentrantLock()
+    private val mCondition = mLock.newCondition()
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
@@ -47,7 +51,6 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         isRunning = false
     }
 
-
     // 定时执行手势
     private fun startSwipeTask() {
         launch {
@@ -59,16 +62,16 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                 val width = screenWidth
                 val height = screenHeight
                 var isSwipe = isUpSwipe.random()
-                performSwipeGesture(width / 2f, height / 2f, isSwipe)
                 var time = times.random()
+                mLock.withLock {
+                    performSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
+                    mCondition.await()
+                }
                 if (oldTime == maxTime) {
                     oldTime = times.min()
                 }
                 while (oldTime < time) {
                     time = times.random()
-                    if (oldTime < time) {
-                        break
-                    }
                 }
                 oldTime = time
                 delay(time) // 每2秒执行一次
@@ -106,11 +109,15 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                 super.onCompleted(gestureDescription)
                 // 滑动成功
                 path.close()
+                mCondition.signalAll()
+                mLock.unlock()
                 dLog { "dispatchGesture ScrollUp onCompleted." }
             }
 
             override fun onCancelled(gestureDescription: GestureDescription?) {
                 super.onCancelled(gestureDescription)
+                mCondition.signalAll()
+                mLock.unlock()
                 // 手势取消或失败，检查原因
                 dLog { "dispatchGesture ScrollUp cancel." }
             }
