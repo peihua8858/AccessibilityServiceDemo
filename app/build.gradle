@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.peihua.toutchmonitor'
+    namespace 'com.peihua.touchmonitor'
     compileSdk 35
 
     defaultConfig {
@@ -17,11 +17,28 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        Release {
+            storeFile file(new File("../keystores/KeyStores"))
+            storePassword 'testkey'
+            keyAlias 'testkey'
+            keyPassword 'testkey'
+            enableV1Signing  true
+            enableV2Signing  true
+            enableV3Signing  true
+            enableV4Signing  true
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.Release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.Release
         }
     }
     compileOptions {
