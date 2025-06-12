@@ -32,7 +32,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         4_000L,
         5_000L,
     )
-    private val isUpSwipe = arrayOf(true, false)
+    private val isUpSwipe = arrayOf(true,true,true,true, false)
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
