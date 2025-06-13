@@ -71,6 +71,11 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         isRunning = false
     }
 
+    override fun onDestroy() {
+        isRunning = false
+        super.onDestroy()
+    }
+
     // 定时执行手势
     private fun startSwipeTask() {
         launch {
