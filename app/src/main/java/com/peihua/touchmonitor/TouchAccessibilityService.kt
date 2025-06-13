@@ -54,6 +54,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         5_000L,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+    private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
     private val mLock = ReentrantLock()
     private val mCondition = mLock.newCondition()
 
@@ -85,10 +86,12 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                 dLog { "withLock>>>>awaitPerformSwipeGesture await" }
                 val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
                 dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
-                delay(times.random()) // 每2秒执行一次
-                dLog { "withLock>>>>performDoubleClickGesture await" }
-                val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
-                dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
+                if (isDownSwipe.random() == 1) {
+                    delay(times.random()) // 每2秒执行一次
+                    dLog { "withLock>>>>performDoubleClickGesture await" }
+                    val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
+                    dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
+                }
                 dLog { "exec next line" }
                 if (oldTime == maxTime) {
                     oldTime = times.min()
