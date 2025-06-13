@@ -36,7 +36,9 @@ fun Context.registerReceiverCompat(
 
     }
 }
-
+fun Context.finish(){
+    (this as? android.app.Activity)?.finish()
+}
 val Context.screenWidth: Int
     get() = resources.displayMetrics.widthPixels
 val Context.screenHeight: Int
