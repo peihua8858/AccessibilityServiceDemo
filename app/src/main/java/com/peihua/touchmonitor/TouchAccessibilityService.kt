@@ -3,7 +3,13 @@ package com.peihua.touchmonitor
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.runtime.mutableStateOf
+import com.peihua.touchmonitor.ui.AppLocalContext
+import com.peihua.touchmonitor.ui.DataManager
+import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
@@ -11,12 +17,10 @@ import com.peihua.touchmonitor.utils.screenHeight
 import com.peihua.touchmonitor.utils.screenWidth
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+
 
 class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isRunning = false
@@ -57,12 +61,13 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
     private val mLock = ReentrantLock()
     private val mCondition = mLock.newCondition()
-
+    private var mPackageName: CharSequence = ""
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
-        val rootNode = rootInActiveWindow
-        if (rootNode != null) {
-            dLog { "rootNode:$rootNode" }
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            Log.d("AppTracker", "当前前台应用: " + event.packageName)
+            // 可以根据包名执行不同操作
+            mPackageName = event.packageName
         }
     }
 
@@ -76,28 +81,28 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         super.onDestroy()
     }
 
+    val settings = mutableStateOf<Settings>(Settings("", Orientation.Vertical, true))
+
     // 定时执行手势
     private fun startSwipeTask() {
+        launch {
+            val result = DataManager.querySettings()
+            result.collect {
+                settings.value = it
+            }
+        }
         launch {
             isRunning = true
             var oldTime = times.min()
             var oldSwipe = false
             val maxTime = times.max()
+            dLog { "Service start>>>>" }
+
             while (isRunning) {
-                val width = screenWidth
-                val height = screenHeight
-                var isSwipe = isUpSwipe.random()
-                var time = times.random()
-                dLog { "withLock>>>>awaitPerformSwipeGesture await" }
-                val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
-                dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
-                if (isDownSwipe.random() == 1) {
-                    delay(times.random()) // 每2秒执行一次
-                    dLog { "withLock>>>>performDoubleClickGesture await" }
-                    val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
-                    dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
-                }
+                dLog { "withLock>>>>start" }
+                extGesture(settings.value)
                 dLog { "exec next line" }
+                var time = times.random()
                 if (oldTime == maxTime) {
                     oldTime = times.min()
                 }
@@ -106,7 +111,38 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                 }
                 oldTime = time
                 delay(time) // 每2秒执行一次
+                dLog { "withLock>>>>end" }
             }
+        }
+    }
+
+    private suspend fun extGesture(settings: Settings?) {
+        dLog { "withLock>>>>settings:${settings?.packageName}" }
+        val rootNode = rootInActiveWindow
+        dLog { "withLock>>>>rootNode:${rootNode}" }
+        dLog { "withLock>>>>rootNode:${rootNode?.packageName}" }
+        if (settings != null) {
+            if (rootNode != null) {
+                dLog { "withLock>>>>currentPackage:${rootNode.packageName}" }
+                if (settings.packageName.isNotEmpty() && settings.packageName != rootNode.packageName) {
+                    dLog { "withLock>>>>setting packageName:${settings.packageName}" }
+                    return
+                }
+            }
+        }
+        val width = screenWidth
+        val height = screenHeight
+        var isSwipe = isUpSwipe.random()
+
+        dLog { "withLock>>>>awaitPerformSwipeGesture await" }
+        val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
+        dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
+        val isDoubleSaver = settings?.isDoubleSaver == true
+        if (isDoubleSaver && isDownSwipe.random() == 1) {
+            delay(times.random()) // 每2秒执行一次
+            dLog { "withLock>>>>performDoubleClickGesture await" }
+            val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
+            dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
         }
     }
 
@@ -212,6 +248,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         deviceLocks.acquire(this)
         // 启动定时执行手势
         startSwipeTask()
+        AppLocalContext.context = application
         dLog { "onServiceConnected" }
     }
 

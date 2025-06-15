@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ToutchMonitor</string>
+    <string name="app_provider">应用程序</string>
+    <string name="scroll_orientation">列表滚动方向</string>
     <string name="accessibility_service_description">开启辅助功能权限后，如打开抖音等短视频，可自动滚动刷屏，点赞等无需手动操作，提高刷短视频挣效率</string>
 </resources>
