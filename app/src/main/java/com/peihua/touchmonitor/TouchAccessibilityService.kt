@@ -7,8 +7,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.mutableStateOf
-import com.peihua.touchmonitor.ui.AppLocalContext
-import com.peihua.touchmonitor.ui.DataManager
+import com.peihua.touchmonitor.data.settingsStore
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
@@ -74,11 +73,13 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     override fun onInterrupt() {
         // 处理中断
         isRunning = false
+        deviceLocks.release()
     }
 
     override fun onDestroy() {
         isRunning = false
         super.onDestroy()
+        deviceLocks.release()
     }
 
     val settings = mutableStateOf<Settings>(Settings("", Orientation.Vertical, true))
@@ -86,7 +87,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     // 定时执行手势
     private fun startSwipeTask() {
         launch {
-            val result = DataManager.querySettings()
+            val result = settingsStore.data
             result.collect {
                 settings.value = it
             }
@@ -248,51 +249,6 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         deviceLocks.acquire(this)
         // 启动定时执行手势
         startSwipeTask()
-        AppLocalContext.context = application
         dLog { "onServiceConnected" }
-    }
-
-    // 定义并执行滑动手势的方法
-    private fun performSwipeGesture(
-        centerX: Float,
-        centerY: Float,
-        isUpSwipe: Boolean = true,
-    ): Boolean {
-        dLog { "center position:($centerX,$centerY)" }
-        val path = Path();
-        path.moveTo(centerX.toFloat(), ((centerY * if (isUpSwipe) 1.5 else 0.5).toFloat())); //起点坐标。
-        path.lineTo(centerX.toFloat(), ((centerY * if (isUpSwipe) 0.5 else 1.5).toFloat())); //终点坐标。
-        val builder = GestureDescription.Builder();
-
-        val gestureDescription = builder.addStroke(
-            GestureDescription.StrokeDescription(path, 0, 800)
-        ).build()
-        //添加双击手势
-        builder.addStroke(
-            GestureDescription.StrokeDescription(path, 0, 800)
-        )
-        // 执行手势并尝试处理结果
-        val gestureCallback = object : GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                super.onCompleted(gestureDescription)
-                // 滑动成功
-                dLog { "dispatchGesture ScrollUp onCompleted." }
-                path.close()
-                mCondition.signal()
-//                mLock.unlock()
-
-            }
-
-            override fun onCancelled(gestureDescription: GestureDescription?) {
-                super.onCancelled(gestureDescription)
-                dLog { "dispatchGesture ScrollUp cancel." }
-                mCondition.signal()
-//                mLock.unlock()
-                // 手势取消或失败，检查原因
-
-            }
-        }
-        val isDispatched = dispatchGesture(gestureDescription, gestureCallback, null);
-        return isDispatched;
     }
 }

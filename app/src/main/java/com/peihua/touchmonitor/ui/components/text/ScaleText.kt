@@ -1,4 +1,4 @@
-package com.peihua.chatbox.shared.components.text
+package com.peihua.touchmonitor.ui.components.text
 
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text

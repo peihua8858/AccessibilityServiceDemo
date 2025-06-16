@@ -24,16 +24,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.peihua.chatbox.shared.components.text.ScaleText
+import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.ui.AppProvider
+import com.peihua.touchmonitor.ui.AppModel
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AllSettings(modifier: Modifier, provider: AppProvider, modelChange: (AppProvider) -> Unit) {
-    val settings = provider.model.settings
+fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
+    val settings = model.settings
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
     val models = arrayOf(
@@ -81,8 +81,8 @@ fun AllSettings(modifier: Modifier, provider: AppProvider, modelChange: (AppProv
                         onClick = {
                             selectedOption.value = item
                             isExpanded.value = !isExpanded.value
-                            provider.model.settings = settings.copy(orientation = item.orientation)
-                            modelChange(provider)
+                            model.settings = settings.copy(orientation = item.orientation)
+                            modelChange(model)
                         },
                     )
                 }
@@ -101,8 +101,8 @@ fun AllSettings(modifier: Modifier, provider: AppProvider, modelChange: (AppProv
                 doubleSaver.value,
                 onCheckedChange = {
                     doubleSaver.value = it
-                    provider.model.settings = settings.copy(isDoubleSaver = it)
-                    modelChange(provider)
+                    model.settings = settings.copy(isDoubleSaver = it)
+                    modelChange(model)
                 })
         }
     }

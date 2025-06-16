@@ -3,11 +3,14 @@ package com.peihua.touchmonitor.ui.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.peihua.touchmonitor.ui.AppProvider
+import com.peihua.touchmonitor.ui.AppModel
 
+/**
+ * 抖音极速版
+ */
 @Composable
-fun DouYinJiSuSettings(modifier: Modifier, provider: AppProvider, modelChange: (AppProvider) -> Unit) {
+fun DouYinJiSuSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
     Column(modifier) {
-        AllSettings(Modifier,provider,modelChange)
+        AllSettings(Modifier,model,modelChange)
     }
 }
