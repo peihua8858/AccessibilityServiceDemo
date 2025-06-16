@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui.applications
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +27,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.data.settingsStore
 import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
@@ -80,8 +83,13 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
         columns = GridCells.Fixed(if (isLandscape) 4 else 2),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        items(models) {
-            AppItemView(Modifier, it, iconSize)
+        items(models) { item ->
+            AppItemView(Modifier.clickable {
+                settingsStore.updateSettings {
+                    it.copy(packageName = item.packageName)
+                }
+                popBackStack()
+            }, item, iconSize)
         }
     }
 }

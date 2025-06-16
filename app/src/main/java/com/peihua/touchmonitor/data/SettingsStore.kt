@@ -47,6 +47,11 @@ class SettingsStore(storePath: String) : CoroutineScope by WorkScope() {
             db.updateData { settings }
         }
     }
+    fun updateSettings(block: (Settings) -> Settings) {
+        launch {
+            db.updateData { block(it) }
+        }
+    }
 
     internal object SettingsJsonSerializer : OkioSerializer<Settings> {
         override val defaultValue: Settings
