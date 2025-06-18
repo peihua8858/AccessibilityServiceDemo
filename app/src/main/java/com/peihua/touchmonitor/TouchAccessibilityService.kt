@@ -25,8 +25,13 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private var isRunning = false
     private val deviceLocks = CommonDeviceLocks()
     private val times = arrayOf(
-        2_000L,
-        3_000L,
+        8_000L,
+        9_000L,
+        10_000L,
+        12_000L,
+        13_000L,
+        14_000L,
+        15_000L,
         5_000L,
         8_000L,
         9_000L,
@@ -36,17 +41,14 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         13_000L,
         14_000L,
         15_000L,
-        18_000L,
-        20_000L,
-        22_000L,
-        23_000L,
-        24_000L,
-        25_000L,
         5_000L,
         8_000L,
+        9_000L,
         10_000L,
+        12_000L,
+        13_000L,
+        14_000L,
         15_000L,
-        20_000L,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
@@ -158,6 +160,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     }
 
     private suspend fun waiteTimeMillis(time: Long) {
+        dLog { "waite time$time" }
         delay(time)
     }
 
