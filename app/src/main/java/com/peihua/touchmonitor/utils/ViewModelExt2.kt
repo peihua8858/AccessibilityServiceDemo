@@ -1,7 +1,10 @@
 package com.peihua.touchmonitor.utils
 
+import android.app.Application
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -124,3 +127,10 @@ fun <T> ViewModel.request(
         }
     }
 }
+fun AndroidViewModel.getString(id: Int): String {
+    return application.getString(id)
+}
+fun AndroidViewModel.getString(id: Int, vararg args: Any): String {
+    return application.getString(id, *args)
+}
+

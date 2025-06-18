@@ -47,6 +47,7 @@ import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.utils.ResultData
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -56,20 +57,31 @@ import kotlinx.coroutines.launch
 fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = viewModel()) {
     val context = LocalContext.current
     val result = viewModel.settingsState.value
+    val bundle = stackEntry?.savedStateHandle
+    val selectPackage = bundle?.get<String>("packageName")
     //请求数据
     val refresh = {
-        viewModel.requestData()
+        viewModel.requestData(selectPackage)
+    }
+    "".dLog { "MainScreen>>>>>>>selectPackage1:$selectPackage" }
+    if (!selectPackage.isNullOrEmpty()) {
+        bundle.remove<String>("packageName")
+        "".dLog { "MainScreen>>>>>>>selectPackage2:$selectPackage" }
+        refresh()
     }
     Column(
         modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
     ) {
-        AppTopBar(title = { "设置" }, navigateUp = {
+        AppTopBar(title = { stringResource(R.string.settings) }, navigateUp = {
             context.finish()
         })
         when (result) {
             is ResultData.Success -> {
+                if (result.data.isEmpty()) {
+                    return
+                }
                 MainScreenContent(Modifier, result.data)
             }
 
@@ -95,7 +107,8 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
     val context = LocalContext.current
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
-    val selectedOption = remember { mutableStateOf(models[0]) }
+    val selectedModel = models.find { it.isSelected } ?: models[0]
+    val selectedOption = remember { mutableStateOf(selectedModel) }
     val scope = rememberCoroutineScope()
     val model = selectedOption.value
     Box(modifier = modifier.fillMaxSize()) {
@@ -131,7 +144,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                                 .fillMaxSize()
                                 .background(if (selected) colorScheme.secondaryContainer else Color.Transparent),
                             text = {
-                                ConstraintLayout {
+                                ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                                     val drawable = item.icon
                                     val (icon, title, desc) = createRefs()
                                     Image(
@@ -168,9 +181,9 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                                                 top.linkTo(parent.top)
                                                 bottom.linkTo(parent.bottom)
                                             },
-                                            text = "最近使用",
+                                            text = stringResource(R.string.use_history),
                                             fontSize = 16.sp,
-                                            color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
+                                            color = colorScheme.error,
                                             style = MaterialTheme.typography.labelMedium
                                         )
                                     }
@@ -213,7 +226,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             }) {
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "辅助功能授权"
+                contentDescription = stringResource(R.string.accessibility_service_authorization),
             )
         }
     }

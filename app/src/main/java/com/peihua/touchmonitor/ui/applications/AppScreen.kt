@@ -88,7 +88,10 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
                 settingsStore.updateSettings {
                     it.copy(packageName = item.packageName)
                 }
-                popBackStack()
+                popBackStack{
+                    set("packageName", item.packageName)
+//                    putString("packageName", item.packageName)
+                }
             }, item, iconSize)
         }
     }

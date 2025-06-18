@@ -10,8 +10,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDirections
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -19,6 +22,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
@@ -65,6 +69,32 @@ fun navigateTo(directions: NavDirections) {
 /**
  * 返回指定的route并回调参数
  */
+fun popBackStack(
+    route: String,
+    autoPop: Boolean = true,
+    callback: (Bundle.() -> Unit)? = null,
+) {
+    appRouter.popBackStack(route, autoPop, callback)
+}
+
+/**
+ * 回到上级页面，并回调参数
+ */
+fun popBackStack(
+    autoPop: Boolean = true,
+    callback: (SavedStateHandle.() -> Unit)? = null,
+) {
+    appRouter.popBackStack(autoPop, callback)
+}
+
+@get:Composable
+val stackEntry: NavBackStackEntry?
+    @SuppressLint("UnrememberedGetBackStackEntry")
+    get() = appRouter.currentBackStackEntry
+
+/**
+ * 返回指定的route并回调参数
+ */
 fun NavHostController.popBackStack(
     route: String,
     autoPop: Boolean = true,
@@ -83,11 +113,16 @@ fun NavHostController.popBackStack(
  */
 fun NavHostController.popBackStack(
     autoPop: Boolean = true,
-    callback: (Bundle.() -> Unit)? = null,
+    callback: (SavedStateHandle.() -> Unit)? = null,
 ) {
-    previousBackStackEntry?.arguments?.let {
-        callback?.invoke(it)
+    dLog { "popBackStack>>>>>>>previousBackStackEntry:${previousBackStackEntry}" }
+    dLog { "popBackStack>>>>>>>previousBackStackEntry.savedStateHandle:${previousBackStackEntry?.savedStateHandle}" }
+    previousBackStackEntry?.savedStateHandle?.apply {
+        callback?.invoke(this)
     }
+//    previousBackStackEntry?.arguments?.let {
+//        callback?.invoke(it)
+//    }
     if (autoPop) {
         popBackStack()
     }
@@ -113,15 +148,15 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
     NavHost(
         navController = navController, startDestination = AppRouter.Home.route,
         enterTransition = {
-            slideIn(tween(700, easing = LinearOutSlowInEasing)) { fullSize ->
+            slideIn(tween(400, easing = LinearOutSlowInEasing)) { fullSize ->
                 IntOffset(fullSize.width, 0)
             }
         },
         exitTransition = {
-            fadeOut(animationSpec = tween(1500))
+            fadeOut(animationSpec = tween(400))
         },
         popEnterTransition = {
-            fadeIn(animationSpec = tween(500))
+            fadeIn(animationSpec = tween(400))
         },
         popExitTransition = {
             slideOut(tween(700, easing = FastOutSlowInEasing)) { fullSize ->

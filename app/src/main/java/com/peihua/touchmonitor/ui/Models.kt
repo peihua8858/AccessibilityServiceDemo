@@ -109,6 +109,7 @@ data class AppModel(
     val pkgName: String,
     var displayName: String,
     var icon: Drawable? = null,
+    var isSelected: Boolean = false,
     var isHistory: Boolean = false,
     var appInfo: ApplicationInfo? = null,
     var settings: Settings,
@@ -125,39 +126,3 @@ data class Settings(
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
 )
-
-@get:Composable
-val Applications: ArrayList<AppModel>
-    get() {
-        val context = LocalContext.current
-        val values = AppProvider.entries
-        val result = ArrayList<AppModel>()
-        for (value in values) {
-            val pkgName = value.settings.packageName
-            try {
-                val appInfo = context.packageManager
-                    .getPackageInfo(pkgName, PackageManager.GET_META_DATA).applicationInfo
-                val icon = appInfo?.loadIcon(context.packageManager)
-                val displayName =
-                    appInfo?.loadLabel(context.packageManager)?.toString() ?: ""
-                result.add(
-                    AppModel(
-                        value,
-                        pkgName,
-                        displayName,
-                        icon,
-                        appInfo = appInfo,
-                        settings = value.settings
-                    )
-                )
-            } catch (e: Throwable) {
-                e.dLog { "getPackageInfo error,${e.stackTraceToString()}" }
-            }
-        }
-        result.add(0, AppModel(AppProvider.ALL, "", "不限制", settings = AppProvider.ALL.settings))
-        result.add(AppModel(AppProvider.Other, "", "Other", settings = AppProvider.Other.settings))
-        return result
-
-    }
-
-val json = Json { ignoreUnknownKeys = true }

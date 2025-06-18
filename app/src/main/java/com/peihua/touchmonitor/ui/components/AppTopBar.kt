@@ -11,10 +11,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,9 +32,12 @@ fun AppTopBar(
     navigateUp: () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
-    }, actions: @Composable RowScope.() -> Unit = {}
+    },
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     val typography = MaterialTheme.typography
+    val colors: TopAppBarColors =
+        TopAppBarDefaults.topAppBarColors().copy(containerColor = Color.White)
     TopAppBar(
         title = {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -48,7 +54,8 @@ fun AppTopBar(
         },
         navigationIcon = navigationIcon,
         actions = actions,
-        modifier = modifier
+        modifier = modifier,
+        colors = colors
     )
 }
 
@@ -59,7 +66,7 @@ fun AppTopBar(
 @Composable
 fun NavigationIcon(
     imageVector: ImageVector = AppIcons.IosArrowBack,
-    navigateUp: () -> Unit = {}
+    navigateUp: () -> Unit = {},
 ) {
     Icon(
         modifier = Modifier

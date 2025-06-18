@@ -37,7 +37,8 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
     val models = arrayOf(
-        OrientationModel(Orientation.Vertical, "垂直"), OrientationModel(Orientation.Horizontal, "水平")
+        OrientationModel(Orientation.Vertical, stringResource(R.string.vertical)),
+        OrientationModel(Orientation.Horizontal, stringResource(R.string.horizontal))
     )
     val selOption = models.find { it.orientation == settings.orientation } ?: models[0]
     val selectedOption = remember { mutableStateOf(selOption) }
@@ -92,7 +93,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         Row {
             ScaleText(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "双击屏幕点赞",
+                text = stringResource(R.string.double_click_like),
                 fontSize = 20.sp,
                 style = MaterialTheme.typography.labelMedium
             )

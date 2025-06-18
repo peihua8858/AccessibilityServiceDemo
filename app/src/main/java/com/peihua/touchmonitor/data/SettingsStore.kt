@@ -6,8 +6,8 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.okio.OkioSerializer
 import androidx.datastore.core.okio.OkioStorage
 import com.peihua.touchmonitor.ServiceApplication
+import com.peihua.touchmonitor.model.json
 import com.peihua.touchmonitor.ui.Settings
-import com.peihua.touchmonitor.ui.json
 import com.peihua.touchmonitor.utils.WorkScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -47,6 +47,7 @@ class SettingsStore(storePath: String) : CoroutineScope by WorkScope() {
             db.updateData { settings }
         }
     }
+
     fun updateSettings(block: (Settings) -> Settings) {
         launch {
             db.updateData { block(it) }
@@ -72,4 +73,5 @@ class SettingsStore(storePath: String) : CoroutineScope by WorkScope() {
     }
 }
 
+@get:Synchronized
 val settingsStore: SettingsStore by lazy { SettingsStore(ServiceApplication.application) }

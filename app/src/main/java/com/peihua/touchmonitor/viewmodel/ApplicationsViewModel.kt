@@ -19,7 +19,6 @@ class ApplicationsViewModel(application: Application) : AndroidViewModel(applica
 
     fun requestData() {
         request(applications) {
-            delay(3000)
             val packageManager = application.packageManager
             val mRetrieveFlags = PackageManager.MATCH_DISABLED_COMPONENTS or
                     PackageManager.MATCH_DISABLED_UNTIL_USED_COMPONENTS

@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.graphics.drawable.Drawable
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.json.Json
 
 data class SettingsModel(
     val name: String,
@@ -30,3 +31,5 @@ data class AppInfo(
         }
     }
 }
+
+val json = Json { ignoreUnknownKeys = true }
