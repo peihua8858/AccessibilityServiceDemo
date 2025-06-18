@@ -27,34 +27,26 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private val times = arrayOf(
         2_000L,
         3_000L,
-        4_000L,
-        2_000L,
-        3_000L,
-        4_000L,
         5_000L,
-        3_000L,
-        4_000L,
-        5_000L,
-        6_000L,
-        7_000L,
-        3_000L,
-        4_000L,
         8_000L,
         9_000L,
-        3_000L,
-        4_000L,
-        2_000L,
-        3_000L,
-        4_000L,
+        10_000L,
+        11_000L,
+        12_000L,
+        13_000L,
+        14_000L,
+        15_000L,
+        18_000L,
+        20_000L,
+        22_000L,
+        23_000L,
+        24_000L,
+        25_000L,
         5_000L,
-        3_000L,
-        4_000L,
-        3_000L,
-        4_000L,
-        5_000L,
-        5_000L,
-        5_000L,
-        5_000L,
+        8_000L,
+        10_000L,
+        15_000L,
+        20_000L,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
@@ -128,6 +120,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
                         val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
                         dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
+                        waiteTimeMillis(2_000)
                         return
                     }
                 }
@@ -140,22 +133,30 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
         val isDoubleSaver = settings?.isDoubleSaver == true
         if (isDoubleSaver && isDownSwipe.random() == 1) {
-            delay(times.random()) // 每2秒执行一次
+            waiteTime() // 每2秒执行一次
             dLog { "withLock>>>>performDoubleClickGesture await" }
             val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
             dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
         }
+        waiteTime()
+    }
+
+    private suspend fun waiteTime() {
         dLog { "exec next line" }
-        var time = times.random()
+        var tempTime = times.random()
         if (oldTime == maxTime) {
             oldTime = times.min()
         }
-        while (oldTime < time) {
-            time = times.random()
+        while (oldTime > tempTime) {
+            tempTime = times.random()
         }
-        oldTime = time
-        delay(time) // 每2秒执行一次
+        oldTime = tempTime
+        waiteTimeMillis(tempTime) // 每2秒执行一次
         dLog { "withLock>>>>end" }
+    }
+
+    private suspend fun waiteTimeMillis(time: Long) {
+        delay(time)
     }
 
     // For background processing
