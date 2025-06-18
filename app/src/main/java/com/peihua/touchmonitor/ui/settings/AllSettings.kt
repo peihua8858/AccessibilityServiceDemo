@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -43,6 +45,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val selOption = models.find { it.orientation == settings.orientation } ?: models[0]
     val selectedOption = remember { mutableStateOf(selOption) }
     val doubleSaver = remember { mutableStateOf(settings.isDoubleSaver) }
+    val skipAdOrLive = remember { mutableStateOf(settings.isSkipAdOrLive) }
     Column(modifier) {
         Spacer(Modifier.size(16.dp))
         ExposedDropdownMenuBox(
@@ -90,19 +93,49 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             }
         }
         Spacer(Modifier.size(16.dp))
-        Row {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                doubleSaver.value = !doubleSaver.value
+            }) {
             ScaleText(
-                modifier = Modifier.align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .weight(1f),
                 text = stringResource(R.string.double_click_like),
                 fontSize = 20.sp,
                 style = MaterialTheme.typography.labelMedium
             )
             Spacer(Modifier.size(4.dp))
-            Switch(
+            Checkbox(
                 doubleSaver.value,
                 onCheckedChange = {
                     doubleSaver.value = it
                     model.settings = settings.copy(isDoubleSaver = it)
+                    modelChange(model)
+                })
+        }
+        Spacer(Modifier.size(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    skipAdOrLive.value = !skipAdOrLive.value
+                }) {
+            ScaleText(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .weight(1f),
+                text = stringResource(R.string.skip_ad_or_live),
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.labelMedium
+            )
+            Spacer(Modifier.size(4.dp))
+            Checkbox(
+                skipAdOrLive.value,
+                onCheckedChange = {
+                    skipAdOrLive.value = it
+                    model.settings = settings.copy(isSkipAdOrLive = it)
                     modelChange(model)
                 })
         }

@@ -125,4 +125,5 @@ data class Settings(
     val packageName: String,
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
+    val isSkipAdOrLive: Boolean = true,
 )

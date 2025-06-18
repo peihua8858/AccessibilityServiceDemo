@@ -83,6 +83,8 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     }
 
     val settings = mutableStateOf<Settings>(Settings("", Orientation.Vertical, true))
+    var oldTime = times.min()
+    val maxTime = times.max()
 
     // 定时执行手势
     private fun startSwipeTask() {
@@ -94,47 +96,45 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         }
         launch {
             isRunning = true
-            var oldTime = times.min()
-            var oldSwipe = false
-            val maxTime = times.max()
             dLog { "Service start>>>>" }
-
             while (isRunning) {
                 dLog { "withLock>>>>start" }
                 extGesture(settings.value)
-                dLog { "exec next line" }
-                var time = times.random()
-                if (oldTime == maxTime) {
-                    oldTime = times.min()
-                }
-                while (oldTime < time) {
-                    time = times.random()
-                }
-                oldTime = time
-                delay(time) // 每2秒执行一次
-                dLog { "withLock>>>>end" }
+
             }
         }
     }
 
     private suspend fun extGesture(settings: Settings?) {
+        val width = screenWidth
+        val height = screenHeight
         dLog { "withLock>>>>settings:${settings?.packageName}" }
         val rootNode = rootInActiveWindow
         dLog { "withLock>>>>rootNode:${rootNode}" }
         dLog { "withLock>>>>rootNode:${rootNode?.packageName}" }
-        if (settings != null) {
-            if (rootNode != null) {
+        if (rootNode != null) {
+            if (settings != null) {
                 dLog { "withLock>>>>currentPackage:${rootNode.packageName}" }
                 if (settings.packageName.isNotEmpty() && settings.packageName != rootNode.packageName) {
                     dLog { "withLock>>>>setting packageName:${settings.packageName}" }
                     return
                 }
+                if (settings.isSkipAdOrLive) {
+                    //跳过广告或直播
+                    val liveNode = rootNode.findAccessibilityNodeInfosByText("直播中")
+                    val adNode = rootNode.findAccessibilityNodeInfosByText("广告")
+                    dLog { "withLock>>>>liveNode:${liveNode}" }
+                    if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
+                        dLog { "withLock>>>>awaitPerformSwipeGesture await" }
+                        val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
+                        dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
+                        return
+                    }
+                }
             }
         }
-        val width = screenWidth
-        val height = screenHeight
-        var isSwipe = isUpSwipe.random()
 
+        var isSwipe = isUpSwipe.random()
         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
         val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
         dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
@@ -145,6 +145,17 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
             dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
         }
+        dLog { "exec next line" }
+        var time = times.random()
+        if (oldTime == maxTime) {
+            oldTime = times.min()
+        }
+        while (oldTime < time) {
+            time = times.random()
+        }
+        oldTime = time
+        delay(time) // 每2秒执行一次
+        dLog { "withLock>>>>end" }
     }
 
     // For background processing
