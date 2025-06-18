@@ -111,25 +111,27 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                     dLog { "withLock>>>>setting packageName:${settings.packageName}" }
                     return
                 }
-                if (settings.isSkipAdOrLive) {
-                    //跳过广告或直播
-                    val liveNode = rootNode.findAccessibilityNodeInfosByText("直播中")
-                    val adNode = rootNode.findAccessibilityNodeInfosByText("广告")
-                    dLog { "withLock>>>>liveNode:${liveNode}" }
-                    if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
-                        dLog { "withLock>>>>awaitPerformSwipeGesture await" }
-                        val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
-                        dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
-                        waiteTimeMillis(2_000)
-                        return
-                    }
-                }
             }
         }
 
         var isSwipe = isUpSwipe.random()
         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
         val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
+        if (settings?.isSkipAdOrLive == true && scrollResult) {
+            waiteTimeMillis(1_000)
+            //跳过广告或直播
+            val rootNode = rootInActiveWindow
+            val liveNode = rootNode.findAccessibilityNodeInfosByText("直播中")
+            val adNode = rootNode.findAccessibilityNodeInfosByText("广告")
+            dLog { "withLock>>>>liveNode:${liveNode}" }
+            if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
+                dLog { "withLock>>>>awaitPerformSwipeGesture await" }
+                val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
+                dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
+                waiteTimeMillis(2_000)
+                return
+            }
+        }
         dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
         val isDoubleSaver = settings?.isDoubleSaver == true
         if (isDoubleSaver && isDownSwipe.random() == 1) {
