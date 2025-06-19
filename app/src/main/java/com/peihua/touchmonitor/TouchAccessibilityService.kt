@@ -25,35 +25,35 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private var isRunning = false
     private val deviceLocks = CommonDeviceLocks()
     private val times = arrayOf(
-        8_000L,
-        9_000L,
-        10_000L,
-        12_000L,
-        13_000L,
-        14_000L,
-        15_000L,
-        5_000L,
+        7_000L,
         8_000L,
         9_000L,
         10_000L,
         11_000L,
         12_000L,
         13_000L,
-        14_000L,
-        15_000L,
+        8_000L,
+        9_000L,
+        10_000L,
+        8_000L,
+        9_000L,
+        10_000L,
+        8_000L,
+        9_000L,
+        10_000L,
         5_000L,
         8_000L,
         9_000L,
         10_000L,
-        12_000L,
-        13_000L,
-        14_000L,
-        15_000L,
+        8_000L,
+        9_000L,
+        10_000L,
+        8_000L,
+        9_000L,
+        10_000L,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-    private val mLock = ReentrantLock()
-    private val mCondition = mLock.newCondition()
     private var mPackageName: CharSequence = ""
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 处理事件
