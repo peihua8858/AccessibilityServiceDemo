@@ -221,9 +221,16 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             onClick = {
                 model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                intent.setData("package:${context.packageName}".toUri())
-                context.startActivity(intent)
+                try {
+                    val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                    intent.setData("package:${context.packageName}".toUri())
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    intent.setData("package:${context.packageName}".toUri())
+                    context.startActivity(intent)
+                }
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }
