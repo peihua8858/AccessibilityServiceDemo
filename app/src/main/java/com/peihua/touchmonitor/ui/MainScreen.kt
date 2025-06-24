@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -51,6 +53,7 @@ import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -210,25 +213,39 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             }
         }
 
-        IconButton(
+        Button(
             modifier = Modifier
-                .padding(bottom = 32.dp, end = 16.dp)
-                .align(Alignment.BottomEnd)
-                .shadow(elevation = 8.dp, shape = CircleShape)
-                .background(
-                    color = Color.White,
-                    shape = CircleShape
-                ),
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+                .align(Alignment.BottomCenter),
             onClick = {
+                model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                intent.setData("package:${context.packageName}".toUri())
                 context.startActivity(intent)
             }) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(R.string.accessibility_service_authorization),
-            )
+            ScaleText(stringResource(R.string.accessibility_service_authorization))
         }
+//        IconButton(
+//            modifier = Modifier
+//                .padding(bottom = 32.dp, end = 16.dp)
+//                .align(Alignment.BottomEnd)
+//                .shadow(elevation = 8.dp, shape = CircleShape)
+//                .background(
+//                    color = Color.White,
+//                    shape = CircleShape
+//                ),
+//            onClick = {
+//                // 引导用户到系统辅助功能设置
+//                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+//                context.startActivity(intent)
+//            }) {
+//            Icon(
+//                imageVector = Icons.Default.Settings,
+//                contentDescription = stringResource(R.string.accessibility_service_authorization),
+//            )
+//        }
     }
 }
 
