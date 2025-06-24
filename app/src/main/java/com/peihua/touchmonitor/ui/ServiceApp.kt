@@ -25,6 +25,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.ui.applications.AppScreen
+import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
+import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
 
@@ -49,6 +51,12 @@ fun popBackStack() {
 fun navigateTo(route: String, builder: NavOptionsBuilder.() -> Unit) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(route, builder)
+}
+fun navigateTo(route: String, params: Pair<String, String>) {
+    assert(::appRouter.isInitialized)
+    appRouter.navigate(route){
+
+    }
 }
 
 fun navigateTo(directions: NavDirections, navigatorExtras: Navigator.Extras) {
@@ -169,6 +177,14 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
         }
         composable(route = AppRouter.Applications.route) {
             AppScreen(modifier)
+        }
+        composable(route = AppRouter.LogScreen.route) {
+            LogScreen(modifier)
+        }
+        composable(route = "logDetail/{filePath}") {
+            val filePath = it.arguments?.getString("path") ?: ""
+            dLog { "LogDetailScreen>>>>>>>filePath:$filePath" }
+            LogDetailScreen(modifier, filePath)
         }
     }
 }

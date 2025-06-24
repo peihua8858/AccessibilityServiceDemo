@@ -13,4 +13,5 @@
     <string name="accessibility_service_authorization">辅助功能授权</string>
     <string name="double_click_like">双击屏幕点赞</string>
     <string name="skip_ad_or_live">跳过广告和直播</string>
+    <string name="text_log">日志</string>
 </resources>

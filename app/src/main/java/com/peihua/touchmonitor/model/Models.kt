@@ -20,7 +20,7 @@ data class AppInfo(
     var isHistory: Boolean = false,
     var isSystemApp: Boolean = false,
     val packageInfo: PackageInfo?,
-){
+) {
     init {
         if (packageInfo != null) {
             packageName = packageInfo.packageName
@@ -33,3 +33,9 @@ data class AppInfo(
 }
 
 val json = Json { ignoreUnknownKeys = true }
+
+data class LogModel(
+    val time: Long,
+    val content: String,
+    val path: String,
+)

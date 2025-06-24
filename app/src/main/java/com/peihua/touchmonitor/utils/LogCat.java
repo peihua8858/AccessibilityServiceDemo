@@ -5,6 +5,9 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.peihua.touchmonitor.BuildConfig;
+import com.peihua.touchmonitor.ServiceApplication;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -513,9 +516,7 @@ public class LogCat {
 
         static void writeLog(String logString) {
             try {
-                File rootFile = Environment.getExternalStorageDirectory();
-//                File parentFile = ComposeDemoApp.context.getExternalCacheDir();
-                File parentFile = new File(rootFile, "/Android/data/com.alibaba.aliabs.genie.cast/cache");
+                File parentFile = ServiceApplication.getApplication().getExternalFilesDir(null);
                 File fileParentDir = new File(parentFile, DIR);//判断log目录是否存在
                 if (!fileParentDir.exists()) {
                     fileParentDir.mkdirs();

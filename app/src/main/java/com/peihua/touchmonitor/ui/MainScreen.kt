@@ -16,6 +16,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -54,6 +57,7 @@ import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.peihua.touchmonitor.utils.LogCat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +83,15 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
     ) {
         AppTopBar(title = { stringResource(R.string.settings) }, navigateUp = {
             context.finish()
+        }, actions = {
+            IconButton(onClick = {
+                navigateTo(AppRouter.LogScreen.route)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = stringResource(R.string.text_log)
+                )
+            }
         })
         when (result) {
             is ResultData.Success -> {
@@ -226,7 +239,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                     intent.setData("package:${context.packageName}".toUri())
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                     intent.setData("package:${context.packageName}".toUri())
                     context.startActivity(intent)
