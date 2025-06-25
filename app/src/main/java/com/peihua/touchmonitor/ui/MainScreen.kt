@@ -236,22 +236,16 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             onClick = {
                 model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                do {
+                try {
+                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                } catch (e: Exception) {
+                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
                     try {
-                        context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                        return@Button
+                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                     } catch (e: Exception) {
-                        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                        try {
-                            context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                            return@Button
-                        } catch (e: Exception) {
-                            writeLog { e.stackTraceToString() }
-                            return@Button
-                        }
+                        writeLog { e.stackTraceToString() }
                     }
-                } while (true)
-
+                }
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }
