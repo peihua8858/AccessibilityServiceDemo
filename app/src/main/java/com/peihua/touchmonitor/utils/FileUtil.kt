@@ -41,8 +41,8 @@ suspend fun InputStream?.writeToFile(
     }
     return withContext(context) {
         try {
-            FileOutputStream(file).use { fos ->
-                this@writeToFile.use { fis ->
+            return@withContext FileOutputStream(file).use { fos ->
+                return@use this@writeToFile.use { fis ->
                     val buffer = ByteArray(bufferSize)
                     var length: Int
                     while (fis.read(buffer).also {
