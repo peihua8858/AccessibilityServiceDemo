@@ -7,30 +7,33 @@ private const val MB = 1024 * 1024
 private const val GB = 1024 * 1024 * 1024
 fun formatSpeed(speed: Float): String {
     if (speed < KB) {
-        return "${format(speed)} KB/s"
+        return "${formatFloat(speed)} KB/s"
     }
     if (speed < MB) {
-        return "${format(speed / KB)} MB/s"
+        return "${formatFloat(speed / KB)} MB/s"
     }
     if (speed < GB) {
-        return "${format(speed / MB)} GB/s"
+        return "${formatFloat(speed / MB)} GB/s"
     }
-    return "${format(speed)} KB/s"
+    return "${formatFloat(speed)} KB/s"
 }
 
 fun formatSize(size: Float): String {
     if (size < KB) {
-        return "${format(size)} KB"
+        return "${formatFloat(size)} KB"
     }
     if (size < MB) {
-        return "${format(size / KB)} MB"
+        return "${formatFloat(size / KB)} MB"
     }
     if (size < GB) {
-        return "${format(size / MB)} GB"
+        return "${formatFloat(size / MB)} GB"
     }
-    return "${format(size)} KB"
+    return "${formatFloat(size)} KB"
 }
 
-fun format(speed: Float): String {
+fun formatFloat(speed: Float): String {
     return String.format(Locale.ENGLISH, "%.2f", speed)
+}
+fun formatInt(value: Int): String {
+    return String.format(Locale.ENGLISH, "%02d", value)
 }

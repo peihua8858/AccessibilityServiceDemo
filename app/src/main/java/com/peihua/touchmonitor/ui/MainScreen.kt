@@ -51,6 +51,7 @@ import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.utils.writeLog
+import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -237,7 +238,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                     try {
                         context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                     } catch (e: Exception) {
-                        writeLog { e.stackTraceToString() }
+                        writeLogFile { e.stackTraceToString() }
                     }
                 }
             }) {
