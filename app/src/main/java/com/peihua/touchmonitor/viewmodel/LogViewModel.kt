@@ -43,7 +43,6 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
         request(logDetailState) {
             dLog { "requestData:$filePath" }
             val result = filePath.read() ?: ""
-            dLog { "requestData:$result" }
             result
         }
     }

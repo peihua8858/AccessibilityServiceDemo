@@ -24,7 +24,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.savedstate.read
 import com.peihua.touchmonitor.ui.applications.AppScreen
+import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
@@ -52,10 +54,17 @@ fun navigateTo(route: String, builder: NavOptionsBuilder.() -> Unit) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(route, builder)
 }
+
 fun navigateTo(route: String, params: Pair<String, String>) {
     assert(::appRouter.isInitialized)
-    appRouter.navigate(route){
+    appRouter.navigate(route.replace("{${params.first}}", params.second))
+}
 
+fun navigateTo2(route: String, params: Pair<String, String>) {
+    assert(::appRouter.isInitialized)
+    appRouter.navigate(route)
+    appRouter.currentBackStackEntry?.savedStateHandle?.apply {
+        this[params.first] = params.second
     }
 }
 
@@ -181,8 +190,11 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
         composable(route = AppRouter.LogScreen.route) {
             LogScreen(modifier)
         }
-        composable(route = "logDetail/{filePath}") {
-            val filePath = it.arguments?.getString("path") ?: ""
+        composable(
+            route = AppRouter.LogDetail.route,
+            arguments = AppRouter.LogDetail.navArguments
+        ) {
+            val filePath = it.savedStateHandle.get<String>("filePath")?:""
             dLog { "LogDetailScreen>>>>>>>filePath:$filePath" }
             LogDetailScreen(modifier, filePath)
         }

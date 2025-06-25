@@ -22,6 +22,7 @@ import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
+import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.viewmodel.LogViewModel
@@ -73,7 +74,7 @@ private fun LogScreenContent(modifier: Modifier, models: List<LogModel>) {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
                 .clickable {
-                    navigateTo(AppRouter.LogDetail(item.path).route)
+                    navigateTo2(AppRouter.LogDetail.route, "filePath" to item.path)
                 }) {
                 ScaleText(text = item.content, fontSize = 16.sp)
             }

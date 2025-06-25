@@ -19,14 +19,13 @@ sealed class AppRouter(
     data object Applications : AppRouter("applications")
 
     data object LogScreen : AppRouter("log")
+    data object LogDetail : AppRouter("logDetail")
+//    /**
+//     * 消息
+//     */
 //    data object LogDetail :
-//        AppRouter("log_detail/{path}", listOf(navArgument("path") { type = NavType.StringType }))
-    /**
-     * 消息
-     */
-    data class LogDetail(val filePath: String) :
-        AppRouter("logDetail/$filePath", listOf(navArgument("filePath") {
-            type = NavType.StringType
-            defaultValue = ""
-        }))
+//        AppRouter("logDetail?filePath={filePath}", listOf(navArgument("filePath") {
+//            type = NavType.StringType
+//            defaultValue = ""
+//        }))
 }
