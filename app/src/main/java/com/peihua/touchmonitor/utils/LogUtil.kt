@@ -3,128 +3,96 @@
 
 package com.peihua.touchmonitor.utils
 
-
 private const val STACK_TRACE_INDEX = 6
-fun <T> T.aLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.aLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.A, null, message)
     return this
 }
 
-fun <T> T.vLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.vLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.V, null, message)
     return this
 }
 
-fun <T> T.jsonLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.jsonLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.JSON, null, message)
     return this
 }
 
-fun <T> T.xmlLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.xmlLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.XML, null, message)
     return this
 }
 
-fun <T> T.wLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.wLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
     return this
 }
 
-fun <T> T.eLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.eLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.E, null, message)
     return this
 }
 
-fun <T> T.dLog(lazyMessage: () -> Any): T {
+fun <T : Any> T.dLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
     return this
 }
 
-fun <T> T.iLog(lazyMessage: () -> Any): T {
+fun aLog(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.A, null, message)
+}
+
+fun vLog(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.V, null, message)
+}
+
+fun jsonLog(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.JSON, null, message)
+}
+
+fun xmlLog(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.XML, null, message)
+}
+
+fun <T : Any> T.iLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.I, null, message)
     return this
 }
 
-fun Int.dLog(lazyMessage: () -> Any): Int {
+fun iLog(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.I, null, message)
+}
+
+fun dLog(lazyMessage: () -> Any) {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
-    return this
 }
 
-fun Double.dLog(lazyMessage: () -> Any): Double {
+
+fun eLog(lazyMessage: () -> Any) {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
-    return this
 }
 
-fun Float.dLog(lazyMessage: () -> Any): Float {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
-    return this
-}
-
-fun Long.dLog(lazyMessage: () -> Any): Long {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
-    return this
-}
-
-
-fun Int.eLog(lazyMessage: () -> Any): Int {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
-    return this
-}
-
-fun Double.eLog(lazyMessage: () -> Any): Double {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.E, null, message)
-    return this
-}
-
-fun Float.eLog(lazyMessage: () -> Any): Float {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.E, null, message)
-    return this
-}
-
-fun Long.eLog(lazyMessage: () -> Any): Long {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.E, null, message)
-    return this
-}
-
-fun Int.wLog(lazyMessage: () -> Any): Int {
+fun wLog(lazyMessage: () -> Any) {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
-    return this
 }
 
-fun Double.wLog(lazyMessage: () -> Any): Double {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
-    return this
-}
-
-fun Float.wLog(lazyMessage: () -> Any): Float {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
-    return this
-}
-
-fun Long.wLog(lazyMessage: () -> Any): Long {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
-    return this
-}
 fun <T> T.writeLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.writeLog(STACK_TRACE_INDEX, "", message)
