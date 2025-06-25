@@ -58,6 +58,7 @@ import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import com.peihua.touchmonitor.utils.LogCat
+import com.peihua.touchmonitor.utils.writeLog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -234,16 +235,40 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             onClick = {
                 model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                try {
-                    val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                    intent.setData("package:${context.packageName}".toUri())
-                    context.startActivity(intent)
-                } catch (e: Exception) {
-                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    intent.setData("package:${context.packageName}".toUri())
-                    context.startActivity(intent)
-                }
+                do {
+                    try {
+                        val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                        intent.setData("package:${context.packageName}".toUri())
+                        context.startActivity(intent)
+                        return@Button
+                    } catch (e: Exception) {
+                        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+                        try {
+                            val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                            context.startActivity(intent)
+                            return@Button
+                        } catch (e: Exception) {
+                            dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+                            try {
+                                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                intent.setData("package:${context.packageName}".toUri())
+                                context.startActivity(intent)
+                                return@Button
+                            } catch (e: Exception) {
+                                dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+                                try {
+                                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                    context.startActivity(intent)
+                                    return@Button
+                                } catch (e: Exception) {
+                                    writeLog{e.stackTraceToString()}
+                                    return@Button
+                                }
+                            }
+                        }
+                    }
+                }while (true)
+
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }

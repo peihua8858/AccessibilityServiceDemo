@@ -482,7 +482,6 @@ public class LogCat {
             Log.d(tag, "╚═══════════════════════════════════════════════════════════════════════════════════════");
         }
     }
-
     /**
      * log 写入文件
      *
@@ -490,7 +489,16 @@ public class LogCat {
      * @param log
      */
     public static void writeLog(String tagStr, String log) {
-        String[] contents = wrapperContent(STACK_TRACE_INDEX_4, tagStr, log);
+        writeLog(STACK_TRACE_INDEX_4, tagStr, log);
+    }
+    /**
+     * log 写入文件
+     *
+     * @param tagStr
+     * @param log
+     */
+    public static void writeLog(int stackTraceIndex, String tagStr, Object log) {
+        String[] contents = wrapperContent(stackTraceIndex, tagStr, log);
         String tag = contents[0];
         String msg = contents[1];
         String headString = contents[2];

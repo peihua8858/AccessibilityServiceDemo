@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor
 
 import android.app.Application
+import android.os.Process
 import com.peihua.touchmonitor.utils.LogCat
 
 class ServiceApplication : Application() {
@@ -21,6 +22,8 @@ class ServiceApplication : Application() {
         app = this
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             LogCat.writeLog("error", e.stackTraceToString())
+            e.printStackTrace()
+            Process.killProcess(Process.myPid())
         }
     }
 }

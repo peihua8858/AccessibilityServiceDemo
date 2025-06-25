@@ -125,6 +125,11 @@ fun Long.wLog(lazyMessage: () -> Any): Long {
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
     return this
 }
+fun <T> T.writeLog(lazyMessage: () -> Any): T {
+    val message = lazyMessage()
+    LogCat.writeLog(STACK_TRACE_INDEX, "", message)
+    return this
+}
 
 fun printStackTrace(tag: String = "") {
     LogCat.printLog(
