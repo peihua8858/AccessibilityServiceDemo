@@ -2,38 +2,65 @@ package com.peihua.touchmonitor.utils
 
 import java.util.Locale
 
-private const val KB = 1024
-private const val MB = 1024 * 1024
-private const val GB = 1024 * 1024 * 1024
-fun formatSpeed(speed: Float): String {
-    if (speed < KB) {
-        return "${formatFloat(speed)} KB/s"
-    }
-    if (speed < MB) {
-        return "${formatFloat(speed / KB)} MB/s"
-    }
-    if (speed < GB) {
-        return "${formatFloat(speed / MB)} GB/s"
-    }
-    return "${formatFloat(speed)} KB/s"
+private const val KB = 1024f
+private const val MB = KB * KB
+private const val GB = MB * KB
+
+
+fun Float.formatSpeed(): String {
+    return this.toDouble().formatSpeed()
 }
 
-fun formatSize(size: Float): String {
-    if (size < KB) {
-        return "${formatFloat(size)} KB"
+fun Double.formatSpeed(): String {
+    if (this == 0.0) {
+        return "0 B/s"
     }
-    if (size < MB) {
-        return "${formatFloat(size / KB)} MB"
+    return when {
+        this < KB -> {
+            String.format(Locale.US, "%.2f B/s", this)
+        }
+
+        this < MB -> {
+            String.format(Locale.US, "%.2f KB/s", this / KB)
+        }
+
+        this < GB -> {
+            String.format(Locale.US, "%.2f MB/s", this / MB)
+        }
+
+        else -> {
+            String.format(Locale.US, "%.2f GB/s", this / GB)
+        }
     }
-    if (size < GB) {
-        return "${formatFloat(size / MB)} GB"
+}
+
+fun Long.formatFileSize(): String {
+    if (this == 0L) {
+        return "0 B"
     }
-    return "${formatFloat(size)} KB"
+    return when {
+        this < KB -> {
+            String.format(Locale.US, "%.2f B", this.toFloat())
+        }
+
+        this < MB -> {
+            String.format(Locale.US, "%.2f KB", this / KB)
+        }
+
+        this < GB -> {
+            String.format(Locale.US, "%.2f MB", this / MB)
+        }
+
+        else -> {
+            String.format(Locale.US, "%.2f GB", this / GB)
+        }
+    }
 }
 
 fun formatFloat(speed: Float): String {
     return String.format(Locale.ENGLISH, "%.2f", speed)
 }
+
 fun formatInt(value: Int): String {
     return String.format(Locale.ENGLISH, "%02d", value)
 }
