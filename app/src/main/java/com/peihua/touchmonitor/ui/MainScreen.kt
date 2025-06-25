@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -237,60 +238,35 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                 // 引导用户到系统辅助功能设置
                 do {
                     try {
-                        val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                        intent.setData("package:${context.packageName}".toUri())
-                        context.startActivity(intent)
+                        context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
                         return@Button
                     } catch (e: Exception) {
                         dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
                         try {
-                            val intent = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                            context.startActivity(intent)
+                            context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                             return@Button
                         } catch (e: Exception) {
-                            dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                            try {
-                                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                                intent.setData("package:${context.packageName}".toUri())
-                                context.startActivity(intent)
-                                return@Button
-                            } catch (e: Exception) {
-                                dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                                try {
-                                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                                    context.startActivity(intent)
-                                    return@Button
-                                } catch (e: Exception) {
-                                    writeLog{e.stackTraceToString()}
-                                    return@Button
-                                }
-                            }
+                            writeLog { e.stackTraceToString() }
+                            return@Button
                         }
                     }
-                }while (true)
+                } while (true)
 
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }
-//        IconButton(
-//            modifier = Modifier
-//                .padding(bottom = 32.dp, end = 16.dp)
-//                .align(Alignment.BottomEnd)
-//                .shadow(elevation = 8.dp, shape = CircleShape)
-//                .background(
-//                    color = Color.White,
-//                    shape = CircleShape
-//                ),
-//            onClick = {
-//                // 引导用户到系统辅助功能设置
-//                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-//                context.startActivity(intent)
-//            }) {
-//            Icon(
-//                imageVector = Icons.Default.Settings,
-//                contentDescription = stringResource(R.string.accessibility_service_authorization),
-//            )
-//        }
+    }
+}
+
+private fun Context.toAccessibilitySettingActivity(action: String) {
+    try {
+        val intent = Intent(action)
+        intent.setData("package:${packageName}".toUri())
+        startActivity(intent)
+    } catch (e: Exception) {
+        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+        val intent = Intent(action)
+        startActivity(intent)
     }
 }
 
