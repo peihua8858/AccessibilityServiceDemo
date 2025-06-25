@@ -41,8 +41,8 @@ suspend fun InputStream?.writeToFile(
     }
     return withContext(context) {
         try {
-            return@withContext FileOutputStream(file).use { fos ->
-                return@withContext this@writeToFile.use { fis ->
+            FileOutputStream(file).use { fos ->
+                this@writeToFile.use { fis ->
                     val buffer = ByteArray(bufferSize)
                     var length: Int
                     while (fis.read(buffer).also {
@@ -119,7 +119,7 @@ fun Bitmap.adjustBitmapOrientation(filePath: String): Bitmap? {
             else -> {}
         }
     }
-    LogCat.d("adjustBitmapOrientation, adjust degree " + rotation + "to 0.")
+    dLog { "adjustBitmapOrientation, adjust degree " + rotation + "to 0." }
     if (rotation == 0) {
         return this
     }
