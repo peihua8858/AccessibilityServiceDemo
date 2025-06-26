@@ -48,12 +48,11 @@ import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.ExtendedListTile
 import com.peihua.touchmonitor.ui.components.LoadingView
-import com.peihua.touchmonitor.ui.components.RotatingArrow
+import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.finish
-import com.peihua.touchmonitor.utils.writeLog
 import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -233,9 +232,11 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                             .padding(16.dp)
 
                     ) {
-                        RotatingArrow(
+                        // 旋转角度，up 旋转 180 度，down 旋转 0 度
+                        val rotationAngle = if (isExtended) 180f else 0f
+                        RotatingView(
                             modifier = Modifier.align(Alignment.CenterVertically),
-                            isExtended = isExtended
+                            rotationAngle = rotationAngle
                         )
                         ScaleText(
                             modifier = Modifier
