@@ -1,0 +1,15 @@
+[
+  {
+    "package": "com.example.test",
+    "name": "test",
+    "type": "string",
+    "default": "test",
+    "title": "test"
+  },
+  {
+    "name": "test2",
+    "type": "string",
+    "default": "test2",
+    "title": "test2"
+  }
+]

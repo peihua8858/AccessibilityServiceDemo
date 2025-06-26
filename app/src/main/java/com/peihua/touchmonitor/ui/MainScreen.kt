@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,7 +46,9 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
+import com.peihua.touchmonitor.ui.components.ExtendedListTile
 import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.RotatingArrow
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
@@ -218,8 +221,42 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                     }
                 }
             }
-            model.provider.contentView(Modifier, model) {
-                it.saveToDb()
+            ExtendedListTile(
+                modifier = Modifier
+                    .padding(top = 16.dp),
+                isExtended = true,
+                title = { isExtended ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                            .padding(16.dp)
+
+                    ) {
+                        RotatingArrow(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            isExtended = isExtended
+                        )
+                        ScaleText(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .weight(1f),
+                            text = stringResource(R.string.text_settings),
+                            fontSize = 16.sp,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                }) {
+                model.provider.contentView(
+                    Modifier.padding(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 16.dp
+                    ), model
+                ) {
+                    it.saveToDb()
+                }
             }
         }
 
