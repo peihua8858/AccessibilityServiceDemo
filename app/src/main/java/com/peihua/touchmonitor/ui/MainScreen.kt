@@ -248,13 +248,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                     }
 
                 }) {
-                model.provider.contentView(
-                    Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp
-                    ), model
-                ) {
+                model.provider.contentView(Modifier.padding(16.dp), model) {
                     it.saveToDb()
                 }
             }
