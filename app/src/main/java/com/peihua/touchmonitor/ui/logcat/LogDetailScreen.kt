@@ -35,7 +35,7 @@ fun LogDetailScreen(
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
     ) {
-        AppTopBar(title = { stringResource(R.string.text_log) }, navigateUp = {
+        AppTopBar(title = { stringResource(R.string.text_log_detail) }, navigateUp = {
             popBackStack()
         })
         when (result) {

@@ -223,7 +223,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             ExtendedListTile(
                 modifier = Modifier
                     .padding(top = 16.dp),
-                isExtended = true,
+                isExtended = false,
                 title = { isExtended ->
                     Row(
                         modifier = Modifier
