@@ -2,6 +2,7 @@ package com.peihua.touchmonitor
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.app.Activity
 import android.graphics.Path
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -17,8 +18,8 @@ import com.peihua.touchmonitor.utils.screenWidth
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.concurrent.locks.ReentrantLock
 
 
 class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
@@ -74,21 +75,32 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         isRunning = false
         super.onDestroy()
         deviceLocks.release()
+        if (settings.value.isBrightnessMin && backupBrightness > 0) {
+            setSystemLight(backupBrightness)
+        }
     }
 
-    val settings = mutableStateOf<Settings>(Settings("", Orientation.Vertical, true))
+    val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
     var oldTime = times.min()
     val maxTime = times.max()
+    var backupBrightness = 0
 
     // 定时执行手势
     private fun startSwipeTask() {
+        val result = settingsStore.data
         launch {
-            val result = settingsStore.data
             result.collect {
                 settings.value = it
             }
         }
+
         launch {
+            val settingsResult = result.first()
+            if (settingsResult.isBrightnessMin) {
+                backupBrightness = getSystemLight()
+                setSystemLight(5)
+            }
+            settings.value = settingsResult
             isRunning = true
             dLog { "Service start>>>>" }
             while (isRunning) {
@@ -123,15 +135,17 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             waiteTimeMillis(1_000)
             //跳过广告或直播
             val rootNode = rootInActiveWindow
-            val liveNode = rootNode.findAccessibilityNodeInfosByText("直播中")
-            val adNode = rootNode.findAccessibilityNodeInfosByText("广告")
-            dLog { "withLock>>>>liveNode:${liveNode}" }
-            if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
-                dLog { "withLock>>>>awaitPerformSwipeGesture await" }
-                val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
-                dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
-                waiteTimeMillis(2_000)
-                return
+            if (rootNode != null) {
+                val liveNode = rootNode.findAccessibilityNodeInfosByText("直播中")
+                val adNode = rootNode.findAccessibilityNodeInfosByText("广告")
+                dLog { "withLock>>>>liveNode:${liveNode}" }
+                if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
+                    dLog { "withLock>>>>awaitPerformSwipeGesture await" }
+                    val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
+                    dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
+                    waiteTimeMillis(2_000)
+                    return
+                }
             }
         }
         dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
@@ -258,6 +272,28 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             deferred.completeExceptionally(e)
         }
         return deferred.await()
+    }
+
+    /**
+     * 调节当前屏幕亮度
+     */
+    fun setSystemLight(brightness: Int) {
+        android.provider.Settings.System.putInt(
+            contentResolver,
+            android.provider.Settings.System.SCREEN_BRIGHTNESS,
+            brightness
+        )
+    }
+
+    /**
+     * 获取当前屏幕亮度
+     */
+    fun getSystemLight(): Int {
+        return android.provider.Settings.System.getInt(
+            contentResolver,
+            android.provider.Settings.System.SCREEN_BRIGHTNESS,
+            0
+        )
     }
 
     override fun onServiceConnected() {

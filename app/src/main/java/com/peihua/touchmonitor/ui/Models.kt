@@ -126,4 +126,5 @@ data class Settings(
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
     val isSkipAdOrLive: Boolean = true,
+    val isBrightnessMin: Boolean = false
 )

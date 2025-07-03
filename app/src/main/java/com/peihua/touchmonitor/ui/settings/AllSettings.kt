@@ -45,6 +45,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val selectedOption = remember { mutableStateOf(selOption) }
     val doubleSaver = remember { mutableStateOf(settings.isDoubleSaver) }
     val skipAdOrLive = remember { mutableStateOf(settings.isSkipAdOrLive) }
+    val isBrightnessMin = remember { mutableStateOf(settings.isBrightnessMin) }
     Column(modifier) {
         ExposedDropdownMenuBox(
             modifier = Modifier
@@ -136,6 +137,30 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 onCheckedChange = {
                     skipAdOrLive.value = it
                     model.settings = settings.copy(isSkipAdOrLive = it)
+                    modelChange(model)
+                })
+        }
+        Spacer(Modifier.size(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    isBrightnessMin.value = !isBrightnessMin.value
+                }) {
+            ScaleText(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .weight(1f),
+                text = stringResource(R.string.brightness_min),
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.labelMedium
+            )
+            Spacer(Modifier.size(4.dp))
+            Checkbox(
+                isBrightnessMin.value,
+                onCheckedChange = {
+                    isBrightnessMin.value = it
+                    model.settings = settings.copy(isBrightnessMin = it)
                     modelChange(model)
                 })
         }
