@@ -43,6 +43,11 @@ public class CommonDeviceLocks {
      * @param context The application context
      */
     public void acquire(@NonNull Context context) {
+        try {
+            release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // Acquire a WifiLock to prevent wifi from turning off and breaking tests
         // NOTE: holding a WifiLock does NOT override a call to setWifiEnabled(false)
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
