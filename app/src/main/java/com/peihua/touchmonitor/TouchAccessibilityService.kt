@@ -1,9 +1,6 @@
 package com.peihua.touchmonitor
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityService.GestureResultCallback
-import android.accessibilityservice.GestureDescription
-import android.graphics.Path
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.Orientation
@@ -13,14 +10,9 @@ import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.screenHeight
-import com.peihua.touchmonitor.utils.screenWidth
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.text.compareTo
 
 class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
@@ -80,14 +72,14 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         }
     }
 
-    var mProcessRunner: ScreenSwipeWorker? = null
+    var mProcessRunner: AutomaticallyWatchShortVideosWorker? = null
     fun chaneState(isProcesserRunning: Boolean) {
         dLog { "Service start>>>> this.isProcesserRunning:${this.isProcesserRunning},isProcesserRunning:$isProcesserRunning" }
         if (this.isProcesserRunning != isProcesserRunning) {
             this.isProcesserRunning = isProcesserRunning
             changeSystemSettings(!isProcesserRunning)
             if (isProcesserRunning) {
-                mProcessRunner = ScreenSwipeWorker(this, settings.value)
+                mProcessRunner = AutomaticallyWatchShortVideosWorker(this, settings.value)
                 mProcessRunner?.onStart()
             } else {
                 mProcessRunner?.onStop()

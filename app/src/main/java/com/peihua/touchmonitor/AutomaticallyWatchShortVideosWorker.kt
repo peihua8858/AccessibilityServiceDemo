@@ -13,8 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-class ScreenSwipeWorker(private val service: TouchAccessibilityService, var settings: Settings) :
+/**
+ * 自动化观看短视频
+ */
+class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilityService, var settings: Settings) :
     Runnable, CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private val times = arrayOf(
