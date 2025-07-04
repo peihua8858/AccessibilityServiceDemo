@@ -263,16 +263,17 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             onClick = {
                 model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                try {
-                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                } catch (e: Exception) {
-                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                    try {
-                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    } catch (e: Exception) {
-                        writeLogFile { e.stackTraceToString() }
-                    }
-                }
+                throw Exception("test")
+//                try {
+//                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+//                } catch (e: Exception) {
+//                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+//                    try {
+//                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+//                    } catch (e: Exception) {
+//                        writeLogFile { e.stackTraceToString() }
+//                    }
+//                }
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }

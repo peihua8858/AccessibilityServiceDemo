@@ -13,33 +13,50 @@ import com.peihua.touchmonitor.utils.request
 import java.io.File
 
 class LogViewModel(application: Application) : AndroidViewModel(application) {
-    val logState: MutableState<ResultData<List<LogModel>>> = mutableStateOf(ResultData.Initialize())
+    val crashLogState: MutableState<ResultData<List<LogModel>>> = mutableStateOf(ResultData.Initialize())
     val logDetailState: MutableState<ResultData<String>> = mutableStateOf(ResultData.Initialize())
 
     companion object {
         val APP_LOG_PATH = ServiceApplication.application.getExternalFilesDir(null)
         val APP_LOG_DIR = "Logcat"
         const val FILE_PATH = "/data/system/dropbox/"
+        private const val CRASH_FILE_NAME = "crash"
     }
 
-    fun requestData() {
-        request(logState) {
+    fun requestCrashLogData() {
+        request(crashLogState) {
             val parentFile = File(FILE_PATH)
             val logs = ArrayList<LogModel>()
-            parentFile.listFiles()?.forEach {
+            val addLogFiles = { it: File ->
                 val model = LogModel(it.lastModified(), it.name, it.absolutePath)
                 logs.add(model)
             }
+            val addLogFileOrDir = { it: File ->
+                if (it.isFile) {
+                    addLogFiles(it)
+                } else if(it.isDirectory) {
+                    it.listFiles()?.forEach {file ->
+                        addLogFiles(file)
+                    }
+                }
+            }
+
+            parentFile.listFiles()?.forEach {
+                addLogFileOrDir(it)
+            }
             val appLogDir = File(APP_LOG_PATH, APP_LOG_DIR)
+            val crashLogFile = File(appLogDir, CRASH_FILE_NAME)
+            crashLogFile.listFiles()?.forEach {
+                addLogFileOrDir(it)
+            }
             appLogDir.listFiles()?.forEach {
-                val model = LogModel(it.lastModified(), it.name, it.absolutePath)
-                logs.add(model)
+                addLogFileOrDir(it)
             }
             logs
         }
     }
 
-    fun requestData(filePath: String) {
+    fun requestLogDetailData(filePath: String) {
         request(logDetailState) {
             dLog { "requestData:$filePath" }
             val result = filePath.read() ?: ""

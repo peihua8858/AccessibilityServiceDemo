@@ -1,5 +1,7 @@
 package com.peihua.touchmonitor.utils
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 private const val KB = 1024f
@@ -63,4 +65,14 @@ fun formatFloat(speed: Float): String {
 
 fun formatInt(value: Int): String {
     return String.format(Locale.ENGLISH, "%02d", value)
+}
+
+/**
+ * 将格式化为[format]的字符串格式化为时间戳
+ */
+fun String.formatToDate(format: String): Long {
+    if (this.isEmpty()) {
+        return 0
+    }
+    return SimpleDateFormat(format, Locale.getDefault()).parse(this)?.time ?: 0
 }

@@ -49,8 +49,8 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-    var oldTime = times.min()
-    val maxTime = times.max()
+    private var oldTime = times.min()
+    private val maxTime = times.max()
 
     override fun run() {
         launch {
@@ -72,7 +72,6 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
     }
 
     private suspend fun extGesture(settings: Settings?) {
-
         val width = service.screenWidth
         val height = service.screenHeight
         dLog { "withLock>>>>settings:${settings?.packageName}" }

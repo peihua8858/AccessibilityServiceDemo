@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor
 
 import android.app.Application
+import com.peihua.touchmonitor.utils.writeCrashLogFile
 import com.peihua.touchmonitor.utils.writeLogFile
 
 class ServiceApplication : Application() {
@@ -21,7 +22,7 @@ class ServiceApplication : Application() {
         app = this
         this.oldDefaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            writeLogFile { e.stackTraceToString() }
+            writeCrashLogFile { e.stackTraceToString() }
             e.printStackTrace()
             oldDefaultExceptionHandler?.uncaughtException(t, e)
         }

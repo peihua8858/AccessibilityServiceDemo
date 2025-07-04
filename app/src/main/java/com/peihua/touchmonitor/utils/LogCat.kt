@@ -5,8 +5,11 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.fz.common.file.deleteFileOrDir
 import com.peihua.touchmonitor.ServiceApplication
+import com.peihua.touchmonitor.utils.LogCat.FileLog.writeCrashLog
 import com.peihua.touchmonitor.utils.LogCat.FileLog.writeLogInternal
+import io.ktor.http.fromHttpToGmtDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -289,10 +292,12 @@ object LogCat : CoroutineScope by WorkScope() {
         val headString: String? = contents[2]
         printDefault(D, tag, headString + msg)
     }
+
     @JvmStatic
     fun printLog(type: Int, tagStr: String?, vararg objects: Any?) {
         printLog(STACK_TRACE_INDEX_6, type, tagStr, *objects)
     }
+
     @JvmStatic
     fun printLog(stackTraceIndex: Int, type: Int, tagStr: String?, vararg objects: Any?) {
         if (!isShowLog) {
@@ -315,6 +320,7 @@ object LogCat : CoroutineScope by WorkScope() {
     private fun printDebug(tagStr: String?, vararg objects: Any?) {
         printDebug(STACK_TRACE_INDEX_6, tagStr, *objects)
     }
+
     @JvmStatic
     fun printDebug(stackTraceIndex: Int, tagStr: String?, vararg objects: Any?) {
         val contents = wrapperContent(stackTraceIndex, tagStr, *objects)
@@ -532,6 +538,39 @@ object LogCat : CoroutineScope by WorkScope() {
     }
 
     /**
+     * log 写入文件
+     *
+     * @param log
+     */
+    @JvmStatic
+    fun writeCrashLog(context: Context, log: String?) {
+        writeLog(context, null, log)
+    }
+
+    /**
+     * log 写入文件
+     *
+     * @param tagStr
+     * @param log
+     */
+    @JvmStatic
+    fun writeCrashLog(context: Context, tagStr: String?, log: String?) {
+        writeLog(context, STACK_TRACE_INDEX_6, tagStr, log)
+    }
+
+    fun writeCrashLog(context: Context, stackTraceIndex: Int, tagStr: String?, log: Any?) {
+        val contents = wrapperContent(stackTraceIndex, tagStr, log)
+        val tag: String? = contents[0]
+        val msg = contents[1]
+        val headString: String? = contents[2]
+        val logMsg = headString + msg
+        printLog(D, tag, logMsg)
+        launch {
+            context.writeCrashLog(logMsg)
+        }
+    }
+
+    /**
      * 将Object对象转成Integer类型
      *
      * @param value
@@ -569,16 +608,22 @@ object LogCat : CoroutineScope by WorkScope() {
      */
     private object FileLog {
         private const val DIR = "Logcat"
+        private const val CRASH_FILE_NAME = "crash"
 
         /**
          * 一天
          */
-        private const val ONE_DAY: Int = 60 * 1000 * 60 * 24
+        private const val ONE_DAY = 60L * 1000L * 60L * 24L
 
         /**
          * 5天
          */
-        private const val FRI_DAY: Int = ONE_DAY * 5
+        private const val FRI_DAY = ONE_DAY * 5L
+
+        /**
+         * 30天
+         */
+        private const val MONTH_DAY  = ONE_DAY * 30L
 
         fun Context.writeLogInternal(logString: String?) {
             try {
@@ -604,8 +649,43 @@ object LogCat : CoroutineScope by WorkScope() {
 
                 val logFile = File(fileParentDir, "Logcat-$curData.log") //日志文件名
                 val printWriter = PrintWriter(FileOutputStream(logFile, true)) //紧接文件尾写入日志字符串
-                val time = "[$curTime] "
+                val time = "[$curTime] > "
                 printWriter.println(time + logString)
+                printWriter.flush()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+
+        fun Context.writeCrashLog(log: String) {
+            try {
+                val parentFile = getExternalFilesDir(null)
+                val fileDir = File(parentFile, DIR) //判断log目录是否存在
+                val crashDir = File(fileDir, CRASH_FILE_NAME)
+                try {
+                    val files = crashDir.listFiles()
+                    files?.forEach {
+                        val fileName = it.nameWithoutExtension
+                        //2025-04-29
+                        val dateTime = fileName.formatToDate(format = "yyyy-MM-dd")
+                        dLog { "delete file =" + it.getName() + ",fileName:$fileName,dateStr:" + dateTime }
+                        if (dateTime < System.currentTimeMillis() - MONTH_DAY) {
+                            it.deleteFileOrDir()
+                            dLog { "delete file =" + it.getName() + ",System.currentTimeMillis():${System.currentTimeMillis()},MONTH_DAY:" + MONTH_DAY  }
+                            Log.d("FileLog", "delete file =" + it.getName())
+                        }
+                    }
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+                val fileParentDir = File(crashDir, curData)
+                if (!fileParentDir.exists()) {
+                    fileParentDir.mkdirs()
+                }
+                val logFile = File(fileParentDir, "Logcat-$curTime.log") //日志文件名
+                val printWriter = PrintWriter(FileOutputStream(logFile, true)) //紧接文件尾写入日志字符串
+                val time = "[$curTime] > "
+                printWriter.println(time + log)
                 printWriter.flush()
             } catch (e: Throwable) {
                 e.printStackTrace()
@@ -786,4 +866,18 @@ fun <T> T.writeLog(lazyMessage: () -> Any): T {
     val context = LocalContext.current
     LogCat.writeLog(context, STACK_TRACE_INDEX, "", message)
     return this
+}
+
+
+@Composable
+fun <T> T.writeCrashLog(lazyMessage: () -> Any): T {
+    val message = lazyMessage()
+    val context = LocalContext.current
+    LogCat.writeCrashLog(context, STACK_TRACE_INDEX, "", message)
+    return this
+}
+
+fun Context.writeCrashLogFile(lazyMessage: () -> Any) {
+    val message = lazyMessage()
+    LogCat.writeCrashLog(this, STACK_TRACE_INDEX, "", message)
 }

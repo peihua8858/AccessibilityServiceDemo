@@ -11,7 +11,9 @@ import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
@@ -33,6 +35,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         isServiceRunning = false
         isProcesserRunning = false
         changeSystemSettings(true)
+        cancel()
     }
 
     override fun onDestroy() {
@@ -40,13 +43,16 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         isProcesserRunning = false
         super.onDestroy()
         changeSystemSettings(true)
+        cancel()
     }
 
-    val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
-    var isChangeBrightness = false
-    var backupBrightness = 0
-    var backupBrightnessMode = android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
-    fun changeSystemSettings(isRest: Boolean) {
+    private val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
+    private var isChangeBrightness = false
+    private var backupBrightness = 0
+    private var backupBrightnessMode =
+        android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
+
+    private fun changeSystemSettings(isRest: Boolean) {
         if (isRest) {
             changeBrightness(false)
             deviceLocks.release()
@@ -56,7 +62,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         }
     }
 
-    fun changeBrightness(isBrightnessMin: Boolean) {
+    private fun changeBrightness(isBrightnessMin: Boolean) {
         if (android.provider.Settings.System.canWrite(this)) {
             if (isBrightnessMin) {
                 isChangeBrightness = true
@@ -72,8 +78,8 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         }
     }
 
-    var mProcessRunner: AutomaticallyWatchShortVideosWorker? = null
-    fun chaneState(isProcesserRunning: Boolean) {
+    private var mProcessRunner: AutomaticallyWatchShortVideosWorker? = null
+    private fun chaneState(isProcesserRunning: Boolean) {
         dLog { "Service start>>>> this.isProcesserRunning:${this.isProcesserRunning},isProcesserRunning:$isProcesserRunning" }
         if (this.isProcesserRunning != isProcesserRunning) {
             this.isProcesserRunning = isProcesserRunning
@@ -88,13 +94,13 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         }
     }
 
-    fun runningService() {
+    private fun runningService() {
         val result = settingsStore.data
         launch {
             result.collect {
                 settings.value = it
-                changeBrightness(it.isBrightnessMin)
             }
+            settings.value = result.first()
             while (isServiceRunning) {
                 val currentPackageName = rootInActiveWindow?.packageName
                 val isProcesserRunning = settings.value.packageName == currentPackageName
@@ -109,7 +115,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     /**
      * 调节当前屏幕亮度
      */
-    fun setSystemLight(brightness: Int) {
+    private fun setSystemLight(brightness: Int) {
         android.provider.Settings.System.putInt(
             contentResolver,
             android.provider.Settings.System.SCREEN_BRIGHTNESS,
@@ -120,7 +126,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     /**
      * 获取当前屏幕亮度
      */
-    fun getSystemLight(): Int {
+    private fun getSystemLight(): Int {
         return android.provider.Settings.System.getInt(
             contentResolver,
             android.provider.Settings.System.SCREEN_BRIGHTNESS,
@@ -128,7 +134,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         )
     }
 
-    fun getSystemLightMode(): Int {
+    private fun getSystemLightMode(): Int {
         return android.provider.Settings.System.getInt(
             contentResolver,
             android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
@@ -136,7 +142,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         )
     }
 
-    fun setSystemLightMode(mode: Int) {
+    private fun setSystemLightMode(mode: Int) {
         android.provider.Settings.System.putInt(
             contentResolver,
             android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,

@@ -17,4 +17,12 @@
     <string name="text_log">日志</string>
     <string name="text_log_detail">日志详情</string>
     <string name="text_settings">功能配置</string>
+    <string name="log_clear">日志清除</string>
+    <string name="log_clear_confirm">确认清除日志？</string>
+    <string name="log_clear_success">日志清除成功</string>
+    <string name="log_clear_fail">日志清除失败</string>
+    <string name="log_clear_cancel">取消</string>
+    <string name="log_clear_ok">确定</string>
+    <string name="log_cat">实时日志</string>
+    <string name="log_crash">异常日志</string>
 </resources>

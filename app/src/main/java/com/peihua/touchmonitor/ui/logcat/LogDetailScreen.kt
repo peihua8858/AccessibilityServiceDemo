@@ -28,7 +28,7 @@ fun LogDetailScreen(
     val result = viewModel.logDetailState.value
     //请求数据
     val refresh = {
-        viewModel.requestData(filePath)
+        viewModel.requestLogDetailData(filePath)
     }
     Column(
         modifier
