@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <!-- 添加权限 -->
 <!--   获取安装应用列表 -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />

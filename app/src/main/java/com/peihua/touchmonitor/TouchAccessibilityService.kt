@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.app.Activity
 import android.graphics.Path
+import android.hardware.display.DisplayManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.Orientation
@@ -91,6 +92,11 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
         launch {
             result.collect {
                 settings.value = it
+                if (it.isBrightnessMin) {
+                    backupBrightness = getSystemLight()
+                    setSystemLight(0)
+                }
+               val mm: DisplayManager= getSystemService(Activity.DISPLAY_SERVICE) as DisplayManager
             }
         }
 
@@ -128,7 +134,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             }
         }
 
-        var isSwipe = isUpSwipe.random()
+        val isSwipe = isUpSwipe.random()
         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
         val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
         if (settings?.isSkipAdOrLive == true && scrollResult) {
