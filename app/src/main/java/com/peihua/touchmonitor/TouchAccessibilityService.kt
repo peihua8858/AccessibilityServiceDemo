@@ -85,6 +85,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     var oldTime = times.min()
     val maxTime = times.max()
     var backupBrightness = 0
+    var backupBrightnessMode = android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
 
     // 定时执行手势
     private fun startSwipeTask() {
@@ -93,8 +94,11 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             if (android.provider.Settings.System.canWrite(this)) {
                 if (it.isBrightnessMin) {
                     backupBrightness = getSystemLight()
+                    backupBrightnessMode = getSystemLightMode()
+                    setSystemLightMode(android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
                     setSystemLight(0)
                 } else {
+                    setSystemLightMode(backupBrightnessMode)
                     setSystemLight(backupBrightness)
                 }
             }
@@ -302,6 +306,20 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             contentResolver,
             android.provider.Settings.System.SCREEN_BRIGHTNESS,
             0
+        )
+    }
+    fun getSystemLightMode(): Int {
+        return android.provider.Settings.System.getInt(
+            contentResolver,
+            android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
+            0
+        )
+    }
+    fun setSystemLightMode(mode: Int) {
+        android.provider.Settings.System.putInt(
+            contentResolver,
+            android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
+            mode
         )
     }
 
