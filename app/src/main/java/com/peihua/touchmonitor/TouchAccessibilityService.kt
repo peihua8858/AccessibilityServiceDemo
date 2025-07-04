@@ -89,23 +89,26 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     // 定时执行手势
     private fun startSwipeTask() {
         val result = settingsStore.data
-        launch {
-            result.collect {
-                settings.value = it
+        val changeBrightness = { it: Settings ->
+            if (android.provider.Settings.System.canWrite(this)) {
                 if (it.isBrightnessMin) {
                     backupBrightness = getSystemLight()
                     setSystemLight(0)
+                } else {
+                    setSystemLight(backupBrightness)
                 }
-               val mm: DisplayManager= getSystemService(Activity.DISPLAY_SERVICE) as DisplayManager
+            }
+        }
+        launch {
+            result.collect {
+                settings.value = it
+                changeBrightness(it)
             }
         }
 
         launch {
             val settingsResult = result.first()
-            if (settingsResult.isBrightnessMin) {
-                backupBrightness = getSystemLight()
-                setSystemLight(5)
-            }
+            changeBrightness(settingsResult)
             settings.value = settingsResult
             isRunning = true
             dLog { "Service start>>>>" }

@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestPermissions(Manifest.permission.QUERY_ALL_PACKAGES, Manifest.permission.WRITE_SETTINGS) {
+        requestPermissions(Manifest.permission.QUERY_ALL_PACKAGES) {
             onGranted {
                 setContent {
                     ServiceApp()

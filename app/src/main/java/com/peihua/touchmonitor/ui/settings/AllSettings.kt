@@ -1,5 +1,9 @@
 package com.peihua.touchmonitor.ui.settings
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -22,18 +26,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
+import com.peihua.touchmonitor.utils.checkPermissions
+import com.peihua.touchmonitor.utils.dLog
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
+    val context = LocalContext.current
     val settings = model.settings
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
@@ -46,6 +54,27 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val doubleSaver = remember { mutableStateOf(settings.isDoubleSaver) }
     val skipAdOrLive = remember { mutableStateOf(settings.isSkipAdOrLive) }
     val isBrightnessMin = remember { mutableStateOf(settings.isBrightnessMin) }
+    val saveDoubleClick = { it: Boolean ->
+        doubleSaver.value = it
+        model.settings = settings.copy(isDoubleSaver = it)
+        modelChange(model)
+    }
+    val saveSkipAdOrLiveClick = { it: Boolean ->
+        skipAdOrLive.value = it
+        model.settings = settings.copy(isSkipAdOrLive = it)
+        modelChange(model)
+    }
+    val saveBrightnessMinClick = { it: Boolean ->
+        dLog { "startActivity>>>> canWrite:${Settings.System.canWrite(context)}" }
+        if (!Settings.System.canWrite(context)) {
+            context.startActivity(Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS))
+            dLog { "startActivity>>>> 没有WRITE_SETTINGS权限" }
+        } else {
+            isBrightnessMin.value = it
+            model.settings = settings.copy(isBrightnessMin = it)
+            modelChange(model)
+        }
+    }
     Column(modifier) {
         ExposedDropdownMenuBox(
             modifier = Modifier
@@ -98,6 +127,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 .fillMaxWidth()
                 .clickable {
                     doubleSaver.value = !doubleSaver.value
+                    saveDoubleClick(doubleSaver.value)
                 }) {
             ScaleText(
                 modifier = Modifier
@@ -111,9 +141,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             Checkbox(
                 doubleSaver.value,
                 onCheckedChange = {
-                    doubleSaver.value = it
-                    model.settings = settings.copy(isDoubleSaver = it)
-                    modelChange(model)
+                    saveDoubleClick(it)
                 })
         }
         Spacer(Modifier.size(16.dp))
@@ -122,6 +150,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 .fillMaxWidth()
                 .clickable {
                     skipAdOrLive.value = !skipAdOrLive.value
+                    saveSkipAdOrLiveClick(skipAdOrLive.value)
                 }) {
             ScaleText(
                 modifier = Modifier
@@ -135,9 +164,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             Checkbox(
                 skipAdOrLive.value,
                 onCheckedChange = {
-                    skipAdOrLive.value = it
-                    model.settings = settings.copy(isSkipAdOrLive = it)
-                    modelChange(model)
+                    saveSkipAdOrLiveClick(it)
                 })
         }
         Spacer(Modifier.size(16.dp))
@@ -146,6 +173,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 .fillMaxWidth()
                 .clickable {
                     isBrightnessMin.value = !isBrightnessMin.value
+                    saveBrightnessMinClick(isBrightnessMin.value)
                 }) {
             ScaleText(
                 modifier = Modifier
@@ -159,9 +187,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             Checkbox(
                 isBrightnessMin.value,
                 onCheckedChange = {
-                    isBrightnessMin.value = it
-                    model.settings = settings.copy(isBrightnessMin = it)
-                    modelChange(model)
+                    saveBrightnessMinClick(it)
                 })
         }
     }
