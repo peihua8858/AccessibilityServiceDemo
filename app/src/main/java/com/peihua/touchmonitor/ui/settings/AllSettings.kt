@@ -62,8 +62,8 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val selectedOption = remember { mutableStateOf(selOption) }
     val doubleSaver = remember { mutableStateOf(settings.isDoubleSaver) }
     val skipAdOrLive = remember { mutableStateOf(settings.isSkipAdOrLive) }
-    val isBrightnessMin = remember { mutableStateOf(settings.isRandomReverse) }
-    val isRandomReverse = remember { mutableStateOf(settings.isBrightnessMin) }
+    val isBrightnessMin = remember { mutableStateOf(settings.isBrightnessMin) }
+    val isRandomReverse = remember { mutableStateOf(settings.isRandomReverse) }
     val delayTimes = remember { mutableStateListOf<Long>() }
     settings.delayTimes.forEach {
         delayTimes.add(it)
@@ -91,7 +91,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     }
     val saveRandomReverseClick = { it: Boolean ->
         skipAdOrLive.value = it
-        model.settings = settings.copy(isSkipAdOrLive = it)
+        model.settings = settings.copy(isRandomReverse = it)
         modelChange(model)
     }
     val saveDelayTimesClick = { index: Long ->
