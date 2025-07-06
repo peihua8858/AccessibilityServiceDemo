@@ -24,32 +24,32 @@ class AutomaticallyWatchShortVideosWorker(
     Runnable, CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private val times = arrayOf(
-        7_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        11_000L,
-        12_000L,
-        13_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        5_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        8_000L,
-        9_000L,
-        10_000L,
-        8_000L,
-        9_000L,
-        10_000L,
+        7L,//7秒
+        8L,
+        9L,
+        10L,
+        11L,
+        12L,
+        13L,
+        8L,
+        9L,
+        10L,
+        8L,
+        9L,
+        10L,
+        8L,
+        9L,
+        10L,
+        5L,
+        8L,
+        9L,
+        10L,
+        8L,
+        9L,
+        10L,
+        8L,
+        9L,
+        10L,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
@@ -65,7 +65,8 @@ class AutomaticallyWatchShortVideosWorker(
         oldTime = mDelayTimes.min()
         maxTime = mDelayTimes.max()
     }
-    fun changeSettings(settings: Settings){
+
+    fun changeSettings(settings: Settings) {
         mDelayTimes.clear()
         if (mDelayTimes.isEmpty()) {
             mDelayTimes.addAll(times.toList())
@@ -73,6 +74,7 @@ class AutomaticallyWatchShortVideosWorker(
         oldTime = mDelayTimes.min()
         maxTime = mDelayTimes.max()
     }
+
     override fun run() {
         launch {
             dLog { "Service start>>>>" }
@@ -154,7 +156,7 @@ class AutomaticallyWatchShortVideosWorker(
             tempTime = mDelayTimes.random()
         }
         oldTime = tempTime
-        waiteTimeMillis(tempTime) // 每2秒执行一次
+        waiteTimeMillis(tempTime * 1000) // 每2秒执行一次
         dLog { "withLock>>>>end" }
     }
 
