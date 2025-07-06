@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -96,7 +98,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
                 if (result.data.isEmpty()) {
                     return
                 }
-                MainScreenContent(Modifier, result.data)
+                MainScreenContent(Modifier.weight(1f), result.data)
             }
 
             is ResultData.Failure -> {
@@ -126,10 +128,10 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
     val selectedOption = remember { mutableStateOf(selectedModel) }
     val scope = rememberCoroutineScope()
     val model = selectedOption.value
-    Box(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .weight(1f)
         ) {
             //选择的应用
             ExposedDropdownMenuBox(
@@ -222,7 +224,8 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
             }
             ExtendedListTile(
                 modifier = Modifier
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
                 isExtended = false,
                 title = { isExtended ->
                     Row(
@@ -249,7 +252,8 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                     }
 
                 }) {
-                model.provider.contentView(Modifier.padding(16.dp), model) {
+                model.provider.contentView(Modifier
+                    .padding(16.dp), model) {
                     it.saveToDb()
                 }
             }
@@ -258,22 +262,20 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 32.dp)
-                .align(Alignment.BottomCenter),
+                .padding(bottom = 32.dp),
             onClick = {
                 model.saveToDb()
                 // 引导用户到系统辅助功能设置
-                throw Exception("test")
-//                try {
-//                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-//                } catch (e: Exception) {
-//                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-//                    try {
-//                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-//                    } catch (e: Exception) {
-//                        writeLogFile { e.stackTraceToString() }
-//                    }
-//                }
+                try {
+                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+                } catch (e: Exception) {
+                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+                    try {
+                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    } catch (e: Exception) {
+                        writeLogFile { e.stackTraceToString() }
+                    }
+                }
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }

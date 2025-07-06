@@ -125,6 +125,8 @@ data class Settings(
     val packageName: String,
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
+    val delayTimes: MutableList<Long> = arrayListOf(),
+    val isRandomReverse: Boolean = false,
     val isSkipAdOrLive: Boolean = true,
     val isBrightnessMin: Boolean = false
 )

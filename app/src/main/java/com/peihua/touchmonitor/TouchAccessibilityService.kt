@@ -87,7 +87,9 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             if (isProcesserRunning) {
                 mProcessRunner = AutomaticallyWatchShortVideosWorker(this, settings.value)
                 mProcessRunner?.onStart()
+                dLog { "start  processer>>>>>" }
             } else {
+                dLog { "stop processer>>>> " }
                 mProcessRunner?.onStop()
                 mProcessRunner = null
             }
@@ -95,15 +97,23 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     }
 
     private fun runningService() {
+        dLog { "runningService>>>>start" }
         val result = settingsStore.data
         launch {
             result.collect {
                 settings.value = it
+                mProcessRunner?.changeSettings(it)
             }
+        }
+        launch {
+            dLog { "runningService>>>><>《》《》<<<<<start" }
             settings.value = result.first()
+            isServiceRunning = true
+            dLog { "runningService>>>><><<<<<start" }
             while (isServiceRunning) {
                 val currentPackageName = rootInActiveWindow?.packageName
                 val isProcesserRunning = settings.value.packageName == currentPackageName
+                dLog { "settings.value:${settings.value}" }
                 dLog { "Service start>>>> currentPackageName:$currentPackageName,isProcesserRunning:$isProcesserRunning" }
                 chaneState(isProcesserRunning)
                 delay(1000)
@@ -152,8 +162,6 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        // 开启屏保长亮
-        isServiceRunning = true
         // 启动定时执行手势
         runningService()
         dLog { "onServiceConnected" }

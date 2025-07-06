@@ -13,10 +13,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 /**
  * 自动化观看短视频
  */
-class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilityService, var settings: Settings) :
+class AutomaticallyWatchShortVideosWorker(
+    private val service: TouchAccessibilityService,
+    private var settings: Settings
+) :
     Runnable, CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private val times = arrayOf(
@@ -49,9 +53,26 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-    private var oldTime = times.min()
-    private val maxTime = times.max()
+    private val mDelayTimes = settings.delayTimes
+    private var oldTime: Long
+    private var maxTime: Long
 
+
+    init {
+        if (mDelayTimes.isEmpty()) {
+            mDelayTimes.addAll(times.toList())
+        }
+        oldTime = mDelayTimes.min()
+        maxTime = mDelayTimes.max()
+    }
+    fun changeSettings(settings: Settings){
+        mDelayTimes.clear()
+        if (mDelayTimes.isEmpty()) {
+            mDelayTimes.addAll(times.toList())
+        }
+        oldTime = mDelayTimes.min()
+        maxTime = mDelayTimes.max()
+    }
     override fun run() {
         launch {
             dLog { "Service start>>>>" }
@@ -63,6 +84,7 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
     }
 
     fun onStart() {
+        isProcesserRunning = true
         run()
     }
 
@@ -88,7 +110,10 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
             }
         }
 
-        val isSwipe = isUpSwipe.random()
+        val isRandomReverse = settings?.isRandomReverse ?: false
+        dLog { ">>>>>isRandomReverse:$isRandomReverse" }
+        val isSwipe = if (isRandomReverse) isUpSwipe.random() else 1
+        dLog { ">>>>>isRandomReverse:$isRandomReverse,isSwipe:$isSwipe" }
         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
         val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
         if (settings?.isSkipAdOrLive == true && scrollResult) {
@@ -121,12 +146,12 @@ class AutomaticallyWatchShortVideosWorker(private val service: TouchAccessibilit
 
     private suspend fun waiteTime() {
         dLog { "exec next line" }
-        var tempTime = times.random()
+        var tempTime = mDelayTimes.random()
         if (oldTime == maxTime) {
-            oldTime = times.min()
+            oldTime = mDelayTimes.min()
         }
         while (oldTime > tempTime) {
-            tempTime = times.random()
+            tempTime = mDelayTimes.random()
         }
         oldTime = tempTime
         waiteTimeMillis(tempTime) // 每2秒执行一次
