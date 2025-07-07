@@ -22,7 +22,7 @@ import kotlin.math.max
 suspend fun InputStream?.writeToFile(
     file: File?,
     bufferSize: Int = 4096,
-    callback: (progress: Int) -> Unit = {},
+    callback: (progress: Int, isComplete: Boolean) -> Unit = { process, isComplete -> },
 ): Boolean {
     val parentFile = file?.parentFile
     if (file == null || this == null || parentFile == null) {
@@ -45,12 +45,16 @@ suspend fun InputStream?.writeToFile(
                 return@use this@writeToFile.use { fis ->
                     val buffer = ByteArray(bufferSize)
                     var length: Int
+                    val total = fis.available()
+                    var progress = 0
                     while (fis.read(buffer).also {
                             length = it
-                            callback(length)
+                            progress += length
+                            callback(length, progress == total)
                         } > 0 && isActive) {
                         fos.write(buffer, 0, length)
                     }
+                    callback(length, true)
                     dLog { "writeToFile, save file  to $file successful" }
                     fos.flush()
                     true

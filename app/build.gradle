@@ -89,4 +89,5 @@ dependencies {
     implementation 'com.github.peihua8858.AndroidxPermissions:permissions-fragment:1.0.0'
     implementation 'com.github.peihua8858.AndroidxPermissions:permissions-compose:1.0.0'
     implementation "com.google.accompanist:accompanist-drawablepainter:0.34.0"
+    implementation "androidx.documentfile:documentfile:1.1.0"
 }

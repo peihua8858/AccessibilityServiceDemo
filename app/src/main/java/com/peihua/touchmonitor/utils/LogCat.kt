@@ -749,7 +749,7 @@ object LogCat : CoroutineScope by WorkScope() {
 }
 
 
-private const val STACK_TRACE_INDEX = 6
+private const val STACK_TRACE_INDEX = 5
 fun <T : Any> T.aLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.A, null, message)

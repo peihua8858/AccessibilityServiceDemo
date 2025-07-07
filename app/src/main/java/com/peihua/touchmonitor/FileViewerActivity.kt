@@ -7,81 +7,121 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
+import com.fz.common.file.createFile
 import com.fz.common.file.getFileNameByUri
 import com.fz.common.text.isNonEmpty
+import com.fz.common.utils.getDiskCacheDir
+import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.writeToFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import kotlin.io.path.createTempFile
 
-class FileViewerActivity : ComponentActivity() {
-    val columnNames =arrayOf(
+class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
+    val columnNames = arrayOf(
         "mime_type",
         "_display_name",
         "document_id",
         MediaStore.Images.ImageColumns.DATA
     )
+
     @SuppressLint("UnsafeIntentLaunch")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dLog { "getRealPathFromURI>>>>>>intent.data:${intent.data}" }
+        dLog { "getRealPathFromURI>>>>>>intent:${intent.toString()}" }
+        setContent {
+            LoadingView()
+        }
         val data = intent.data
         if (data != null) {
-            getRealPathFromURI(data)
+//            getRealPathFromURI(data)
             val fileName = getFileNameByUri(data)
-           val file = getFileFromContentUri(data)
-            dLog { "getRealPathFromURI>>>>>>file:${file?.absolutePath}" }
             dLog { "getRealPathFromURI>>>>>>fileName:$fileName" }
-            if (fileName.isNonEmpty()) {
-                if (fileName.contains(".apk")) {
-                    installAPK(data)
-                } else {
-                    startActivity(intent)
+//            val file = getFileFromContentUri(data)
+            launch {
+                val fileDescriptor = contentResolver.openFileDescriptor(data, "r")
+                val parentFile = getExternalFilesDir("share_apk.apk")
+                if (parentFile != null&&fileDescriptor!=null) {
+                    val file = File.createTempFile("temp", ".apk", parentFile)
+                    val outputFile = fileDescriptor.use {
+                        FileInputStream(it.fileDescriptor).use { fis ->
+                            fis.writeToFile(file)
+                            file
+                        }
+                    }
+                    dLog { "getRealPathFromURI>>>>>>outputFile:$outputFile" }
+                    installAPK(outputFile?.toUri())
+                    finish()
+                }else {
+                    dLog { "getRealPathFromURI>>>>>>parentFile is null" }
+                    finish()
                 }
             }
         }
-        finish()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
+    }
+
     /**
      * 启动安装APK
      */
-    fun Context.installAPK(uri: Uri) {
-
+    fun Context.installAPK(uri: Uri?) {
+        if (uri == null) {
+            return
+        }
         // For other schemes, let's be conservative about
         // the data we include -- only the host and port, not the query params, path or
         // fragment, because those can often have sensitive info.
-        val builder = StringBuilder()
-        builder.append(uri.scheme)
-        val host: String? = uri.host
-        dLog { "getRealPathFromURI>>>>>>host:$host" }
-        val port: Int = uri.port
-        val path: String? = uri.path
-        dLog { "getRealPathFromURI>>>>>>path:$path" }
-        val authority: String? = uri.authority
-        dLog { "getRealPathFromURI>>>>>>authority:$authority" }
-        if (authority != null) builder.append("//")
-        if (host != null) builder.append(BuildConfig.APPLICATION_ID)
-        if (port != -1) builder.append(":").append(port)
-        if (authority!=null) {
-            builder.append("/").append(authority)
-        }
-        if (path!=null) {
-            builder.append("/").append(path)
-        }
-        val apkFile =uri.buildUpon().authority(BuildConfig.APPLICATION_ID).build()
-        dLog { "getRealPathFromURI>>>>>>apkFile:$apkFile" }
+        dLog { "getRealPathFromURI>>>>>>apkFile:$uri" }
         val installApkIntent = Intent()
-        installApkIntent.action = Intent.ACTION_VIEW
+        installApkIntent.action = Intent.ACTION_INSTALL_PACKAGE
         installApkIntent.addCategory(Intent.CATEGORY_DEFAULT)
         installApkIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        var file = getFileFromUri(uri)
+        if (file == null) {
+            var path = uri.path
+            dLog { "getRealPathFromURI>>>>>>path:$path" }
+            if (path.isNullOrEmpty()) {
+                return
+            }
+            if (path.startsWith("/external_storage_root/") || path.startsWith("external_storage_root/")) {
+                path = path.replace(
+                    "external_storage_root",
+                    Environment.getExternalStorageDirectory()?.path ?: ""
+                )
+            }
+            file = File(path)
+            if (!file.exists()) {
+                dLog { "getRealPathFromURI>>>>>>file $path is not exists" }
+            }
+            dLog { "getRealPathFromURI>>>>>>path:${file.absolutePath}" }
+        }
+        val tempUri = FileProvider.getUriForFile(this, "${packageName}.fileProvider", file)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            installApkIntent.setDataAndType(apkFile, "application/vnd.android.package-archive")
+            installApkIntent.setDataAndType(tempUri, "application/vnd.android.package-archive")
             installApkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         } else {
             installApkIntent.setDataAndType(
-                apkFile,
+                tempUri,
                 "application/vnd.android.package-archive"
             )
         }
@@ -89,6 +129,7 @@ class FileViewerActivity : ComponentActivity() {
             startActivity(installApkIntent)
         }
     }
+
     fun Context.getRealPathFromURI(contentUri: Uri): File? {
         return contentResolver.query(
             contentUri,
@@ -107,7 +148,7 @@ class FileViewerActivity : ComponentActivity() {
                         val text = cursor.getString(index)
                         dLog { "getRealPathFromURI>>>>>>columnName:$name,text:$text,index:$index" }
                     } catch (e: Exception) {
-                       e.printStackTrace()
+                        e.printStackTrace()
                     }
                 }
                 val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
@@ -151,7 +192,8 @@ class FileViewerActivity : ComponentActivity() {
             val sel: String
             val cursor = try {
                 val wholeID = DocumentsContract.getDocumentId(uri)
-                val id = wholeID.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                val id =
+                    wholeID.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
                 // where id is equal to
                 sel = MediaStore.Images.Media._ID + "=?"
                 query(
@@ -165,13 +207,25 @@ class FileViewerActivity : ComponentActivity() {
                 )
             }
             return cursor?.use {
-                val columnIndex = cursor.getColumnIndex(column[0])
-                cursor.moveToFirst()
-                val filePath = cursor.getString(columnIndex)
-                if (filePath.isNonEmpty()) {
-                    return File(filePath)
+                try {
+                    val columnNames = cursor.columnNames
+                    cursor.moveToFirst()
+                    dLog { " getRealPathFromURI>>>>>>cursor.columnNames:${columnNames.contentToString()}" }
+                    val columnIndex = cursor.getColumnIndex(column[0])
+                    val filePath = cursor.getString(columnIndex)
+                    if (filePath.isNonEmpty()) {
+                        val file = File(filePath)
+                        if (file.exists()) {
+                            return file
+                        }
+                    }
+                    dLog { "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:$columnIndex" }
+                    null
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                    dLog { "getFileFromContentUri>>>>>>e:${e.message}" }
+                    null
                 }
-                null
             }
         }
     }

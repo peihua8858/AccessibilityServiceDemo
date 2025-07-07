@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path name="external_files" path="."/>
+    <root-path name="root_path" path="."/>
+    <external-path name="external_storage_root" path="."/>
     <external-files-path name="external-files-path" path="."/>
     <files-path name="files_path" path="."/>
+    <external-files-path name="share_apk.apk" path="share_apk.apk"/>
+    <external-path name="external_files" path="."/>
+    <external-files-path name="external_files" path="."/>
 </paths>
