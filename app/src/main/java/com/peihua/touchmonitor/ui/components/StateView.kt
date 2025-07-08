@@ -37,9 +37,10 @@ fun ErrorView(modifier: Modifier = Modifier, retry: () -> Unit) {
         }
     }
 }
+
 @Composable
-fun LoadingView(modifier: Modifier=Modifier){
-    Box(modifier = modifier.fillMaxSize()) {
+fun LoadingView(modifier: Modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }

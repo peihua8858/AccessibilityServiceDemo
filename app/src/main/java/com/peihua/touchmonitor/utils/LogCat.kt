@@ -750,48 +750,53 @@ object LogCat : CoroutineScope by WorkScope() {
 
 
 private const val STACK_TRACE_INDEX = 5
-fun <T : Any> T.aLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.aLog(lazyMessage: T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.A, null, message)
     return this
 }
 
-fun <T : Any> T.vLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.vLog(lazyMessage: T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.V, null, message)
     return this
 }
 
-fun <T : Any> T.jsonLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.jsonLog(lazyMessage: T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.JSON, null, message)
     return this
 }
 
-fun <T : Any> T.xmlLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.xmlLog(lazyMessage: T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.XML, null, message)
     return this
 }
 
-fun <T : Any> T.wLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.wLog(lazyMessage:  T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.W, null, message)
     return this
 }
 
-fun <T : Any> T.eLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any> T.eLog(lazyMessage: T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.E, null, message)
     return this
 }
 
-fun <T : Any> T.dLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
+fun <T : Any?> T.dLog(lazyMessage:  T.() -> Any): T {
+    val message = this.lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.D, null, message)
     return this
 }
 
+fun <T : Any?> T.iLog(lazyMessage:  T.() -> Any): T {
+    val message = this.lazyMessage()
+    LogCat.printLog(STACK_TRACE_INDEX, LogCat.I, null, message)
+    return this
+}
 fun aLog(lazyMessage: () -> Any) {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.A, null, message)
@@ -810,12 +815,6 @@ fun jsonLog(lazyMessage: () -> Any) {
 fun xmlLog(lazyMessage: () -> Any) {
     val message = lazyMessage()
     LogCat.printLog(STACK_TRACE_INDEX, LogCat.XML, null, message)
-}
-
-fun <T : Any> T.iLog(lazyMessage: () -> Any): T {
-    val message = lazyMessage()
-    LogCat.printLog(STACK_TRACE_INDEX, LogCat.I, null, message)
-    return this
 }
 
 fun iLog(lazyMessage: () -> Any) {

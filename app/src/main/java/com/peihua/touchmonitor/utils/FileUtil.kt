@@ -15,6 +15,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.io.OutputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 import kotlin.math.max
@@ -67,7 +68,47 @@ suspend fun InputStream?.writeToFile(
         }
     }
 }
-
+suspend fun InputStream?.writeToFile(
+    os: OutputStream?,
+    bufferSize: Int = 4096,
+    callback: (progress: Int, isComplete: Boolean) -> Unit = { process, isComplete -> },
+): Boolean {
+    if (os == null || this == null) {
+        return false
+    }
+    val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
+        Dispatchers.IO
+    } else {
+        coroutineContext
+    }
+    return withContext(context) {
+        try {
+            return@withContext os.use { fos ->
+                return@use this@writeToFile.use { fis ->
+                    val buffer = ByteArray(bufferSize)
+                    var length: Int
+                    val total = fis.available()
+                    var progress = 0
+                    while (fis.read(buffer).also {
+                            length = it
+                            progress += length
+                            callback(length, progress == total)
+                        } > 0 && isActive) {
+                        fos.write(buffer, 0, length)
+                    }
+                    callback(length, true)
+                    dLog { "writeToFile, save file  to $os successful" }
+                    fos.flush()
+                    true
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            dLog { "writeToFile, save file  to $os failed" }
+            return@withContext false
+        }
+    }
+}
 
 fun String.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
     try {

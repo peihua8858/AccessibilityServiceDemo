@@ -9,6 +9,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.ComponentActivity;
@@ -34,9 +37,6 @@ public class InstallerActivity extends ComponentActivity {
 
     public Uri mTreeUri;
 
-    public Uri f2873OooOoO0;
-
-
     public final Uri OooOOO(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
         InputStream inputStream = null;
@@ -49,7 +49,7 @@ public class InstallerActivity extends ComponentActivity {
             if (r3 < 3) {
                 r7 = "temp";
             }
-            File tempFile = java.io.File.createTempFile(r7, ".apk", r2);
+            File tempFile = File.createTempFile(r7, ".apk", r2);
             Log.e("xxxxx", tempFile.getAbsolutePath());
             fos = new FileOutputStream(tempFile);
             byte[] byteArray = new byte[8192];
@@ -58,7 +58,7 @@ public class InstallerActivity extends ComponentActivity {
             }
             inputStream.close();
             fos.close();
-            return FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider", tempFile);
+            return FileProvider.getUriForFile(this, getPackageName() + ".provider", tempFile);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -121,8 +121,8 @@ public class InstallerActivity extends ComponentActivity {
         OutputStream outputStream = null;
         try {
             inputStream = contentResolver.openInputStream(uri);
-            outputStream = contentResolver.openOutputStream(r0.getUri()); 
-            byte[] bytes = new byte[8192]; 
+            outputStream = contentResolver.openOutputStream(r0.getUri());
+            byte[] bytes = new byte[8192];
             int length;
             while ((length = inputStream.read(bytes)) > 0) {
                 outputStream.write(bytes, 0, length);
@@ -142,7 +142,7 @@ public class InstallerActivity extends ComponentActivity {
 
     }
 
-    public final java.io.File OooOOo(Uri uri) {
+    public final File OooOOo(Uri uri) {
         if (uri == null) {
             return null;
         }
@@ -173,12 +173,12 @@ public class InstallerActivity extends ComponentActivity {
         return null;
     }
 
-    public final void OooOOo0(Uri uri, Uri uri1) {
-        if (uri == null) {
+    public final void OooOOo0(Uri treeUri, Uri uri) {
+        if (treeUri == null) {
             return;
         }
-        Log.e("treeUri", uri.toString());
-        DocumentFile documentFile = DocumentFile.fromTreeUri(this, uri);
+        Log.e("treeUri", treeUri.toString());
+        DocumentFile documentFile = DocumentFile.fromTreeUri(this, treeUri);
         if (documentFile == null) {
             return;
         }
@@ -192,24 +192,30 @@ public class InstallerActivity extends ComponentActivity {
         DocumentFile[] docFiles = documentFile.listFiles();
         int length = docFiles.length;
         int index = 0;
-        if (index == length) return;
+        if (index == length) {
+            return;
+        }
         DocumentFile documentFile1 = null;
         while (length > index) {
             documentFile1 = docFiles[index];
             Log.e("DocumentFile", documentFile1.getName());
             Uri docFileUri = documentFile1.getUri();
             String r6 = docFileUri.getPath();
-            String r7 = uri1.getPath();
+            String r7 = uri.getPath();
             if (documentFile1.isFile() && r6.equals(r7)) {
                 break;
             }
             index = index + 1;
         }
-        if (!documentFile1.exists()) return;
-        if (!documentFile1.canRead()) return;
-        android.content.ContentResolver contentResolver = getContentResolver(); 
+        if (!documentFile1.exists()) {
+            return;
+        }
+        if (!documentFile1.canRead()) {
+            return;
+        }
+        android.content.ContentResolver contentResolver = getContentResolver();
         Uri r0 = documentFile1.getUri();
-        File uri1File = OooOOoo(uri1);
+        File uri1File = OooOOoo(uri);
         try {
             InputStream inputStream = contentResolver.openInputStream(r0);
             FileOutputStream fos = new FileOutputStream(uri1File);
@@ -223,13 +229,15 @@ public class InstallerActivity extends ComponentActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Uri r9 = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", uri1File);
-        if (r9 == null) return;
+        Uri r9 = FileProvider.getUriForFile(this, getPackageName() + ".provider", uri1File);
+        if (r9 == null) {
+            return;
+        }
         StringBuilder builder = new StringBuilder();
-        java.io.File externalFilesDir = getExternalFilesDir("");
+        File externalFilesDir = getExternalFilesDir("");
         builder.append(externalFilesDir);
         builder.append(r9.getPath());
-        String r10 = uri1.toString();
+        String r10 = uri.toString();
         PackageManager packageManager = getPackageManager();
         android.content.pm.PackageInfo packageInfo = packageManager.getPackageArchiveInfo(r10, 1);
         if (packageInfo == null) {
@@ -240,13 +248,17 @@ public class InstallerActivity extends ComponentActivity {
         applicationInfo.sourceDir = r10;
         applicationInfo.publicSourceDir = r10;
         DocumentFile documentFile2 = DocumentFile.fromSingleUri(this, r9);
-        if (documentFile2 == null) return;
-        if (!documentFile2.exists()) return;
+        if (documentFile2 == null) {
+            return;
+        }
+        if (!documentFile2.exists()) {
+            return;
+        }
         f2867OooOo = OooOOOo(r9);
         Log.e("newUri", f2867OooOo.getPath());
     }
 
-    public final java.io.File OooOOoo(Uri uri) {
+    public final File OooOOoo(Uri uri) {
         try {
             File r0 = getExternalFilesDir("share_apk");
             String r3 = uri.getLastPathSegment();
@@ -266,8 +278,10 @@ public class InstallerActivity extends ComponentActivity {
             startActivity(intent);
         } else {
             File file = OooOOo(r5);
-            if (file == null) return;
-            intent.setData(FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file));
+            if (file == null) {
+                return;
+            }
+            intent.setData(FileProvider.getUriForFile(this, getPackageName() + ".provider", file));
             startActivity(intent);
         }
     }
@@ -309,9 +323,7 @@ public class InstallerActivity extends ComponentActivity {
         }
         if ("file".equals(scheme)) {
             if (Build.VERSION.SDK_INT >= 30) {
-                f2873OooOoO0 = uri;
-                Uri r0 = mTreeUri;
-                OooOOo0(r0, uri);
+                OooOOo0(mTreeUri, uri);
                 return;
             }
         }
@@ -331,8 +343,12 @@ public class InstallerActivity extends ComponentActivity {
         applicationInfo.sourceDir = path;
         applicationInfo.publicSourceDir = path;
         DocumentFile r0 = DocumentFile.fromSingleUri(this, uri);
-        if (r0 == null) return;
-        if (!r0.exists()) return;
+        if (r0 == null) {
+            return;
+        }
+        if (!r0.exists()) {
+            return;
+        }
         f2867OooOo = OooOOOo(uri);
     }
 
@@ -354,15 +370,16 @@ public class InstallerActivity extends ComponentActivity {
         ApplicationInfo applicationInfo = packageInfo.applicationInfo;
         applicationInfo.sourceDir = path;
         applicationInfo.publicSourceDir = path;
+        f2864OooOOo = r5;
     }
-
 
 
     @Override
     public void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        set1Px();
         Log.e("qwer", "onCreate");
-        java.io.File r6 = getExternalFilesDir("share_apk");
+        File r6 = getExternalFilesDir("share_apk");
         FileUtil.deleteFileOrDir(r6);
         Intent intent = getIntent();
         Uri uri = intent.getData();
@@ -370,36 +387,53 @@ public class InstallerActivity extends ComponentActivity {
             finish();
             return;
         }
+        try {
+            String treeUri = intent.getStringExtra("treeUri");
+            mTreeUri = Uri.parse(treeUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mType = intent.getIntExtra("type", 0);
         if (mType == 1) {
             if (Build.VERSION.SDK_INT < 30) {
                 OooOoO0(uri);
-                installApk();
-                return;
             } else {
                 OooOoO(uri);
-                installApk();
-                return;
             }
+            installApk();
+            return;
         }
         Log.e("detailDocumentByUri", uri.getPath());
         OooOOOO(uri);
         installApk();
         finish();
     }
+
+    private void set1Px() {
+        Window window = getWindow();
+        window.setGravity(Gravity.START | Gravity.TOP);
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.x = 0;
+        params.y = 0;
+        params.height = 1;
+        params.width = 1;
+        window.setAttributes(params);
+    }
+
     public void installApk() {
-        if (Build.VERSION.SDK_INT >= 30){
-            if (mType == 1){
-                if (f2867OooOo!=null) {
+        if (Build.VERSION.SDK_INT >= 30) {
+            if (mType == 1) {
+                if (f2867OooOo != null) {
                     OooOo(f2867OooOo);
                     return;
                 }
             }
         }
-        if (f2864OooOOo!=null) {
+        if (f2864OooOOo != null) {
             OooOo0o(f2864OooOOo);
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -411,7 +445,9 @@ public class InstallerActivity extends ComponentActivity {
         super.onNewIntent(intent);
         Log.e("qwer", "onNewIntent");
         Uri uri = intent.getData();
-        if (uri == null) return;
+        if (uri == null) {
+            return;
+        }
         OooOOOO(uri);
         installApk();
         finish();
@@ -421,9 +457,6 @@ public class InstallerActivity extends ComponentActivity {
     public void onResume() {
         super.onResume();
         Log.e("qwer", "onResume");
-        if (getPackageName().equals(BuildConfig.APPLICATION_ID)) return;
-        Log.d("error", "tuichu: ");
-        finish();
     }
 
     @Override
