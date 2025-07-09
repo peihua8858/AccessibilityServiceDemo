@@ -2,17 +2,23 @@ package com.peihua.touchmonitor.viewmodel
 
 import android.app.Application
 import android.content.pm.PackageManager
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
+import com.fz.common.text.isNonEmpty
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.data.settingsStore
+import com.peihua.touchmonitor.data.db.AppDatabase
+import com.peihua.touchmonitor.data.db.Factory
+import com.peihua.touchmonitor.data.db.FactoryImpl
+import com.peihua.touchmonitor.data.db.dao.HistoryDao
+import com.peihua.touchmonitor.data.db.dao.SettingsDao
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.AppProvider
+import com.peihua.touchmonitor.ui.History
 import com.peihua.touchmonitor.ui.Settings
+import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.getString
@@ -22,10 +28,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+class SettingsViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
     private val _settings = mutableStateListOf<AppModel>()
     val settingsState: MutableState<ResultData<List<AppModel>>> =
         mutableStateOf(ResultData.Initialize())
+    val factory: Factory
+        get() = FactoryImpl()
+    val database: AppDatabase
+        get() = factory.createRoomDatabase()
+    val historyDao: HistoryDao
+        get() = database.historyDao()
+    val settingsDao: SettingsDao
+        get() = database.settingsDao()
 
     /**
      * 查询数据
@@ -43,53 +59,79 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         return withContext(Dispatchers.IO) {
             val values = AppProvider.entries
             val result = ArrayList<AppModel>()
-            for (value in values) {
-                val model = value.createModel(value.settings)
-                if (model != null) {
-                    result.add(model)
-                }
-            }
+            val histories = historyDao.queryAll()
+            val historySettings = settingsDao.queryAll()
             val settings = runBlocking {
                 settingsStore.data.first()
             }
-            if (selectPackage.isNullOrEmpty()) {
-                val findModel = result.find { it.pkgName == settings.packageName }
-                findModel?.let {
-                    it.isHistory = true
-                    it.settings = settings
-                    it.isSelected = true
-                }
-                if (findModel == null) {
-                    val model = AppProvider.Other.createModel(settings)
-                    if (model != null) {
-                        model.isHistory = true
-                        model.isSelected = true
-                        result.add(0, model)
+            for (value in values) {
+                val model = value.createModel(value.settings)
+                if (model != null) {
+                    if (selectPackage.isNullOrEmpty()) {
+                        model.isSelected = model.pkgName == settings.packageName
+                    } else {
+                        model.isSelected = model.pkgName == selectPackage
                     }
+                    val findSettings = historySettings.find { model.pkgName == it.packageName }
+                    if (findSettings != null) {
+                        model.settings = findSettings
+                    } else if (model.pkgName == settings.packageName) {
+                        model.settings = settings
+                    }
+                    result.add(model)
+                }
+            }
+            val selectedModel = result.find { it.isSelected }
+            //未选中，则表明result中不存在 settings存储的包名
+            if (selectedModel == null) {
+                val findModel =
+                    if (selectPackage.isNonEmpty() && selectPackage != settings.packageName) {
+                        val selSettings = settings.copy(packageName = selectPackage)
+                        AppProvider.New.createModel(selSettings)
+                    } else {
+                        AppProvider.New.createModel(settings)
+                    }
+                if (findModel != null) {
+                    findModel.isHistory = true
+                    findModel.isSelected = true
+                    result.add(0, findModel)
                 }
             } else {
-                val findModel = result.find { it.pkgName == settings.packageName }
-                findModel?.let {
-                    it.isHistory = true
-                    it.isSelected = true
-                    it.settings = settings
-                }
-                if (findModel == null) {
-                    val model = AppProvider.Other.createModel(
-                        Settings(
-                            selectPackage,
-                            Orientation.Vertical,
-                            true
-                        )
-                    )
-                    if (model != null) {
-                        model.isHistory = true
-                        model.isSelected = true
-                        result.add(0, model)
-                    }
-                }
-
+                selectedModel.isHistory = true
             }
+
+//            if (selectPackage.isNullOrEmpty()) {
+//                val findModel = result.find { it.pkgName == settings.packageName }
+//                findModel?.let {
+//                    it.isHistory = true
+//                    it.settings = settings
+//                    it.isSelected = true
+//                }
+//                if (findModel == null) {
+//                    val model = AppProvider.Other.createModel(settings)
+//                    if (model != null) {
+//                        model.isHistory = true
+//                        model.isSelected = true
+//                        result.add(0, model)
+//                    }
+//                }
+//            } else {
+//                val findModel = result.find { it.pkgName == settings.packageName }
+//                findModel?.let {
+//                    it.isHistory = true
+//                    it.isSelected = true
+//                    it.settings = settings
+//                }
+//                if (findModel == null) {
+//                    val model = AppProvider.Other.createModel(Settings.default)
+//                    if (model != null) {
+//                        model.isHistory = true
+//                        model.isSelected = true
+//                        result.add(0, model)
+//                    }
+//                }
+//
+//            }
             result.add(
                 0,
                 AppModel(
@@ -108,6 +150,24 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 )
             )
             result
+        }
+    }
+
+    fun saveToDb(model: AppModel) {
+        model.saveToDb()
+        request {
+            val findItem = historyDao.queryAll().find { it.packageName == model.pkgName }
+            if (findItem != null) {
+                historyDao.update(
+                    findItem.copy(
+                        useCont = findItem.useCont + 1,
+                    )
+                )
+            } else {
+                val history = History(model.pkgName, 1)
+                historyDao.insert(history)
+            }
+            true
         }
     }
 
@@ -131,9 +191,5 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             e.dLog { "getPackageInfo error,${e.stackTraceToString()}" }
         }
         return null
-    }
-
-    fun saveToDb(model: AppModel) {
-        settingsStore.updateSettings(model.settings)
     }
 }

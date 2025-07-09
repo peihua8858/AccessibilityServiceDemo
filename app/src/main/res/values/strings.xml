@@ -27,4 +27,9 @@
     <string name="log_clear_ok">确定</string>
     <string name="log_cat">实时日志</string>
     <string name="log_crash">异常日志</string>
+    <string name="text_resume">恢复</string>
+    <string name="text_pause">暂停</string>
+    <string name="text_stop">停止</string>
+    <string name="text_start">开始</string>
+    <string name="text_clear">清除</string>
 </resources>

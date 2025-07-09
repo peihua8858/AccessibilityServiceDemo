@@ -1,22 +1,27 @@
 package com.peihua.touchmonitor.ui
 
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.peihua.touchmonitor.data.settingsStore
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.peihua.touchmonitor.ServiceApplication
+import com.peihua.touchmonitor.data.DataStore
+import com.peihua.touchmonitor.model.json
 import com.peihua.touchmonitor.ui.settings.AlipaySettings
 import com.peihua.touchmonitor.ui.settings.AllSettings
 import com.peihua.touchmonitor.ui.settings.DouYinHuoShanSettings
 import com.peihua.touchmonitor.ui.settings.DouYinJiSuSettings
 import com.peihua.touchmonitor.ui.settings.DouYinSettings
 import com.peihua.touchmonitor.ui.settings.MeiTuanSettings
-import com.peihua.touchmonitor.utils.dLog
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import com.peihua.touchmonitor.utils.findValue
 
 
 enum class AppProvider(
@@ -96,7 +101,10 @@ enum class AppProvider(
      * 西瓜视频
      */
     XiGuaShiPin(settings = Settings("com.ss.android.article.video", Orientation.Vertical, true)),
-
+    /**
+     * 其他应用程序
+     */
+    New(settings = Settings("new", Orientation.Vertical, true)),
     /**
      * 其他应用程序
      */
@@ -115,18 +123,69 @@ data class AppModel(
     var settings: Settings,
 ) {
     fun saveToDb() {
-        settingsStore.updateSettings(settings)
+        settingsStore.update(settings)
+//        historyStore.update { item ->
+//            val findItem = item.findValue { it.key == pkgName }
+//            if (findItem != null) {
+//                findItem.copy(useCont = findItem.useCont + 1)
+//            } else {
+//                item.put(pkgName, History(pkgName, 1, settings))
+//            }
+//            item
+//        }
     }
 }
 
 
-@Serializable
+@Entity(tableName = "Settings", indices = [Index(value = ["packageName"], unique = true)])
 data class Settings(
+    @PrimaryKey
     val packageName: String,
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
     val delayTimes: MutableList<Long> = arrayListOf(),
     val isRandomReverse: Boolean = false,
     val isSkipAdOrLive: Boolean = true,
-    val isBrightnessMin: Boolean = false
+    val isBrightnessMin: Boolean = false,
+) {
+    companion object {
+        val default: Settings = Settings("", Orientation.Vertical, true)
+    }
+}
+
+@ProvidedTypeConverter
+class ListToStringConverter {
+    @TypeConverter
+    fun StringToList(value: String): MutableList<Long> {
+        return json.decodeFromString(value)
+    }
+
+    @TypeConverter
+    fun ListToString(value: MutableList<Long>?): String? {
+        return json.encodeToString(value)
+    }
+}
+
+@get:Synchronized
+val settingsStore: DataStore<Settings> by lazy {
+    DataStore(
+        ServiceApplication.application,
+        Settings.default,
+        typeToken = object : TypeToken<Settings>() {},
+    )
+}
+
+@Entity(tableName = "History", indices = [Index(value = ["packageName"], unique = true)])
+data class History(
+    @PrimaryKey
+    val packageName: String,
+    val useCont: Int = 0,
 )
+
+//@get:Synchronized
+//val historyStore: DataStore<String, History> by lazy {
+//    DataStore(
+//        ServiceApplication.application,
+//        typeToken = object : TypeToken<MapItem<String, History>>() {},
+//    )
+//}

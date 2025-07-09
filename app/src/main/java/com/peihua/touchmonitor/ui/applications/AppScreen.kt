@@ -27,12 +27,12 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.data.settingsStore
 import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.viewmodel.ApplicationsViewModel
@@ -85,7 +85,7 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
     ) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
-                settingsStore.updateSettings {
+                settingsStore.update {
                     it.copy(packageName = item.packageName)
                 }
                 popBackStack{

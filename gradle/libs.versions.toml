@@ -53,7 +53,7 @@ runner = "1.5.2"
 core = "1.5.0"
 multiplatformSettings = "1.2.0"
 dataStore = "1.1.4"
-androidx-room = "2.7.0-rc03"
+androidx-room = "2.7.2"
 androidx-paging = "3.3.6"
 pagingComposeAndroid = "3.3.6"
 ksp = "2.1.10-1.0.29"
@@ -61,6 +61,8 @@ skie = "0.10.1"
 atomicfu = "0.27.0"
 sqlite = "2.5.0-rc03"
 okio = "3.10.2"
+roomCommonJvm = "2.7.2"
+sqliteBundledAndroid = "2.5.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -150,6 +152,8 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 compose-kotlin-compiler = { group = "org.jetbrains.kotlin", name = "kotlin-compose-compiler", version.ref = "kotlin" }
 skie-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-sqlite-bundled-android = { group = "androidx.sqlite", name = "sqlite-bundled-android", version.ref = "sqliteBundledAndroid" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

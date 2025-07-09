@@ -98,7 +98,9 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
                 if (result.data.isEmpty()) {
                     return
                 }
-                MainScreenContent(Modifier.weight(1f), result.data)
+                MainScreenContent(Modifier.weight(1f), result.data){
+                    viewModel.saveToDb(it)
+                }
             }
 
             is ResultData.Failure -> {
@@ -119,7 +121,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
+private fun MainScreenContent(modifier: Modifier, models: List<AppModel>,saveDb:(AppModel)->Unit) {
 
     val context = LocalContext.current
     val colorScheme = MaterialTheme.colorScheme
@@ -129,10 +131,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
     val scope = rememberCoroutineScope()
     val model = selectedOption.value
     Column(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             //选择的应用
             ExposedDropdownMenuBox(
                 modifier = Modifier.fillMaxWidth(),
@@ -215,7 +214,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                                 } else {
                                     selectedOption.value = item
                                     isExpanded.value = !isExpanded.value
-                                    item.saveToDb()
+                                    saveDb(item)
                                 }
                             },
                         )
@@ -254,7 +253,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                 }) {
                 model.provider.contentView(Modifier
                     .padding(16.dp), model) {
-                    it.saveToDb()
+                    saveDb(it)
                 }
             }
         }
@@ -264,7 +263,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>) {
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
             onClick = {
-                model.saveToDb()
+                saveDb(model)
                 // 引导用户到系统辅助功能设置
                 try {
                     context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")

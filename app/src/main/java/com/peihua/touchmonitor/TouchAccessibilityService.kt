@@ -5,8 +5,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.mutableStateOf
-import com.peihua.touchmonitor.data.settingsStore
 import com.peihua.touchmonitor.ui.Settings
+import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog

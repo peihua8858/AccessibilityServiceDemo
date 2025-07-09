@@ -15,7 +15,6 @@ import java.io.File
 class LogViewModel(application: Application) : AndroidViewModel(application) {
     val crashLogState: MutableState<ResultData<List<LogModel>>> = mutableStateOf(ResultData.Initialize())
     val logDetailState: MutableState<ResultData<String>> = mutableStateOf(ResultData.Initialize())
-
     companion object {
         val APP_LOG_PATH = ServiceApplication.application.getExternalFilesDir(null)
         val APP_LOG_DIR = "Logcat"
@@ -63,4 +62,5 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
             result
         }
     }
+
 }
