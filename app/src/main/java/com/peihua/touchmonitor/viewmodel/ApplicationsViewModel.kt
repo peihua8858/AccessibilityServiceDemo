@@ -11,11 +11,27 @@ import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.request
 import androidx.lifecycle.application
+import com.peihua.touchmonitor.data.db.AppDatabase
+import com.peihua.touchmonitor.data.db.Factory
+import com.peihua.touchmonitor.data.db.FactoryImpl
+import com.peihua.touchmonitor.data.db.dao.HistoryDao
+import com.peihua.touchmonitor.data.db.dao.SettingsDao
+import com.peihua.touchmonitor.ui.History
+import com.peihua.touchmonitor.ui.Settings
+import com.peihua.touchmonitor.ui.settingsStore
 import kotlinx.coroutines.delay
 
 class ApplicationsViewModel(application: Application) : AndroidViewModel(application) {
     val applications: MutableState<ResultData<List<AppInfo>>> =
         mutableStateOf(ResultData.Initialize())
+    val factory: Factory
+        get() = FactoryImpl()
+    val database: AppDatabase
+        get() = factory.createRoomDatabase()
+    val historyDao: HistoryDao
+        get() = database.historyDao()
+    val settingsDao: SettingsDao
+        get() = database.settingsDao()
 
     fun requestData() {
         request(applications) {
@@ -60,5 +76,32 @@ class ApplicationsViewModel(application: Application) : AndroidViewModel(applica
                     or PackageManager.MATCH_DIRECT_BOOT_UNAWARE)
         )
         return intents.isNotEmpty()
+    }
+
+    fun saveToDb(item: AppInfo) {
+        // 保存到数据库
+        request {
+            val findItem = historyDao.queryAll().find { it.packageName == item.packageName }
+            if (findItem != null) {
+                historyDao.update(
+                    findItem.copy(
+                        useCont = findItem.useCont + 1,
+                    )
+                )
+            } else {
+                val history = History(item.packageName, 1)
+                historyDao.insert(history)
+            }
+        }
+        settingsStore.update {
+            val findSettingsItem =
+                settingsDao.queryAll().find { it.packageName == item.packageName }
+            if (findSettingsItem != null) {
+                settingsDao.update(findSettingsItem)
+                findSettingsItem
+            } else {
+                Settings.default.copy(packageName = item.packageName)
+            }
+        }
     }
 }

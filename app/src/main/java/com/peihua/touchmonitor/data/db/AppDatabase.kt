@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.data.db.dao.HistoryDao
 import com.peihua.touchmonitor.data.db.dao.SettingsDao
@@ -32,7 +32,7 @@ class Factory(private val app: Context) {
             name = dbFile.absolutePath,
         )
             .addTypeConverter(ListToStringConverter())
-            .setDriver(BundledSQLiteDriver())
+            .setDriver(AndroidSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }

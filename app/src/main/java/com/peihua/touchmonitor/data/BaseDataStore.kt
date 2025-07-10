@@ -58,7 +58,7 @@ abstract class BaseDataStore<T> :
         }
     }
 
-    fun update(block: (T) -> T) {
+    fun update(block: suspend (T) -> T) {
         launch {
             db.updateData { block(it) }
         }

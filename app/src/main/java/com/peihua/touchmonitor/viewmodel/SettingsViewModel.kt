@@ -64,19 +64,29 @@ class SettingsViewModel(
             val settings = runBlocking {
                 settingsStore.data.first()
             }
+            historySettings.forEach {
+                val newModel =  AppProvider.New.createModel(it)
+                if (newModel != null) {
+                    if (selectPackage.isNullOrEmpty()) {
+                        newModel.isSelected = newModel.pkgName == settings.packageName
+                    } else {
+                        newModel.isSelected = newModel.pkgName == selectPackage
+                    }
+                    result.add(newModel)
+                }
+            }
+
             for (value in values) {
+               val findModel= result.find { it.pkgName ==value.settings.packageName }
+                if (findModel != null) {
+                    continue
+                }
                 val model = value.createModel(value.settings)
                 if (model != null) {
                     if (selectPackage.isNullOrEmpty()) {
                         model.isSelected = model.pkgName == settings.packageName
                     } else {
                         model.isSelected = model.pkgName == selectPackage
-                    }
-                    val findSettings = historySettings.find { model.pkgName == it.packageName }
-                    if (findSettings != null) {
-                        model.settings = findSettings
-                    } else if (model.pkgName == settings.packageName) {
-                        model.settings = settings
                     }
                     result.add(model)
                 }
@@ -89,7 +99,7 @@ class SettingsViewModel(
                         val selSettings = settings.copy(packageName = selectPackage)
                         AppProvider.New.createModel(selSettings)
                     } else {
-                        AppProvider.New.createModel(settings)
+                        AppProvider.New.createModel(settings.copy())
                     }
                 if (findModel != null) {
                     findModel.isHistory = true
@@ -100,38 +110,6 @@ class SettingsViewModel(
                 selectedModel.isHistory = true
             }
 
-//            if (selectPackage.isNullOrEmpty()) {
-//                val findModel = result.find { it.pkgName == settings.packageName }
-//                findModel?.let {
-//                    it.isHistory = true
-//                    it.settings = settings
-//                    it.isSelected = true
-//                }
-//                if (findModel == null) {
-//                    val model = AppProvider.Other.createModel(settings)
-//                    if (model != null) {
-//                        model.isHistory = true
-//                        model.isSelected = true
-//                        result.add(0, model)
-//                    }
-//                }
-//            } else {
-//                val findModel = result.find { it.pkgName == settings.packageName }
-//                findModel?.let {
-//                    it.isHistory = true
-//                    it.isSelected = true
-//                    it.settings = settings
-//                }
-//                if (findModel == null) {
-//                    val model = AppProvider.Other.createModel(Settings.default)
-//                    if (model != null) {
-//                        model.isHistory = true
-//                        model.isSelected = true
-//                        result.add(0, model)
-//                    }
-//                }
-//
-//            }
             result.add(
                 0,
                 AppModel(
@@ -153,19 +131,27 @@ class SettingsViewModel(
         }
     }
 
-    fun saveToDb(model: AppModel) {
+    fun saveToDb(model: AppModel, isSaveToHistory: Boolean) {
         model.saveToDb()
         request {
-            val findItem = historyDao.queryAll().find { it.packageName == model.pkgName }
-            if (findItem != null) {
-                historyDao.update(
-                    findItem.copy(
-                        useCont = findItem.useCont + 1,
+            if (isSaveToHistory) {
+                val findItem = historyDao.queryAll().find { it.packageName == model.pkgName }
+                if (findItem != null) {
+                    historyDao.update(
+                        findItem.copy(
+                            useCont = findItem.useCont + 1,
+                        )
                     )
-                )
+                } else {
+                    val history = History(model.pkgName, 1)
+                    historyDao.insert(history)
+                }
+            }
+            val findSettingsItem = settingsDao.queryAll().find { it.packageName == model.pkgName }
+            if (findSettingsItem != null) {
+                settingsDao.update(model.settings)
             } else {
-                val history = History(model.pkgName, 1)
-                historyDao.insert(history)
+                settingsDao.insert(model.settings)
             }
             true
         }

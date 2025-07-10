@@ -28,6 +28,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.AppInfo
+import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
@@ -54,7 +55,9 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
         })
         when (result) {
             is ResultData.Success -> {
-                AppScreenContent(Modifier, result.data)
+                AppScreenContent(Modifier, result.data){
+                    viewModel.saveToDb(it)
+                }
             }
 
             is ResultData.Failure -> {
@@ -73,7 +76,7 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
 }
 
 @Composable
-private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo>) {
+private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo>,saveToDb: (AppInfo) -> Unit) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape()
     val iconSize = if (isLandscape) 96.dp else 56.dp
@@ -85,9 +88,7 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
     ) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
-                settingsStore.update {
-                    it.copy(packageName = item.packageName)
-                }
+                saveToDb(item)
                 popBackStack{
                     set("packageName", item.packageName)
 //                    putString("packageName", item.packageName)
