@@ -27,6 +27,8 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +55,7 @@ private data class OrientationModel(val orientation: Orientation, val displayNam
 fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
     val context = LocalContext.current
     val settings = model.settings
+    dLog { "settings.packageName:${settings.packageName}" }
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
     val models = arrayOf(
@@ -69,11 +73,10 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     isBrightnessMin.value = settings.isBrightnessMin
     val isRandomReverse = remember { mutableStateOf(settings.isRandomReverse) }
     isRandomReverse.value = settings.isRandomReverse
-    val delayTimes = remember { mutableStateListOf<Long>() }
-    delayTimes.clear()
-    settings.delayTimes.forEach {
-        delayTimes.add(it)
-    }
+    val delayTimes = remember { mutableStateOf(settings.delayTimes) }
+    delayTimes.value = settings.delayTimes
+    dLog { "settings.delayTimes:${settings.delayTimes}" }
+    dLog { ">>>55555>delayTimes:${delayTimes}" }
     val saveDoubleClick = { it: Boolean ->
         doubleSaver.value = it
         model.settings = settings.copy(isDoubleSaver = it)
@@ -100,19 +103,16 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         model.settings = settings.copy(isRandomReverse = it)
         modelChange(model)
     }
-    val saveDelayTimesClick = { index: Long ->
-        if (delayTimes.contains(index)) {
-            delayTimes.remove(index)
+    val saveDelayTimesClick = { index: Int ->
+        if (delayTimes.value.contains(index)) {
+            delayTimes.value.remove(index)
         } else {
-            delayTimes.add(index)
+            delayTimes.value.add(index)
         }
-        model.settings = settings.copy(delayTimes = delayTimes)
+        model.settings = settings.copy(delayTimes = delayTimes.value)
         modelChange(model)
     }
-    Column(
-        modifier
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column(modifier.verticalScroll(rememberScrollState())) {
         ExposedDropdownMenuBox(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -162,34 +162,39 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         Column {
             Text(stringResource(R.string.delay_time))
             FlowRow(modifier = Modifier.padding(top = 4.dp), maxItemsInEachRow = 4) {
-                for (index in 1L..32L) {
-                    val isSelected = delayTimes.contains(index)
-                    val borderColor = if (isSelected) Color.Blue else Color.Gray
-                    val backgroundColor = if (isSelected) Color.Blue else Color.Transparent
-                    val textColor = if (isSelected) Color.White else Color.Black
-                    Text(
-                        text = index.toString(),
-                        color = textColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(
-                                bottom = if (30 - index > 4) 16.dp else 0.dp,
-                                start = 8.dp,
-                                end = 8.dp
-                            )
-                            .border(
-                                1.dp,
-                                borderColor,
-                                RoundedCornerShape(8.dp)
-                            )
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(shape = RectangleShape, color = backgroundColor)
-                            .clickable {
-                                saveDelayTimesClick(index)
-                            }
-                            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-                            .weight(1f)
-                    )
+                key(settings.packageName) {
+                    dLog { "FlowRow>>>settings.packageName:${settings.packageName}" }
+                    dLog { ">FlowRow>>55555>delayTimes:${delayTimes.value}" }
+                    for (index in 1..32) {
+                        val isSelected = delayTimes.value.contains(index)
+                        val borderColor = if (isSelected) Color.Blue else Color.Gray
+                        val backgroundColor = if (isSelected) Color.Blue else Color.Transparent
+                        val textColor = if (isSelected) Color.White else Color.Black
+                        Text(
+                            text = index.toString(),
+                            color = textColor,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(
+                                    bottom = if (30 - index > 4) 16.dp else 0.dp,
+                                    start = 8.dp,
+                                    end = 8.dp
+                                )
+                                .border(
+                                    1.dp,
+                                    borderColor,
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(shape = RectangleShape, color = backgroundColor)
+                                .clickable {
+                                    saveDelayTimesClick(index)
+                                }
+                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                                .weight(1f)
+                        )
+                    }
+
                 }
             }
         }

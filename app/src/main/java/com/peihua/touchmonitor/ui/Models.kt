@@ -124,15 +124,6 @@ data class AppModel(
 ) {
     fun saveToDb() {
         settingsStore.update(settings)
-//        historyStore.update { item ->
-//            val findItem = item.findValue { it.key == pkgName }
-//            if (findItem != null) {
-//                findItem.copy(useCont = findItem.useCont + 1)
-//            } else {
-//                item.put(pkgName, History(pkgName, 1, settings))
-//            }
-//            item
-//        }
     }
 }
 
@@ -143,7 +134,7 @@ data class Settings(
     val packageName: String,
     val orientation: Orientation,
     val isDoubleSaver: Boolean,
-    val delayTimes: MutableList<Long> = arrayListOf(),
+    val delayTimes: MutableList<Int> = arrayListOf(),
     val isRandomReverse: Boolean = false,
     val isSkipAdOrLive: Boolean = true,
     val isBrightnessMin: Boolean = false,
@@ -156,12 +147,12 @@ data class Settings(
 @ProvidedTypeConverter
 class ListToStringConverter {
     @TypeConverter
-    fun StringToList(value: String): MutableList<Long> {
+    fun StringToList(value: String): MutableList<Int> {
         return json.decodeFromString(value)
     }
 
     @TypeConverter
-    fun ListToString(value: MutableList<Long>?): String? {
+    fun ListToString(value: MutableList<Int>?): String? {
         return json.encodeToString(value)
     }
 }

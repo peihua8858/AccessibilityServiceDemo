@@ -24,38 +24,38 @@ class AutomaticallyWatchShortVideosWorker(
     Runnable, CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private val times = arrayOf(
-        7L,//7秒
-        8L,
-        9L,
-        10L,
-        11L,
-        12L,
-        13L,
-        8L,
-        9L,
-        10L,
-        8L,
-        9L,
-        10L,
-        8L,
-        9L,
-        10L,
-        5L,
-        8L,
-        9L,
-        10L,
-        8L,
-        9L,
-        10L,
-        8L,
-        9L,
-        10L,
+        7,//7秒
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        8,
+        9,
+        10,
+        8,
+        9,
+        10,
+        8,
+        9,
+        10,
+        5,
+        8,
+        9,
+        10,
+        8,
+        9,
+        10,
+        8,
+        9,
+        10,
     )
     private val isUpSwipe = arrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     private val isDownSwipe = arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
     private val mDelayTimes = settings.delayTimes
-    private var oldTime: Long
-    private var maxTime: Long
+    private var oldTime: Int
+    private var maxTime: Int
 
 
     init {
@@ -111,7 +111,6 @@ class AutomaticallyWatchShortVideosWorker(
                 }
             }
         }
-
         val isRandomReverse = settings?.isRandomReverse ?: false
         dLog { ">>>>>isRandomReverse:$isRandomReverse" }
         val isSwipe = if (isRandomReverse) isUpSwipe.random() else 1
@@ -156,7 +155,7 @@ class AutomaticallyWatchShortVideosWorker(
             tempTime = mDelayTimes.random()
         }
         oldTime = tempTime
-        waiteTimeMillis(tempTime * 1000) // 每2秒执行一次
+        waiteTimeMillis(tempTime * 1000L) // 每2秒执行一次
         dLog { "withLock>>>>end" }
     }
 

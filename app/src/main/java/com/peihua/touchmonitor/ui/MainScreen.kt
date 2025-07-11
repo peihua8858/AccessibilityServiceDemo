@@ -52,6 +52,10 @@ import com.peihua.touchmonitor.ui.components.ExtendedListTile
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
+import com.peihua.touchmonitor.ui.settings.AlipaySettings
+import com.peihua.touchmonitor.ui.settings.AllSettings
+import com.peihua.touchmonitor.ui.settings.DouYinHuoShanSettings
+import com.peihua.touchmonitor.ui.settings.DouYinSettings
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.finish
@@ -98,8 +102,9 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
                 if (result.data.isEmpty()) {
                     return
                 }
-                MainScreenContent(Modifier.weight(1f), result.data){item,isSaveToHistory->
-                    viewModel.saveToDb(item,isSaveToHistory)
+                dLog { "MainScreen>>>AllSettings>>>>provider<><><>" }
+                MainScreenContent(Modifier.weight(1f), result.data) { item, isSaveToHistory ->
+                    viewModel.saveToDb(item, isSaveToHistory)
                 }
             }
 
@@ -121,13 +126,18 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = vie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreenContent(modifier: Modifier, models: List<AppModel>,saveDb:(AppModel,Boolean)->Unit) {
+private fun MainScreenContent(
+    modifier: Modifier,
+    models: List<AppModel>,
+    saveDb: (AppModel, Boolean) -> Unit,
+) {
     val context = LocalContext.current
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
     val selectedModel = models.find { it.isSelected } ?: models[0]
     val selectedOption = remember { mutableStateOf(selectedModel) }
     val scope = rememberCoroutineScope()
+    dLog { "MainScreen>>>AllSettings>>>>000《》《》《》《》" }
     Column(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
             //选择的应用
@@ -210,9 +220,9 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>,saveDb:
                                         navigateTo(AppRouter.Applications.route)
                                     }
                                 } else {
-                                    selectedOption.value = item
                                     isExpanded.value = !isExpanded.value
-                                    saveDb(item,true)
+                                    selectedOption.value = item
+                                    saveDb(item, true)
                                 }
                             },
                         )
@@ -249,9 +259,9 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>,saveDb:
                     }
 
                 }) {
-                selectedOption.value.provider.contentView(Modifier
-                    .padding(16.dp), selectedOption.value) {
-                    saveDb(it,false)
+                dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
+                selectedOption.value.provider.contentView(Modifier.padding(16.dp), selectedOption.value) {
+                    saveDb(it, false)
                 }
             }
         }
@@ -261,7 +271,7 @@ private fun MainScreenContent(modifier: Modifier, models: List<AppModel>,saveDb:
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
             onClick = {
-                saveDb(selectedOption.value,false)
+                saveDb(selectedOption.value, false)
                 // 引导用户到系统辅助功能设置
                 try {
                     context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")

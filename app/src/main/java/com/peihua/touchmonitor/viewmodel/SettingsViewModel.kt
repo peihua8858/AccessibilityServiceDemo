@@ -59,13 +59,13 @@ class SettingsViewModel(
         return withContext(Dispatchers.IO) {
             val values = AppProvider.entries
             val result = ArrayList<AppModel>()
-            val histories = historyDao.queryAll()
             val historySettings = settingsDao.queryAll()
             val settings = runBlocking {
                 settingsStore.data.first()
             }
             historySettings.forEach {
-                val newModel =  AppProvider.New.createModel(it)
+                val provider =values.find { value->value.settings.packageName == it.packageName }
+                val newModel = (provider ?: AppProvider.New).createModel(it)
                 if (newModel != null) {
                     if (selectPackage.isNullOrEmpty()) {
                         newModel.isSelected = newModel.pkgName == settings.packageName
