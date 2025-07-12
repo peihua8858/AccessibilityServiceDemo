@@ -54,7 +54,9 @@ private data class OrientationModel(val orientation: Orientation, val displayNam
 @Composable
 fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
     val context = LocalContext.current
+    val settingsState = remember { mutableStateOf(model.settings) }
     val settings = model.settings
+    settingsState.value = settings
     dLog { "settings.packageName:${settings.packageName}" }
     val colorScheme = MaterialTheme.colorScheme
     val isExpanded = remember { mutableStateOf(false) }
@@ -73,8 +75,11 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     isBrightnessMin.value = settings.isBrightnessMin
     val isRandomReverse = remember { mutableStateOf(settings.isRandomReverse) }
     isRandomReverse.value = settings.isRandomReverse
-    val delayTimes = remember { mutableStateOf(settings.delayTimes) }
-    delayTimes.value = settings.delayTimes
+    val delayTimes = remember { mutableStateListOf<Int>() }
+    delayTimes.clear()
+    settings.delayTimes.forEach {
+        delayTimes.add(it)
+    }
     dLog { "settings.delayTimes:${settings.delayTimes}" }
     dLog { ">>>55555>delayTimes:${delayTimes}" }
     val saveDoubleClick = { it: Boolean ->
@@ -104,13 +109,14 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         modelChange(model)
     }
     val saveDelayTimesClick = { index: Int ->
-        if (delayTimes.value.contains(index)) {
-            delayTimes.value.remove(index)
+        if (delayTimes.contains(index)) {
+            delayTimes.remove(index)
         } else {
-            delayTimes.value.add(index)
+            delayTimes.add(index)
         }
-        model.settings = settings.copy(delayTimes = delayTimes.value)
+        model.settings = settings.copy(delayTimes = delayTimes)
         modelChange(model)
+        settingsState.value = settings.copy(delayTimes = delayTimes)
     }
     Column(modifier.verticalScroll(rememberScrollState())) {
         ExposedDropdownMenuBox(
@@ -162,11 +168,11 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         Column {
             Text(stringResource(R.string.delay_time))
             FlowRow(modifier = Modifier.padding(top = 4.dp), maxItemsInEachRow = 4) {
-                key(settings.packageName) {
+                key(delayTimes) {
                     dLog { "FlowRow>>>settings.packageName:${settings.packageName}" }
-                    dLog { ">FlowRow>>55555>delayTimes:${delayTimes.value}" }
+                    dLog { ">FlowRow>>55555>delayTimes:${delayTimes}" }
                     for (index in 1..32) {
-                        val isSelected = delayTimes.value.contains(index)
+                        val isSelected = delayTimes.contains(index)
                         val borderColor = if (isSelected) Color.Blue else Color.Gray
                         val backgroundColor = if (isSelected) Color.Blue else Color.Transparent
                         val textColor = if (isSelected) Color.White else Color.Black
