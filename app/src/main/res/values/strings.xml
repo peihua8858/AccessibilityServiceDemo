@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">辅助功能</string>
+    <string name="version">版本：</string>
+    <string name="install">安装</string>
+    <string name="installIllustrate">下面按钮，一键安装apk.1文件.</string>
+    <string name="install_app_ads">立即安装</string>
+    <string name="internal_storage">内部存储</string>
+    <string name="oneInstall">一键安装</string>
     <string name="settings">设置</string>
     <string name="app_provider">应用程序</string>
     <string name="scroll_orientation">列表滚动方向</string>

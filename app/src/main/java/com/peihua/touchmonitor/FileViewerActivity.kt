@@ -136,12 +136,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
         return try {
             contentResolver.openInputStream(uri).use {
                 val r2 = getExternalFilesDir("share_apk")
-                var lastPathSegment = uri.lastPathSegment
-                val length = lastPathSegment?.length ?: 0
-                if (length < 3) {
-                    lastPathSegment = "temp"
-                }
-                val tempFile = File.createTempFile(lastPathSegment, ".apk", r2)
+                val tempFile = File.createTempFile("ShareTempApk", ".apk", r2)
                 dLog { "copyFile>>>>>>tempFile:${tempFile.absolutePath}" }
                 it.writeToFile(tempFile)
                 return FileProvider.getUriForFile(this, "$packageName.provider", tempFile)
@@ -169,8 +164,8 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
             return null
         }
         val applicationInfo = packageInfo.applicationInfo
-        applicationInfo!!.sourceDir = path
-        applicationInfo.publicSourceDir = path
+        applicationInfo?.sourceDir = path
+        applicationInfo?.publicSourceDir = path
         return newUri
     }
 
@@ -204,8 +199,8 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
             return null
         }
         val applicationInfo = packageInfo.applicationInfo
-        applicationInfo!!.sourceDir = path
-        applicationInfo.publicSourceDir = path
+        applicationInfo?.sourceDir = path
+        applicationInfo?.publicSourceDir = path
         val singleUri = DocumentFile.fromSingleUri(this, uri)
         if (singleUri == null || !singleUri.exists()) {
             return null
@@ -273,8 +268,8 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
             return null
         }
         val applicationInfo = packageInfo.applicationInfo
-        applicationInfo!!.sourceDir = r10
-        applicationInfo.publicSourceDir = r10
+        applicationInfo?.sourceDir = r10
+        applicationInfo?.publicSourceDir = r10
         val singleUri = DocumentFile.fromSingleUri(this, newFileUri)
         if (singleUri == null || !singleUri.exists()) {
             return null
@@ -285,7 +280,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
     fun createTempFile(uri: Uri): File? {
         try {
             val r0 = getExternalFilesDir("share_apk")
-            return File.createTempFile(uri.lastPathSegment ?: "temp", ".apk", r0)
+            return File.createTempFile("ShareTempAPk", ".apk", r0)
         } catch (e: IOException) {
             e.printStackTrace()
             return null
@@ -327,6 +322,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
     fun installLocalApk(uri: Uri?) {
         val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         if (Build.VERSION.SDK_INT < 30) {
             intent.setData(uri)
             startActivity(intent)
@@ -352,6 +348,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
             val mediaType = "application/vnd.android.package-archive"
             val intent = Intent(Intent.ACTION_VIEW)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             if (Build.VERSION.SDK_INT < 29) {
                 intent.setDataAndType(uri, mediaType)
             } else {

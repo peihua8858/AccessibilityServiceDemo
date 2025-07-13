@@ -78,11 +78,15 @@ public class CommonDeviceLocks {
      * Release the previously-acquired locks.
      */
     public void release() {
-        // Release all the locks we were holding
-        wifiLock.release();
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            keyguardLock.reenableKeyguard();
+        try {
+            // Release all the locks we were holding
+            wifiLock.release();
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                keyguardLock.reenableKeyguard();
+            }
+            wakeLock.release();
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
-        wakeLock.release();
     }
 }
