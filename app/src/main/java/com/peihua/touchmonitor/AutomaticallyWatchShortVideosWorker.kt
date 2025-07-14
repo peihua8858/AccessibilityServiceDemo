@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  * 自动化观看短视频
  */
 class AutomaticallyWatchShortVideosWorker(
-    private val service: TouchAccessibilityService,
+    private val service: AppAccessibilityService,
     private var settings: Settings
 ) :
     Runnable, CoroutineScope by WorkScope() {

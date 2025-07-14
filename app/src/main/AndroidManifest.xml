@@ -44,7 +44,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".TouchAccessibilityService"
+            android:name=".AppAccessibilityService"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

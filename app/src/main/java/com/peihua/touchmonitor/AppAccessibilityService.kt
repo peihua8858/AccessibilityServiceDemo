@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor
 
 import android.accessibilityservice.AccessibilityService
+import android.media.AudioManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.Orientation
@@ -10,13 +11,14 @@ import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.wLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class TouchAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
+class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private var isServiceRunning = false
     private val deviceLocks = CommonDeviceLocks()
@@ -49,6 +51,7 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
     private val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
     private var isChangeBrightness = false
     private var backupBrightness = 0
+    private var backupSoundMute = false
     private var backupBrightnessMode =
         android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
 
@@ -70,10 +73,13 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
                 backupBrightnessMode = getSystemLightMode()
                 setSystemLightMode(android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
                 setSystemLight(0)
+                backupSoundMute = getSoundMute()
+                setSoundMute(true)
             } else if (isChangeBrightness) {
                 isChangeBrightness = false
                 setSystemLightMode(backupBrightnessMode)
                 setSystemLight(backupBrightness)
+                setSoundMute(backupSoundMute)
             }
         }
     }
@@ -158,6 +164,30 @@ class TouchAccessibilityService : AccessibilityService(), CoroutineScope by Work
             android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
             mode
         )
+    }
+
+    private fun getSoundMute(): Boolean {
+        val audioManager = getSystemService(AUDIO_SERVICE) as? AudioManager
+        return audioManager?.isStreamMute(AudioManager.STREAM_MUSIC) == true
+    }
+
+    private fun setSoundMute(isMute: Boolean) {
+        val audioManager = getSystemService(AUDIO_SERVICE) as? AudioManager
+        if (isMute) {
+            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        } else {
+            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
+        }
+    }
+
+    fun AudioManager?.setStreamMute(streamType: Int, state: Boolean) {
+        wLog { "setStreamMute is deprecated. adjustStreamVolume should be used instead." }
+        val direction = if (state) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
+        if (streamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
+            this?.adjustSuggestedStreamVolume(direction, streamType, 0)
+        } else {
+            this?.adjustStreamVolume(streamType, direction, 0)
+        }
     }
 
     override fun onServiceConnected() {
