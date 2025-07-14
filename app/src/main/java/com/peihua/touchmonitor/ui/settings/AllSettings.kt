@@ -75,6 +75,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     isBrightnessMin.value = settings.isBrightnessMin
     val isRandomReverse = remember { mutableStateOf(settings.isRandomReverse) }
     isRandomReverse.value = settings.isRandomReverse
+    val isSoundMute = remember { mutableStateOf(settings.isSoundMute) }
     val delayTimes = remember { mutableStateListOf<Int>() }
     delayTimes.clear()
     settings.delayTimes.forEach {
@@ -117,6 +118,11 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         model.settings = settings.copy(delayTimes = delayTimes)
         modelChange(model)
         settingsState.value = settings.copy(delayTimes = delayTimes)
+    }
+    val saveSoundMute = { it: Boolean ->
+        isSoundMute.value=it
+        model.settings = settings.copy(isSoundMute = it)
+        modelChange(model)
     }
     Column(modifier.verticalScroll(rememberScrollState())) {
         ExposedDropdownMenuBox(
@@ -273,7 +279,29 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     saveBrightnessMinClick(it)
                 })
         }
-
+        Spacer(Modifier.size(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    isSoundMute.value = !isSoundMute.value
+                    saveSoundMute(isSoundMute.value)
+                }) {
+            ScaleText(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .weight(1f),
+                text = stringResource(R.string.sound_mute),
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.labelMedium
+            )
+            Spacer(Modifier.size(4.dp))
+            Checkbox(
+                isSoundMute.value,
+                onCheckedChange = {
+                    saveSoundMute(it)
+                })
+        }
         Spacer(Modifier.size(16.dp))
         Row(
             modifier = Modifier

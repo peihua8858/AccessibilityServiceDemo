@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -133,11 +134,17 @@ data class Settings(
     @PrimaryKey
     val packageName: String,
     val orientation: Orientation,
+    @ColumnInfo(name = "isDoubleSaver", defaultValue = "false")
     val isDoubleSaver: Boolean,
     val delayTimes: MutableList<Int> = arrayListOf(),
+    @ColumnInfo(name = "isRandomReverse", defaultValue = "false")
     val isRandomReverse: Boolean = false,
+    @ColumnInfo(name = "isSkipAdOrLive", defaultValue = "false")
     val isSkipAdOrLive: Boolean = true,
+    @ColumnInfo(name = "isBrightnessMin", defaultValue = "false")
     val isBrightnessMin: Boolean = false,
+    @ColumnInfo(name = "isSoundMute", defaultValue = "false")
+    val isSoundMute: Boolean = false
 ) {
     companion object {
         val default: Settings = Settings("", Orientation.Vertical, true)
