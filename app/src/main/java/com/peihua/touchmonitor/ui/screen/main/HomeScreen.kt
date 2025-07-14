@@ -378,5 +378,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Box( Modifier
                 .weight(1f)) {  }
         }
+
     }
 }
