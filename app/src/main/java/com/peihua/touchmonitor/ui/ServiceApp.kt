@@ -29,6 +29,7 @@ import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
+import com.peihua.touchmonitor.ui.screen.function.ShortVideoScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
 
@@ -149,7 +150,7 @@ fun NavHostController.popBackStack(
 fun ServiceApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     appRouter = navController
-    AppTheme {
+    AppTheme { model, colorScheme ->
         AppNavHost(navController = navController, modifier = modifier)
     }
 }
@@ -194,9 +195,12 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             route = AppRouter.LogDetail.route,
             arguments = AppRouter.LogDetail.navArguments
         ) {
-            val filePath = it.savedStateHandle.get<String>("filePath")?:""
+            val filePath = it.savedStateHandle.get<String>("filePath") ?: ""
             dLog { "LogDetailScreen>>>>>>>filePath:$filePath" }
             LogDetailScreen(modifier, filePath)
+        }
+        composable(route = AppRouter.AutoScroller.route) {
+            ShortVideoScreen(modifier)
         }
     }
 }

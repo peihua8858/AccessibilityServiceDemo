@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.storage.StorageVolume;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
@@ -25,6 +27,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
+
+import kotlin.uuid.Uuid;
 
 public class InstallerActivity extends ComponentActivity {
 
@@ -468,5 +473,150 @@ public class InstallerActivity extends ComponentActivity {
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+
+    private String CallInternalStorageElse() {
+        java.io.File dataDirectory = android.os.Environment.getDataDirectory();
+        android.os.StatFs statFs = new android.os.StatFs(dataDirectory.getPath());
+        long blockSize = statFs.getBlockSizeLong();
+        long availableBlocks = statFs.getAvailableBlocksLong();
+        long blockCount = statFs.getBlockCountLong();
+        long totalBlockSize = blockCount * blockSize;
+        long totalAvailableBlocks = availableBlocks * blockSize;
+        long r0 = totalBlockSize - totalAvailableBlocks;
+        return android.text.format.Formatter.formatShortFileSize(this, r0) + "/" + android.text.format.Formatter.formatShortFileSize(this, totalBlockSize);
+    }
+
+    private void setInternalData() {
+        if (android.os.Build.VERSION.SDK_INT < 26) {
+            CallInternalStorageElse();
+        } else {
+            android.app.usage.StorageStatsManager storageStatsManager = (android.app.usage.StorageStatsManager) getSystemService(Context.STORAGE_STATS_SERVICE);
+            android.os.storage.StorageManager storageManager = (android.os.storage.StorageManager) getSystemService(Context.STORAGE_SERVICE);
+            if (storageStatsManager == null) {
+                return;
+            }
+            if (storageManager == null) {
+                return;
+            }
+            java.util.List<StorageVolume> storageVolumes = storageManager.getStorageVolumes();
+            java.util.Iterator<StorageVolume> iterator = storageVolumes.iterator();
+            if (!iterator.hasNext()) {
+                return;
+            }
+            while (iterator.hasNext()) {
+                StorageVolume storageVolume = iterator.next();
+                String uuidName = storageVolume.getUuid();
+                boolean isPrimary = storageVolume.isPrimary();
+                if (isPrimary) {
+                    UUID uuid = null;
+                    if (uuidName != null) {
+                        uuid = java.util.UUID.fromString(uuidName);
+                    } else {
+                        uuid = android.os.storage.StorageManager.UUID_DEFAULT;
+                    }
+                    try {
+                        long totalBytes = storageStatsManager.getTotalBytes(uuid);
+                        long freeBytes = storageStatsManager.getFreeBytes(uuid);
+                        long r3 = totalBytes - freeBytes;
+                        StringBuilder r6 = new StringBuilder();
+                        r6.append(android.text.format.Formatter.formatShortFileSize(this, r3));
+                        r6.append(" / ");
+                        r6.append(android.text.format.Formatter.formatShortFileSize(this, totalBytes));
+                        String r2 = r6.toString();
+//                        txtInternal.setText(r2);
+                    } catch (IOException e) {
+                        CallInternalStorageElse();
+                        break;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private void setProgressData() {
+        setInternalData();
+        setSdCardData();
+    }
+
+    public static boolean externalMemoryAvailable(android.content.Context r3) {
+        java.io.File[] filesDirs = r3.getExternalFilesDirs(null);
+        int length = filesDirs.length;
+        if (length <= 0) {
+            return false;
+        }
+        File filesDir = filesDirs[0];
+        if (filesDir == null) {
+            return false;
+        }
+        filesDir = filesDirs[1];
+        if (filesDir == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setSdCardData() {
+        boolean isSdCard = externalMemoryAvailable(this);
+        if (isSdCard) {
+            //隐藏视图
+            return;
+        }
+        java.lang.String externalStoragePath = getExternalStoragePath(this, isSdCard);
+        if (externalStoragePath == null || externalStoragePath.isEmpty()) {
+            //隐藏视图
+            return;
+        }
+        java.io.File file = new java.io.File(externalStoragePath);
+        android.os.StatFs statFs = new android.os.StatFs(file.getPath());
+        long blockSize = statFs.getBlockSizeLong();
+        long availableBlocks = statFs.getAvailableBlocksLong();
+        long blockCount = statFs.getBlockCountLong();
+        long totalBlockSize = blockCount * blockSize;
+        long totalAvailableBlocks = availableBlocks * blockSize;
+        long r2 = totalBlockSize - totalAvailableBlocks;
+        java.lang.StringBuilder r7 = new java.lang.StringBuilder();
+        r7.append(android.text.format.Formatter.formatShortFileSize(this, r2));
+        r7.append(" / ");
+        r7.append(android.text.format.Formatter.formatShortFileSize(this, totalBlockSize));
+        java.lang.String r0 = r7.toString();
+        //        txtSdCard.setText(r0);
+        java.io.File r1 = android.os.Environment.getExternalStorageDirectory();
+        android.os.StatFs statFs1 = new android.os.StatFs(r1.getPath());
+        long blockSizeLong = statFs1.getBlockSizeLong();
+        long blockCountLong = statFs1.getBlockCountLong();
+        long result = blockSizeLong * blockCountLong / 1048576;
+    }
+
+    public static java.lang.String getExternalStoragePath(android.content.Context context, boolean r10) {
+        android.os.storage.StorageManager storageManager = (android.os.storage.StorageManager) context.getSystemService("storage");
+        try {
+            java.lang.Class clazz = java.lang.Class.forName("android.os.storage.StorageVolume");
+            java.lang.Class manageClass = storageManager.getClass();
+            java.lang.reflect.Method r2 = manageClass.getMethod("getVolumeList", null);
+            java.lang.reflect.Method r3 = clazz.getMethod("getPath", null);
+            java.lang.reflect.Method r1 = clazz.getMethod("isRemovable", null);
+            java.lang.Object r9 = r2.invoke(storageManager, null);
+            int length = java.lang.reflect.Array.getLength(r9);
+            if (length <= 0) {
+                return null;
+            }
+            int index = 0;
+            while (index < length) {
+                java.lang.Object r6 = java.lang.reflect.Array.get(r9, index);
+                java.lang.String r7 = (java.lang.String) r3.invoke(r6, null);
+                boolean result = (boolean) r1.invoke(r6, null);
+                if (r10 == result) {
+                    return r7;
+                }
+                index++;
+            }
+
+            return null;
+        }catch (Exception e) {
+            return null;
+        }
     }
 }

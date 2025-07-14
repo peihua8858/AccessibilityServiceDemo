@@ -11,18 +11,16 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.data.DataStore
 import com.peihua.touchmonitor.model.json
-import com.peihua.touchmonitor.ui.settings.AlipaySettings
-import com.peihua.touchmonitor.ui.settings.AllSettings
-import com.peihua.touchmonitor.ui.settings.DouYinHuoShanSettings
-import com.peihua.touchmonitor.ui.settings.DouYinJiSuSettings
-import com.peihua.touchmonitor.ui.settings.DouYinSettings
-import com.peihua.touchmonitor.ui.settings.MeiTuanSettings
-import com.peihua.touchmonitor.utils.findValue
+import com.peihua.touchmonitor.ui.screen.function.settings.AlipaySettings
+import com.peihua.touchmonitor.ui.screen.function.settings.AllSettings
+import com.peihua.touchmonitor.ui.screen.function.settings.DouYinHuoShanSettings
+import com.peihua.touchmonitor.ui.screen.function.settings.DouYinJiSuSettings
+import com.peihua.touchmonitor.ui.screen.function.settings.DouYinSettings
+import com.peihua.touchmonitor.ui.screen.function.settings.MeiTuanSettings
 
 
 enum class AppProvider(

@@ -20,6 +20,7 @@ sealed class AppRouter(
 
     data object LogScreen : AppRouter("log")
     data object LogDetail : AppRouter("logDetail")
+    data object AutoScroller : AppRouter("autoScroller")
 //    /**
 //     * 消息
 //     */

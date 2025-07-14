@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">辅助功能</string>
+    <string name="app_name">辅助工具</string>
     <string name="version">版本：</string>
     <string name="install">安装</string>
     <string name="installIllustrate">下面按钮，一键安装apk.1文件.</string>
@@ -39,4 +39,23 @@
     <string name="text_stop">停止</string>
     <string name="text_start">开始</string>
     <string name="text_clear">清除</string>
+
+    <string name="text_home">首页</string>
+    <string name="text_function">功能</string>
+    <string name="text_collect">收藏</string>
+    <string name="text_account">我的</string>
+    <string name="text_images">图片</string>
+    <string name="text_videos">视频</string>
+    <string name="text_audio">音频</string>
+    <string name="text_documents">文档</string>
+    <string name="text_apk">Apk</string>
+    <string name="text_compression">压缩</string>
+    <string name="text_download">下载</string>
+    <string name="text_collect_folder">收藏夹</string>
+    <string name="text_search">搜索</string>
+    <string name="text_app_manager">应用管理</string>
+    <string name="text_auto_scroll">自动刷屏器</string>
+    <string name="text_function_developing">功能开发中,敬请期待…</string>
+
+
 </resources>

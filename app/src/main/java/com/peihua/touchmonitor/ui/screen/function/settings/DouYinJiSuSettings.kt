@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor.ui.settings
+package com.peihua.touchmonitor.ui.screen.function.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

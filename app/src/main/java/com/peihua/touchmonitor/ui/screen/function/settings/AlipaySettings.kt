@@ -1,10 +1,9 @@
-package com.peihua.touchmonitor.ui.settings
+package com.peihua.touchmonitor.ui.screen.function.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.peihua.touchmonitor.ui.AppModel
-import com.peihua.touchmonitor.ui.AppProvider
 
 /**
  * 支付宝
