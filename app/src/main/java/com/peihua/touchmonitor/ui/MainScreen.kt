@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -57,7 +58,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             AppTopBar(title = { stringResource(id = R.string.app_name) }, navigationIcon = {})
         },
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(64.dp)) {
+            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_64))) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -80,7 +81,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_home),
                         tint = if (selectItem.intValue == 0) colorScheme.onSurface else Color.Black,
@@ -114,7 +115,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_function_24),
                         tint = if (selectItem.intValue == 1) colorScheme.onSurface else Color.Black,
@@ -148,7 +149,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_star_gray),
                         tint = if (selectItem.intValue == 2) colorScheme.onSurface else Color.Black,
@@ -182,7 +183,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_me_gray),
                         tint = if (selectItem.intValue == 3) colorScheme.onSurface else Color.Black,

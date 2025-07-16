@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +56,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.stackEntry
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
@@ -85,7 +87,7 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
     Column(
         modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
     ) {
         AppTopBar(title = { stringResource(R.string.settings) }, navigateUp = {
             popBackStack()
@@ -183,8 +185,8 @@ private fun MainScreenContent(
                                                 top.linkTo(parent.top)
                                                 bottom.linkTo(parent.bottom)
                                             }
-                                            .size(24.dp)
-                                            .clip(RoundedCornerShape(8.dp))
+                                            .size(dimensionResource(id = R.dimen.dp_24))
+                                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
                                     )
 
                                     ScaleText(
@@ -194,9 +196,9 @@ private fun MainScreenContent(
                                                 top.linkTo(parent.top)
                                                 bottom.linkTo(parent.bottom)
                                             }
-                                            .padding(start = 8.dp),
+                                            .padding(start = dimensionResource(id = R.dimen.dp_8)),
                                         text = item.displayName,
-                                        fontSize = 20.sp,
+                                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                                         color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
                                         style = MaterialTheme.typography.labelMedium
                                     )
@@ -208,7 +210,7 @@ private fun MainScreenContent(
                                                 bottom.linkTo(parent.bottom)
                                             },
                                             text = stringResource(R.string.use_history),
-                                            fontSize = 16.sp,
+                                            fontSize = dimensionSpResource(id = R.dimen.sp_16),
                                             color = colorScheme.error,
                                             style = MaterialTheme.typography.labelMedium
                                         )
@@ -233,7 +235,7 @@ private fun MainScreenContent(
             }
             ExtendedListTile(
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = dimensionResource(id = R.dimen.dp_16))
                     .fillMaxWidth(),
                 isExtended = false,
                 title = { isExtended ->
@@ -241,7 +243,7 @@ private fun MainScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .padding(16.dp)
+                            .padding(dimensionResource(id = R.dimen.dp_16))
 
                     ) {
                         // 旋转角度，up 旋转 180 度，down 旋转 0 度
@@ -255,14 +257,14 @@ private fun MainScreenContent(
                                 .align(Alignment.CenterVertically)
                                 .weight(1f),
                             text = stringResource(R.string.text_settings),
-                            fontSize = 16.sp,
+                            fontSize = dimensionSpResource(id = R.dimen.sp_16),
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
 
                 }) {
                 dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
-                selectedOption.value.provider.contentView(Modifier.padding(16.dp), selectedOption.value) {
+                selectedOption.value.provider.contentView(Modifier.padding(dimensionResource(id = R.dimen.dp_16)), selectedOption.value) {
                     saveDb(it, false)
                 }
             }
@@ -271,7 +273,7 @@ private fun MainScreenContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 32.dp),
+                .padding(bottom = dimensionResource(id = R.dimen.dp_32)),
             onClick = {
                 saveDb(selectedOption.value, false)
                 // 引导用户到系统辅助功能设置

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,26 +32,26 @@ import com.peihua.touchmonitor.utils.showToast
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        Row(modifier = Modifier.padding(top = 32.dp)) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         navigateTo(AppRouter.AutoScroller.route)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_home_scroller),
                             contentDescription = stringResource(id = R.string.text_auto_scroll)
@@ -58,7 +59,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_auto_scroll)
                     )
                 })
@@ -66,21 +67,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_fdff0e66, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_home_images_24),
                             contentDescription = stringResource(id = R.string.text_images)
@@ -88,7 +89,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_images)
                     )
                 })
@@ -96,21 +97,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_home_audio_24),
                             contentDescription = stringResource(id = R.string.text_audio)
@@ -118,7 +119,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_audio)
                     )
                 })
@@ -126,22 +127,22 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        bottom = 32.dp,
-                        start = 16.dp,
-                        end = 16.dp
+                        bottom = dimensionResource(id = R.dimen.dp_32),
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_f63505, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.mipmap.ic_video_home),
                             contentDescription = stringResource(id = R.string.text_videos)
@@ -149,7 +150,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_videos)
                     )
                 })
@@ -157,21 +158,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_7b1fa2, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.mipmap.ic_doc_home),
                             contentDescription = stringResource(id = R.string.text_documents)
@@ -179,31 +180,31 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_documents)
                     )
                 })
         }
-        Row(modifier = Modifier.padding(top = 32.dp)) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_08bf54, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.mipmap.ic_apk_home),
                             contentDescription = stringResource(id = R.string.text_apk)
@@ -211,7 +212,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_apk)
                     )
                 })
@@ -219,21 +220,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_2039c5, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.mipmap.ic_zip_home),
                             contentDescription = stringResource(id = R.string.text_compression)
@@ -241,7 +242,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_compression)
                     )
                 })
@@ -249,21 +250,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_2979ff, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_download_24),
                             contentDescription = stringResource(id = R.string.text_download)
@@ -271,7 +272,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_download)
                     )
                 })
@@ -279,21 +280,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_ffd600, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             painter = painterResource(id = R.mipmap.ic_fav_home),
                             tint = Color.White,
                             contentDescription = stringResource(id = R.string.text_collect_folder)
@@ -301,7 +302,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_collect_folder)
                     )
                 })
@@ -310,21 +311,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_7b1fa2, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_home_search_24),
                             contentDescription = stringResource(id = R.string.text_search)
@@ -332,32 +333,32 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_search)
                     )
                 })
         }
-        Row(modifier = Modifier.padding(top = 32.dp)) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        bottom = 32.dp,
-                        start = 16.dp,
-                        end = 16.dp
+                        bottom = dimensionResource(id = R.dimen.dp_32),
+                        start = dimensionResource(id = R.dimen.dp_16),
+                        end = dimensionResource(id = R.dimen.dp_16)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
                     },
                 icon = {
-                    Card(modifier = Modifier, elevation = 3.dp) {
+                    Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
                         Icon(
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(96.dp)
+                                .size(dimensionResource(id = R.dimen.dp_96))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
-                                .padding(8.dp),
+                                .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.ic_home_app_manager_24),
                             contentDescription = stringResource(id = R.string.text_app_manager)
@@ -365,7 +366,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }, title = {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
                         text = stringResource(id = R.string.text_app_manager)
                     )
                 })

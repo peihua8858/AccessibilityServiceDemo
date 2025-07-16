@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.peihua.touchmonitor.R
 
 @Composable
 fun NavigationBar(
@@ -38,7 +40,7 @@ fun NavigationBar(
             modifier =
                 Modifier.fillMaxWidth()
                     .windowInsetsPadding(windowInsets)
-                    .defaultMinSize(minHeight = 64.dp)
+                    .defaultMinSize(minHeight = dimensionResource(id = R.dimen.dp_64))
                     .selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             verticalAlignment = Alignment.CenterVertically,

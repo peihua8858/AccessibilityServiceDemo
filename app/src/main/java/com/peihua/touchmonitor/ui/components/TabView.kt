@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 
 
@@ -40,7 +42,7 @@ fun <T> TabView(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .wrapContentWidth(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = dimensionResource(id = R.dimen.dp_16)),
         )
     }
 }

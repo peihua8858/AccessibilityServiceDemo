@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
@@ -45,7 +46,7 @@ fun LogcatContent(modifier: Modifier = Modifier) {
         initialPageOffsetFraction = 0f
     ) { mTabs.size }
     TabPager(modifier = modifier, tabs = mTabs, pagerState = pagerState) { m, state, index ->
-        mTabs[index].content(m.padding(32.dp), state)
+        mTabs[index].content(m.padding(dimensionResource(id = R.dimen.dp_32)), state)
     }
 }
 

@@ -15,9 +15,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isUnspecified
-import androidx.compose.ui.unit.sp
+import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.utils.dimensionSpResource
 
-private val DefaultFontSize = 14.sp
 
 @Composable
 fun ScaleText(
@@ -39,9 +39,10 @@ fun ScaleText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
 ) {
+    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
     val textScale = 1
     val fontSize = when{
-        fontSize.isUnspecified -> if(style.fontSize.isUnspecified) DefaultFontSize else style.fontSize
+        fontSize.isUnspecified -> if(style.fontSize.isUnspecified) defaultFontSize else style.fontSize
         else -> fontSize
     }
     Text(

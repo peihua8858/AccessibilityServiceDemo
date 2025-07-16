@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.peihua.touchmonitor.R
 
 /**
  * 旋转动画组件
@@ -21,7 +23,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RotatingView(
     modifier: Modifier = Modifier,
-    size: DpSize = DpSize(24.dp, 24.dp),
+    size: DpSize = DpSize(dimensionResource(id = R.dimen.dp_24), dimensionResource(id = R.dimen.dp_24)),
     rotationAngle: Float = 0f,
     durationMillis: Int = 800,
     content: @Composable () -> Unit = {

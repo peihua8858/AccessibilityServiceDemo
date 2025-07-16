@@ -42,16 +42,17 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.*
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
+import com.peihua.touchmonitor.R
 
 /** Fit a linear 0F - 1F curve to an ease out sine (decelerating) curve.  */
 private fun decInterp(@FloatRange(from = 0.0, to = 1.0) fraction: Float): Float {
@@ -85,8 +86,8 @@ fun PagerTabIndicator(
     tabPositions: List<TabPosition>,
     pagerState: PagerState,
     color: Color = MaterialTheme.colorScheme.primary,
-    radius: Dp = 20.dp,
-    height: Dp = 4.dp,
+    radius: Dp = dimensionResource(id = R.dimen.dp_20),
+    height: Dp = dimensionResource(id = R.dimen.dp_4),
 ) {
     Canvas(
         modifier = Modifier
@@ -176,7 +177,7 @@ fun TabIndicatorScope.FancyAnimatedIndicatorWithModifier(index: Int) {
     var endAnimatable by remember { mutableStateOf<Animatable<Dp, AnimationVector1D>?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val indicatorColor: Color by animateColorAsState(colors[index % colors.size], label = "")
-
+    val dp5 = dimensionResource(id = R.dimen.dp_5)
     Box(
         Modifier
             .tabIndicatorLayout { measurable: Measurable,
@@ -238,13 +239,13 @@ fun TabIndicatorScope.FancyAnimatedIndicatorWithModifier(index: Int) {
                     placeable.place(indicatorStart, 0)
                 }
             }
-            .padding(5.dp)
+            .padding(dp5)
             .fillMaxSize()
             .drawWithContent {
                 drawRoundRect(
                     color = indicatorColor,
-                    cornerRadius = CornerRadius(5.dp.toPx()),
-                    style = Stroke(width = 2.dp.toPx())
+                    cornerRadius = CornerRadius(dp5.toPx()),
+                    style = Stroke(width = dp5.toPx())
                 )
             }
     )

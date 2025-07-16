@@ -49,28 +49,28 @@ fun Typography(scale: Float = 1f): Typography {
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
             fontSize = typography.bodySmall.fontSize * scale,
-//            lineHeight = 16.sp,
+//            lineHeight = dimensionResource(id = R.dimen.sp_16),
 //            letterSpacing = 0.4.sp
         ),
         labelLarge = typography.labelLarge.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Bold,
             fontSize = typography.labelLarge.fontSize * scale,
-//            lineHeight = 24.sp,
+//            lineHeight = dimensionResource(id = R.dimen.sp_24),
 //            letterSpacing = 0.5.sp
         ),
         labelMedium = typography.labelMedium.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Medium,
             fontSize = typography.labelMedium.fontSize * scale,
-//            lineHeight = 20.sp,
+//            lineHeight = dimensionResource(id = R.dimen.sp_20),
 //            letterSpacing = 0.1.sp
         ),
         labelSmall = typography.labelSmall.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
             fontSize = typography.labelSmall.fontSize * scale,
-//            lineHeight = 16.sp,
+//            lineHeight = dimensionResource(id = R.dimen.sp_16),
 //            letterSpacing = 0.5.sp
         ),
     )
@@ -117,71 +117,71 @@ fun Typography(scale: Float = 1f): Typography {
 //        headlineSmall = typography.headlineSmall.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
-//            fontSize = 24.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_24),
 //            lineHeight = 32.sp,
 //            letterSpacing = 0.sp
 //        ),
 //        titleLarge = typography.titleLarge.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Bold,
-//            fontSize = 22.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_18),
 //            lineHeight = 28.sp,
 //            letterSpacing = 0.sp
 //        ),
 //        titleMedium = typography.titleMedium.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Medium,
-//            fontSize = 16.sp,
-//            lineHeight = 24.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_16),
+//            lineHeight = dimensionResource(id = R.dimen.sp_24),
 //            letterSpacing = 0.1.sp
 //        ),
 //        titleSmall = typography.titleSmall.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
-//            fontSize = 14.sp,
-//            lineHeight = 20.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_14),
+//            lineHeight = dimensionResource(id = R.dimen.sp_20),
 //            letterSpacing = 0.1.sp
 //        ),
 //        bodyLarge = typography.bodyLarge.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Bold,
-//            fontSize = 16.sp,
-//            lineHeight = 24.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_16),
+//            lineHeight = dimensionResource(id = R.dimen.sp_24),
 //            letterSpacing = 0.5.sp
 //        ),
 //        bodyMedium = typography.bodyMedium.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Medium,
-//            fontSize = 14.sp,
-//            lineHeight = 20.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_14),
+//            lineHeight = dimensionResource(id = R.dimen.sp_20),
 //            letterSpacing = 0.25.sp
 //        ),
 //        bodySmall = typography.bodySmall.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
-//            fontSize = 12.sp,
-//            lineHeight = 16.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_12),
+//            lineHeight = dimensionResource(id = R.dimen.sp_16),
 //            letterSpacing = 0.4.sp
 //        ),
 //        labelLarge = typography.labelLarge.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Bold,
-//            fontSize = 16.sp,
-//            lineHeight = 24.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_16),
+//            lineHeight = dimensionResource(id = R.dimen.sp_24),
 //            letterSpacing = 0.5.sp
 //        ),
 //        labelMedium = typography.labelMedium.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Medium,
-//            fontSize = 14.sp,
-//            lineHeight = 20.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_14),
+//            lineHeight = dimensionResource(id = R.dimen.sp_20),
 //            letterSpacing = 0.1.sp
 //        ),
 //        labelSmall = typography.labelSmall.copy(
 //            fontFamily = FontFamily.Default,
 //            fontWeight = FontWeight.Normal,
-//            fontSize = 12.sp,
-//            lineHeight = 16.sp,
+//            fontSize = dimensionResource(id = R.dimen.sp_12),
+//            lineHeight = dimensionResource(id = R.dimen.sp_16),
 //            letterSpacing = 0.5.sp
 //        ),
 //    )

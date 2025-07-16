@@ -20,11 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
+import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,13 +52,13 @@ fun AppTopBar(
                     modifier = Modifier
                         .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
                         .align(Alignment.Center),
-                    fontSize = 18.sp,
+                    fontSize = dimensionSpResource(id = R.dimen.sp_24),
                 )
             }
         },
         navigationIcon = navigationIcon,
         actions = actions,
-        modifier = modifier.height(64.dp),
+        modifier = modifier,
         colors = colors
     )
 }
@@ -71,8 +74,8 @@ fun NavigationIcon(
 ) {
     Icon(
         modifier = Modifier
-            .size(32.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
+            .size(dimensionResource(id = R.dimen.dp_32))
+            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
             .clickable { navigateUp() },
         imageVector = imageVector, contentDescription = ""
     )

@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.dimensionSpResource
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
@@ -153,7 +155,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                         text = {
                             ScaleText(
                                 text = item.displayName,
-                                fontSize = 20.sp,
+                                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                                 color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.labelMedium
                             )
@@ -168,10 +170,10 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 }
             }
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Column {
             Text(stringResource(R.string.delay_time))
-            FlowRow(modifier = Modifier.padding(top = 4.dp), maxItemsInEachRow = 4) {
+            FlowRow(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_4)), maxItemsInEachRow = 4) {
                 key(delayTimes) {
                     dLog { "FlowRow>>>settings.packageName:${settings.packageName}" }
                     dLog { ">FlowRow>>55555>delayTimes:${delayTimes}" }
@@ -186,21 +188,21 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(
-                                    bottom = if (30 - index > 4) 16.dp else 0.dp,
-                                    start = 8.dp,
-                                    end = 8.dp
+                                    bottom = if (30 - index > 4) dimensionResource(id = R.dimen.dp_16) else 0.dp,
+                                    start = dimensionResource(id = R.dimen.dp_8),
+                                    end = dimensionResource(id = R.dimen.dp_8)
                                 )
                                 .border(
-                                    1.dp,
+                                    dimensionResource(id = R.dimen.dp_1),
                                     borderColor,
-                                    RoundedCornerShape(8.dp)
+                                    RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
                                 )
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
                                 .background(shape = RectangleShape, color = backgroundColor)
                                 .clickable {
                                     saveDelayTimesClick(index)
                                 }
-                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                                .padding(start = dimensionResource(id = R.dimen.dp_16), top = dimensionResource(id = R.dimen.dp_8), end = dimensionResource(id = R.dimen.dp_16), bottom = dimensionResource(id = R.dimen.dp_8))
                                 .weight(1f)
                         )
                     }
@@ -208,7 +210,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 }
             }
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -221,17 +223,17 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.double_click_like),
-                fontSize = 20.sp,
+                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(Modifier.size(4.dp))
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
             Checkbox(
                 doubleSaver.value,
                 onCheckedChange = {
                     saveDoubleClick(it)
                 })
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -244,17 +246,17 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.skip_ad_or_live),
-                fontSize = 20.sp,
+                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(Modifier.size(4.dp))
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
             Checkbox(
                 skipAdOrLive.value,
                 onCheckedChange = {
                     saveSkipAdOrLiveClick(it)
                 })
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -267,17 +269,17 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.brightness_min),
-                fontSize = 20.sp,
+                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(Modifier.size(4.dp))
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
             Checkbox(
                 isBrightnessMin.value,
                 onCheckedChange = {
                     saveBrightnessMinClick(it)
                 })
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -290,17 +292,17 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.sound_mute),
-                fontSize = 20.sp,
+                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(Modifier.size(4.dp))
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
             Checkbox(
                 isSoundMute.value,
                 onCheckedChange = {
                     saveSoundMute(it)
                 })
         }
-        Spacer(Modifier.size(16.dp))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -313,10 +315,10 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.random_reverse),
-                fontSize = 20.sp,
+                fontSize = dimensionSpResource(id = R.dimen.sp_20),
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(Modifier.size(4.dp))
+            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
             Checkbox(
                 isRandomReverse.value,
                 onCheckedChange = {
