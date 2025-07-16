@@ -6,6 +6,7 @@ import android.graphics.Path
 import android.util.DisplayMetrics
 import android.view.accessibility.AccessibilityNodeInfo
 import com.peihua.touchmonitor.ui.Settings
+import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.screenHeight
@@ -59,7 +60,6 @@ class AutomaticallyWatchShortVideosWorker(
     private var oldTime: Int
     private var maxTime: Int
 
-
     init {
         if (mDelayTimes.isEmpty()) {
             mDelayTimes.addAll(times.toList())
@@ -88,11 +88,13 @@ class AutomaticallyWatchShortVideosWorker(
     }
 
     fun onStart() {
+        service.changeSystemSettings(settings.isBrightnessMin)
         isProcesserRunning = true
         run()
     }
 
     fun onStop() {
+        service.changeSystemSettings(true)
         isProcesserRunning = false
         cancel()
     }

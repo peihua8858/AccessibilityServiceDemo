@@ -44,6 +44,7 @@ import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
+import com.peihua.touchmonitor.ui.theme.AppColor
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
@@ -85,14 +86,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_home),
-                        tint = if (selectItem.intValue == 0) colorScheme.onSurface else Color.Black,
+                        tint = if (selectItem.intValue == 0) colorScheme.onSurface else AppColor.color_747878,
                         contentDescription = stringResource(id = R.string.text_home)
                     )
                     Text(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         text = stringResource(id = R.string.text_home),
                         fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 0) colorScheme.onSurface else Color.Black,
+                        color = if (selectItem.intValue == 0) colorScheme.onSurface else AppColor.color_747878,
                     )
                 }
                 Column(
@@ -120,14 +121,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_function_24),
-                        tint = if (selectItem.intValue == 1) colorScheme.onSurface else Color.Black,
+                        tint = if (selectItem.intValue == 1) colorScheme.onSurface else AppColor.color_747878,
                         contentDescription = stringResource(id = R.string.text_function)
                     )
                     Text(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         text = stringResource(id = R.string.text_function),
                         fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 1) colorScheme.onSurface else Color.Black,
+                        color = if (selectItem.intValue == 1) colorScheme.onSurface else AppColor.color_747878,
                     )
                 }
                 Column(
@@ -155,14 +156,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_star_gray),
-                        tint = if (selectItem.intValue == 2) colorScheme.onSurface else Color.Black,
+                        tint = if (selectItem.intValue == 2) colorScheme.onSurface else AppColor.color_747878,
                         contentDescription = stringResource(id = R.string.text_collect)
                     )
                     Text(
                         text = stringResource(id = R.string.text_collect),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 2) colorScheme.onSurface else Color.Black,
+                        color = if (selectItem.intValue == 2) colorScheme.onSurface else AppColor.color_747878,
                     )
                 }
                 Column(
@@ -190,14 +191,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             .size(dimensionResource(id = R.dimen.dp_24))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_me_gray),
-                        tint = if (selectItem.intValue == 3) colorScheme.onSurface else Color.Black,
+                        tint = if (selectItem.intValue == 3) colorScheme.onSurface else AppColor.color_747878,
                         contentDescription = stringResource(id = R.string.text_account)
                     )
                     Text(
                         text = stringResource(id = R.string.text_account),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 3) colorScheme.onSurface else Color.Black,
+                        color = if (selectItem.intValue == 3) colorScheme.onSurface else AppColor.color_747878,
                     )
                 }
             }

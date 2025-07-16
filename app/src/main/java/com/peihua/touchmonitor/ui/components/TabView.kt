@@ -28,7 +28,7 @@ fun <T> TabView(
     val colorScheme= MaterialTheme.colorScheme
     Tab(
         modifier = modifier
-            .heightIn(min = 48.dp)
+            .heightIn(min = dimensionResource(id = R.dimen.dp_48))
             .background(Color.Transparent),
         selected = isSelected,
         selectedContentColor = colorScheme.primary,
@@ -38,7 +38,6 @@ fun <T> TabView(
         }) {
         ScaleText(
             item.toString(),
-            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .wrapContentWidth(Alignment.CenterHorizontally)

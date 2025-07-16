@@ -36,6 +36,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         // 处理中断
         isServiceRunning = false
         isProcesserRunning = false
+        mProcessRunner?.onStop()
         changeSystemSettings(true)
         cancel()
     }
@@ -45,6 +46,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         isProcesserRunning = false
         super.onDestroy()
         changeSystemSettings(true)
+        mProcessRunner?.onStop()
         cancel()
     }
 
@@ -55,7 +57,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
     private var backupBrightnessMode =
         android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
 
-    private fun changeSystemSettings(isRest: Boolean) {
+    internal fun changeSystemSettings(isRest: Boolean) {
         if (isRest) {
             changeBrightness(false)
             deviceLocks.release()
@@ -89,7 +91,6 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         dLog { "Service start>>>> this.isProcesserRunning:${this.isProcesserRunning},isProcesserRunning:$isProcesserRunning" }
         if (this.isProcesserRunning != isProcesserRunning) {
             this.isProcesserRunning = isProcesserRunning
-            changeSystemSettings(!isProcesserRunning)
             if (isProcesserRunning) {
                 mProcessRunner = AutomaticallyWatchShortVideosWorker(this, settings.value)
                 mProcessRunner?.onStart()

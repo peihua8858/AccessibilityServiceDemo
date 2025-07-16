@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.main
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,18 +41,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val content = StringBuilder()
-    content.append("screenWidthDp:${configuration.screenWidthDp},")
-        .append("screenHeightDp:${configuration.screenHeightDp}")
+    configuration.orientation
+    configuration.screenLayout
+    content.append("屏幕宽度（单位：dp）：${configuration.screenWidthDp},")
         .append("\n")
-        .append("smallestScreenWidthDp:${configuration.smallestScreenWidthDp}")
+        .append("屏幕高度（单位：dp）：${configuration.screenHeightDp}")
         .append("\n")
-        .append("screenLayout:${configuration.screenLayout}")
-        .append(",")
-        .append("densityDpi:${configuration.densityDpi}")
+        .append("屏幕的总体方向：${if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) "横向" else "纵向"}")
         .append("\n")
-        .append("density:${density.density}")
-        .append(",")
-        .append("fontScale:${density.fontScale}")
+        .append("最小屏幕宽度（单位：dp）：${configuration.smallestScreenWidthDp}")
+        .append("\n")
+        .append("像素密度DPI：${configuration.densityDpi}")
+        .append("\n")
+        .append("像素密度：${density.density}")
+        .append("\n")
+        .append("字体缩放系数：${density.fontScale}")
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())

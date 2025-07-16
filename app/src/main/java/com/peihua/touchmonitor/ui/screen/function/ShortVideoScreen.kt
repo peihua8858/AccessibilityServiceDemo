@@ -155,8 +155,6 @@ private fun ShortVideoScreenContent(
     val selectedModel = models.find { it.isSelected } ?: models[0]
     val selectedOption = remember { mutableStateOf(selectedModel) }
     val scope = rememberCoroutineScope()
-    val textStyle =LocalTextStyle.current
-    dLog { "textStyle:${textStyle.fontSize},${textStyle.fontWeight}" }
     Column(
         modifier = modifier
             .fillMaxSize()
