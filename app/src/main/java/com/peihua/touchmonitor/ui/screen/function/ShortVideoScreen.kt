@@ -277,6 +277,7 @@ private fun ShortVideoScreenContent(
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .weight(1f),
+                            style = MaterialTheme.typography.titleMedium,
                             text = stringResource(R.string.text_settings),
                         )
                     }
