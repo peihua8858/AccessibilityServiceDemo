@@ -29,6 +29,7 @@ import com.peihua.touchmonitor.ui.components.Card
 import com.peihua.touchmonitor.ui.components.CardViewItem
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
+import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -82,6 +83,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                         text = stringResource(id = R.string.text_auto_scroll)
                     )
                 })
@@ -112,6 +114,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                         text = stringResource(id = R.string.text_images)
                     )
                 })
@@ -142,6 +145,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                         text = stringResource(id = R.string.text_audio)
                     )
                 })
@@ -173,6 +177,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                         text = stringResource(id = R.string.text_videos)
                     )
                 })
@@ -203,6 +208,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
                         text = stringResource(id = R.string.text_documents)
                     )
                 })
@@ -409,7 +415,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
             ) { }
         }
-        Text(text = content.toString())
+        Text(text = content.toString(),
+            fontSize = dimensionSpResource(id = R.dimen.sp_20),)
     }
 
 }

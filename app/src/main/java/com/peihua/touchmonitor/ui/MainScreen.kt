@@ -45,6 +45,7 @@ import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
+import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             AppTopBar(title = { stringResource(id = R.string.app_name) }, navigationIcon = {})
         },
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_64))) {
+            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_96))) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -81,7 +82,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
+                            .size(dimensionResource(id = R.dimen.dp_48))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_home),
                         tint = if (selectItem.intValue == 0) colorScheme.onSurface else Color.Black,
@@ -90,6 +91,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     Text(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         text = stringResource(id = R.string.text_home),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_24),
                         color = if (selectItem.intValue == 0) colorScheme.onSurface else Color.Black,
                     )
                 }
@@ -115,7 +117,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
+                            .size(dimensionResource(id = R.dimen.dp_48))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_function_24),
                         tint = if (selectItem.intValue == 1) colorScheme.onSurface else Color.Black,
@@ -124,6 +126,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     Text(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         text = stringResource(id = R.string.text_function),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_24),
                         color = if (selectItem.intValue == 1) colorScheme.onSurface else Color.Black,
                     )
                 }
@@ -149,7 +152,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
+                            .size(dimensionResource(id = R.dimen.dp_48))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_star_gray),
                         tint = if (selectItem.intValue == 2) colorScheme.onSurface else Color.Black,
@@ -158,6 +161,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     Text(
                         text = stringResource(id = R.string.text_collect),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_24),
                         color = if (selectItem.intValue == 2) colorScheme.onSurface else Color.Black,
                     )
                 }
@@ -183,7 +187,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
+                            .size(dimensionResource(id = R.dimen.dp_48))
                             .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.ic_me_gray),
                         tint = if (selectItem.intValue == 3) colorScheme.onSurface else Color.Black,
@@ -192,6 +196,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     Text(
                         text = stringResource(id = R.string.text_account),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_24),
                         color = if (selectItem.intValue == 3) colorScheme.onSurface else Color.Black,
                     )
                 }
