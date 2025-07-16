@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -60,8 +62,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         navigateTo(AppRouter.AutoScroller.route)
@@ -91,8 +93,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -122,8 +124,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -153,9 +155,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        bottom = dimensionResource(id = R.dimen.dp_32),
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -185,8 +186,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -376,7 +377,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        bottom = dimensionResource(id = R.dimen.dp_16),
                         start = dimensionResource(id = R.dimen.dp_8),
                         end = dimensionResource(id = R.dimen.dp_8)
                     )
@@ -421,6 +421,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
             ) { }
         }
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
         Text(
             text = content.toString(),
             fontSize = dimensionSpResource(id = R.dimen.sp_12),
