@@ -10,16 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
@@ -31,8 +34,27 @@ import com.peihua.touchmonitor.utils.showToast
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    val content = StringBuilder()
+    content.append("screenWidthDp:${configuration.screenWidthDp},")
+        .append("screenHeightDp:${configuration.screenHeightDp}")
+        .append("\n")
+        .append("smallestScreenWidthDp:${configuration.smallestScreenWidthDp}")
+        .append("\n")
+        .append("screenLayout:${configuration.screenLayout}")
+        .append(",")
+        .append("densityDpi:${configuration.densityDpi}")
+        .append("\n")
+        .append("density:${density.density}")
+        .append(",")
+        .append("fontScale:${density.fontScale}")
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(dimensionResource(id = R.dimen.dp_16))
+    ) {
+        Row(modifier = Modifier) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
@@ -370,15 +392,24 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         text = stringResource(id = R.string.text_app_manager)
                     )
                 })
-            Box( Modifier
-                .weight(1f)) {  }
-            Box( Modifier
-                .weight(1f)) {  }
-            Box( Modifier
-                .weight(1f)) {  }
-            Box( Modifier
-                .weight(1f)) {  }
+            Box(
+                Modifier
+                    .weight(1f)
+            ) { }
+            Box(
+                Modifier
+                    .weight(1f)
+            ) { }
+            Box(
+                Modifier
+                    .weight(1f)
+            ) { }
+            Box(
+                Modifier
+                    .weight(1f)
+            ) { }
         }
-
+        Text(text = content.toString())
     }
+
 }
