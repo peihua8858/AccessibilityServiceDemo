@@ -36,7 +36,7 @@ fun ExtendedListTile(
     Column(
         modifier = modifier
             .border(
-                dimensionResource(id = R.dimen.dp_1),
+                dimensionResource(id = R.dimen.dp_0_5),
                 MaterialTheme.colorScheme.primary,
                 RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
             )
