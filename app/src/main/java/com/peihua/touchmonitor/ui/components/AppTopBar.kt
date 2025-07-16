@@ -52,7 +52,7 @@ fun AppTopBar(
                     modifier = Modifier
                         .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
                         .align(Alignment.Center),
-                    fontSize = dimensionSpResource(id = R.dimen.sp_36),
+                    fontSize = dimensionSpResource(id = R.dimen.sp_18),
                 )
             }
         },

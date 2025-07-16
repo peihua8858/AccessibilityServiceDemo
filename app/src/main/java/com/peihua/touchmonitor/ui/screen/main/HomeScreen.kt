@@ -72,7 +72,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -83,7 +83,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_auto_scroll)
                     )
                 })
@@ -103,7 +103,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_fdff0e66, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -114,7 +114,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_images)
                     )
                 })
@@ -134,7 +134,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -145,7 +145,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_audio)
                     )
                 })
@@ -166,7 +166,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_f63505, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -177,7 +177,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_videos)
                     )
                 })
@@ -197,7 +197,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_7b1fa2, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -208,12 +208,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_documents)
                     )
                 })
         }
-        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16))) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
@@ -230,7 +230,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_08bf54, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -241,6 +241,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_apk)
                     )
                 })
@@ -260,7 +261,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_2039c5, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -271,6 +272,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_compression)
                     )
                 })
@@ -290,7 +292,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_2979ff, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -301,6 +303,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_download)
                     )
                 })
@@ -320,7 +323,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_ffd600, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             painter = painterResource(id = R.mipmap.ic_fav_home),
@@ -331,6 +334,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_collect_folder)
                     )
                 })
@@ -351,7 +355,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_7b1fa2, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -362,11 +366,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_search)
                     )
                 })
         }
-        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_32))) {
+        Row(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16))) {
             CardViewItem(
                 modifier = Modifier
                     .weight(1f)
@@ -384,7 +389,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .wrapContentHeight()
                                 .wrapContentWidth()
-                                .size(dimensionResource(id = R.dimen.dp_96))
+                                .size(dimensionResource(id = R.dimen.dp_48))
                                 .background(AppColor.color_e30b5a, shape = RectangleShape)
                                 .padding(dimensionResource(id = R.dimen.dp_8)),
                             tint = Color.White,
@@ -395,6 +400,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }, title = {
                     Text(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
                         text = stringResource(id = R.string.text_app_manager)
                     )
                 })
@@ -415,8 +421,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
             ) { }
         }
-        Text(text = content.toString(),
-            fontSize = dimensionSpResource(id = R.dimen.sp_20),)
+        Text(
+            text = content.toString(),
+            fontSize = dimensionSpResource(id = R.dimen.sp_12),
+        )
     }
 
 }
