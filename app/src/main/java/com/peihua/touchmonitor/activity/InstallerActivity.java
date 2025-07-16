@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor;
+package com.peihua.touchmonitor.activity;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-
-import kotlin.uuid.Uuid;
 
 public class InstallerActivity extends ComponentActivity {
 
@@ -591,14 +589,14 @@ public class InstallerActivity extends ComponentActivity {
     }
 
     public static java.lang.String getExternalStoragePath(android.content.Context context, boolean r10) {
-        android.os.storage.StorageManager storageManager = (android.os.storage.StorageManager) context.getSystemService("storage");
+        android.os.storage.StorageManager storageManager = (android.os.storage.StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         try {
             java.lang.Class clazz = java.lang.Class.forName("android.os.storage.StorageVolume");
             java.lang.Class manageClass = storageManager.getClass();
-            java.lang.reflect.Method r2 = manageClass.getMethod("getVolumeList", null);
-            java.lang.reflect.Method r3 = clazz.getMethod("getPath", null);
-            java.lang.reflect.Method r1 = clazz.getMethod("isRemovable", null);
-            java.lang.Object r9 = r2.invoke(storageManager, null);
+            java.lang.reflect.Method r2 = manageClass.getMethod("getVolumeList");
+            java.lang.reflect.Method r3 = clazz.getMethod("getPath");
+            java.lang.reflect.Method r1 = clazz.getMethod("isRemovable");
+            java.lang.Object r9 = r2.invoke(storageManager);
             int length = java.lang.reflect.Array.getLength(r9);
             if (length <= 0) {
                 return null;

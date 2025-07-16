@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
@@ -22,11 +21,8 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.savedstate.read
 import com.peihua.touchmonitor.ui.applications.AppScreen
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.function.ShortVideoScreen
@@ -147,11 +143,11 @@ fun NavHostController.popBackStack(
 }
 
 @Composable
-fun ServiceApp(modifier: Modifier = Modifier) {
+fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter.Home) {
     val navController = rememberNavController()
     appRouter = navController
     AppTheme { model, colorScheme ->
-        AppNavHost(navController = navController, modifier = modifier)
+        AppNavHost(navController = navController, modifier = modifier, defaultPage)
     }
 }
 
@@ -162,9 +158,13 @@ fun ServiceApp(modifier: Modifier = Modifier) {
  * @param modifier 修饰符
  */
 @Composable
-fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
+fun AppNavHost(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    defaultPage: AppRouter,
+) {
     NavHost(
-        navController = navController, startDestination = AppRouter.Home.route,
+        navController = navController, startDestination = defaultPage.route,
         enterTransition = {
             slideIn(tween(400, easing = LinearOutSlowInEasing)) { fullSize ->
                 IntOffset(fullSize.width, 0)

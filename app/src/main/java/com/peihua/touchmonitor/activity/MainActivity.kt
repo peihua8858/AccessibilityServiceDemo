@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor
+package com.peihua.touchmonitor.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

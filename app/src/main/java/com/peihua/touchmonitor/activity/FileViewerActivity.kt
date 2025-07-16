@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor
+package com.peihua.touchmonitor.activity
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver

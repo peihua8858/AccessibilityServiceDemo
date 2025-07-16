@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
@@ -302,7 +303,9 @@ fun Theme(
         colorScheme = colorScheme,
         typography = Typography(1f),
         content = {
-            content(if (darkTheme) ThemeMode.Dark else ThemeMode.Light, colorScheme)
+            ProvideTextStyle(value = DefaultTextStyle){
+                content(if (darkTheme) ThemeMode.Dark else ThemeMode.Light, colorScheme)
+            }
         }
     )
 

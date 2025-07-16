@@ -40,8 +40,7 @@ fun AppTopBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val typography = MaterialTheme.typography
-    val colors: TopAppBarColors =
-        TopAppBarDefaults.topAppBarColors().copy(containerColor = Color.White)
+    val colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors()
     TopAppBar(
         title = {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -74,7 +73,7 @@ fun NavigationIcon(
 ) {
     Icon(
         modifier = Modifier
-            .size(dimensionResource(id = R.dimen.dp_32))
+            .size(dimensionResource(id = R.dimen.dp_24))
             .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
             .clickable { navigateUp() },
         imageVector = imageVector, contentDescription = ""

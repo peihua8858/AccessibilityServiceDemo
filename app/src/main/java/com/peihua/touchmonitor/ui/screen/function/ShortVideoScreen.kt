@@ -12,14 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -33,15 +32,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.activity.AutoScrollScreenActivity
+import com.peihua.touchmonitor.activity.HomeScreenActivity
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.AppProvider
 import com.peihua.touchmonitor.ui.AppRouter
@@ -54,10 +54,9 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.stackEntry
+import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.dimensionSpResource
-import com.peihua.touchmonitor.utils.finish
 import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -71,6 +70,7 @@ import kotlin.text.isNullOrEmpty
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = viewModel()) {
+    val context = LocalContext.current
     val result = viewModel.settingsState.value
     val bundle = stackEntry?.savedStateHandle
     val selectPackage = bundle?.get<String>("packageName")
@@ -87,16 +87,30 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
     Column(
         modifier
             .fillMaxSize()
-            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(
+                start = dimensionResource(id = R.dimen.dp_16),
+                end = dimensionResource(id = R.dimen.dp_16)
+            )
+
     ) {
         AppTopBar(title = { stringResource(R.string.settings) }, navigateUp = {
-            popBackStack()
+            if (context is AutoScrollScreenActivity) {
+                context.startActivity(
+                    Intent(context, HomeScreenActivity::class.java)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+                context.finish()
+            } else {
+                popBackStack()
+            }
         }, actions = {
             IconButton(onClick = {
                 navigateTo(AppRouter.LogScreen.route)
             }) {
                 Icon(
-                    imageVector = Icons.Default.Info,
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
+                    painter = painterResource(id = R.drawable.ic_logcat),
                     contentDescription = stringResource(R.string.text_log)
                 )
             }
@@ -107,7 +121,7 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
                     return
                 }
                 dLog { "MainScreen>>>AllSettings>>>>provider<><><>" }
-                MainScreenContent(Modifier.weight(1f), result.data) { item, isSaveToHistory ->
+                ShortVideoScreenContent(Modifier.weight(1f), result.data) { item, isSaveToHistory ->
                     viewModel.saveToDb(item, isSaveToHistory)
                 }
             }
@@ -130,7 +144,7 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreenContent(
+private fun ShortVideoScreenContent(
     modifier: Modifier,
     models: List<AppModel>,
     saveDb: (AppModel, Boolean) -> Unit,
@@ -141,8 +155,13 @@ private fun MainScreenContent(
     val selectedModel = models.find { it.isSelected } ?: models[0]
     val selectedOption = remember { mutableStateOf(selectedModel) }
     val scope = rememberCoroutineScope()
-    dLog { "MainScreen>>>AllSettings>>>>000《》《》《》《》" }
-    Column(modifier = modifier.fillMaxSize()) {
+    val textStyle =LocalTextStyle.current
+    dLog { "textStyle:${textStyle.fontSize},${textStyle.fontWeight}" }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = dimensionResource(id = R.dimen.dp_16))
+    ) {
         Column(modifier = Modifier.weight(1f)) {
             //选择的应用
             ExposedDropdownMenuBox(
@@ -156,7 +175,6 @@ private fun MainScreenContent(
                     },
                     label = { ScaleText(stringResource(R.string.app_provider)) },
                     readOnly = true,
-                    textStyle = MaterialTheme.typography.labelMedium,
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -172,7 +190,14 @@ private fun MainScreenContent(
                                 .fillMaxSize()
                                 .background(if (selected) colorScheme.secondaryContainer else Color.Transparent),
                             text = {
-                                ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+                                ConstraintLayout(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top = dimensionResource(id = R.dimen.dp_4),
+                                            bottom = dimensionResource(id = R.dimen.dp_4)
+                                        )
+                                ) {
                                     val drawable = item.icon
                                     val (icon, title, desc) = createRefs()
                                     Image(
@@ -186,7 +211,7 @@ private fun MainScreenContent(
                                                 bottom.linkTo(parent.bottom)
                                             }
                                             .size(dimensionResource(id = R.dimen.dp_24))
-                                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
                                     )
 
                                     ScaleText(
@@ -198,9 +223,8 @@ private fun MainScreenContent(
                                             }
                                             .padding(start = dimensionResource(id = R.dimen.dp_8)),
                                         text = item.displayName,
-                                        fontSize = dimensionSpResource(id = R.dimen.sp_20),
+                                        style = DefaultTextStyle,
                                         color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-                                        style = MaterialTheme.typography.labelMedium
                                     )
                                     if (item.isHistory) {
                                         ScaleText(
@@ -210,9 +234,8 @@ private fun MainScreenContent(
                                                 bottom.linkTo(parent.bottom)
                                             },
                                             text = stringResource(R.string.use_history),
-                                            fontSize = dimensionSpResource(id = R.dimen.sp_16),
+                                            style = DefaultTextStyle,
                                             color = colorScheme.error,
-                                            style = MaterialTheme.typography.labelMedium
                                         )
                                     }
                                 }
@@ -243,7 +266,7 @@ private fun MainScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .padding(dimensionResource(id = R.dimen.dp_16))
+                            .padding(dimensionResource(id = R.dimen.dp_8))
 
                     ) {
                         // 旋转角度，up 旋转 180 度，down 旋转 0 度
@@ -257,14 +280,15 @@ private fun MainScreenContent(
                                 .align(Alignment.CenterVertically)
                                 .weight(1f),
                             text = stringResource(R.string.text_settings),
-                            fontSize = dimensionSpResource(id = R.dimen.sp_16),
-                            style = MaterialTheme.typography.labelMedium
                         )
                     }
 
                 }) {
                 dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
-                selectedOption.value.provider.contentView(Modifier.padding(dimensionResource(id = R.dimen.dp_16)), selectedOption.value) {
+                selectedOption.value.provider.contentView(
+                    Modifier.padding(dimensionResource(id = R.dimen.dp_8)),
+                    selectedOption.value
+                ) {
                     saveDb(it, false)
                 }
             }
