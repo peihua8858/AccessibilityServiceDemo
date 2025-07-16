@@ -3,6 +3,8 @@ package com.peihua.touchmonitor
 import android.accessibilityservice.AccessibilityService.GestureResultCallback
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
+import android.util.DisplayMetrics
+import android.view.accessibility.AccessibilityNodeInfo
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
@@ -19,7 +21,7 @@ import kotlinx.coroutines.launch
  */
 class AutomaticallyWatchShortVideosWorker(
     private val service: AppAccessibilityService,
-    private var settings: Settings
+    private var settings: Settings,
 ) :
     Runnable, CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
@@ -96,8 +98,6 @@ class AutomaticallyWatchShortVideosWorker(
     }
 
     private suspend fun extGesture(settings: Settings?) {
-        val width = service.screenWidth
-        val height = service.screenHeight
         dLog { "withLock>>>>settings:${settings?.packageName}" }
         val rootNode = service.rootInActiveWindow
         dLog { "withLock>>>>rootNode:${rootNode}" }
@@ -116,7 +116,7 @@ class AutomaticallyWatchShortVideosWorker(
         val isSwipe = if (isRandomReverse) isUpSwipe.random() else 1
         dLog { ">>>>>isRandomReverse:$isRandomReverse,isSwipe:$isSwipe" }
         dLog { "withLock>>>>awaitPerformSwipeGesture await" }
-        val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, isSwipe == 1)
+        val scrollResult = awaitPerformSwipeGesture(isSwipe == 1)
         if (settings?.isSkipAdOrLive == true && scrollResult) {
             waiteTimeMillis(1_000)
             //跳过广告或直播
@@ -127,7 +127,7 @@ class AutomaticallyWatchShortVideosWorker(
                 dLog { "withLock>>>>liveNode:${liveNode}" }
                 if (!liveNode.isNullOrEmpty() || !adNode.isNullOrEmpty()) {
                     dLog { "withLock>>>>awaitPerformSwipeGesture await" }
-                    val scrollResult = awaitPerformSwipeGesture(width / 2f, height / 2f, true)
+                    val scrollResult = awaitPerformSwipeGesture(true)
                     dLog { "withLock>>>>awaitPerformSwipeGesture await end scrollResult:$scrollResult" }
                     waiteTimeMillis(2_000)
                     return
@@ -139,7 +139,7 @@ class AutomaticallyWatchShortVideosWorker(
         if (isDoubleSaver && isDownSwipe.random() == 1) {
             waiteTime() // 每2秒执行一次
             dLog { "withLock>>>>performDoubleClickGesture await" }
-            val doubleClick = performDoubleClickGesture(width / 2f, height / 2f)
+            val doubleClick = performDoubleClickGesture()
             dLog { "withLock>>>>performDoubleClickGesture await end doubleClick:$doubleClick" }
         }
         waiteTime()
@@ -166,29 +166,38 @@ class AutomaticallyWatchShortVideosWorker(
 
     // For background processing
     @Suppress("SuspendFunctionOnCoroutineScope")
-    private suspend fun CoroutineScope.awaitPerformSwipeGesture(
-        centerX: Float,
-        centerY: Float,
-        isUpSwipe: Boolean = true,
-    ): Boolean {
+    private suspend fun CoroutineScope.awaitPerformSwipeGesture(isUpSwipe: Boolean = true): Boolean {
+        val width = service.screenWidth
+        val height = service.screenHeight
+        val centerX: Float = width / 2f
+        val centerY: Float = height / 2f
+        // 根据屏幕的密度调整滑动手势的参数
+        val dpi = service.resources.displayMetrics.densityDpi
+        val swipeFactor = if (dpi in DisplayMetrics.DENSITY_LOW..DisplayMetrics.DENSITY_HIGH) {
+            1.2f
+        } else if (dpi in DisplayMetrics.DENSITY_XHIGH..DisplayMetrics.DENSITY_XXHIGH) {
+            0.9f
+        } else if (dpi > DisplayMetrics.DENSITY_XXHIGH) {
+            0.8f
+        } else {
+            1.0f
+        }.coerceIn(0.5f, 1.5f) // 确保最小值和最大值
+        dLog { "screenWidth:${width},screenHeight:${height},dpi:$dpi,swipeFactor:$swipeFactor,isUpSwipe:$isUpSwipe,centerX:$centerX,centerY:$centerY" }
         val deferred = CompletableDeferred<Boolean>()
         try {
             dLog { "center position:($centerX,$centerY)" }
-            val path = Path();
-            path.moveTo(
-                centerX.toFloat(),
-                ((centerY * if (isUpSwipe) 1.5 else 0.5).toFloat())
-            ); //起点坐标。
-            path.lineTo(
-                centerX.toFloat(),
-                ((centerY * if (isUpSwipe) 0.5 else 1.5).toFloat())
-            ); //终点坐标。
-            val builder = GestureDescription.Builder();
-
+            val path = Path()
+            //起点坐标。
+            val startY = ((centerY * swipeFactor * if (isUpSwipe) 1.6 else 0.4).toFloat())
+            path.moveTo(centerX,startY )
+            //终点坐标。[640,564][640,187.5] = [640,376.5]
+            val endY= ((centerY * swipeFactor * if (isUpSwipe) 0.4 else 1.6).toFloat())
+            path.lineTo(centerX, endY)
+            dLog { "dispatchGesture,startX:${centerX},startY:$startY,endX:$centerX,endY:$endY, path:$path" }
+            val builder = GestureDescription.Builder()
             val gestureDescription = builder.addStroke(
-                GestureDescription.StrokeDescription(path, 0, 800)
+                GestureDescription.StrokeDescription(path, 0, (1000 * swipeFactor).toLong())
             ).build()
-            var result = false;
             // 执行手势并尝试处理结果
             val gestureCallback = object : GestureResultCallback() {
                 override fun onCompleted(gestureDescription: GestureDescription?) {
@@ -196,28 +205,28 @@ class AutomaticallyWatchShortVideosWorker(
                     // 滑动成功
                     dLog { "dispatchGesture ScrollUp onCompleted." }
                     path.close()
-                    deferred.complete(result)
+                    deferred.complete(true)
                 }
 
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     super.onCancelled(gestureDescription)
                     dLog { "dispatchGesture ScrollUp cancel." }
-                    deferred.complete(result)
+                    deferred.complete(false)
                     // 手势取消或失败，检查原因
-
                 }
             }
-            result = service.dispatchGesture(gestureDescription, gestureCallback, null);
+            service.dispatchGesture(gestureDescription, gestureCallback, null);
         } catch (throwable: Throwable) {
             deferred.completeExceptionally(throwable)
         }
         return deferred.await()
     }
 
-    private suspend fun CoroutineScope.performDoubleClickGesture(
-        centerX: Float,
-        centerY: Float,
-    ): Boolean {
+    private suspend fun CoroutineScope.performDoubleClickGesture(): Boolean {
+        val width = service.screenWidth
+        val height = service.screenHeight
+        val centerX: Float = width / 2f
+        val centerY: Float = height / 2f
         val deferred = CompletableDeferred<Boolean>()
         try {// 第一次点击路径
             val path1 = Path().apply {
@@ -240,18 +249,17 @@ class AutomaticallyWatchShortVideosWorker(
                 .addStroke(strokeDescription2)
 
             val gestureDescription = gestureBuilder.build()
-            var result = false
-            result = service.dispatchGesture(gestureDescription, object : GestureResultCallback() {
+            service.dispatchGesture(gestureDescription, object : GestureResultCallback() {
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     super.onCompleted(gestureDescription)
                     dLog { "Double-click gesture completed successfully" }
-                    deferred.complete(result)
+                    deferred.complete(true)
                 }
 
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     super.onCancelled(gestureDescription)
                     dLog { "Double-click gesture cancelled" }
-                    deferred.complete(result)
+                    deferred.complete(false)
                 }
             }, null)
         } catch (e: Throwable) {
