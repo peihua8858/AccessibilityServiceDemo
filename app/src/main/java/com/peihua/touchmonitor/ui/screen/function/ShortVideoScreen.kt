@@ -268,7 +268,7 @@ private fun ShortVideoScreenContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = dimensionResource(id = R.dimen.dp_36))
+                            .heightIn(min = dimensionResource(id = R.dimen.dp_56))
                             .background(MaterialTheme.colorScheme.secondaryContainer)
                             .padding(start = dimensionResource(id = R.dimen.dp_8), end = dimensionResource(id = R.dimen.dp_8)),
                         verticalAlignment = Alignment.CenterVertically

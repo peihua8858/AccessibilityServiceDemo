@@ -217,7 +217,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 }
             }
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -238,7 +238,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     saveDoubleClick(it)
                 })
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -259,7 +259,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     saveSkipAdOrLiveClick(it)
                 })
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -280,7 +280,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     saveBrightnessMinClick(it)
                 })
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -301,7 +301,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     saveSoundMute(it)
                 })
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
