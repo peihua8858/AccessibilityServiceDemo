@@ -218,8 +218,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -249,8 +249,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -280,8 +280,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -311,8 +311,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -343,8 +343,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
@@ -376,9 +376,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        bottom = dimensionResource(id = R.dimen.dp_32),
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
+                        bottom = dimensionResource(id = R.dimen.dp_16),
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
                         showToast(R.string.text_function_developing)
