@@ -107,8 +107,8 @@ val DefaultTextStyle: TextStyle
     get() {
         return LocalTextStyle.current.copy(
             fontWeight = FontWeight.Normal,
-            fontSize = dimensionSpResource(id = R.dimen.sp_12),
-            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_5)
+            fontSize = dimensionSpResource(id = R.dimen.sp_14),
+            lineHeight = dimensionSpResource(id = R.dimen.sp_20),
+            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_1)
         )
     }

@@ -42,7 +42,7 @@ fun ScaleText(
 ) {
     val textStyle =LocalTextStyle.current
     dLog { "textStyle:${textStyle.fontSize},${textStyle.fontWeight}" }
-    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_12)
+    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
     val textScale = 1
     val fontSize = when {
         fontSize.isUnspecified -> if (style.fontSize.isUnspecified) defaultFontSize else style.fontSize
