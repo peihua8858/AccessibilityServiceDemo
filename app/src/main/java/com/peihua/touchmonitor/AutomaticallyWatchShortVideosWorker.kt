@@ -88,13 +88,11 @@ class AutomaticallyWatchShortVideosWorker(
     }
 
     fun onStart() {
-        service.changeSystemSettings(settings.isBrightnessMin)
         isProcesserRunning = true
         run()
     }
 
     fun onStop() {
-        service.changeSystemSettings(true)
         isProcesserRunning = false
         cancel()
     }
