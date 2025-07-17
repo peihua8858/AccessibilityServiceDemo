@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui
 
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.Composable
@@ -15,12 +16,12 @@ import com.google.gson.reflect.TypeToken
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.data.DataStore
 import com.peihua.touchmonitor.model.json
-import com.peihua.touchmonitor.ui.screen.function.settings.AlipaySettings
-import com.peihua.touchmonitor.ui.screen.function.settings.AllSettings
-import com.peihua.touchmonitor.ui.screen.function.settings.DouYinHuoShanSettings
-import com.peihua.touchmonitor.ui.screen.function.settings.DouYinJiSuSettings
-import com.peihua.touchmonitor.ui.screen.function.settings.DouYinSettings
-import com.peihua.touchmonitor.ui.screen.function.settings.MeiTuanSettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.AlipaySettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.AllSettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinHuoShanSettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinJiSuSettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinSettings
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.MeiTuanSettings
 
 
 enum class AppProvider(
@@ -177,11 +178,9 @@ data class History(
     val packageName: String,
     val useCont: Int = 0,
 )
-
-//@get:Synchronized
-//val historyStore: DataStore<String, History> by lazy {
-//    DataStore(
-//        ServiceApplication.application,
-//        typeToken = object : TypeToken<MapItem<String, History>>() {},
-//    )
-//}
+ data class AppInfoModel(
+     val name: String,
+     var packageName: String,
+     val icon: Drawable?,
+     val packInfo: PackageInfo?,
+ )

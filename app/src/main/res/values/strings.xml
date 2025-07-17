@@ -57,5 +57,8 @@
     <string name="text_auto_scroll">自动刷屏器</string>
     <string name="text_function_developing">功能开发中,敬请期待…</string>
 
+    <string name="text_system_tool">系统工具</string>
+    <string name="text_app_kit">apk 提取器</string>
+
 
 </resources>

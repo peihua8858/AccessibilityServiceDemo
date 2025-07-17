@@ -18,9 +18,24 @@ sealed class AppRouter(
      */
     data object Applications : AppRouter("applications")
 
+    /**
+     * 日志列表
+     */
     data object LogScreen : AppRouter("log")
+
+    /**
+     * 日志详情
+     */
     data object LogDetail : AppRouter("logDetail")
+
+    /**
+     * 自动刷屏器
+     */
     data object AutoScroller : AppRouter("autoScroller")
+    /**
+     * app 提取器
+     */
+    data object AppExtractorScreen : AppRouter("appExtractor")
 //    /**
 //     * 消息
 //     */

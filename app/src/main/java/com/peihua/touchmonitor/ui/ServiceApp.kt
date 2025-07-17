@@ -25,7 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
-import com.peihua.touchmonitor.ui.screen.function.ShortVideoScreen
+import com.peihua.touchmonitor.ui.screen.function.apkkit.AppExtractorScreen
+import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
 
@@ -201,6 +202,9 @@ fun AppNavHost(
         }
         composable(route = AppRouter.AutoScroller.route) {
             ShortVideoScreen(modifier)
+        }
+        composable(route = AppRouter.AppExtractorScreen.route) {
+            AppExtractorScreen(modifier)
         }
     }
 }

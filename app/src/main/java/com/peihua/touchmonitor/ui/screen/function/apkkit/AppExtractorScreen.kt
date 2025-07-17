@@ -1,6 +1,7 @@
-package com.peihua.touchmonitor.ui.applications
+package com.peihua.touchmonitor.ui.screen.function.apkkit
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.model.AppInfo
+import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
@@ -33,18 +34,19 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dimensionSpResource
-import com.peihua.touchmonitor.viewmodel.ApplicationsViewModel
+import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 
 @Composable
-fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = viewModel()) {
+fun AppExtractorScreen(modifier: Modifier = Modifier,viewModel: AppExtractorViewModel = viewModel()) {
     val result = viewModel.applications.value
     //请求数据
     val refresh = {
-        viewModel.requestData()
+        viewModel.refreshAppList()
     }
     Column(
         modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
     ) {
         AppTopBar(title = { "Touch Monitor" }, navigateUp = {
@@ -52,9 +54,7 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
         })
         when (result) {
             is ResultData.Success -> {
-                AppScreenContent(Modifier, result.data){
-                    viewModel.saveToDb(it)
-                }
+                AppListScreenContent(Modifier, result.data)
             }
 
             is ResultData.Failure -> {
@@ -71,9 +71,8 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
         }
     }
 }
-
 @Composable
-private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo>,saveToDb: (AppInfo) -> Unit) {
+private fun AppListScreenContent(modifier: Modifier = Modifier, models: List<AppInfoModel>) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape()
     val iconSize = if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
@@ -85,7 +84,6 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
     ) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
-                saveToDb(item)
                 popBackStack{
                     set("packageName", item.packageName)
 //                    putString("packageName", item.packageName)
@@ -96,7 +94,7 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
 }
 
 @Composable
-private fun AppItemView(modifier: Modifier, item: AppInfo, iconSize: Dp = dimensionResource(id = R.dimen.dp_96)) {
+private fun AppItemView(modifier: Modifier, item: AppInfoModel, iconSize: Dp = dimensionResource(id = R.dimen.dp_96)) {
     val colorScheme = MaterialTheme.colorScheme
     ConstraintLayout(modifier = modifier) {
         val drawable = item.icon
@@ -126,32 +124,32 @@ private fun AppItemView(modifier: Modifier, item: AppInfo, iconSize: Dp = dimens
                 .padding(top = dimensionResource(id = R.dimen.dp_4)),
             text = item.name,
             fontSize = dimensionSpResource(id = R.dimen.sp_20),
-            color = if (item.isHistory) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
+//            color = if (item.isHistory) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium
         )
-        val ids = if (item.isHistory) desc else title
-        if (item.isHistory) {
-            ScaleText(
-                modifier = Modifier
-                    .constrainAs(desc) {
-                        start.linkTo(title.start)
-                        top.linkTo(title.bottom)
-                        end.linkTo(title.end)
-                        horizontalChainWeight = 1f
-                    }
-                    .padding(top = dimensionResource(id = R.dimen.dp_4)),
-                text = "最近使用",
-                fontSize = dimensionSpResource(id = R.dimen.sp_16),
-                color = colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.labelMedium
-            )
-        }
+//        val ids = if (item.isHistory) desc else title
+//        if (item.isHistory) {
+//            ScaleText(
+//                modifier = Modifier
+//                    .constrainAs(desc) {
+//                        start.linkTo(title.start)
+//                        top.linkTo(title.bottom)
+//                        end.linkTo(title.end)
+//                        horizontalChainWeight = 1f
+//                    }
+//                    .padding(top = dimensionResource(id = R.dimen.dp_4)),
+//                text = "最近使用",
+//                fontSize = dimensionSpResource(id = R.dimen.sp_16),
+//                color = colorScheme.onSecondaryContainer,
+//                style = MaterialTheme.typography.labelMedium
+//            )
+//        }
         Spacer(
             Modifier
                 .size(dimensionResource(id = R.dimen.dp_20))
                 .constrainAs(line) {
                     start.linkTo(parent.start)
-                    top.linkTo(ids.bottom)
+                    top.linkTo(title.bottom)
                     end.linkTo(parent.end)
                 })
     }

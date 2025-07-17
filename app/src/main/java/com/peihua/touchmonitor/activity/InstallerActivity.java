@@ -604,8 +604,8 @@ public class InstallerActivity extends ComponentActivity {
             int index = 0;
             while (index < length) {
                 java.lang.Object r6 = java.lang.reflect.Array.get(r9, index);
-                java.lang.String r7 = (java.lang.String) r3.invoke(r6, null);
-                boolean result = (boolean) r1.invoke(r6, null);
+                java.lang.String r7 = (java.lang.String) r3.invoke(r6);
+                boolean result = (boolean) r1.invoke(r6);
                 if (r10 == result) {
                     return r7;
                 }

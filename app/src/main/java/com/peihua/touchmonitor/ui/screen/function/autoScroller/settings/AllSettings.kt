@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor.ui.screen.function.settings
+package com.peihua.touchmonitor.ui.screen.function.autoScroller.settings
 
 import android.content.Intent
 import android.provider.Settings
@@ -25,7 +25,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -41,13 +40,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.dimensionSpResource
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
