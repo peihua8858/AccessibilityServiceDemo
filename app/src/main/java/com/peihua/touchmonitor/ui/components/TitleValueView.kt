@@ -1,6 +1,8 @@
 package com.peihua.touchmonitor.ui.components
 
 
+import androidx.compose.foundation.MarqueeAnimationMode
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -11,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
-import coil3.size.Dimension
+import androidx.constraintlayout.compose.Dimension
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
@@ -51,6 +54,7 @@ fun TitleValueView(
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         end.linkTo(vValue.start)
+                        width = Dimension.wrapContent
                     }
                 }
                 .padding(
@@ -75,13 +79,17 @@ fun TitleValueView(
                         end.linkTo(parent.end)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
+                        width = Dimension.preferredWrapContent
                     }
                 }
+                .basicMarquee(animationMode = MarqueeAnimationMode.Immediately)
                 .padding(
                     start = dimensionResource(id = R.dimen.dp_8),
                     end = dimensionResource(id = R.dimen.dp_8)
                 ),
             style = valueStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Visible,
             fontSize = dimensionSpResource(id = R.dimen.sp_10),
             textAlign = TextAlign.End,
             text = value

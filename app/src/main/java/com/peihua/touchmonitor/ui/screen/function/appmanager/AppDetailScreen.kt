@@ -156,7 +156,7 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
             }
             IconText(
                 text = stringResource(id = R.string.text_app_store),
-                painter = painterResource(id = R.drawable.icon_market),
+                painter = painterResource(id = R.drawable.ic_play_store),
             ) {
                 // 从应用市场打开
             }
