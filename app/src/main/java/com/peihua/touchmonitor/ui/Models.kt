@@ -3,6 +3,8 @@ package com.peihua.touchmonitor.ui
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.text.format.Formatter
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +24,7 @@ import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinHu
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinJiSuSettings
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinSettings
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.MeiTuanSettings
+import com.peihua.touchmonitor.utils.formatToDate
 
 
 enum class AppProvider(
@@ -101,10 +104,12 @@ enum class AppProvider(
      * 西瓜视频
      */
     XiGuaShiPin(settings = Settings("com.ss.android.article.video", Orientation.Vertical, true)),
+
     /**
      * 其他应用程序
      */
     New(settings = Settings("new", Orientation.Vertical, true)),
+
     /**
      * 其他应用程序
      */
@@ -143,7 +148,7 @@ data class Settings(
     @ColumnInfo(name = "isBrightnessMin", defaultValue = "false")
     val isBrightnessMin: Boolean = false,
     @ColumnInfo(name = "isSoundMute", defaultValue = "false")
-    val isSoundMute: Boolean = false
+    val isSoundMute: Boolean = false,
 ) {
     companion object {
         val default: Settings = Settings("", Orientation.Vertical, true)
@@ -178,9 +183,39 @@ data class History(
     val packageName: String,
     val useCont: Int = 0,
 )
- data class AppInfoModel(
-     val name: String,
-     var packageName: String,
-     val icon: Drawable?,
-     val packInfo: PackageInfo?,
- )
+
+data class AppInfoModel(
+    val name: String,
+    var packageName: String,
+    val icon: Drawable?,
+    val packInfo: PackageInfo,
+    val fileSize: Long=0L,
+    val launchClass: String = "",
+    val installSource: String=""
+) {
+    val versionName: String
+        get() = packInfo.versionName?:"Unknown"
+    val versionCode: Long
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packInfo.longVersionCode
+        } else {
+            packInfo.versionCode.toLong()
+        }
+    val applicationInfo: ApplicationInfo?
+        get() = packInfo.applicationInfo
+    val firstInstallTime: String
+        get() = packInfo.firstInstallTime.formatToDate("yyyy-MM-dd HH:mm:ss")
+    val lastUpdateTime: String
+        get() = packInfo.lastUpdateTime.formatToDate("yyyy-MM-dd HH:mm:ss")
+    val isSystemApp: Boolean
+        get() = false
+    val uid: Int
+        get() = applicationInfo?.uid?:0
+    val path: String
+        get() = applicationInfo?.sourceDir?:""
+    val lowApi: String
+        get() = applicationInfo?.minSdkVersion.toString()
+    val targetApi: String
+        get() = applicationInfo?.targetSdkVersion.toString()
+
+}

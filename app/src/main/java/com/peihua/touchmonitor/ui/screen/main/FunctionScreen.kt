@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +23,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ExtendedListTile
@@ -92,7 +90,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
                         .background(shape = RectangleShape, color = backgroundColor)
                         .clickable {
-                            navigateTo(AppRouter.AppExtractorScreen.route)
+                            navigateTo(AppRouter.AppManagerScreen.route)
                         }
                         .padding(
                             start = dimensionResource(id = R.dimen.dp_16),

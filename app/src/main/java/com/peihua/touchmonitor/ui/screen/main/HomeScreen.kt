@@ -385,7 +385,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         end = dimensionResource(id = R.dimen.dp_8)
                     )
                     .clickable {
-                        showToast(R.string.text_function_developing)
+                       navigateTo(AppRouter.AppManagerScreen.route)
                     },
                 icon = {
                     Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {

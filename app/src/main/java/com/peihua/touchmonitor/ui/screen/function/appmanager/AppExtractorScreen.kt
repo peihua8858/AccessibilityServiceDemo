@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor.ui.screen.function.apkkit
+package com.peihua.touchmonitor.ui.screen.function.appmanager
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,10 +27,12 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
+import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
+import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
@@ -49,7 +52,7 @@ fun AppExtractorScreen(modifier: Modifier = Modifier,viewModel: AppExtractorView
             .background(MaterialTheme.colorScheme.background)
             .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
     ) {
-        AppTopBar(title = { "Touch Monitor" }, navigateUp = {
+        AppTopBar(title = { stringResource(id = R.string.text_app_manager) }, navigateUp = {
             popBackStack()
         })
         when (result) {
@@ -84,10 +87,7 @@ private fun AppListScreenContent(modifier: Modifier = Modifier, models: List<App
     ) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
-                popBackStack{
-                    set("packageName", item.packageName)
-//                    putString("packageName", item.packageName)
-                }
+                navigateTo(AppRouter.AppDetailScreen.route, "packageName" to item.packageName)
             }, item, iconSize)
         }
     }
@@ -95,10 +95,9 @@ private fun AppListScreenContent(modifier: Modifier = Modifier, models: List<App
 
 @Composable
 private fun AppItemView(modifier: Modifier, item: AppInfoModel, iconSize: Dp = dimensionResource(id = R.dimen.dp_96)) {
-    val colorScheme = MaterialTheme.colorScheme
     ConstraintLayout(modifier = modifier) {
         val drawable = item.icon
-        val (icon, title, desc, line) = createRefs()
+        val (icon, title, line) = createRefs()
         Image(
             if (drawable == null)
                 rememberAsyncImagePainter(R.mipmap.ic_launcher)
@@ -122,28 +121,9 @@ private fun AppItemView(modifier: Modifier, item: AppInfoModel, iconSize: Dp = d
                     horizontalChainWeight = 1f
                 }
                 .padding(top = dimensionResource(id = R.dimen.dp_4)),
-            text = item.name,
-            fontSize = dimensionSpResource(id = R.dimen.sp_20),
-//            color = if (item.isHistory) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
+            text = item.name+"(${item.versionName})",
             style = MaterialTheme.typography.labelMedium
         )
-//        val ids = if (item.isHistory) desc else title
-//        if (item.isHistory) {
-//            ScaleText(
-//                modifier = Modifier
-//                    .constrainAs(desc) {
-//                        start.linkTo(title.start)
-//                        top.linkTo(title.bottom)
-//                        end.linkTo(title.end)
-//                        horizontalChainWeight = 1f
-//                    }
-//                    .padding(top = dimensionResource(id = R.dimen.dp_4)),
-//                text = "最近使用",
-//                fontSize = dimensionSpResource(id = R.dimen.sp_16),
-//                color = colorScheme.onSecondaryContainer,
-//                style = MaterialTheme.typography.labelMedium
-//            )
-//        }
         Spacer(
             Modifier
                 .size(dimensionResource(id = R.dimen.dp_20))

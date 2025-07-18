@@ -32,16 +32,15 @@ sealed class AppRouter(
      * 自动刷屏器
      */
     data object AutoScroller : AppRouter("autoScroller")
+
     /**
-     * app 提取器
+     * 应用管理
      */
-    data object AppExtractorScreen : AppRouter("appExtractor")
-//    /**
-//     * 消息
-//     */
-//    data object LogDetail :
-//        AppRouter("logDetail?filePath={filePath}", listOf(navArgument("filePath") {
-//            type = NavType.StringType
-//            defaultValue = ""
-//        }))
+    data object AppManagerScreen : AppRouter("appManager")
+
+    /**
+     * 应用详情
+     */
+    data object AppDetailScreen :
+        AppRouter("appDetail/{packageName}", listOf(navArgument("packageName") { type = NavType.StringType }))
 }

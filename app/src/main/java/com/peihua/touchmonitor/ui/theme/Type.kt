@@ -97,10 +97,12 @@ fun Typography(scale: Float = 1f): Typography {
 val Typography.labelSmallNormal: TextStyle
     get() = labelSmall.copy(fontWeight = FontWeight.Normal)
 
-
 @get:Composable
 val Typography.labelMediumNormal: TextStyle
-    get() = labelSmall.copy(fontWeight = FontWeight.Normal)
+    get() = labelMedium.copy(fontWeight = FontWeight.Normal)
+@get:Composable
+val Typography.labelLargeNormal: TextStyle
+    get() = labelLarge.copy(fontWeight = FontWeight.Normal)
 
 @get:Composable
 val DefaultTextStyle: TextStyle

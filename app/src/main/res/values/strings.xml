@@ -57,8 +57,40 @@
     <string name="text_auto_scroll">自动刷屏器</string>
     <string name="text_function_developing">功能开发中,敬请期待…</string>
 
+    <string name="text_system">系统</string>
+    <string name="text_yes">是</string>
+    <string name="text_no">否</string>
+
     <string name="text_system_tool">系统工具</string>
     <string name="text_app_kit">apk 提取器</string>
+    <string name="text_running">运行</string>
+    <string name="text_export">导出</string>
+    <string name="text_share">分享</string>
+    <string name="text_app_detail">详情</string>
+    <string name="text_app_store">在应用商店查看</string>
+    <string name="text_app_uninstall">卸载</string>
+    <string name="text_package_name">应用包名</string>
+    <string name="text_version_name">版本名</string>
+    <string name="text_version_code">版本号</string>
+    <string name="text_app_file_size">应用包大小</string>
+    <string name="text_app_file_path">应用包路径</string>
+    <string name="text_app_first_install_time">首次安装时间</string>
+    <string name="text_app_last_update_time">最后更新时间</string>
+    <string name="text_app_install_source">安装来源</string>
+    <string name="text_app_low_api">最低Api</string>
+    <string name="text_app_target_api">目标Api</string>
+    <string name="text_system_app">系统应用</string>
+    <string name="text_app_uid">UID</string>
+    <string name="text_app_path">路径/Uri</string>
+    <string name="text_app_launch_class">主启动类</string>
+
+    <string name="word_none">无</string>
+    <string name="word_unknown">未知</string>
+    <string name="app_signature">签名信息</string>
+    <string name="app_signature_issuer">证书发行者</string>
+    <string name="app_signature_detail_info">签名信息详情</string>
+    <string name="app_signature_detail_info_empty">签名信息为空</string>
+    <string name="app_signature_detail_info_empty_tips">签名信息为空</string>
 
 
 </resources>

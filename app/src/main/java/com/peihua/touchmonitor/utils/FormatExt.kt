@@ -76,3 +76,10 @@ fun String.formatToDate(format: String): Long {
     }
     return SimpleDateFormat(format, Locale.getDefault()).parse(this)?.time ?: 0
 }
+
+fun Long.formatToDate(format: String): String {
+    if (this == 0L) {
+        return ""
+    }
+    return SimpleDateFormat(format, Locale.getDefault()).format(this)
+}
