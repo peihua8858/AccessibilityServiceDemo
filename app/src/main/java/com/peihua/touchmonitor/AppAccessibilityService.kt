@@ -52,6 +52,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
 
     private val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
     private var isChangeBrightness = false
+    private var isChangeSoundMute = false
     private var backupBrightness = 0
     private var backupSoundMute = false
     private var backupBrightnessMode =
@@ -60,10 +61,23 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
     private fun changeSystemSettings(isRest: Boolean) {
         if (isRest) {
             changeBrightness(false)
+            changeSoundMute(false)
             deviceLocks.release()
         } else {
             changeBrightness(settings.value.isBrightnessMin)
+            changeSoundMute(settings.value.isSoundMute)
             deviceLocks.acquire(this)
+        }
+    }
+
+    private fun changeSoundMute(isSoundMute: Boolean) {
+        if (isSoundMute) {
+            isChangeSoundMute = true
+            backupSoundMute = getSoundMute()
+            setSoundMute(true)
+        } else if (isChangeSoundMute) {
+            isChangeSoundMute = false
+            setSoundMute(backupSoundMute)
         }
     }
 
@@ -75,13 +89,10 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
                 backupBrightnessMode = getSystemLightMode()
                 setSystemLightMode(android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
                 setSystemLight(0)
-                backupSoundMute = getSoundMute()
-                setSoundMute(true)
             } else if (isChangeBrightness) {
                 isChangeBrightness = false
                 setSystemLightMode(backupBrightnessMode)
                 setSystemLight(backupBrightness)
-                setSoundMute(backupSoundMute)
             }
         }
     }

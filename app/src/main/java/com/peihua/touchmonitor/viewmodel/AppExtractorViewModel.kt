@@ -115,4 +115,8 @@ class AppDetailViewModel(application: Application) : AndroidViewModel(applicatio
         val intent = packageManager.getLaunchIntentForPackage(packageName)
         return intent?.component?.className ?: application.getString(R.string.word_none)
     }
+
+    fun exportApp(packageName: String){
+
+    }
 }

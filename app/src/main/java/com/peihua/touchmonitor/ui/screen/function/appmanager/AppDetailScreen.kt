@@ -1,17 +1,16 @@
 package com.peihua.touchmonitor.ui.screen.function.appmanager
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.text.format.Formatter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -19,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,9 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
@@ -48,7 +43,7 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
 
 @Composable
@@ -76,7 +71,7 @@ fun AppDetailScreen(
         })
         when (result) {
             is ResultData.Success -> {
-                AppInfoScreenContent(Modifier, result.data)
+                AppInfoScreenContent(Modifier, result.data, viewModel)
             }
 
             is ResultData.Failure -> {
@@ -95,7 +90,7 @@ fun AppDetailScreen(
 }
 
 @Composable
-private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoModel) {
+private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoModel, viewModel: AppDetailViewModel) {
     val context = LocalContext.current
     Column(
         modifier
@@ -132,6 +127,12 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Cyan[800]
             ) {
                 // 打开应用
+                try {
+                    val intent = context.packageManager.getLaunchIntentForPackage(model.packageName)
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    showToast(e.toString())
+                }
             }
             IconText(
                 text = stringResource(id = R.string.text_export),
@@ -139,6 +140,7 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Cyan[800]
             ) {
                 // 导出应用
+                viewModel.exportApp(model.packageName)
             }
             IconText(
                 text = stringResource(id = R.string.text_share),
@@ -146,6 +148,7 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Cyan[600]
             ) {
                 // 分享应用
+                showToast(R.string.text_function_developing)
             }
             IconText(
                 text = stringResource(id = R.string.text_app_detail),
@@ -153,12 +156,23 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Cyan[600]
             ) {
                 // 查看信息
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.setData(Uri.fromParts("package", model.packageName, null))
+                context.startActivity(intent)
             }
             IconText(
                 text = stringResource(id = R.string.text_app_store),
                 painter = painterResource(id = R.drawable.ic_play_store),
             ) {
                 // 从应用市场打开
+                try {
+                    val intent =
+                        Intent(Intent.ACTION_VIEW, ("market://details?id=" + model.packageName).toUri())
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    showToast(e.toString())
+                }
             }
             IconText(
                 text = stringResource(id = R.string.text_app_uninstall),
@@ -166,6 +180,14 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Grey[800]
             ) {
                 // 卸载应用
+                try {
+                    val intent = Intent()
+                    intent.setAction(Intent.ACTION_DELETE)
+                    intent.setData(("package:" + model.packageName).toUri())
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    showToast(e.toString())
+                }
             }
         }
         Card(
