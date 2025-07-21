@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">辅助工具</string>
-    <string name="version">版本：</string>
+    <string name="text_request_fail">请求失败</string>
+    <string name="text_request_fail_retry">请点击重试</string>
+    <string name="text_retry">重试</string>
+    <string name="text_loading">加载中</string>
+    <string name="text_application">应用</string>
+    <string name="text_name">名称：%1$s</string>
+    <string name="text_package">包名：%1$s</string>
+    <string name="text_version">版本：%1$s</string>
     <string name="install">安装</string>
+    <string name="text_install_package">安装包</string>
     <string name="installIllustrate">下面按钮，一键安装apk.1文件.</string>
     <string name="install_app_ads">立即安装</string>
     <string name="internal_storage">内部存储</string>
@@ -61,8 +69,33 @@
     <string name="text_yes">是</string>
     <string name="text_no">否</string>
 
+    <string name="text_daily_tools">日常工具</string>
+<!--    刻度尺-->
+    <string name="text_scale_ruler">刻度尺</string>
+<!--    指南针-->
+    <string name="text_compass">指南针</string>
+<!--    水平仪-->
+    <string name="text_horizon">水平仪</string>
+<!--    量角器-->
+    <string name="text_angle_meter">量角器</string>
+<!--    简易画板-->
+    <string name="text_simple_paint">简易画板</string>
+<!--    LED手机字幕-->
+    <string name="text_led_subtitle">LED手机字幕</string>
+<!--    时间屏幕-->
+    <string name="text_time_screen">时间屏幕</string>
+<!--    每日60秒早报-->
+    <string name="text_daily_60_seconds_early_report">每日60秒早报</string>
+    <string name="text_calculator">计算器</string>
     <string name="text_system_tool">系统工具</string>
     <string name="text_app_kit">apk 提取器</string>
+    <string name="text_check_screen_bad_point">屏幕坏点检测</string>
+    <string name="text_see_device_info">查看设备信息</string>
+<!--    桌面视频壁纸-->
+    <string name="text_desktop_video_wallpaper">桌面视频壁纸</string>
+<!--    系统字体大小调节-->
+    <string name="text_system_font_size_adjustment">系统字体大小调节</string>
+    <string name="text_photo_tools">图片工具</string>
     <string name="text_running">运行</string>
     <string name="text_export">导出</string>
     <string name="text_share">分享</string>

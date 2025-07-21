@@ -26,7 +26,7 @@ import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
-import com.peihua.touchmonitor.ui.screen.function.appmanager.AppExtractorScreen
+import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
@@ -205,7 +205,7 @@ fun AppNavHost(
             ShortVideoScreen(modifier)
         }
         composable(route = AppRouter.AppManagerScreen.route) {
-            AppExtractorScreen(modifier)
+            MainAppExtractorScreen(modifier)
         }
         composable(
             route = AppRouter.AppDetailScreen.route,

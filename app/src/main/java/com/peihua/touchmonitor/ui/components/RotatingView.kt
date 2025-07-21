@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
@@ -24,12 +26,14 @@ import com.peihua.touchmonitor.R
 fun RotatingView(
     modifier: Modifier = Modifier,
     size: DpSize = DpSize(dimensionResource(id = R.dimen.dp_24), dimensionResource(id = R.dimen.dp_24)),
+    tintColor : Color?=null,
     rotationAngle: Float = 0f,
     durationMillis: Int = 800,
     content: @Composable () -> Unit = {
         Image(
             modifier = Modifier
                 .fillMaxSize(),
+            colorFilter = if(tintColor!=null) ColorFilter.tint(tintColor) else null,
             imageVector = Icons.Filled.KeyboardArrowUp,
             contentDescription = null,
         )

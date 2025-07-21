@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.text.TextUtils
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -16,6 +17,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.request
+import com.peihua.touchmonitor.utils.showToast
 
 class AppExtractorViewModel(application: Application) : AndroidViewModel(application) {
     private val receiverApp = object : BroadcastReceiver() {
@@ -116,7 +118,8 @@ class AppDetailViewModel(application: Application) : AndroidViewModel(applicatio
         return intent?.component?.className ?: application.getString(R.string.word_none)
     }
 
+    @Composable
     fun exportApp(packageName: String){
-
+        showToast("导出应用,packageName:$packageName")
     }
 }

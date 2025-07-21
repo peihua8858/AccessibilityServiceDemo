@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 
 @Composable
@@ -21,12 +23,12 @@ fun ErrorView(modifier: Modifier = Modifier, retry: () -> Unit) {
                 .align(Alignment.Center)
         ) {
             ScaleText(
-                text = "请求失败,",
+                text = stringResource(id = R.string.text_request_fail)+"，",
                 style = typography.titleMedium,
             )
             //text 下划线
             ScaleText(
-                text = "请点击重试",
+                text = stringResource(id = R.string.text_request_fail_retry),
                 style = typography.titleMedium,
                 color = Color.Blue,
                 textDecoration = TextDecoration.Underline,

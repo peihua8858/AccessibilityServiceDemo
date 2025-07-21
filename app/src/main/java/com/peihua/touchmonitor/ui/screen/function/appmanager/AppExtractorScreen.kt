@@ -4,14 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -31,16 +29,48 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 
 @Composable
-fun AppExtractorScreen(modifier: Modifier = Modifier,viewModel: AppExtractorViewModel = viewModel()) {
+fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
+    val application = stringResource(id = R.string.text_application)
+    val apk = stringResource(id = R.string.text_install_package)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        AppTopBar(title = { stringResource(id = R.string.text_app_manager) }, navigateUp = {
+            popBackStack()
+        })
+        TabPager(modifier = modifier, tabs = listOf(application, apk)) { modifier, state, index ->
+            when (index) {
+                0 -> {
+                    AppExtractorScreen(modifier)
+                }
+
+                1 -> {
+                    ApkPackageScreen(modifier)
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun AppExtractorScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AppExtractorViewModel = viewModel(),
+) {
     val result = viewModel.applications.value
     //请求数据
     val refresh = {
@@ -49,12 +79,12 @@ fun AppExtractorScreen(modifier: Modifier = Modifier,viewModel: AppExtractorView
     Column(
         modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
+            .padding(
+                start = dimensionResource(id = R.dimen.dp_16),
+                end = dimensionResource(id = R.dimen.dp_16)
+            )
     ) {
-        AppTopBar(title = { stringResource(id = R.string.text_app_manager) }, navigateUp = {
-            popBackStack()
-        })
+
         when (result) {
             is ResultData.Success -> {
                 AppListScreenContent(Modifier, result.data)
@@ -74,39 +104,46 @@ fun AppExtractorScreen(modifier: Modifier = Modifier,viewModel: AppExtractorView
         }
     }
 }
+
 @Composable
-private fun AppListScreenContent(modifier: Modifier = Modifier, models: List<AppInfoModel>) {
+private fun AppListScreenContent(
+    modifier: Modifier = Modifier,
+    models: List<AppInfoModel>,
+) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape()
-    val iconSize = if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
-    LazyVerticalGrid(
-        modifier = modifier,
-        //如果是平板或者大屏则使用4列，否则2列
-        columns = GridCells.Fixed(if (isLandscape) 4 else 2),
-        contentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.dp_16))
-    ) {
+    val iconSize =
+        if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
+    LazyColumn(modifier = modifier) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
-                navigateTo(AppRouter.AppDetailScreen.route, "packageName" to item.packageName)
+                navigateTo(
+                    AppRouter.AppDetailScreen.route,
+                    "packageName" to item.packageName
+                )
             }, item, iconSize)
         }
     }
 }
 
 @Composable
-private fun AppItemView(modifier: Modifier, item: AppInfoModel, iconSize: Dp = dimensionResource(id = R.dimen.dp_96)) {
-    ConstraintLayout(modifier = modifier) {
+private fun AppItemView(
+    modifier: Modifier,
+    item: AppInfoModel,
+    iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
+) {
+    ConstraintLayout(modifier = modifier.fillMaxWidth()) {
         val drawable = item.icon
-        val (icon, title, line) = createRefs()
+        val (icon, title, pkgName, version, line) = createRefs()
         Image(
             if (drawable == null)
                 rememberAsyncImagePainter(R.mipmap.ic_launcher)
             else rememberDrawablePainter(drawable), "",
             modifier = Modifier
                 .constrainAs(icon) {
-                    start.linkTo(title.start)
+                    start.linkTo(parent.start)
                     top.linkTo(parent.top)
-                    end.linkTo(title.end)
+                    bottom.linkTo(parent.bottom)
                 }
                 .size(iconSize)
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
@@ -115,22 +152,64 @@ private fun AppItemView(modifier: Modifier, item: AppInfoModel, iconSize: Dp = d
         ScaleText(
             modifier = Modifier
                 .constrainAs(title) {
-                    start.linkTo(parent.start)
-                    top.linkTo(icon.bottom)
+                    start.linkTo(icon.end)
+                    top.linkTo(parent.top)
                     end.linkTo(parent.end)
+                    horizontalBias = 0f
                     horizontalChainWeight = 1f
                 }
-                .padding(top = dimensionResource(id = R.dimen.dp_4)),
-            text = item.name+"(${item.versionName})",
-            style = MaterialTheme.typography.labelMedium
+                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+            text = stringResource(R.string.text_name, item.name),
+            maxLines = 1,
+            style = MaterialTheme.typography.labelSmallNormal
+        )
+        ScaleText(
+            modifier = Modifier
+                .constrainAs(pkgName) {
+                    start.linkTo(icon.end)
+                    top.linkTo(title.bottom)
+                    end.linkTo(parent.end)
+                    horizontalBias = 0f
+                    horizontalChainWeight = 1f
+                }
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_8),
+                    top = dimensionResource(id = R.dimen.dp_4)
+                ),
+            text = stringResource(R.string.text_package, item.packageName),
+            maxLines = 1,
+            style = MaterialTheme.typography.labelSmallNormal
+        )
+        ScaleText(
+            modifier = Modifier
+                .constrainAs(version) {
+                    start.linkTo(title.start)
+                    top.linkTo(pkgName.bottom)
+                    end.linkTo(parent.end)
+                    horizontalBias = 0f
+                    horizontalChainWeight = 1f
+                }
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_8),
+                    top = dimensionResource(id = R.dimen.dp_4)
+                ),
+            text = stringResource(R.string.text_version, item.versionName),
+            maxLines = 1,
+            style = MaterialTheme.typography.labelSmallNormal
         )
         Spacer(
             Modifier
                 .size(dimensionResource(id = R.dimen.dp_20))
                 .constrainAs(line) {
                     start.linkTo(parent.start)
-                    top.linkTo(title.bottom)
+                    top.linkTo(version.bottom)
                     end.linkTo(parent.end)
                 })
+    }
+}
+
+@Composable
+private fun ApkPackageScreen(modifier: Modifier = Modifier) {
+    Column(modifier) {
     }
 }

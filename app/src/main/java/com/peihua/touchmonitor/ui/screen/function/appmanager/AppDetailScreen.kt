@@ -20,6 +20,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,8 +92,20 @@ fun AppDetailScreen(
 }
 
 @Composable
-private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoModel, viewModel: AppDetailViewModel) {
+private fun AppInfoScreenContent(
+    modifier: Modifier = Modifier,
+    model: AppInfoModel,
+    viewModel: AppDetailViewModel,
+) {
     val context = LocalContext.current
+    val exportAppPkg = remember { mutableStateOf("") }
+    val exportApk = @Composable {
+        viewModel.exportApp(model.packageName)
+        exportAppPkg.value = ""
+    }
+    if (exportAppPkg.value.isNotEmpty()) {
+        exportApk()
+    }
     Column(
         modifier
             .fillMaxSize()
@@ -140,7 +154,8 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 tint = Colors.Cyan[800]
             ) {
                 // 导出应用
-                viewModel.exportApp(model.packageName)
+                exportAppPkg.value = model.packageName
+//                exportApp(model.packageName)
             }
             IconText(
                 text = stringResource(id = R.string.text_share),
@@ -167,7 +182,10 @@ private fun AppInfoScreenContent(modifier: Modifier = Modifier, model: AppInfoMo
                 // 从应用市场打开
                 try {
                     val intent =
-                        Intent(Intent.ACTION_VIEW, ("market://details?id=" + model.packageName).toUri())
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            ("market://details?id=" + model.packageName).toUri()
+                        )
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent)
                 } catch (e: Exception) {

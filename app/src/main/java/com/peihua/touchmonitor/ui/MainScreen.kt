@@ -24,7 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,14 +45,13 @@ import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
 import com.peihua.touchmonitor.ui.theme.AppColor
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val selectItem = remember { mutableIntStateOf(0) }
+    val selectItem = rememberSaveable { mutableIntStateOf(0) }
     val colorScheme = MaterialTheme.colorScheme
     Scaffold(
         modifier = modifier,

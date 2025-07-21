@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Theme.MainScreen" parent="Theme.SplashScreen">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="windowSplashScreenBackground">@color/white</item>
-        <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
+        <item name="android:windowSplashScreenAnimationDuration">1000</item>
     </style>
-
     <style name="Theme.Transparent" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
