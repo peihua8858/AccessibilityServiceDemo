@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#3C7FEC" />
+            <corners android:radius="@dimen/dp_8" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="@dimen/dp_8" />
+            <size
+                android:width="@dimen/dp_32"
+                android:height="@dimen/dp_32" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>
