@@ -15,6 +15,7 @@ import androidx.lifecycle.application
 import com.fz.common.file.getFileSize
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
+import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.request
 import com.peihua.touchmonitor.utils.showToast
@@ -116,10 +117,5 @@ class AppDetailViewModel(application: Application) : AndroidViewModel(applicatio
         val packageManager = application.packageManager
         val intent = packageManager.getLaunchIntentForPackage(packageName)
         return intent?.component?.className ?: application.getString(R.string.word_none)
-    }
-
-    @Composable
-    fun exportApp(packageName: String){
-        showToast("导出应用,packageName:$packageName")
     }
 }

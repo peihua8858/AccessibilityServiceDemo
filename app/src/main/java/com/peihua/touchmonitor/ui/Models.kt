@@ -4,7 +4,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.text.format.Formatter
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import com.google.gson.reflect.TypeToken
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.data.DataStore
 import com.peihua.touchmonitor.model.json
+import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.AlipaySettings
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.AllSettings
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinHuoShanSettings
@@ -25,6 +25,7 @@ import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinJi
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.DouYinSettings
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.settings.MeiTuanSettings
 import com.peihua.touchmonitor.utils.formatToDate
+import java.io.File
 
 
 enum class AppProvider(
@@ -189,12 +190,14 @@ data class AppInfoModel(
     var packageName: String,
     val icon: Drawable?,
     val packInfo: PackageInfo,
-    val fileSize: Long=0L,
+    val fileSize: Long = 0L,
     val launchClass: String = "",
-    val installSource: String=""
+    val installSource: String = "",
+    var exportData: Boolean = false,
+    var exportObb: Boolean = false,
 ) {
     val versionName: String
-        get() = packInfo.versionName?:"Unknown"
+        get() = packInfo.versionName ?: "Unknown"
     val versionCode: Long
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packInfo.longVersionCode
@@ -210,12 +213,17 @@ data class AppInfoModel(
     val isSystemApp: Boolean
         get() = false
     val uid: Int
-        get() = applicationInfo?.uid?:0
+        get() = applicationInfo?.uid ?: 0
     val path: String
-        get() = applicationInfo?.sourceDir?:""
+        get() = applicationInfo?.sourceDir ?: ""
     val lowApi: String
         get() = applicationInfo?.minSdkVersion.toString()
     val targetApi: String
         get() = applicationInfo?.targetSdkVersion.toString()
-
+    val sourcePath: String
+        get() = applicationInfo?.sourceDir ?: ""
+    val fileItem: FileItem
+        get() {
+            return FileItem.createFileItemInstance(File(sourcePath))
+        }
 }

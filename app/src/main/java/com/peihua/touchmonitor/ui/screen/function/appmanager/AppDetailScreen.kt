@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.text.format.Formatter
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -20,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,10 +46,12 @@ import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.TitleValueView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
+import kotlinx.coroutines.cancel
 
 @Composable
 fun AppDetailScreen(
@@ -73,7 +78,7 @@ fun AppDetailScreen(
         })
         when (result) {
             is ResultData.Success -> {
-                AppInfoScreenContent(Modifier, result.data, viewModel)
+                AppInfoScreenContent(Modifier, result.data)
             }
 
             is ResultData.Failure -> {
@@ -95,16 +100,12 @@ fun AppDetailScreen(
 private fun AppInfoScreenContent(
     modifier: Modifier = Modifier,
     model: AppInfoModel,
-    viewModel: AppDetailViewModel,
 ) {
     val context = LocalContext.current
     val exportAppPkg = remember { mutableStateOf("") }
-    val exportApk = @Composable {
-        viewModel.exportApp(model.packageName)
-        exportAppPkg.value = ""
-    }
     if (exportAppPkg.value.isNotEmpty()) {
-        exportApk()
+        exportAppPkg.value = ""
+        ExportApp(model)
     }
     Column(
         modifier
@@ -155,7 +156,6 @@ private fun AppInfoScreenContent(
             ) {
                 // 导出应用
                 exportAppPkg.value = model.packageName
-//                exportApp(model.packageName)
             }
             IconText(
                 text = stringResource(id = R.string.text_share),
@@ -290,4 +290,32 @@ private fun AppInfoScreenContent(
             )
         }
     }
+}
+
+
+@Composable
+fun ExportApp(item: AppInfoModel) {
+    val context = LocalContext.current
+    val worker = ExtortWorker(context, item) {
+        onStart { }
+        onSpeed { w, speed -> }
+        onComplete { w, e -> w.cancel() }
+        onProgress { w, total, current -> }
+    }
+    val callback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                worker.cancel()
+            }
+        }
+    }
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    DisposableEffect(key1 = Unit) {
+        dispatcher?.addCallback(callback)
+        onDispose {
+            worker.cancel()
+            callback.remove()
+        }
+    }
+    worker.start()
 }
