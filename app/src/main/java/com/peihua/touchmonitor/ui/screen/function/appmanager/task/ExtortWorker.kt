@@ -94,21 +94,17 @@ class ExtortWorker(
                         }
                         val file = File(item.sourcePath)
                         val input: InputStream = FileInputStream(file) //读入原文件
-                        input.use { input ->
-                            outputStream?.use {
-                                input.writeToFile(it, 1024 * 10) { progress, speed ->
-                                    mProgress += speed
-                                    val endTime = System.currentTimeMillis()
-                                    if (endTime - startTime >= 1000) {
-                                        startTime = endTime
-                                        model.invokeSpeed(this@ExtortWorker, speed)
-                                        model.invokeProgress(
-                                            this@ExtortWorker,
-                                            mProgress,
-                                            totalLength
-                                        )
-                                    }
-                                }
+                        input.writeToFile(outputStream, 1024 * 10) { progress, speed ->
+                            mProgress += speed
+                            val endTime = System.currentTimeMillis()
+                            if (endTime - startTime >= 1000) {
+                                startTime = endTime
+                                model.invokeSpeed(this@ExtortWorker, speed)
+                                model.invokeProgress(
+                                    this@ExtortWorker,
+                                    mProgress,
+                                    totalLength
+                                )
                             }
                         }
                     } else {
@@ -249,7 +245,7 @@ class ExtortWorker(
                 mCurrentWritingFile?.delete()
                 model.invokeComplete(this@ExtortWorker, e)
             }
-            if (isActive) {
+            if (!isActive) {
                 mCurrentWritingFile?.delete()
             }
         }
@@ -290,7 +286,7 @@ class ExtortWorker(
                 zipEntry.setCrc(fis?.cRC32?.value ?: 0L)
             }
             zos.putNextEntry(zipEntry)
-            fis.writeToZip(zos, isCloseZip = false) { progress, speed ->
+            fis.writeToFile(zos, isCloseOs = false) { progress, speed ->
                 mProgress += speed
                 val endTime = System.currentTimeMillis()
                 if (endTime - startTime >= 1000) {

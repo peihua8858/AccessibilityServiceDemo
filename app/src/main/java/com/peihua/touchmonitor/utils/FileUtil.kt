@@ -27,7 +27,8 @@ import kotlin.math.max
 suspend fun InputStream?.writeToFile(
     file: File?,
     bufferSize: Int = 4096,
-    callback: (progress: Int, isComplete: Boolean) -> Unit = { process, isComplete -> },
+    isCloseOs: Boolean = true,
+    callback: (progress: Long, speed: Long) -> Unit = { process, isComplete -> },
 ): Boolean {
     val parentFile = file?.parentFile
     if (file == null || this == null || parentFile == null) {
@@ -39,45 +40,15 @@ suspend fun InputStream?.writeToFile(
     if (parentFile.exists().not()) {
         parentFile.mkdirs()
     }
-    val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
-        Dispatchers.IO
-    } else {
-        coroutineContext
-    }
-    return withContext(context) {
-        try {
-            return@withContext FileOutputStream(file).use { fos ->
-                return@use this@writeToFile.use { fis ->
-                    val buffer = ByteArray(bufferSize)
-                    var length: Int
-                    val total = fis.available()
-                    var progress = 0
-                    while (fis.read(buffer).also {
-                            length = it
-                            progress += length
-                            callback(length, progress == total)
-                        } > 0 && isActive) {
-                        fos.write(buffer, 0, length)
-                    }
-                    callback(length, true)
-                    dLog { "writeToFile, save file  to $file successful" }
-                    fos.flush()
-                    true
-                }
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            dLog { "writeToFile, save file  to $file failed" }
-            return@withContext false
-        }
-    }
+    val os = FileOutputStream(file)
+    return writeToFile(os, bufferSize, isCloseOs, callback)
 }
 
 suspend fun InputStream?.writeToFile(
     os: OutputStream?,
     bufferSize: Int = 4096,
     isCloseOs: Boolean = true,
-    callback: (progress: Long,speed:Long) -> Unit = { process,speed -> },
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
     if (os == null || this == null) {
         return false
@@ -94,8 +65,11 @@ suspend fun InputStream?.writeToFile(
 }
 
 suspend fun File?.writeToZip(
-    parent: String, zos: ZipOutputStream, zipLevel: Int,
-    callback: (progress: Long) -> Unit = { process -> },
+    parent: String,
+    zos: ZipOutputStream,
+    bufferSize: Int = 4096,
+    zipLevel: Int = 0,
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ) {
     if (this == null) {
         return
@@ -107,7 +81,7 @@ suspend fun File?.writeToZip(
         if (fileItemList != null) {
             if (fileItemList.size > 0) {
                 for (f in fileItemList) {
-                    f.writeToZip(parentTemp, zos, zipLevel)
+                    f.writeToZip(parentTemp, zos, bufferSize, zipLevel, callback)
                 }
             } else {
                 try {
@@ -118,31 +92,21 @@ suspend fun File?.writeToZip(
             }
         }
     } else if (isFile) {
-        writeToZip(parentTemp, zos, zipLevel, callback)
-    }
-}
-
-suspend fun File.writeToZip(
-    parent: String,
-    zos: ZipOutputStream,
-    zipLevel: Int,
-    callback: (progress: Long,speed:Long) -> Unit = { process,speed -> },
-): Boolean {
-    try {
-        val zipEntry = ZipEntry(parent + getName())
-        val totalLength = length()
-        if (zipLevel == 0) {
-            zipEntry.setMethod(ZipOutputStream.STORED)
-            zipEntry.setCompressedSize(totalLength)
-            zipEntry.setSize(totalLength)
-            zipEntry.setCrc(this.cRC32.value)
+        try {
+            val zipEntry = ZipEntry(parent + getName())
+            val totalLength = length()
+            if (zipLevel == 0) {
+                zipEntry.setMethod(ZipOutputStream.STORED)
+                zipEntry.setCompressedSize(totalLength)
+                zipEntry.setSize(totalLength)
+                zipEntry.setCrc(this.cRC32.value)
+            }
+            zos.putNextEntry(zipEntry)
+            val fis = inputStream()
+             fis.writeToZip(zos, bufferSize, callback = callback)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        zos.putNextEntry(zipEntry)
-        val fis = inputStream()
-        return fis.writeToZip(zos, callback = callback)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return false
     }
 }
 
@@ -150,7 +114,7 @@ suspend fun InputStream?.writeToZip(
     zos: ZipOutputStream,
     bufferSize: Int = 4096,
     isCloseZip: Boolean = true,
-    callback: (progress: Long,speed:Long) -> Unit = { process,speed -> },
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
     if (this == null) {
         return false
@@ -172,7 +136,7 @@ suspend fun InputStream?.writeToZip(
 suspend fun InputStream.writeToFileNoClose(
     ios: OutputStream,
     bufferSize: Int = 4096,
-    callback: (progress: Long,speed:Long) -> Unit = { process,speed -> },
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
     try {
         val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -188,9 +152,9 @@ suspend fun InputStream.writeToFileNoClose(
             while ((fis.read(buffer).also { length = it }) != -1 && isActive) {
                 ios.write(buffer, 0, length)
                 progress += length.toLong()
-                callback(progress,length.toLong())
+                callback(progress, length.toLong())
             }
-            callback(progress,length.toLong())
+            callback(progress, length.toLong())
             ios.flush()
             dLog { "writeToFile, save file  to $ios successful" }
             true

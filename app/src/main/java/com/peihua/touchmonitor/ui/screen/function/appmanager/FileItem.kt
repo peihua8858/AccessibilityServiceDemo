@@ -128,7 +128,7 @@ abstract class FileItem : Comparable<FileItem> {
     abstract override fun toString(): String
 
     companion object {
-        var sort_config: Int = 0
+        private var sort_config: Int = 0
 
         @Synchronized
         fun setSort_config(value: Int) {
