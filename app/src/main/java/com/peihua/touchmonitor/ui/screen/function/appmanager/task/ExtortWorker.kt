@@ -12,13 +12,13 @@ import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.appExternalStoragePath
 import com.peihua.touchmonitor.utils.cRC32
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.externalStoragePath
 import com.peihua.touchmonitor.utils.findDocumentFile
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getExportPathDocumentFile
 import com.peihua.touchmonitor.utils.outputStreamForDocumentFile
 import com.peihua.touchmonitor.utils.writeToFile
-import com.peihua.touchmonitor.utils.writeToZip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -55,10 +55,6 @@ class ExtortWorker(
     private var mCurrentWritingFile: FileItem? = null
     private var mCurrentWritingPath: String? = null
 
-    init {
-
-    }
-
     fun start() {
         model.invokeStart(this)
         launch {
@@ -67,8 +63,10 @@ class ExtortWorker(
                 val dataObbSizeInfo = dataObbWorker.execute().await()
                 val totalLength = getTotalLength(dataObbSizeInfo)
                 var startTime = System.currentTimeMillis()
+                dLog { "getTotalLength, totalLength $totalLength,isActive:$isActive" }
                 for ((index, item) in items.withIndex()) {
                     if (!isActive) {
+                        mCurrentWritingFile?.delete()
                         break
                     }
                     if (!item.exportData && !item.exportObb) {
@@ -94,7 +92,7 @@ class ExtortWorker(
                         }
                         val file = File(item.sourcePath)
                         val input: InputStream = FileInputStream(file) //读入原文件
-                        input.writeToFile(outputStream, 1024 * 10) { progress, speed ->
+                      val result =  input.writeToFile(outputStream, 1024 * 10) { progress, speed ->
                             mProgress += speed
                             val endTime = System.currentTimeMillis()
                             if (endTime - startTime >= 1000) {
@@ -107,6 +105,7 @@ class ExtortWorker(
                                 )
                             }
                         }
+                        dLog { "writeToFile, save file  to ${mCurrentWritingFile?.path} ${if(result) "successful" else "Failure" }" }
                     } else {
                         val outputStream: OutputStream?
                         if (isExternal) {
@@ -191,9 +190,7 @@ class ExtortWorker(
                                             )
                                         if (pkgObbDocumentFile != null) {
                                             obbFileItem =
-                                                FileItem.createFileItemInstance(
-                                                    pkgObbDocumentFile
-                                                )
+                                                FileItem.createFileItemInstance(pkgObbDocumentFile)
                                         }
                                     }
                                 } catch (e: Exception) {
@@ -241,12 +238,10 @@ class ExtortWorker(
                 }
                 //后续处理
                 model.invokeComplete(this@ExtortWorker)
-            } catch (e: Exception) {
+                return@launch
+            } catch (e: Throwable) {
                 mCurrentWritingFile?.delete()
                 model.invokeComplete(this@ExtortWorker, e)
-            }
-            if (!isActive) {
-                mCurrentWritingFile?.delete()
             }
         }
     }
@@ -319,21 +314,18 @@ class ExtortWorker(
         extension: String,
         sequenceNumber: Int,
     ): DocumentFile? {
-        val writingFileName = context.getWriteFileNameForAppItem(
+        val fileName = context.getWriteFileNameForAppItem(
             appItem,
             extension,
             sequenceNumber
         )
         val parent = getExportPathDocumentFile(context, "", "".toUri())
-        val documentFile = parent.findDocumentFile(writingFileName)
+        val documentFile = parent.findDocumentFile(fileName)
         if (documentFile != null && documentFile.exists()) documentFile.delete()
         return parent?.createFile(
-            if ("apk".equals(
-                    extension,
-                    ignoreCase = true
-                )
+            if ("apk".equals(extension, ignoreCase = true)
             ) "application/vnd.android.package-archive" else "application/x-zip-compressed",
-            writingFileName
+            fileName
         )
     }
 

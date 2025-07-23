@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -49,6 +50,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
 import kotlinx.coroutines.cancel
@@ -295,17 +297,27 @@ private fun AppInfoScreenContent(
 
 @Composable
 fun ExportApp(item: AppInfoModel) {
+    val showDialog =remember { mutableStateOf(true) }
     val context = LocalContext.current
     val worker = ExtortWorker(context, item) {
         onStart { }
-        onSpeed { w, speed -> }
-        onComplete { w, e -> w.cancel() }
-        onProgress { w, total, current -> }
+        onSpeed { w, speed ->
+            dLog { "speed: $speed" }
+        }
+        onComplete { w, e ->
+            w.cancel()
+            showDialog.value = false
+            dLog { "exportApp, save file  to $e successful" }
+        }
+        onProgress { w, total, current ->
+            dLog { "progress: $current/$total" }
+        }
     }
     val callback = remember {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 worker.cancel()
+                showDialog.value = false
             }
         }
     }
@@ -313,8 +325,16 @@ fun ExportApp(item: AppInfoModel) {
     DisposableEffect(key1 = Unit) {
         dispatcher?.addCallback(callback)
         onDispose {
+            showDialog.value = false
             worker.cancel()
             callback.remove()
+        }
+    }
+    if (showDialog.value) {
+        Dialog(onDismissRequest = {
+            showDialog.value = false
+        }) {
+            LoadingView()
         }
     }
     worker.start()

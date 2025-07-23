@@ -165,6 +165,9 @@ class StandardFileItem(file: File) : FileItem() {
 
     init {
         this.file = file
+        if (!file.exists()) {
+            file.parentFile?.mkdirs()
+        }
     }
 
     override val name: String

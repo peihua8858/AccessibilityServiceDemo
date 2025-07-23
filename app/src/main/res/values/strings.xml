@@ -4,10 +4,12 @@
     <string name="text_request_fail_retry">请点击重试</string>
     <string name="text_retry">重试</string>
     <string name="text_loading">加载中</string>
-    <string name="text_application">应用</string>
+    <string name="text_user_application">用户应用</string>
+    <string name="text_system_application">系统应用</string>
     <string name="text_name">名称：%1$s</string>
     <string name="text_package">包名：%1$s</string>
     <string name="text_version">版本：%1$s</string>
+    <string name="text_file_size">大小：%1$s</string>
     <string name="install">安装</string>
     <string name="text_install_package">安装包</string>
     <string name="installIllustrate">下面按钮，一键安装apk.1文件.</string>

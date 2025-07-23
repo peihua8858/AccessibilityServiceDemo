@@ -152,8 +152,7 @@ fun getExportPathDocumentFile(
     segments: String?,
     externalStorageUri: Uri,
 ): DocumentFile? {
-    val documentFile =
-        DocumentFile.fromTreeUri(context, externalStorageUri)
+    val documentFile = DocumentFile.fromTreeUri(context, externalStorageUri)
     if (documentFile == null || !documentFile.canWrite()) {
         throw RuntimeException("Exporting path invalid or can not write to it, please check")
     }

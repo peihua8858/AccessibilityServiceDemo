@@ -149,11 +149,14 @@ suspend fun InputStream.writeToFileNoClose(
             val buffer = ByteArray(bufferSize)
             var length: Int
             var progress = 0L
+            dLog { "writeToFile, save file  to $ios successful" }
             while ((fis.read(buffer).also { length = it }) != -1 && isActive) {
                 ios.write(buffer, 0, length)
                 progress += length.toLong()
                 callback(progress, length.toLong())
+                dLog { "writeToFile, save file  progress:$progress length:$length" }
             }
+            dLog { "writeToFile, save file  progress:$progress length:$length" }
             callback(progress, length.toLong())
             ios.flush()
             dLog { "writeToFile, save file  to $ios successful" }

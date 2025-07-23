@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.function.appmanager
 
+import android.text.format.Formatter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +42,8 @@ import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 
 @Composable
 fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
-    val application = stringResource(id = R.string.text_application)
+    val userApplication = stringResource(id = R.string.text_user_application)
+    val systemApplication = stringResource(id = R.string.text_system_application)
     val apk = stringResource(id = R.string.text_install_package)
     Column(
         modifier = modifier
@@ -51,10 +53,17 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
         AppTopBar(title = { stringResource(id = R.string.text_app_manager) }, navigateUp = {
             popBackStack()
         })
-        TabPager(modifier = modifier, tabs = listOf(application, apk)) { modifier, state, index ->
+        TabPager(
+            modifier = modifier,
+            tabs = listOf(userApplication, systemApplication, apk)
+        ) { modifier, state, index ->
             when (index) {
                 0 -> {
-                    AppExtractorScreen(modifier)
+                    UserAppScreen(modifier)
+                }
+
+                1 -> {
+                    SystemAppScreen(modifier)
                 }
 
                 1 -> {
@@ -67,14 +76,53 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppExtractorScreen(
+private fun UserAppScreen(
     modifier: Modifier = Modifier,
     viewModel: AppExtractorViewModel = viewModel(),
 ) {
-    val result = viewModel.applications.value
+    val result = viewModel.userApplications.value
     //请求数据
     val refresh = {
-        viewModel.refreshAppList()
+        viewModel.requestUserAppList()
+    }
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(
+                start = dimensionResource(id = R.dimen.dp_16),
+                end = dimensionResource(id = R.dimen.dp_16)
+            )
+    ) {
+
+        when (result) {
+            is ResultData.Success -> {
+                AppListScreenContent(Modifier, result.data)
+            }
+
+            is ResultData.Failure -> {
+                ErrorView { refresh() }
+            }
+
+            is ResultData.Initialize -> {
+                refresh()
+            }
+
+            is ResultData.Starting -> {
+                LoadingView()
+            }
+        }
+    }
+}
+
+@Composable
+fun SystemAppScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AppExtractorViewModel = viewModel(),
+) {
+    val result = viewModel.sysApplications.value
+    //请求数据
+    val refresh = {
+        viewModel.requestSystemAppList()
     }
     Column(
         modifier
@@ -116,12 +164,16 @@ private fun AppListScreenContent(
         if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
     LazyColumn(modifier = modifier) {
         items(models) { item ->
-            AppItemView(Modifier.clickable {
-                navigateTo(
-                    AppRouter.AppDetailScreen.route,
-                    "packageName" to item.packageName
-                )
-            }, item, iconSize)
+            AppItemView(
+                Modifier
+                    .padding(bottom = dimensionResource(id = R.dimen.dp_16))
+                    .clickable {
+                        navigateTo(
+                            AppRouter.AppDetailScreen.route,
+                            "packageName" to item.packageName
+                        )
+                    }, item, iconSize
+            )
         }
     }
 }
@@ -132,9 +184,10 @@ private fun AppItemView(
     item: AppInfoModel,
     iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
 ) {
+    val context = LocalContext.current
     ConstraintLayout(modifier = modifier.fillMaxWidth()) {
         val drawable = item.icon
-        val (icon, title, pkgName, version, line) = createRefs()
+        val (icon, title, pkgName, version, fileSize, line) = createRefs()
         Image(
             if (drawable == null)
                 rememberAsyncImagePainter(R.mipmap.ic_launcher)
@@ -194,6 +247,26 @@ private fun AppItemView(
                     top = dimensionResource(id = R.dimen.dp_4)
                 ),
             text = stringResource(R.string.text_version, item.versionName),
+            maxLines = 1,
+            style = MaterialTheme.typography.labelSmallNormal
+        )
+        ScaleText(
+            modifier = Modifier
+                .constrainAs(fileSize) {
+                    start.linkTo(title.start)
+                    top.linkTo(version.bottom)
+                    end.linkTo(parent.end)
+                    horizontalBias = 0f
+                    horizontalChainWeight = 1f
+                }
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_8),
+                    top = dimensionResource(id = R.dimen.dp_4)
+                ),
+            text = stringResource(
+                R.string.text_file_size,
+                Formatter.formatFileSize(context, item.fileSize)
+            ),
             maxLines = 1,
             style = MaterialTheme.typography.labelSmallNormal
         )

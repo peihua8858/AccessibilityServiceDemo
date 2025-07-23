@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
@@ -28,7 +29,7 @@ class AppExtractorViewModel(application: Application) : AndroidViewModel(applica
                 || Intent.ACTION_PACKAGE_REMOVED == action
                 || Intent.ACTION_PACKAGE_REPLACED == action
             ) {
-                refreshAppList()
+                refreshAllAppList()
             }
         }
     }
@@ -42,24 +43,55 @@ class AppExtractorViewModel(application: Application) : AndroidViewModel(applica
         application.registerReceiver(receiverApp, intentFilter)
     }
 
-    val applications: MutableState<ResultData<List<AppInfoModel>>> =
+    val userApplications: MutableState<ResultData<List<AppInfoModel>>> =
         mutableStateOf(ResultData.Initialize())
-
-    fun refreshAppList() {
-        request(applications) {
+    val sysApplications: MutableState<ResultData<List<AppInfoModel>>> =
+        mutableStateOf(ResultData.Initialize())
+    fun requestUserAppList() {
+        request(userApplications) {
             val packageManager = application.packageManager
             val appList = mutableListOf<AppInfoModel>()
             packageManager.getInstalledPackages(0).forEach {
-                val appInfo = AppInfoModel(
-                    it.applicationInfo?.loadLabel(packageManager).toString(),
-                    it.packageName,
-                    it.applicationInfo?.loadIcon(packageManager),
-                    it
-                )
-                appList.add(appInfo)
+                val applicationInfo =it.applicationInfo?:return@forEach
+                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                if (!isSystemApp) {
+                    val appInfo = AppInfoModel(
+                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
+                        packageName = it.packageName,
+                        icon = it.applicationInfo?.loadIcon(packageManager),
+                        packInfo = it,
+                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
+                    )
+                    appList.add(appInfo)
+                }
             }
             appList
         }
+    }
+    fun requestSystemAppList(){
+        request(sysApplications) {
+            val packageManager = application.packageManager
+            val appList = mutableListOf<AppInfoModel>()
+            packageManager.getInstalledPackages(0).forEach {
+                val applicationInfo =it.applicationInfo?:return@forEach
+                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                if (isSystemApp) {
+                    val appInfo = AppInfoModel(
+                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
+                        packageName = it.packageName,
+                        icon = it.applicationInfo?.loadIcon(packageManager),
+                        packInfo = it,
+                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
+                    )
+                    appList.add(appInfo)
+                }
+            }
+            appList
+        }
+    }
+    fun refreshAllAppList() {
+        requestSystemAppList()
+        requestUserAppList()
     }
 
     override fun onCleared() {
