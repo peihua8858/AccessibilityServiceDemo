@@ -66,7 +66,7 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
                     SystemAppScreen(modifier)
                 }
 
-                1 -> {
+                2 -> {
                     ApkPackageScreen(modifier)
                 }
             }
