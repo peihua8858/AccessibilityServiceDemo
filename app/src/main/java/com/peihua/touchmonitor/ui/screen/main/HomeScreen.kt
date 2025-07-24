@@ -95,7 +95,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 AppColor.color_7b1fa2
             )
 
-        )
+        ){item, index ->
+            item.second?.let {  navigateTo(it.route)} ?: showToast(R.string.text_function_developing)
+            true
+        }
         HomeHorList(
             modifier = Modifier,
             titles = listOf(
@@ -131,7 +134,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             ),
             painters = listOf(painterResource(id = R.drawable.ic_home_app_manager_24)),
             iconBgColors = listOf(AppColor.color_e30b5a)
-        )
+        ){item, index ->
+            item.second?.let {  navigateTo(it.route)} ?: showToast(R.string.text_function_developing)
+            true
+        }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
         val textStyle = LocalTextStyle.current
         dLog { "000textColor:" + textStyle.color }
