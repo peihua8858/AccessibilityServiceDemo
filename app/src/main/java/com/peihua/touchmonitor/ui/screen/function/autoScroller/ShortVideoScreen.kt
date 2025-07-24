@@ -45,11 +45,11 @@ import com.peihua.touchmonitor.activity.HomeScreenActivity
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.AppProvider
 import com.peihua.touchmonitor.ui.AppRouter
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.ExtendedListTile
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.RotatingView
+import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
@@ -60,8 +60,6 @@ import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
-import kotlin.collections.forEach
-import kotlin.text.isNullOrEmpty
 
 
 /**
@@ -84,17 +82,10 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
         dLog { "MainScreen>>>>>>>selectPackage2:$selectPackage" }
         refresh()
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
-
-    ) {
-        AppTopBar(title = { stringResource(R.string.settings) }, navigateUp = {
+    Toolbar(
+        modifier = modifier,
+        title = stringResource(id = R.string.settings),
+        navigateUp = {
             if (context is AutoScrollScreenActivity) {
                 context.startActivity(
                     Intent(context, HomeScreenActivity::class.java)
@@ -104,7 +95,8 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
             } else {
                 popBackStack()
             }
-        }, actions = {
+        },
+        actions = {
             IconButton(onClick = {
                 navigateTo(AppRouter.LogScreen.route)
             }) {
@@ -114,32 +106,46 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
                     contentDescription = stringResource(R.string.text_log)
                 )
             }
-        })
-        when (result) {
-            is ResultData.Success -> {
-                if (result.data.isEmpty()) {
-                    return
+        }) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_16),
+                    end = dimensionResource(id = R.dimen.dp_16)
+                )
+
+        ) {
+            when (result) {
+                is ResultData.Success -> {
+                    if (result.data.isEmpty()) {
+                        return@Column
+                    }
+                    dLog { "MainScreen>>>AllSettings>>>>provider<><><>" }
+                    ShortVideoScreenContent(
+                        Modifier.weight(1f),
+                        result.data
+                    ) { item, isSaveToHistory ->
+                        viewModel.saveToDb(item, isSaveToHistory)
+                    }
                 }
-                dLog { "MainScreen>>>AllSettings>>>>provider<><><>" }
-                ShortVideoScreenContent(Modifier.weight(1f), result.data) { item, isSaveToHistory ->
-                    viewModel.saveToDb(item, isSaveToHistory)
+
+                is ResultData.Failure -> {
+                    ErrorView { refresh() }
                 }
-            }
 
-            is ResultData.Failure -> {
-                ErrorView { refresh() }
-            }
+                is ResultData.Initialize -> {
+                    refresh()
+                }
 
-            is ResultData.Initialize -> {
-                refresh()
-            }
-
-            is ResultData.Starting -> {
-                LoadingView()
+                is ResultData.Starting -> {
+                    LoadingView()
+                }
             }
         }
-    }
 
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -264,8 +270,10 @@ private fun ShortVideoScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = dimensionResource(id = R.dimen.dp_56))
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .padding(start = dimensionResource(id = R.dimen.dp_8), end = dimensionResource(id = R.dimen.dp_8)),
+                            .padding(
+                                start = dimensionResource(id = R.dimen.dp_8),
+                                end = dimensionResource(id = R.dimen.dp_8)
+                            ),
                         verticalAlignment = Alignment.CenterVertically
 
                     ) {
@@ -273,6 +281,7 @@ private fun ShortVideoScreenContent(
                         val rotationAngle = if (isExtended) 180f else 0f
                         RotatingView(
                             modifier = Modifier.align(Alignment.CenterVertically),
+                            tintColor = colorScheme.onSecondaryContainer,
                             rotationAngle = rotationAngle
                         )
                         ScaleText(
@@ -280,6 +289,7 @@ private fun ShortVideoScreenContent(
                                 .align(Alignment.CenterVertically)
                                 .weight(1f),
                             style = MaterialTheme.typography.titleMedium,
+                            color = colorScheme.onSecondaryContainer,
                             text = stringResource(R.string.text_settings),
                         )
                     }

@@ -10,6 +10,8 @@
     <string name="text_package">包名：%1$s</string>
     <string name="text_version">版本：%1$s</string>
     <string name="text_file_size">大小：%1$s</string>
+    <string name="text_app_name">应用名：%1$s</string>
+    <string name="text_file_name">文件名:%1$s</string>
     <string name="install">安装</string>
     <string name="text_install_package">安装包</string>
     <string name="installIllustrate">下面按钮，一键安装apk.1文件.</string>
@@ -126,6 +128,10 @@
     <string name="app_signature_detail_info">签名信息详情</string>
     <string name="app_signature_detail_info_empty">签名信息为空</string>
     <string name="app_signature_detail_info_empty_tips">签名信息为空</string>
-
+    <string name="text_install_package_manager">安装包管理</string>
+    <string name="dialog_storage_message">此功能需要申请&lt;font color = \'#5187F4\'&gt;\"读写手机储存\"&lt;/font&gt;是为了能扫描文件,申请后才能正常使用</string>
+    <string name="dialog_storage_positive">申请</string>
+    <string name="dialog_storage_negative">拒绝</string>
+    <string name="dialog_storage_title">申请权限</string>
 
 </resources>

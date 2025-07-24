@@ -39,3 +39,15 @@ data class LogModel(
     val content: String,
     val path: String,
 )
+
+data class ApkModel(
+    val displayName: String,
+    val apkName: String,
+    val path: String,
+    val icon: Drawable?,
+    val fileSize: Long = 0L,
+    val packInfo: PackageInfo?,
+){
+    val versionName: String
+        get() = packInfo?.versionName ?: ""
+}

@@ -43,4 +43,9 @@ sealed class AppRouter(
      */
     data object AppDetailScreen :
         AppRouter("appDetail/{packageName}", listOf(navArgument("packageName") { type = NavType.StringType }))
+
+    /**
+     * APK管理
+     */
+    data object ApkManagerScreen : AppRouter("apkManager")
 }

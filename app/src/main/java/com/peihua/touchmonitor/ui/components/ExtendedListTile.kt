@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import com.peihua.touchmonitor.R
 
@@ -23,6 +25,8 @@ import com.peihua.touchmonitor.R
 fun ExtendedListTile(
     modifier: Modifier = Modifier,
     isExtended: Boolean,
+    titleContainerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
     durationMillis: Int = 800,
     title: @Composable (Boolean) -> Unit,
     content: @Composable () -> Unit,
@@ -31,8 +35,8 @@ fun ExtendedListTile(
     Column(
         modifier = modifier
             .border(
-                dimensionResource(id = R.dimen.dp_0_5),
-                MaterialTheme.colorScheme.primary,
+                dimensionResource(id = R.dimen.dp_1),
+                borderColor,
                 RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
             )
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
@@ -40,6 +44,7 @@ fun ExtendedListTile(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(titleContainerColor)
                 .clickable {
                     isExtended.value = !isExtended.value
                 }) {

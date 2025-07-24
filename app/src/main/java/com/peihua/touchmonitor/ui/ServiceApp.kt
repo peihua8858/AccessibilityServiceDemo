@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
+import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
@@ -214,6 +215,9 @@ fun AppNavHost(
             val packageName = it.arguments?.getString("packageName") ?: ""
             dLog { "AppDetailScreen>>>>>>>packageName:$packageName" }
             AppDetailScreen(modifier, packageName)
+        }
+        composable(route = AppRouter.ApkManagerScreen.route) {
+            ApkScreen(modifier)
         }
     }
 }

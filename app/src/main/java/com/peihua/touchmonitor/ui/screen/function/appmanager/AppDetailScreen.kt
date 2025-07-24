@@ -40,11 +40,11 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.IconText
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.TitleValueView
+import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
@@ -66,33 +66,37 @@ fun AppDetailScreen(
     val refresh = {
         viewModel.refreshAppInfo(packageName)
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
-    ) {
-        AppTopBar(title = { stringResource(id = R.string.text_app_manager) }, navigateUp = {
+    Toolbar(
+        modifier = modifier,
+        title = stringResource(id = R.string.text_app_manager),
+        navigateUp = {
             popBackStack()
-        })
-        when (result) {
-            is ResultData.Success -> {
-                AppInfoScreenContent(Modifier, result.data)
-            }
+        }) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_16),
+                    end = dimensionResource(id = R.dimen.dp_16)
+                )
+        ) {
+            when (result) {
+                is ResultData.Success -> {
+                    AppInfoScreenContent(Modifier, result.data)
+                }
 
-            is ResultData.Failure -> {
-                ErrorView { refresh() }
-            }
+                is ResultData.Failure -> {
+                    ErrorView { refresh() }
+                }
 
-            is ResultData.Initialize -> {
-                refresh()
-            }
+                is ResultData.Initialize -> {
+                    refresh()
+                }
 
-            is ResultData.Starting -> {
-                LoadingView()
+                is ResultData.Starting -> {
+                    LoadingView()
+                }
             }
         }
     }
@@ -297,7 +301,7 @@ private fun AppInfoScreenContent(
 
 @Composable
 fun ExportApp(item: AppInfoModel) {
-    val showDialog =remember { mutableStateOf(true) }
+    val showDialog = remember { mutableStateOf(true) }
     val context = LocalContext.current
     val worker = ExtortWorker(context, item) {
         onStart { }

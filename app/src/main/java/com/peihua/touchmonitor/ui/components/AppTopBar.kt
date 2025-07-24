@@ -3,14 +3,17 @@ package com.peihua.touchmonitor.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,18 +24,51 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
+import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
+
+@Composable
+fun Toolbar(
+    modifier: Modifier = Modifier,
+    title: String,
+    navigateUp: () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {
+        NavigationIcon(navigateUp = navigateUp)
+    },
+    actions: @Composable RowScope.() -> Unit = {},
+    content: @Composable () -> Unit = {},
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AppTopBar(
+                title = title,
+                navigateUp = navigateUp,
+                navigationIcon = navigationIcon,
+                actions = actions
+            )
+        }) {
+        Box(
+            Modifier
+                .padding(it)
+                .fillMaxSize()
+        ) {
+            content()
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier, title: @Composable () -> String,
+    modifier: Modifier = Modifier, title: String,
     navigateUp: () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -46,7 +82,7 @@ fun AppTopBar(
             Box(modifier = Modifier.fillMaxWidth()) {
                 ScaleText(
                     style = typography.titleMedium,
-                    text = title(),
+                    text = title,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
@@ -73,7 +109,7 @@ fun NavigationIcon(
 ) {
     Icon(
         modifier = Modifier
-            .size(dimensionResource(id = R.dimen.dp_24))
+            .size(dimensionResource(id = R.dimen.dp_36))
             .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
             .clickable { navigateUp() },
         imageVector = imageVector, contentDescription = ""

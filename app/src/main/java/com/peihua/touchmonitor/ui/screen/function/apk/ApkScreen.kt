@@ -1,8 +1,7 @@
-package com.peihua.touchmonitor.ui.screen.function.appmanager
+package com.peihua.touchmonitor.ui.screen.function.apk
 
 import android.text.format.Formatter
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,71 +25,38 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.ui.AppInfoModel
-import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
-import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
-import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.installApk
 import com.peihua.touchmonitor.utils.items
-import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
+import com.peihua.touchmonitor.viewmodel.ApkViewModel
 
 @Composable
-fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
-    val userApplication = stringResource(id = R.string.text_user_application)
-    val systemApplication = stringResource(id = R.string.text_system_application)
-    val apk = stringResource(id = R.string.text_install_package)
+fun ApkScreen(modifier: Modifier = Modifier) {
     Toolbar(
         modifier = modifier,
-        title = stringResource(id = R.string.text_app_manager),
+        title = stringResource(id = R.string.text_install_package_manager),
         navigateUp = {
             popBackStack()
         }) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            TabPager(
-                modifier = modifier,
-                tabs = listOf(userApplication, systemApplication, apk)
-            ) { modifier, state, index ->
-                when (index) {
-                    0 -> {
-                        UserAppScreen(modifier)
-                    }
-
-                    1 -> {
-                        SystemAppScreen(modifier)
-                    }
-
-                    2 -> {
-                        ApkScreenContent(modifier)
-                    }
-                }
-
-            }
-        }
+        ApkScreenContent()
     }
 }
 
 @Composable
-private fun UserAppScreen(
-    modifier: Modifier = Modifier,
-    viewModel: AppExtractorViewModel = viewModel(),
-) {
-    val result = viewModel.userApplications.value
+fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = viewModel()) {
+    val result = viewModel.apkList.value
     //请求数据
     val refresh = {
-        viewModel.requestUserAppList()
+        viewModel.getApkList()
     }
     Column(
         modifier
@@ -100,10 +66,9 @@ private fun UserAppScreen(
                 end = dimensionResource(id = R.dimen.dp_16)
             )
     ) {
-
         when (result) {
             is ResultData.Success -> {
-                AppListScreenContent(Modifier, result.data)
+                ApkListScreenContent(Modifier, result.data)
             }
 
             is ResultData.Failure -> {
@@ -122,48 +87,9 @@ private fun UserAppScreen(
 }
 
 @Composable
-fun SystemAppScreen(
+private fun ApkListScreenContent(
     modifier: Modifier = Modifier,
-    viewModel: AppExtractorViewModel = viewModel(),
-) {
-    val result = viewModel.sysApplications.value
-    //请求数据
-    val refresh = {
-        viewModel.requestSystemAppList()
-    }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
-    ) {
-
-        when (result) {
-            is ResultData.Success -> {
-                AppListScreenContent(Modifier, result.data)
-            }
-
-            is ResultData.Failure -> {
-                ErrorView { refresh() }
-            }
-
-            is ResultData.Initialize -> {
-                refresh()
-            }
-
-            is ResultData.Starting -> {
-                LoadingView()
-            }
-        }
-    }
-}
-
-@Composable
-private fun AppListScreenContent(
-    modifier: Modifier = Modifier,
-    models: List<AppInfoModel>,
+    models: List<ApkModel>,
 ) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape()
@@ -171,14 +97,11 @@ private fun AppListScreenContent(
         if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
     LazyColumn(modifier = modifier) {
         items(models) { item ->
-            AppItemView(
+            ApkItemView(
                 Modifier
                     .padding(bottom = dimensionResource(id = R.dimen.dp_16))
                     .clickable {
-                        navigateTo(
-                            AppRouter.AppDetailScreen.route,
-                            "packageName" to item.packageName
-                        )
+                        context.installApk(item.path)
                     }, item, iconSize
             )
         }
@@ -186,9 +109,9 @@ private fun AppListScreenContent(
 }
 
 @Composable
-private fun AppItemView(
+private fun ApkItemView(
     modifier: Modifier,
-    item: AppInfoModel,
+    item: ApkModel,
     iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
 ) {
     val context = LocalContext.current
@@ -210,25 +133,28 @@ private fun AppItemView(
                 .size(iconSize)
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
         )
-        ScaleText(
-            modifier = Modifier
-                .constrainAs(title) {
-                    start.linkTo(icon.end)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    horizontalBias = 0f
-                    horizontalChainWeight = 1f
-                }
-                .padding(start = dimensionResource(id = R.dimen.dp_8)),
-            text = stringResource(R.string.text_name, item.name),
-            maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
-        )
+        val hasDisplayName = item.displayName.isNotEmpty()
+        if (hasDisplayName) {
+            ScaleText(
+                modifier = Modifier
+                    .constrainAs(title) {
+                        start.linkTo(icon.end)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        horizontalBias = 0f
+                        horizontalChainWeight = 1f
+                    }
+                    .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                text = stringResource(R.string.text_app_name, item.displayName),
+                maxLines = 1,
+                style = MaterialTheme.typography.labelSmallNormal
+            )
+        }
         ScaleText(
             modifier = Modifier
                 .constrainAs(pkgName) {
                     start.linkTo(icon.end)
-                    top.linkTo(title.bottom)
+                    top.linkTo(if(hasDisplayName)title.bottom else parent.top)
                     end.linkTo(parent.end)
                     horizontalBias = 0f
                     horizontalChainWeight = 1f
@@ -237,32 +163,35 @@ private fun AppItemView(
                     start = dimensionResource(id = R.dimen.dp_8),
                     top = dimensionResource(id = R.dimen.dp_4)
                 ),
-            text = stringResource(R.string.text_package, item.packageName),
+            text = stringResource(R.string.text_file_name, item.apkName),
             maxLines = 1,
             style = MaterialTheme.typography.labelSmallNormal
         )
-        ScaleText(
-            modifier = Modifier
-                .constrainAs(version) {
-                    start.linkTo(title.start)
-                    top.linkTo(pkgName.bottom)
-                    end.linkTo(parent.end)
-                    horizontalBias = 0f
-                    horizontalChainWeight = 1f
-                }
-                .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
-                ),
-            text = stringResource(R.string.text_version, item.versionName),
-            maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
-        )
+        val hasVersion = item.versionName.isNotEmpty()
+        if (hasVersion) {
+            ScaleText(
+                modifier = Modifier
+                    .constrainAs(version) {
+                        start.linkTo(icon.end)
+                        top.linkTo(pkgName.bottom)
+                        end.linkTo(parent.end)
+                        horizontalBias = 0f
+                        horizontalChainWeight = 1f
+                    }
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        top = dimensionResource(id = R.dimen.dp_4)
+                    ),
+                text = stringResource(R.string.text_version, item.versionName),
+                maxLines = 1,
+                style = MaterialTheme.typography.labelSmallNormal
+            )
+        }
         ScaleText(
             modifier = Modifier
                 .constrainAs(fileSize) {
-                    start.linkTo(title.start)
-                    top.linkTo(version.bottom)
+                    start.linkTo(icon.end)
+                    top.linkTo(if (hasVersion) version.bottom else pkgName.bottom)
                     end.linkTo(parent.end)
                     horizontalBias = 0f
                     horizontalChainWeight = 1f

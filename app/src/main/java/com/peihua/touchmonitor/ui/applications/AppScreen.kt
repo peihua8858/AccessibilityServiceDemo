@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,9 +26,9 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.AppInfo
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
@@ -42,41 +43,53 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
     val refresh = {
         viewModel.requestData()
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
-    ) {
-        AppTopBar(title = { "Touch Monitor" }, navigateUp = {
+    Toolbar(
+        modifier = modifier,
+        title = stringResource(id = R.string.text_app_manager),
+        navigateUp = {
             popBackStack()
-        })
-        when (result) {
-            is ResultData.Success -> {
-                AppScreenContent(Modifier, result.data){
-                    viewModel.saveToDb(it)
+        }) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_16),
+                    end = dimensionResource(id = R.dimen.dp_16)
+                )
+        ) {
+            when (result) {
+                is ResultData.Success -> {
+                    AppScreenContent(Modifier, result.data) {
+                        viewModel.saveToDb(it)
+                    }
                 }
-            }
 
-            is ResultData.Failure -> {
-                ErrorView { refresh() }
-            }
+                is ResultData.Failure -> {
+                    ErrorView { refresh() }
+                }
 
-            is ResultData.Initialize -> {
-                refresh()
-            }
+                is ResultData.Initialize -> {
+                    refresh()
+                }
 
-            is ResultData.Starting -> {
-                LoadingView()
+                is ResultData.Starting -> {
+                    LoadingView()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo>,saveToDb: (AppInfo) -> Unit) {
+private fun AppScreenContent(
+    modifier: Modifier = Modifier,
+    models: List<AppInfo>,
+    saveToDb: (AppInfo) -> Unit,
+) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape()
-    val iconSize = if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
+    val iconSize =
+        if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
     LazyVerticalGrid(
         modifier = modifier,
         //如果是平板或者大屏则使用4列，否则2列
@@ -86,7 +99,7 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
         items(models) { item ->
             AppItemView(Modifier.clickable {
                 saveToDb(item)
-                popBackStack{
+                popBackStack {
                     set("packageName", item.packageName)
 //                    putString("packageName", item.packageName)
                 }
@@ -96,7 +109,11 @@ private fun AppScreenContent(modifier: Modifier = Modifier, models: List<AppInfo
 }
 
 @Composable
-private fun AppItemView(modifier: Modifier, item: AppInfo, iconSize: Dp = dimensionResource(id = R.dimen.dp_96)) {
+private fun AppItemView(
+    modifier: Modifier,
+    item: AppInfo,
+    iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
+) {
     val colorScheme = MaterialTheme.colorScheme
     ConstraintLayout(modifier = modifier) {
         val drawable = item.icon

@@ -56,7 +56,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            AppTopBar(title = { stringResource(id = R.string.app_name) }, navigationIcon = {})
+            AppTopBar(title = stringResource(id = R.string.app_name), navigationIcon = {})
         },
         bottomBar = {
             NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_48))) {

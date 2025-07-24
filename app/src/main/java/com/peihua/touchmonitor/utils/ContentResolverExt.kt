@@ -89,3 +89,73 @@ fun ContentResolver.getFieldFromContentUri(contentUri: Uri?, columnName: String)
         }
     }
 }
+
+
+fun Context.getFileFromUri(uri: Uri?): File? {
+    return if (uri == null) {
+        null
+    } else when (uri.scheme) {
+        "content" -> getFileFromContentUri(uri)
+        "file" -> uri.path?.let {
+            File(it)
+        }
+
+        null -> {
+            val file = File(uri.toString())
+            if (file.exists()) {
+                file
+            } else null
+        }
+
+        else -> null
+    }
+}
+
+fun Context.getFileFromContentUri(contentUri: Uri?): File? {
+    val contentResolver = contentResolver ?: return null
+    return contentResolver.getFileFromContentUri(contentUri)
+}
+
+fun ContentResolver.getFileFromContentUri(contentUri: Uri?): File? {
+    return contentUri?.let { uri ->
+        val column = arrayOf(MediaStore.Images.Media.DATA)
+        val sel: String
+        val cursor = try {
+            val wholeID = DocumentsContract.getDocumentId(uri)
+            val id =
+                wholeID.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+            // where id is equal to
+            sel = MediaStore.Images.Media._ID + "=?"
+            query(
+                MediaStore.Files.getContentUri(sel),
+                column, sel, arrayOf(id), null
+            )
+        } catch (e: Throwable) {
+            query(
+                uri, column, null,
+                null, null
+            )
+        }
+        return cursor?.use {
+            try {
+                val columnNames = cursor.columnNames
+                cursor.moveToFirst()
+                dLog { " getRealPathFromURI>>>>>>cursor.columnNames:${columnNames.contentToString()}" }
+                val columnIndex = cursor.getColumnIndex(column[0])
+                val filePath = cursor.getString(columnIndex)
+                if (filePath.isNonEmpty()) {
+                    val file = File(filePath)
+                    if (file.exists()) {
+                        return file
+                    }
+                }
+                dLog { "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:$columnIndex" }
+                null
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                dLog { "getFileFromContentUri>>>>>>e:${e.message}" }
+                null
+            }
+        }
+    }
+}

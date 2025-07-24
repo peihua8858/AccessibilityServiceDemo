@@ -178,9 +178,9 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 key(delayTimes) {
                     for (index in 1..32) {
                         val isSelected = delayTimes.contains(index)
-                        val borderColor = if (isSelected) Color.Blue else Color.Gray
-                        val backgroundColor = if (isSelected) Color.Blue else Color.Transparent
-                        val textColor = if (isSelected) Color.White else Color.Black
+                        val borderColor = if (isSelected) colorScheme.primary else colorScheme.inverseSurface
+                        val backgroundColor = if (isSelected) colorScheme.secondaryContainer else Color.Transparent
+                        val textColor = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.inverseSurface
                         ScaleText(
                             text = index.toString(),
                             color = textColor,
@@ -226,6 +226,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
+                color = colorScheme.onSurface,
                 text = stringResource(R.string.double_click_like),
             )
             Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
@@ -247,6 +248,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
+                color = colorScheme.onSurface,
                 text = stringResource(R.string.skip_ad_or_live),
             )
             Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
@@ -268,6 +270,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
+                color = colorScheme.onSurface,
                 text = stringResource(R.string.brightness_min),
             )
             Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
@@ -289,6 +292,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
+                color = colorScheme.onSurface,
                 text = stringResource(R.string.sound_mute),
             )
             Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
@@ -310,6 +314,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
+                color = colorScheme.onSurface,
                 text = stringResource(R.string.random_reverse),
             )
             Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))

@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui.screen.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -34,6 +35,9 @@ import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.ui.theme.labelLargeNormal
+import com.peihua.touchmonitor.ui.theme.labelMediumNormal
+import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -44,13 +48,15 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState())
             .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
-        val textColor = Colors.Red[300]
-        val textBgColor = Colors.Red[50]
+        val isDarkTheme = isSystemInDarkTheme()
+        val textColor = if(isDarkTheme) Colors.Grey[300] else  Colors.Red[300]
+        val textBgColor = if(isDarkTheme) Colors.Grey[700] else Colors.Red[50]
+        val bgContainerColor = if(isDarkTheme) Colors.Grey[900] else Color.White
         ExtendedListTileNoBorder(
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
                 .background(
-                    Color.White,
+                    bgContainerColor,
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
                 ),
             isExtended = true,
@@ -83,7 +89,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 .padding(top = dimensionResource(id = R.dimen.dp_16))
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
                 .background(
-                    Color.White,
+                    bgContainerColor,
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
                 ),
             isExtended = true,
@@ -113,7 +119,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 .padding(top = dimensionResource(id = R.dimen.dp_16))
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
                 .background(
-                    Color.White,
+                    bgContainerColor,
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
                 ),
             isExtended = true,
@@ -151,6 +157,7 @@ private fun ItemTextView(
         text = text,
         textAlign = TextAlign.Center,
         color = textColor,
+        style = MaterialTheme.typography.labelSmallNormal,
         maxLines = 1,
         modifier = modifier
             .padding(
@@ -199,7 +206,7 @@ private fun TitleView(text: String, painter: Painter, tintColor: Color, isExtend
                 .padding(start = dimensionResource(id = R.dimen.dp_8))
                 .align(Alignment.CenterVertically)
                 .weight(1f),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLargeNormal,
             color = tintColor,
             text = text,
         )

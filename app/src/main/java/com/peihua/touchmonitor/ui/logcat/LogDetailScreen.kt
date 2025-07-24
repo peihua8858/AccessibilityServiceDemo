@@ -9,12 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
@@ -31,34 +30,40 @@ fun LogDetailScreen(
     val refresh = {
         viewModel.requestLogDetailData(filePath)
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
-    ) {
-        AppTopBar(title = { stringResource(R.string.text_log_detail) }, navigateUp = {
+    Toolbar(
+        modifier = modifier,
+        title = stringResource(id = R.string.text_log_detail),
+        navigateUp = {
             popBackStack()
-        })
-        when (result) {
-            is ResultData.Success -> {
-                ScaleText(
-                    text = result.data, modifier = modifier
-                        .verticalScroll(rememberScrollState())
+        }) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_16),
+                    end = dimensionResource(id = R.dimen.dp_16)
                 )
-            }
+        ) {
+            when (result) {
+                is ResultData.Success -> {
+                    ScaleText(
+                        text = result.data, modifier = modifier
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
 
-            is ResultData.Failure -> {
-                ErrorView { refresh() }
-            }
+                is ResultData.Failure -> {
+                    ErrorView { refresh() }
+                }
 
-            is ResultData.Initialize -> {
-                refresh()
-            }
+                is ResultData.Initialize -> {
+                    refresh()
+                }
 
-            is ResultData.Starting -> {
-                LoadingView()
+                is ResultData.Starting -> {
+                    LoadingView()
+                }
             }
         }
     }
-
 }

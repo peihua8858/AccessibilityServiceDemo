@@ -2,13 +2,9 @@ package com.peihua.touchmonitor.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.SliderColors
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -17,9 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettings
 
 private val lightScheme = lightColorScheme(
@@ -261,24 +254,8 @@ data class ColorFamily(
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
-@get:Composable
-val customShapes
-    get() = Shapes(
-        extraSmall = RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)),
-        small = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)), // 小型圆角设为 8dp
-        medium = RoundedCornerShape(dimensionResource(id = R.dimen.dp_12)), // 中型圆角设为 12dp
-        large = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)), // 大型圆角设为 16dp
-        extraLarge = RoundedCornerShape(dimensionResource(id = R.dimen.dp_20)),
-    )
 
-@Composable
-fun SliderColors(): SliderColors {
-    return SliderDefaults.colors(
-        thumbColor = MaterialTheme.colorScheme.primary,
-        activeTrackColor = MaterialTheme.colorScheme.primary,
-        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-    )
-}
+
 
 @Composable
 fun Theme(
@@ -294,10 +271,6 @@ fun Theme(
         else -> lightScheme
     }
 
-    colorScheme.messageBotCardBackground =
-        if (darkTheme) colorScheme.surfaceVariant else colorScheme.background
-    colorScheme.messageHumanCardBackground =
-        if (darkTheme) colorScheme.onSurface else colorScheme.onSurfaceVariant
     MaterialTheme(
         shapes = customShapes,
         colorScheme = colorScheme,
