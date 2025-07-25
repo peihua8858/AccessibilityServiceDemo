@@ -46,3 +46,28 @@ fun LoadingView(modifier: Modifier = Modifier.fillMaxSize()) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }
+
+@Composable
+fun EmptyView(modifier: Modifier = Modifier, retry: () -> Unit) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Row(
+            Modifier
+                .align(Alignment.Center)
+        ) {
+            ScaleText(
+                text = stringResource(id = R.string.text_no_data_found)+"，",
+                style = typography.titleMedium,
+            )
+            //text 下划线
+            ScaleText(
+                text = stringResource(id = R.string.text_request_fail_retry),
+                style = typography.titleMedium,
+                color = Color.Blue,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .clickable {
+                        retry()
+                    })
+        }
+    }
+}

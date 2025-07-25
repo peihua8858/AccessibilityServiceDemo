@@ -7,11 +7,13 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.fz.common.utils.showToast
 import java.io.File
+import androidx.core.net.toUri
 
 fun Context.dimenOffset(dip: Int): Int {
     return resources.getDimensionPixelOffset(dip)
@@ -99,4 +101,29 @@ fun Context.installLocalApk(uri: Uri?) {
         startActivity(intent)
     }
     finish()
+}
+
+
+fun Context.startStorageSettingsActivity(){
+    if (isR) {
+        val intent =Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+        intent.setData(("package:$packageName").toUri())
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            dLog { "fail e:${e.stackTraceToString()}" }
+            try {
+                intent.action =Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                startActivity(intent)
+            } catch (e: Exception) {
+                dLog { "fail e:${e.stackTraceToString()}" }
+                intent.action =Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                startActivity(intent)
+            }
+        }
+    } else if(isN) {
+        val intent =Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.setData(("package:$packageName").toUri())
+        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS))
+    }
 }

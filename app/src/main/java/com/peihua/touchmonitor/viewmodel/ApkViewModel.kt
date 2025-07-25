@@ -3,7 +3,6 @@ package com.peihua.touchmonitor.viewmodel
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.provider.MediaStore
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +11,6 @@ import androidx.lifecycle.application
 import com.fz.common.file.getFileSize
 import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.request
 import java.io.File
 
@@ -22,6 +20,7 @@ class ApkViewModel(application: Application) : AndroidViewModel(application) {
         mutableStateOf(ResultData.Initialize())
 
     fun getApkList() {
+        apkList.value = ResultData.Initialize()
         request(apkList) {
             application.contentResolver.query(
                 MediaStore.Files.getContentUri("external"),
@@ -62,7 +61,7 @@ class ApkViewModel(application: Application) : AndroidViewModel(application) {
                                             )
                                         )
                                     }
-                                }else{
+                                } else {
                                     apkList.add(
                                         ApkModel(
                                             displayName = "",

@@ -59,11 +59,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
             AppTopBar(title = stringResource(id = R.string.app_name), navigationIcon = {})
         },
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_48))) {
+            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_72))) {
                 Column(
                     modifier = Modifier
-                        .weight(1f)
                         .fillMaxHeight()
+                        .weight(1f)
                         .align(Alignment.CenterVertically)
                         .background(if (selectItem.intValue == 0) colorScheme.surface else Color.White)
                         .clickable {

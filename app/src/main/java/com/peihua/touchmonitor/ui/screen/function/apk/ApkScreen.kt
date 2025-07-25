@@ -26,6 +26,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
+import com.peihua.touchmonitor.ui.components.EmptyView
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.Toolbar
@@ -68,7 +69,13 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
     ) {
         when (result) {
             is ResultData.Success -> {
-                ApkListScreenContent(Modifier, result.data)
+                if (result.data.isNotEmpty()) {
+                    ApkListScreenContent(Modifier, result.data)
+                } else {
+                    EmptyView(modifier) {
+                        refresh()
+                    }
+                }
             }
 
             is ResultData.Failure -> {
@@ -154,7 +161,7 @@ private fun ApkItemView(
             modifier = Modifier
                 .constrainAs(pkgName) {
                     start.linkTo(icon.end)
-                    top.linkTo(if(hasDisplayName)title.bottom else parent.top)
+                    top.linkTo(if (hasDisplayName) title.bottom else parent.top)
                     end.linkTo(parent.end)
                     horizontalBias = 0f
                     horizontalChainWeight = 1f

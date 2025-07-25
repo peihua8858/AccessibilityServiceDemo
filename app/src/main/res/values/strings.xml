@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">辅助工具</string>
     <string name="text_request_fail">请求失败</string>
+    <string name="text_no_data_found">数据为空</string>
     <string name="text_request_fail_retry">请点击重试</string>
     <string name="text_retry">重试</string>
     <string name="text_loading">加载中</string>
