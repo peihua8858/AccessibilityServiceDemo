@@ -158,10 +158,7 @@ private fun HomeHorList(
     Row(modifier = modifier.padding(top = dimensionResource(id = R.dimen.dp_16))) {
         for ((index, item) in titles.withIndex()) {
             if (item.first.isEmpty()) {
-                Box(
-                    Modifier
-                        .weight(1f)
-                ) { }
+                Spacer(Modifier.weight(1f))
             } else {
                 HomeCard(
                     modifier = Modifier.weight(1f),

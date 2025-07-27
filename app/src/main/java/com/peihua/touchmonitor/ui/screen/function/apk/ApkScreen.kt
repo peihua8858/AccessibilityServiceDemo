@@ -19,8 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
@@ -148,6 +150,7 @@ private fun ApkItemView(
                         start.linkTo(icon.end)
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
                         horizontalBias = 0f
                         horizontalChainWeight = 1f
                     }
@@ -164,6 +167,7 @@ private fun ApkItemView(
                     top.linkTo(if (hasDisplayName) title.bottom else parent.top)
                     end.linkTo(parent.end)
                     horizontalBias = 0f
+                    width = Dimension.fillToConstraints
                     horizontalChainWeight = 1f
                 }
                 .padding(
@@ -172,6 +176,7 @@ private fun ApkItemView(
                 ),
             text = stringResource(R.string.text_file_name, item.apkName),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.labelSmallNormal
         )
         val hasVersion = item.versionName.isNotEmpty()
