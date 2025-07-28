@@ -140,7 +140,7 @@ fun TextMiddleEllipsis(
                         val dotSpacing = with(density) { 4.dp.toPx() }
                         listOf(-dotSpacing, 0f, dotSpacing).forEach { offset ->
                             drawCircle(
-                                color = textStyle.color ?: Color.Black,
+                                color = textStyle.color,
                                 radius = with(density) { 1.5.dp.toPx() },
                                 center = Offset(ellipsisX + offset, ellipsisY)
                             )

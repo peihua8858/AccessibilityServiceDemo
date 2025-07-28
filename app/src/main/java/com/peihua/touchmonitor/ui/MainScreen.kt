@@ -38,7 +38,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.ui.components.AppTopBar
 import com.peihua.touchmonitor.ui.components.NavigationBar
 import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
@@ -55,9 +54,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val colorScheme = MaterialTheme.colorScheme
     Scaffold(
         modifier = modifier,
-        topBar = {
-            AppTopBar(title = stringResource(id = R.string.app_name), navigationIcon = {})
-        },
         bottomBar = {
             NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_72))) {
                 Column(

@@ -32,6 +32,8 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ExtendedListTileNoBorder
 import com.peihua.touchmonitor.ui.components.RotatingView
+import com.peihua.touchmonitor.ui.components.Toolbar
+import com.peihua.touchmonitor.ui.components.ToolbarNoNav
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.Colors
@@ -43,104 +45,109 @@ import com.peihua.touchmonitor.utils.showToast
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FunctionScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(dimensionResource(id = R.dimen.dp_16))
+    ToolbarNoNav(
+        modifier = modifier,
+        title = stringResource(id = R.string.text_function)
     ) {
-        val isDarkTheme = isSystemInDarkTheme()
-        val textColor = if(isDarkTheme) Colors.Grey[300] else  Colors.Red[300]
-        val textBgColor = if(isDarkTheme) Colors.Grey[700] else Colors.Red[50]
-        val bgContainerColor = if(isDarkTheme) Colors.Grey[900] else Color.White
-        ExtendedListTileNoBorder(
-            modifier = Modifier
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
-                .background(
-                    bgContainerColor,
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
-                ),
-            isExtended = true,
-            title = { isExtended ->
-                TitleView(
-                    text = stringResource(R.string.text_daily_tools),
-                    painter = painterResource(id = R.drawable.ic_daily_tools),
-                    tintColor = Colors.Red[400],
-                    isExtended = isExtended
+        Column(
+            modifier = modifier
+                .verticalScroll(rememberScrollState())
+                .padding(dimensionResource(id = R.dimen.dp_16))
+        ) {
+            val isDarkTheme = isSystemInDarkTheme()
+            val textColor = if (isDarkTheme) Colors.Grey[300] else Colors.Red[300]
+            val textBgColor = if (isDarkTheme) Colors.Grey[700] else Colors.Red[50]
+            val bgContainerColor = if (isDarkTheme) Colors.Grey[900] else Color.White
+            ExtendedListTileNoBorder(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .background(
+                        bgContainerColor,
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                    ),
+                isExtended = true,
+                title = { isExtended ->
+                    TitleView(
+                        text = stringResource(R.string.text_daily_tools),
+                        painter = painterResource(id = R.drawable.ic_daily_tools),
+                        tintColor = Colors.Red[400],
+                        isExtended = isExtended
+                    )
+                }) {
+                FlowRowList(
+                    modifier = Modifier,
+                    items = listOf(
+                        stringResource(R.string.text_scale_ruler) to null,
+                        stringResource(R.string.text_compass) to null,
+                        stringResource(R.string.text_horizon) to null,
+                        stringResource(R.string.text_angle_meter) to null,
+                        stringResource(R.string.text_simple_paint) to null,
+                        stringResource(R.string.text_led_subtitle) to null,
+                        stringResource(R.string.text_time_screen) to null,
+                        stringResource(R.string.text_daily_60_seconds_early_report) to null,
+                    ),
+                    textColor = textColor,
+                    backgroundColor = textBgColor
                 )
-            }) {
-            FlowRowList(
-                modifier = Modifier,
-                items = listOf(
-                    stringResource(R.string.text_scale_ruler) to null,
-                    stringResource(R.string.text_compass) to null,
-                    stringResource(R.string.text_horizon) to null,
-                    stringResource(R.string.text_angle_meter) to null,
-                    stringResource(R.string.text_simple_paint) to null,
-                    stringResource(R.string.text_led_subtitle) to null,
-                    stringResource(R.string.text_time_screen) to null,
-                    stringResource(R.string.text_daily_60_seconds_early_report) to null,
-                ),
-                textColor = textColor,
-                backgroundColor = textBgColor
-            )
-        }
-        ExtendedListTileNoBorder(
-            modifier = Modifier
-                .padding(top = dimensionResource(id = R.dimen.dp_16))
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
-                .background(
-                    bgContainerColor,
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
-                ),
-            isExtended = true,
-            title = { isExtended ->
-                TitleView(
-                    text = stringResource(R.string.text_system_tool),
-                    painter = painterResource(id = R.drawable.ic_system_tools),
-                    tintColor = Colors.Indigo[600],
-                    isExtended = isExtended
+            }
+            ExtendedListTileNoBorder(
+                modifier = Modifier
+                    .padding(top = dimensionResource(id = R.dimen.dp_16))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .background(
+                        bgContainerColor,
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                    ),
+                isExtended = true,
+                title = { isExtended ->
+                    TitleView(
+                        text = stringResource(R.string.text_system_tool),
+                        painter = painterResource(id = R.drawable.ic_system_tools),
+                        tintColor = Colors.Indigo[600],
+                        isExtended = isExtended
+                    )
+                }) {
+                FlowRowList(
+                    modifier = Modifier,
+                    items = listOf(
+                        stringResource(R.string.text_app_kit) to AppRouter.AppManagerScreen,
+                        stringResource(R.string.text_check_screen_bad_point) to null,
+                        stringResource(R.string.text_see_device_info) to null,
+                        stringResource(R.string.text_desktop_video_wallpaper) to null,
+                        stringResource(R.string.text_system_font_size_adjustment) to null,
+                    ),
+                    textColor = textColor,
+                    backgroundColor = textBgColor
                 )
-            }) {
-            FlowRowList(
-                modifier = Modifier,
-                items = listOf(
-                    stringResource(R.string.text_app_kit) to AppRouter.AppManagerScreen,
-                    stringResource(R.string.text_check_screen_bad_point) to null,
-                    stringResource(R.string.text_see_device_info) to null,
-                    stringResource(R.string.text_desktop_video_wallpaper) to null,
-                    stringResource(R.string.text_system_font_size_adjustment) to null,
-                ),
-                textColor = textColor,
-                backgroundColor = textBgColor
-            )
-        }
-        ExtendedListTileNoBorder(
-            modifier = Modifier
-                .padding(top = dimensionResource(id = R.dimen.dp_16))
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
-                .background(
-                    bgContainerColor,
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
-                ),
-            isExtended = true,
-            title = { isExtended ->
-                TitleView(
-                    text = stringResource(R.string.text_photo_tools),
-                    painter = painterResource(id = R.drawable.ic_photo_tools),
-                    tintColor = Colors.Green[600],
-                    isExtended = isExtended
+            }
+            ExtendedListTileNoBorder(
+                modifier = Modifier
+                    .padding(top = dimensionResource(id = R.dimen.dp_16))
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .background(
+                        bgContainerColor,
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                    ),
+                isExtended = true,
+                title = { isExtended ->
+                    TitleView(
+                        text = stringResource(R.string.text_photo_tools),
+                        painter = painterResource(id = R.drawable.ic_photo_tools),
+                        tintColor = Colors.Green[600],
+                        isExtended = isExtended
+                    )
+                }) {
+                FlowRowList(
+                    modifier = Modifier,
+                    items = listOf(
+                        stringResource(R.string.text_app_kit) to null,
+                        stringResource(R.string.text_check_screen_bad_point) to null,
+                        stringResource(R.string.text_see_device_info) to null,
+                    ),
+                    textColor = textColor,
+                    backgroundColor = textBgColor
                 )
-            }) {
-            FlowRowList(
-                modifier = Modifier,
-                items = listOf(
-                    stringResource(R.string.text_app_kit) to null,
-                    stringResource(R.string.text_check_screen_bad_point) to null,
-                    stringResource(R.string.text_see_device_info) to null,
-                ),
-                textColor = textColor,
-                backgroundColor = textBgColor
-            )
+            }
         }
     }
 }

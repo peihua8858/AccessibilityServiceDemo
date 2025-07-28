@@ -1,12 +1,8 @@
 package com.peihua.touchmonitor.ui.screen.main
 
-import android.Manifest
-import android.content.Intent
 import android.content.res.Configuration
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -36,10 +32,10 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
 import com.peihua.touchmonitor.ui.components.CardViewItem
+import com.peihua.touchmonitor.ui.components.ToolbarNoNav
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
-import com.peihua.touchmonitor.utils.checkPermissions
 import com.peihua.touchmonitor.utils.checkStorgePermission
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
@@ -66,84 +62,88 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         .append("像素密度：${density.density}")
         .append("\n")
         .append("字体缩放系数：${density.fontScale}")
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(dimensionResource(id = R.dimen.dp_16))
-    ) {
-        HomeHorList(
-            modifier = Modifier,
-            titles = listOf(
-                stringResource(id = R.string.text_auto_scroll) to AppRouter.AutoScroller,
-                stringResource(id = R.string.text_images) to null,
-                stringResource(id = R.string.text_audio) to null,
-                stringResource(id = R.string.text_videos) to null,
-                stringResource(id = R.string.text_documents) to null
-            ),
-            painters = listOf(
-                painterResource(id = R.drawable.ic_home_scroller),
-                painterResource(id = R.drawable.ic_home_images_24),
-                painterResource(id = R.drawable.ic_home_audio_24),
-                painterResource(id = R.mipmap.ic_video_home),
-                painterResource(id = R.mipmap.ic_doc_home)
-            ),
-            iconBgColors = listOf(
-                AppColor.color_e30b5a,
-                AppColor.color_fdff0e66,
-                AppColor.color_e30b5a,
-                AppColor.color_f63505,
-                AppColor.color_7b1fa2
-            )
+    ToolbarNoNav(
+        modifier = modifier,
+        title = stringResource(id = R.string.text_home)) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(dimensionResource(id = R.dimen.dp_16))
+        ) {
+            HomeHorList(
+                modifier = Modifier,
+                titles = listOf(
+                    stringResource(id = R.string.text_auto_scroll) to AppRouter.AutoScroller,
+                    stringResource(id = R.string.text_images) to null,
+                    stringResource(id = R.string.text_audio) to null,
+                    stringResource(id = R.string.text_videos) to null,
+                    stringResource(id = R.string.text_documents) to null
+                ),
+                painters = listOf(
+                    painterResource(id = R.drawable.ic_home_scroller),
+                    painterResource(id = R.drawable.ic_home_images_24),
+                    painterResource(id = R.drawable.ic_home_audio_24),
+                    painterResource(id = R.mipmap.ic_video_home),
+                    painterResource(id = R.mipmap.ic_doc_home)
+                ),
+                iconBgColors = listOf(
+                    AppColor.color_e30b5a,
+                    AppColor.color_fdff0e66,
+                    AppColor.color_e30b5a,
+                    AppColor.color_f63505,
+                    AppColor.color_7b1fa2
+                )
 
-        ){item, index ->
-            item.second?.let {  navigateTo(it.route)} ?: showToast(R.string.text_function_developing)
-            true
+            ) { item, index ->
+                item.second?.let { navigateTo(it.route) }
+                    ?: showToast(R.string.text_function_developing)
+                true
+            }
+            HomeHorList(
+                modifier = Modifier,
+                titles = listOf(
+                    stringResource(id = R.string.text_apk) to AppRouter.ApkManagerScreen,
+                    stringResource(id = R.string.text_compression) to null,
+                    stringResource(id = R.string.text_download) to null,
+                    stringResource(id = R.string.text_collect_folder) to null,
+                    stringResource(id = R.string.text_search) to null
+                ),
+                painters = listOf(
+                    painterResource(id = R.mipmap.ic_apk_home),
+                    painterResource(id = R.mipmap.ic_zip_home),
+                    painterResource(id = R.drawable.ic_download_24),
+                    painterResource(id = R.mipmap.ic_fav_home),
+                    painterResource(id = R.drawable.ic_home_search_24)
+                ),
+                iconBgColors = listOf(
+                    AppColor.color_08bf54,
+                    AppColor.color_2039c5,
+                    AppColor.color_2979ff,
+                    AppColor.color_ffd600,
+                    AppColor.color_7b1fa2
+                )
+            )
+            HomeHorList(
+                modifier = Modifier,
+                titles = listOf(
+                    stringResource(id = R.string.text_app_manager) to AppRouter.AppManagerScreen,
+                    "" to null,
+                    "" to null,
+                    "" to null,
+                    "" to null
+                ),
+                painters = listOf(painterResource(id = R.drawable.ic_home_app_manager_24)),
+                iconBgColors = listOf(AppColor.color_e30b5a)
+            )
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
+            val textStyle = LocalTextStyle.current
+            dLog { "000textColor:" + textStyle.color }
+            ScaleText(
+                text = content.toString(),
+                fontSize = dimensionSpResource(id = R.dimen.sp_12),
+            )
         }
-        HomeHorList(
-            modifier = Modifier,
-            titles = listOf(
-                stringResource(id = R.string.text_apk) to AppRouter.ApkManagerScreen,
-                stringResource(id = R.string.text_compression) to null,
-                stringResource(id = R.string.text_download) to null,
-                stringResource(id = R.string.text_collect_folder) to null,
-                stringResource(id = R.string.text_search) to null
-            ),
-            painters = listOf(
-                painterResource(id = R.mipmap.ic_apk_home),
-                painterResource(id = R.mipmap.ic_zip_home),
-                painterResource(id = R.drawable.ic_download_24),
-                painterResource(id = R.mipmap.ic_fav_home),
-                painterResource(id = R.drawable.ic_home_search_24)
-            ),
-            iconBgColors = listOf(
-                AppColor.color_08bf54,
-                AppColor.color_2039c5,
-                AppColor.color_2979ff,
-                AppColor.color_ffd600,
-                AppColor.color_7b1fa2
-            )
-        )
-        HomeHorList(
-            modifier = Modifier,
-            titles = listOf(
-                stringResource(id = R.string.text_app_manager) to AppRouter.AppManagerScreen,
-                "" to null,
-                "" to null,
-                "" to null,
-                "" to null
-            ),
-            painters = listOf(painterResource(id = R.drawable.ic_home_app_manager_24)),
-            iconBgColors = listOf(AppColor.color_e30b5a)
-        )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
-        val textStyle = LocalTextStyle.current
-        dLog { "000textColor:" + textStyle.color }
-        ScaleText(
-            text = content.toString(),
-            fontSize = dimensionSpResource(id = R.dimen.sp_12),
-        )
     }
-
 }
 
 @Composable

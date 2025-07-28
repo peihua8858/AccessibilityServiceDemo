@@ -33,7 +33,35 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
-
+@Composable
+fun ToolbarNoNav(
+    modifier: Modifier = Modifier,
+    title: String,
+    navigateUp: () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {
+    },
+    actions: @Composable RowScope.() -> Unit = {},
+    content: @Composable () -> Unit = {},
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AppTopBar(
+                title = title,
+                navigateUp = navigateUp,
+                navigationIcon = navigationIcon,
+                actions = actions
+            )
+        }) {
+        Box(
+            Modifier
+                .padding(it)
+                .fillMaxSize()
+        ) {
+            content()
+        }
+    }
+}
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
