@@ -32,7 +32,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
 import com.peihua.touchmonitor.ui.components.CardViewItem
-import com.peihua.touchmonitor.ui.components.ToolbarNoNav
+import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
@@ -62,7 +62,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         .append("像素密度：${density.density}")
         .append("\n")
         .append("字体缩放系数：${density.fontScale}")
-    ToolbarNoNav(
+    Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_home)) {
         Column(

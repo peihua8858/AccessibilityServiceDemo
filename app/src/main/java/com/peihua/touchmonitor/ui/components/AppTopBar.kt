@@ -33,13 +33,12 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
+
 @Composable
-fun ToolbarNoNav(
+fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
-    navigateUp: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-    },
+    navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -48,7 +47,6 @@ fun ToolbarNoNav(
         topBar = {
             AppTopBar(
                 title = title,
-                navigateUp = navigateUp,
                 navigationIcon = navigationIcon,
                 actions = actions
             )
@@ -62,6 +60,7 @@ fun ToolbarNoNav(
         }
     }
 }
+
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
@@ -78,7 +77,6 @@ fun Toolbar(
         topBar = {
             AppTopBar(
                 title = title,
-                navigateUp = navigateUp,
                 navigationIcon = navigationIcon,
                 actions = actions
             )
@@ -97,10 +95,7 @@ fun Toolbar(
 @Composable
 fun AppTopBar(
     modifier: Modifier = Modifier, title: String,
-    navigateUp: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-        NavigationIcon(navigateUp = navigateUp)
-    },
+    navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val typography = MaterialTheme.typography

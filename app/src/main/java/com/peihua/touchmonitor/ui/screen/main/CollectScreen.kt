@@ -5,11 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.ui.components.ToolbarNoNav
+import com.peihua.touchmonitor.ui.components.Toolbar
 
 @Composable
 fun CollectScreen(modifier: Modifier = Modifier) {
-    ToolbarNoNav(
+    Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_collect)
     ) {

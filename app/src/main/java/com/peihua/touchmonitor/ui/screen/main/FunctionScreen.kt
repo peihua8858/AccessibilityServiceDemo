@@ -33,19 +33,17 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ExtendedListTileNoBorder
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.Toolbar
-import com.peihua.touchmonitor.ui.components.ToolbarNoNav
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
-import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FunctionScreen(modifier: Modifier = Modifier) {
-    ToolbarNoNav(
+    Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_function)
     ) {
