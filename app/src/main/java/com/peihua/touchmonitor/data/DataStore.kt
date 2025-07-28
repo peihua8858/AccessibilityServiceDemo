@@ -2,7 +2,6 @@ package com.peihua.touchmonitor.data
 
 import android.app.Application
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.launch
 
 /**
  * 私有数据存储
@@ -11,7 +10,8 @@ import kotlinx.coroutines.launch
  */
 abstract class AbstractDataStore<T>(
     protected val application: Application,
-) : BaseDataStore<T>() {
+    vararg typePairs: Pair<Class<*>, Any>,
+) : BaseDataStore<T>(*typePairs) {
     open val fileName: String = "Settings.json"
     override val storeFile: String
         get() = application.filesDir.absolutePath + "/" + fileName
@@ -27,7 +27,8 @@ class DataStore<T>(
     override val default: T,
     override val typeToken: TypeToken<T>,
     override val fileName: String = "Settings.json",
-) : AbstractDataStore<T>(application) {
+    vararg typePairs: Pair<Class<*>,Any>,
+) : AbstractDataStore<T>(application, *typePairs) {
 //    override val typeToken: TypeToken<T> = object : TypeToken<T>() {}
 }
 

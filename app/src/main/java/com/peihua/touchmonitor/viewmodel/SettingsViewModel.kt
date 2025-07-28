@@ -64,7 +64,7 @@ class SettingsViewModel(
                 settingsStore.data.first()
             }
             historySettings.forEach {
-                val provider =values.find { value->value.settings.packageName == it.packageName }
+                val provider = values.find { value -> value.settings.packageName == it.packageName }
                 val newModel = (provider ?: AppProvider.New).createModel(it)
                 if (newModel != null) {
                     if (selectPackage.isNullOrEmpty()) {
@@ -77,7 +77,7 @@ class SettingsViewModel(
             }
 
             for (value in values) {
-               val findModel= result.find { it.pkgName ==value.settings.packageName }
+                val findModel = result.find { it.pkgName == value.settings.packageName }
                 if (findModel != null) {
                     continue
                 }
@@ -116,6 +116,7 @@ class SettingsViewModel(
                     AppProvider.ALL,
                     "",
                     getString(R.string.no_limit),
+                    icon = application.packageManager.defaultActivityIcon,
                     settings = AppProvider.ALL.settings
                 )
             )
@@ -124,6 +125,7 @@ class SettingsViewModel(
                     AppProvider.Other,
                     "other",
                     getString(R.string.other),
+                    icon = application.packageManager.defaultActivityIcon,
                     settings = AppProvider.Other.settings
                 )
             )
@@ -160,16 +162,17 @@ class SettingsViewModel(
     private fun AppProvider.createModel(settings: Settings): AppModel? {
         val pkgName = settings.packageName
         try {
+            val packageManager = application.packageManager
             val appInfo = application.packageManager
                 .getPackageInfo(pkgName, PackageManager.GET_META_DATA).applicationInfo
-            val icon = appInfo?.loadIcon(application.packageManager)
+            val icon = appInfo?.loadIcon(packageManager)
             val displayName =
-                appInfo?.loadLabel(application.packageManager)?.toString() ?: ""
+                appInfo?.loadLabel(packageManager)?.toString() ?: ""
             return AppModel(
                 this,
                 pkgName,
                 displayName,
-                icon,
+                icon ?: packageManager.defaultActivityIcon,
                 appInfo = appInfo,
                 settings = settings
             )

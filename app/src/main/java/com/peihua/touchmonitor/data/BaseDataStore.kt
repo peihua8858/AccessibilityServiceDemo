@@ -22,16 +22,17 @@ import java.lang.reflect.Type
  * 私有数据存储
  * @param <T> 对象类型
  */
-abstract class BaseDataStore<T> :
+abstract class BaseDataStore<T>(vararg typePairs: Pair<Class<*>, Any>) :
     CoroutineScope by WorkScope() {
     abstract val default: T
     abstract val typeToken: TypeToken<T>
     abstract val storeFile: String
+
     protected val db by lazy {
         DataStoreFactory.create(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
-                serializer = JsonSerializer(typeToken.type, default),
+                serializer = JsonSerializer(typeToken.type, default, *typePairs),
                 producePath = {
                     storeFile.toPath()
                 },
@@ -40,6 +41,7 @@ abstract class BaseDataStore<T> :
     }
     val data: Flow<T>
         get() = db.data
+
     fun getData(block: (T) -> Unit) {
         launch {
             data.collect {
@@ -64,17 +66,31 @@ abstract class BaseDataStore<T> :
         }
     }
 
-    class JsonSerializer<T>(private val type: Type, private val default: T) : OkioSerializer<T> {
-        val mGson: Gson = GsonFactory.createGson()
+    class JsonSerializer<T>(
+        private val type: Type,
+        private val default: T,
+        vararg typePairs: Pair<Class<*>, Any>,
+    ) : OkioSerializer<T> {
+        private val factory: GsonFactory.Factory = GsonFactory.createFactory()
+        private val mGson: Gson
+
+        init {
+            typePairs.forEach {
+                factory.registerTypeAdapter(it.first, it.second)
+            }
+            mGson = factory.build()
+        }
+
         override val defaultValue: T
             get() = default
 
         override suspend fun readFrom(source: BufferedSource): T {
             return try {
-               val result:T = mGson.fromJson(source.readUtf8(), type)
-                dLog{"JsonSerializer>>>readFrom>>>>result:$result"}
+                val result: T = mGson.fromJson(source.readUtf8(), type)
+                dLog { "JsonSerializer>>>readFrom>>>>result:$result" }
                 result
             } catch (e: Exception) {
+                e.printStackTrace()
                 default
             }
         }
@@ -84,8 +100,8 @@ abstract class BaseDataStore<T> :
             sink: BufferedSink,
         ) {
             sink.use {
-                val result = mGson.toJson(t,type)
-                dLog{"JsonSerializer>>>writeTo>>>>result:$result"}
+                val result = mGson.toJson(t, type)
+                dLog { "JsonSerializer>>>writeTo>>>>result:$result" }
                 it.writeUtf8(result)
             }
         }

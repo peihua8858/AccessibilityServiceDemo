@@ -135,4 +135,13 @@
     <string name="dialog_storage_negative">拒绝</string>
     <string name="dialog_storage_title">申请权限</string>
 
+    <!-- 主题 -->
+    <string name="theme">主题</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_black">黑色</string>
+    <string name="txt_language">语言</string>
+    <string name="text_dynamic_color">动态主题色</string>
+
 </resources>

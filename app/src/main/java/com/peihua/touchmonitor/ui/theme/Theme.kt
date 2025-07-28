@@ -13,7 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.peihua.touchmonitor.ui.screen.settings.SystemSettings
+import com.peihua.touchmonitor.model.SystemSettings
+import com.peihua.touchmonitor.model.ThemeModel
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -294,11 +295,11 @@ private fun dynamicColorScheme(isDarkTheme: Boolean): ColorScheme? {
 
 @Composable
 fun AppTheme(
-    config: SystemSettings = SystemSettings(ThemeMode.System, false, false),
+    config: ThemeModel,
     // Dynamic color is available on Android 12+
     content: @Composable() (ThemeMode, colorScheme: ColorScheme) -> Unit,
 ) {
-    val themeMode = config.themeMode
+    val themeMode = config.theme
 
     when (themeMode) {
         ThemeMode.Dark -> {
@@ -310,7 +311,7 @@ fun AppTheme(
         }
 
         ThemeMode.System -> {
-            Theme(darkTheme = isSystemInDarkTheme(), content = content)
+            Theme(darkTheme = isSystemInDarkTheme(),config.dynamicColor, content = content)
         }
     }
 }

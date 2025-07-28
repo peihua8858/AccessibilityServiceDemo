@@ -48,4 +48,9 @@ sealed class AppRouter(
      * APK管理
      */
     data object ApkManagerScreen : AppRouter("apkManager")
+
+    /**
+     * 设置
+     */
+    data object SettingsScreen : AppRouter("settings")
 }

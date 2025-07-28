@@ -30,11 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -176,6 +178,18 @@ private fun ShortVideoScreenContent(
                 OutlinedTextField(
                     value = selectedOption.value.displayName,
                     onValueChange = {
+                    },
+                    leadingIcon = {
+                        val icon = selectedOption.value.icon
+                        if (icon!=null) {
+                            Image(
+                               painter = rememberDrawablePainter(icon),
+                                "",
+                                modifier = Modifier
+                                    .size(dimensionResource(id = R.dimen.dp_16))
+                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                            )
+                        }
                     },
                     label = { ScaleText(stringResource(R.string.app_provider)) },
                     readOnly = true,
