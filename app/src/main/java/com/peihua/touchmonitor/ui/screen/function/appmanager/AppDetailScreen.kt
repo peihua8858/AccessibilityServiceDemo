@@ -87,7 +87,7 @@ fun AppDetailScreen(
                 }
 
                 is ResultData.Failure -> {
-                    ErrorView { refresh() }
+                    ErrorView(retry = refresh)
                 }
 
                 is ResultData.Initialize -> {

@@ -97,17 +97,6 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
             } else {
                 popBackStack()
             }
-        },
-        actions = {
-            IconButton(onClick = {
-                navigateTo(AppRouter.LogScreen.route)
-            }) {
-                Icon(
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
-                    painter = painterResource(id = R.drawable.ic_logcat),
-                    contentDescription = stringResource(R.string.text_log)
-                )
-            }
         }) {
         Column(
             modifier
@@ -134,7 +123,7 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
                 }
 
                 is ResultData.Failure -> {
-                    ErrorView { refresh() }
+                    ErrorView(retry = refresh)
                 }
 
                 is ResultData.Initialize -> {

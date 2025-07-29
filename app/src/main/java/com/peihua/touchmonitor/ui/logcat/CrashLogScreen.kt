@@ -11,12 +11,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.LogModel
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.components.EmptyView
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -35,19 +34,23 @@ fun CrashLogScreen(modifier: Modifier = Modifier, viewModel: LogViewModel = view
     Column(
         modifier
             .fillMaxSize()
-            .padding(start = dimensionResource(id = R.dimen.dp_16), end = dimensionResource(id = R.dimen.dp_16))
+            .padding(
+                start = dimensionResource(id = R.dimen.dp_16),
+                end = dimensionResource(id = R.dimen.dp_16)
+            )
     ) {
 
         when (result) {
             is ResultData.Success -> {
                 if (result.data.isEmpty()) {
+                    EmptyView(retry = refresh)
                     return
                 }
                 LogScreenContent(Modifier, result.data)
             }
 
             is ResultData.Failure -> {
-                ErrorView { refresh() }
+                ErrorView(retry = refresh)
             }
 
             is ResultData.Initialize -> {
@@ -65,12 +68,13 @@ fun CrashLogScreen(modifier: Modifier = Modifier, viewModel: LogViewModel = view
 private fun LogScreenContent(modifier: Modifier, models: List<LogModel>) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(models) { item ->
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dimensionResource(id = R.dimen.dp_8))
-                .clickable {
-                    navigateTo2(AppRouter.LogDetail.route, "filePath" to item.path)
-                }) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(id = R.dimen.dp_8))
+                    .clickable {
+                        navigateTo2(AppRouter.LogDetail.route, "filePath" to item.path)
+                    }) {
                 ScaleText(text = item.content, fontSize = dimensionSpResource(id = R.dimen.sp_16))
             }
         }

@@ -107,7 +107,7 @@ private fun UserAppScreen(
             }
 
             is ResultData.Failure -> {
-                ErrorView { refresh() }
+                ErrorView(retry = refresh)
             }
 
             is ResultData.Initialize -> {
@@ -146,7 +146,7 @@ fun SystemAppScreen(
             }
 
             is ResultData.Failure -> {
-                ErrorView { refresh() }
+                ErrorView(retry = refresh)
             }
 
             is ResultData.Initialize -> {

@@ -53,7 +53,7 @@ fun LogDetailScreen(
                 }
 
                 is ResultData.Failure -> {
-                    ErrorView { refresh() }
+                    ErrorView(retry = refresh)
                 }
 
                 is ResultData.Initialize -> {

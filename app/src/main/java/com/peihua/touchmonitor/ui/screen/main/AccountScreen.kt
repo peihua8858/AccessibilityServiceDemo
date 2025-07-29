@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -42,10 +43,11 @@ import com.peihua.touchmonitor.viewmodel.AccountViewModel
 fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = viewModel()) {
     val colorScheme = MaterialTheme.colorScheme
     // 创建一个用于选择图像的 launcher
-    val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+            }
         }
-    }
 
     Column(
         modifier
@@ -63,13 +65,13 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                     bottom = dimensionResource(id = R.dimen.dp_32)
                 )
         ) {
-            Image(
+            AsyncImage(
+                model = R.drawable.ic_user_avatar,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .border(dimensionResource(id = R.dimen.dp_2), Color.White, CircleShape)
                     .clip(CircleShape)
                     .size(dimensionResource(id = R.dimen.dp_64)),
-                painter = painterResource(id = R.drawable.ic_user_avatar),
                 contentDescription = null
             )
             ScaleText(
@@ -90,6 +92,21 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                 },
             painter = painterResource(id = R.drawable.ic_settings_24),
             title = stringResource(id = R.string.settings)
+        )
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        AccountItemView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .background(colorScheme.surface)
+                .clickable {
+                    navigateTo(AppRouter.LogScreen.route)
+                },
+            painter = painterResource(id = R.drawable.ic_logcat),
+            title = stringResource(id = R.string.text_log)
         )
         HorizontalDivider(
             modifier = Modifier

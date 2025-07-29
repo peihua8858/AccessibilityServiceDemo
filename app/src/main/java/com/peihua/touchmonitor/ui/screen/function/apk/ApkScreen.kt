@@ -74,14 +74,12 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
                 if (result.data.isNotEmpty()) {
                     ApkListScreenContent(Modifier, result.data)
                 } else {
-                    EmptyView(modifier) {
-                        refresh()
-                    }
+                    EmptyView(modifier, retry = refresh)
                 }
             }
 
             is ResultData.Failure -> {
-                ErrorView { refresh() }
+                ErrorView(retry = refresh)
             }
 
             is ResultData.Initialize -> {

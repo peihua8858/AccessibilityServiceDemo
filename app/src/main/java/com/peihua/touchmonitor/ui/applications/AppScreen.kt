@@ -65,7 +65,7 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
                 }
 
                 is ResultData.Failure -> {
-                    ErrorView { refresh() }
+                    ErrorView(retry = refresh)
                 }
 
                 is ResultData.Initialize -> {

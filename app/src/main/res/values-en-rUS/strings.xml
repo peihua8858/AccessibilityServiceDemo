@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Auxiliary Tools</string>
     <string name="text_request_fail">Request Failed</string>
-    <string name="text_no_data_found">Data Empty</string>
+    <string name="text_load_fail">Loading failed</string>
+    <string name="text_no_data_found">No data found</string>
     <string name="text_request_fail_retry">Click Retry</string>
     <string name="text_retry">Retry</string>
     <string name="text_loading">Loading…</string>
