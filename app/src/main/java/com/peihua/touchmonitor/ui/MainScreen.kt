@@ -7,31 +7,20 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -42,164 +31,93 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.NavigationBar
+import com.peihua.touchmonitor.ui.components.NavigationBarItem
 import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
-import com.peihua.touchmonitor.ui.theme.AppColor
-import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val selectItem = rememberSaveable { mutableIntStateOf(0) }
-    val colorScheme = MaterialTheme.colorScheme
     val layoutDirection = LocalLayoutDirection.current
+   val navigationBarItemColors = NavigationBarItemDefaults.colors().copy(
+       unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+       unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+       selectedIconColor = MaterialTheme.colorScheme.primary,
+       selectedTextColor = MaterialTheme.colorScheme.primary
+   )
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_72))) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f)
-                        .align(Alignment.CenterVertically)
-                        .background(if (selectItem.intValue == 0) colorScheme.surface else Color.White)
-                        .clickable {
-                            if (selectItem.intValue == 0) {
-                                return@clickable
+            NavigationBar(modifier = Modifier) {
+                NavigationBarItem(
+                    selected = selectItem.intValue == 0,
+                    onClick = {
+                        if (selectItem.intValue == 0) {
+                            return@NavigationBarItem
+                        }
+                        selectItem.intValue = 0
+                        navController.navigate(MainRouter.Home.route) {
+                            popUpTo(MainRouter.Home.route) {
+                                inclusive = true
                             }
-                            selectItem.intValue = 0
-                            navController.navigate(MainRouter.Home.route) {
-                                popUpTo(MainRouter.Home.route) {
-                                    inclusive = true
-                                }
+                        }
+                    },
+                    painter = painterResource(id = R.drawable.ic_home),
+                    title = stringResource(id = R.string.text_home),
+                    colors = navigationBarItemColors
+                )
+                NavigationBarItem(
+                    selected = selectItem.intValue == 1, onClick = {
+                        if (selectItem.intValue == 1) {
+                            return@NavigationBarItem
+                        }
+                        selectItem.intValue = 1
+                        navController.navigate(MainRouter.Function.route) {
+                            popUpTo(MainRouter.Function.route) {
+                                inclusive = true
                             }
-                        },
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
-                            .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.ic_home),
-                        tint = if (selectItem.intValue == 0) colorScheme.onSurface else AppColor.color_747878,
-                        contentDescription = stringResource(id = R.string.text_home)
-                    )
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        text = stringResource(id = R.string.text_home),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 0) colorScheme.onSurface else AppColor.color_747878,
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .align(Alignment.CenterVertically)
-                        .background(if (selectItem.intValue == 1) colorScheme.surface else Color.White)
-                        .clickable {
-                            if (selectItem.intValue == 1) {
-                                return@clickable
+                        }
+                    },
+                    painter = painterResource(id = R.drawable.ic_function_24),
+                    title = stringResource(id = R.string.text_function),
+                    colors = navigationBarItemColors
+                )
+                NavigationBarItem(
+                    selected = selectItem.intValue == 2, onClick = {
+                        if (selectItem.intValue == 2) {
+                            return@NavigationBarItem
+                        }
+                        selectItem.intValue = 2
+                        navController.navigate(MainRouter.Collect.route) {
+                            popUpTo(MainRouter.Collect.route) {
+                                inclusive = true
                             }
-                            selectItem.intValue = 1
-                            navController.navigate(MainRouter.Function.route) {
-                                popUpTo(MainRouter.Function.route) {
-                                    inclusive = true
-                                }
+                        }
+                    },
+                    painter = painterResource(id = R.drawable.ic_star_gray),
+                    title = stringResource(id = R.string.text_collect),
+                    colors = navigationBarItemColors
+                )
+                NavigationBarItem(
+                    selected = selectItem.intValue == 3, onClick = {
+                        if (selectItem.intValue == 3) {
+                            return@NavigationBarItem
+                        }
+                        selectItem.intValue = 3
+                        navController.navigate(MainRouter.Account.route) {
+                            popUpTo(MainRouter.Account.route) {
+                                inclusive = true
                             }
-                        },
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
-                            .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.ic_function_24),
-                        tint = if (selectItem.intValue == 1) colorScheme.onSurface else AppColor.color_747878,
-                        contentDescription = stringResource(id = R.string.text_function)
-                    )
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        text = stringResource(id = R.string.text_function),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 1) colorScheme.onSurface else AppColor.color_747878,
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .align(Alignment.CenterVertically)
-                        .background(if (selectItem.intValue == 2) colorScheme.surface else Color.White)
-                        .clickable {
-                            if (selectItem.intValue == 2) {
-                                return@clickable
-                            }
-                            selectItem.intValue = 2
-                            navController.navigate(MainRouter.Collect.route) {
-                                popUpTo(MainRouter.Collect.route) {
-                                    inclusive = true
-                                }
-                            }
-                        },
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
-                            .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.ic_star_gray),
-                        tint = if (selectItem.intValue == 2) colorScheme.onSurface else AppColor.color_747878,
-                        contentDescription = stringResource(id = R.string.text_collect)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.text_collect),
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 2) colorScheme.onSurface else AppColor.color_747878,
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .align(Alignment.CenterVertically)
-                        .background(if (selectItem.intValue == 3) colorScheme.surface else Color.White)
-                        .clickable {
-                            if (selectItem.intValue == 3) {
-                                return@clickable
-                            }
-                            selectItem.intValue = 3
-                            navController.navigate(MainRouter.Account.route) {
-                                popUpTo(MainRouter.Account.route) {
-                                    inclusive = true
-                                }
-                            }
-                        },
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_24))
-                            .align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.ic_me_gray),
-                        tint = if (selectItem.intValue == 3) colorScheme.onSurface else AppColor.color_747878,
-                        contentDescription = stringResource(id = R.string.text_account)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.text_account),
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                        color = if (selectItem.intValue == 3) colorScheme.onSurface else AppColor.color_747878,
-                    )
-                }
+                        }
+                    },
+                    painter = painterResource(id = R.drawable.ic_me_gray),
+                    title = stringResource(id = R.string.text_account),
+                    colors = navigationBarItemColors
+                )
             }
         },
         content = {
@@ -212,15 +130,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         bottom = it.calculateBottomPadding()
                     )
             ) {
-                MainContent(modifier = Modifier.fillMaxSize(), navController)
+                MainNavHost(navController,modifier = Modifier.fillMaxSize())
             }
         }
     )
-}
-
-@Composable
-private fun MainContent(modifier: Modifier = Modifier, navController: NavHostController) {
-    MainNavHost(navController, modifier)
 }
 
 /**

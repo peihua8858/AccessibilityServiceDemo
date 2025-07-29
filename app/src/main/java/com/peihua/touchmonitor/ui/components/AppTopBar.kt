@@ -124,7 +124,6 @@ fun AppTopBar(
 /**
  * 导航图标
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationIcon(
     imageVector: ImageVector = AppIcons.IosArrowBack,

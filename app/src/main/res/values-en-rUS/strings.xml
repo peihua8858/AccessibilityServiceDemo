@@ -133,4 +133,6 @@
     <string name="txt_language">Language</string>
     <string name="text_dynamic_color">Dynamic Theme Color</string>
 
+    <string name="text_not_login">Not logged in</string>
+
 </resources>

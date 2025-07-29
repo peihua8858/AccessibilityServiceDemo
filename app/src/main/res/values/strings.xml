@@ -144,4 +144,7 @@
     <string name="txt_language">语言</string>
     <string name="text_dynamic_color">动态主题色</string>
 
+    <string name="text_not_login">未登陆</string>
+
+
 </resources>

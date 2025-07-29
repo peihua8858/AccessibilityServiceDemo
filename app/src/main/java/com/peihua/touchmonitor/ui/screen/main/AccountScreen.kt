@@ -1,5 +1,8 @@
 package com.peihua.touchmonitor.ui.screen.main
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +41,12 @@ import com.peihua.touchmonitor.viewmodel.AccountViewModel
 @Composable
 fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = viewModel()) {
     val colorScheme = MaterialTheme.colorScheme
+    // 创建一个用于选择图像的 launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+        }
+    }
+
     Column(
         modifier
             .verticalScroll(rememberScrollState())
@@ -60,14 +69,14 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                     .border(dimensionResource(id = R.dimen.dp_2), Color.White, CircleShape)
                     .clip(CircleShape)
                     .size(dimensionResource(id = R.dimen.dp_64)),
-                painter = painterResource(id = R.drawable.ic_home_app_manager_24),
+                painter = painterResource(id = R.drawable.ic_user_avatar),
                 contentDescription = null
             )
             ScaleText(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = dimensionResource(id = R.dimen.dp_8)),
-                text = "未登录",
+                text = stringResource(id = R.string.text_not_login),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -79,7 +88,7 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                 .clickable {
                     navigateTo(AppRouter.SettingsScreen.route)
                 },
-            painter = painterResource(id = R.drawable.ic_home_app_manager_24),
+            painter = painterResource(id = R.drawable.ic_settings_24),
             title = stringResource(id = R.string.settings)
         )
         HorizontalDivider(
@@ -99,13 +108,13 @@ private fun AccountItemView(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dp_56)),
+            .height(dimensionResource(id = R.dimen.dp_48)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             modifier = Modifier
                 .padding(start = dimensionResource(id = R.dimen.dp_16))
-                .size(dimensionResource(id = R.dimen.dp_36)),
+                .size(dimensionResource(id = R.dimen.dp_24)),
             painter = painter,
             colorFilter = if (tint != Color.Unspecified) {
                 ColorFilter.tint(tint)
@@ -115,7 +124,9 @@ private fun AccountItemView(
             contentDescription = null
         )
         ScaleText(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = dimensionResource(id = R.dimen.dp_8)),
             textAlign = TextAlign.Start,
             text = title
         )
