@@ -27,8 +27,10 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
             val parentFile = File(FILE_PATH)
             val logs = ArrayList<LogModel>()
             val addLogFiles = { it: File ->
-                val model = LogModel(it.lastModified(), it.name, it.absolutePath)
-                logs.add(model)
+                if (it.isFile) {
+                    val model = LogModel(it.lastModified(), it.name, it.absolutePath)
+                    logs.add(model)
+                }
             }
             val addLogFileOrDir = { it: File ->
                 if (it.isFile) {
