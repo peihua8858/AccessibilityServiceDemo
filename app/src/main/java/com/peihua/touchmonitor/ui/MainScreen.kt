@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui
 
+import android.os.Bundle
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -17,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -25,6 +27,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavController
+import androidx.navigation.NavController.OnDestinationChangedListener
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +41,7 @@ import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
+import com.peihua.touchmonitor.utils.dLog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,12 +49,33 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val selectItem = rememberSaveable { mutableIntStateOf(0) }
     val layoutDirection = LocalLayoutDirection.current
-   val navigationBarItemColors = NavigationBarItemDefaults.colors().copy(
-       unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-       unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-       selectedIconColor = MaterialTheme.colorScheme.primary,
-       selectedTextColor = MaterialTheme.colorScheme.primary
-   )
+    val navigationBarItemColors = NavigationBarItemDefaults.colors().copy(
+        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        selectedTextColor = MaterialTheme.colorScheme.primary
+    )
+    val listener = object : OnDestinationChangedListener {
+        override fun onDestinationChanged(
+            controller: NavController,
+            destination: NavDestination,
+            arguments: Bundle?,
+        ) {
+            selectItem.intValue = when (destination.route) {
+                MainRouter.Home.route -> 0
+                MainRouter.Function.route -> 1
+                MainRouter.Collect.route -> 2
+                MainRouter.Account.route -> 3
+                else -> 0
+            }
+        }
+    }
+    navController.addOnDestinationChangedListener(listener)
+    DisposableEffect(navController) {
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -130,7 +157,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         bottom = it.calculateBottomPadding()
                     )
             ) {
-                MainNavHost(navController,modifier = Modifier.fillMaxSize())
+                MainNavHost(navController, modifier = Modifier.fillMaxSize())
             }
         }
     )
