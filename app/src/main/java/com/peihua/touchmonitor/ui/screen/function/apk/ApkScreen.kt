@@ -30,7 +30,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.ui.components.EmptyView
 import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
@@ -87,7 +87,7 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
             }
 
             is ResultData.Starting -> {
-                LoadingView()
+                LoadingViewFillMaxSize()
             }
         }
     }

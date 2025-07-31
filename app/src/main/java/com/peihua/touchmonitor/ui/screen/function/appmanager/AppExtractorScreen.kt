@@ -29,7 +29,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -115,7 +115,7 @@ private fun UserAppScreen(
             }
 
             is ResultData.Starting -> {
-                LoadingView()
+                LoadingViewFillMaxSize()
             }
         }
     }
@@ -154,7 +154,7 @@ fun SystemAppScreen(
             }
 
             is ResultData.Starting -> {
-                LoadingView()
+                LoadingViewFillMaxSize()
             }
         }
     }

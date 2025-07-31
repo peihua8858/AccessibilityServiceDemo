@@ -27,7 +27,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
@@ -73,7 +73,7 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
                 }
 
                 is ResultData.Starting -> {
-                    LoadingView()
+                    LoadingViewFillMaxSize()
                 }
             }
         }

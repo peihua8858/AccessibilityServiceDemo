@@ -7,7 +7,6 @@ import androidx.documentfile.provider.DocumentFile
 import com.fz.common.file.getFileSize
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.ui.AppInfoModel
-import com.peihua.touchmonitor.ui.screen.function.appmanager.DocumentFileItem
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.canReadPathByDocumentFile
 import com.peihua.touchmonitor.utils.externalStoragePath

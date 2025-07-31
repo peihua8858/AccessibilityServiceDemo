@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.content.PermissionChecker
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import com.fz.common.text.ifNullOrEmpty
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
 import com.peihua.touchmonitor.utils.WorkScope
@@ -20,6 +21,8 @@ import com.peihua.touchmonitor.utils.getExportPathDocumentFile
 import com.peihua.touchmonitor.utils.outputStreamForDocumentFile
 import com.peihua.touchmonitor.utils.writeToFile
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.BufferedOutputStream
@@ -35,15 +38,15 @@ import java.util.zip.ZipOutputStream
 class ExtortWorker(
     private val context: Context,
     private val items: List<AppInfoModel>,
-    callback: (TaskProcessModel<ExtortWorker>.() -> Unit),
+    callback: (TaskProcessModel<FileItem>.() -> Unit),
 ) : CoroutineScope by WorkScope() {
     constructor(
         context: Context,
         item: AppInfoModel,
-        callback: (TaskProcessModel<ExtortWorker>.() -> Unit),
+        callback: (TaskProcessModel<FileItem>.() -> Unit),
     ) : this(context, listOf<AppInfoModel>(item), callback)
 
-    private val model = TaskProcessModel<ExtortWorker>().apply(callback)
+    private val model = TaskProcessModel<FileItem>().apply(callback)
 
     /**
      * 本次导出任务的目的存储路径是否为外置存储
@@ -52,198 +55,208 @@ class ExtortWorker(
     private val zipLevel: Int = -1
     private var totalLength: Long = 0L
     private var mProgress: Long = 0L
-    private var mCurrentWritingFile: FileItem? = null
+    private var mCurrentWritingFile: FileItem = FileItem.createFileItemInstance("")
     private var mCurrentWritingPath: String? = null
-
+    private val byteLength = 1024 * 10
     fun start() {
-        model.invokeStart(this)
+        model.invokeStart()
         launch {
-            try {
-                val dataObbWorker = GetDataObbWorker(items)
-                val dataObbSizeInfo = dataObbWorker.execute().await()
-                val totalLength = getTotalLength(dataObbSizeInfo)
-                var startTime = System.currentTimeMillis()
-                dLog { "getTotalLength, totalLength $totalLength,isActive:$isActive" }
-                for ((index, item) in items.withIndex()) {
-                    if (!isActive) {
-                        mCurrentWritingFile?.delete()
-                        break
-                    }
-                    if (!item.exportData && !item.exportObb) {
-                        val outputStream: OutputStream?
-                        if (isExternal) {
-                            val documentFile =
-                                getWritingDocumentFileForAppItem(
-                                    context,
-                                    item,
-                                    "apk",
-                                    index + 1
-                                )
-                            mCurrentWritingPath = documentFile?.uri?.toString()
-                            mCurrentWritingFile =
-                                documentFile?.let { FileItem.createFileItemInstance(it) }
-                            outputStream = documentFile?.outputStreamForDocumentFile
-                        } else {
-                            val writePath =
-                                getAbsoluteWritePath(context, item, "apk", index + 1)
-                            mCurrentWritingPath = writePath
-                            mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
-                            outputStream = FileOutputStream(writePath)
-                        }
-                        val file = File(item.sourcePath)
-                        val input: InputStream = FileInputStream(file) //读入原文件
-                      val result =  input.writeToFile(outputStream, 1024 * 10) { progress, speed ->
-                            mProgress += speed
-                            val endTime = System.currentTimeMillis()
-                            if (endTime - startTime >= 1000) {
-                                startTime = endTime
-                                model.invokeSpeed(this@ExtortWorker, speed)
-                                model.invokeProgress(
-                                    this@ExtortWorker,
-                                    mProgress,
-                                    totalLength
-                                )
-                            }
-                        }
-                        dLog { "writeToFile, save file  to ${mCurrentWritingFile?.path} ${if(result) "successful" else "Failure" }" }
-                    } else {
-                        val outputStream: OutputStream?
-                        if (isExternal) {
-                            val documentFile =
-                                getWritingDocumentFileForAppItem(
-                                    context,
-                                    item,
-                                    "zip",
-                                    index + 1
-                                )
-                            mCurrentWritingPath = documentFile?.uri?.toString()
-                            mCurrentWritingFile =
-                                documentFile?.let { FileItem.createFileItemInstance(it) }
-                            outputStream = documentFile?.outputStreamForDocumentFile
-                        } else {
-                            val writePath =
-                                getAbsoluteWritePath(context, item, "zip", index + 1)
-                            mCurrentWritingPath = writePath
-                            mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
-                            outputStream = FileOutputStream(writePath)
-                        }
-
-                        val zos = ZipOutputStream(BufferedOutputStream(outputStream))
-                        zos.setComment("Packaged by com.peihua8858.assists \nhttps://github.com/peihua8858/assists")
-                        if (zipLevel >= 0 && zipLevel <= 9) zos.setLevel(zipLevel)
-                        writeToZip(item.fileItem, "", zos, zipLevel)
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && PermissionChecker.checkSelfPermission(
-                                context,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) == PermissionChecker.PERMISSION_GRANTED
-                        ) {
-                            if (item.exportData) {
-                                writeToZip(
-                                    FileItem.createFileItemInstance(File(externalStoragePath + "/android/data/" + item.packageName)),
-                                    "Android/data/",
-                                    zos,
-                                    zipLevel
-                                )
-                            }
-                            if (item.exportObb) {
-                                writeToZip(
-                                    FileItem.createFileItemInstance(File(externalStoragePath + "/android/obb/" + item.packageName)),
-                                    "Android/obb/",
-                                    zos,
-                                    zipLevel
-                                )
-                            }
-                        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                            if (item.exportData) {
-                                var dataFileItem: FileItem? = null
-                                try {
-                                    val dataDocumentFile = GetDataObbWorker.dataDocumentFile
-                                    if (dataDocumentFile != null) {
-                                        val pkgDataDocumentFile =
-                                            dataDocumentFile.getDocumentFileBySegments(
-                                                item.packageName,
-                                                false
-                                            )
-                                        if (pkgDataDocumentFile != null) {
-                                            dataFileItem =
-                                                FileItem.createFileItemInstance(
-                                                    pkgDataDocumentFile
-                                                )
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.i(javaClass.getSimpleName(), e.toString())
-                                }
-                                if (dataFileItem != null) {
-                                    writeToZip(dataFileItem, "Android/data/", zos, zipLevel)
-                                }
-                            }
-                            if (item.exportObb) {
-                                var obbFileItem: FileItem? = null
-                                try {
-                                    val obbDocumentFile = GetDataObbWorker.obbDocumentFile
-                                    if (obbDocumentFile != null) {
-                                        val pkgObbDocumentFile =
-                                            obbDocumentFile.getDocumentFileBySegments(
-                                                item.packageName,
-                                                false
-                                            )
-                                        if (pkgObbDocumentFile != null) {
-                                            obbFileItem =
-                                                FileItem.createFileItemInstance(pkgObbDocumentFile)
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.i(javaClass.getSimpleName(), e.toString())
-                                }
-                                if (obbFileItem != null) {
-                                    writeToZip(obbFileItem, "Android/obb/", zos, zipLevel)
-                                }
-                            }
-                        } else {
-                            if (item.exportData) {
-                                var dataFileItem: FileItem? = null
-                                try {
-                                    val dataDocumentFile = GetDataObbWorker.dataDocumentFile
-                                    if (dataDocumentFile != null) {
-                                        dataFileItem =
-                                            FileItem.createFileItemInstance(dataDocumentFile)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.i(javaClass.getSimpleName(), e.toString())
-                                }
-                                if (dataFileItem != null) {
-                                    writeToZip(dataFileItem, "Android/data/", zos, zipLevel)
-                                }
-                            }
-                            if (item.exportObb) {
-                                var obbFileItem: FileItem? = null
-                                try {
-                                    val obbDocumentFile = GetDataObbWorker.obbDocumentFile
-                                    if (obbDocumentFile != null) {
-                                        obbFileItem =
-                                            FileItem.createFileItemInstance(obbDocumentFile)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.i(javaClass.getSimpleName(), e.toString())
-                                }
-                                if (obbFileItem != null) {
-                                    writeToZip(obbFileItem, "Android/obb/", zos, zipLevel)
-                                }
-                            }
-                        }
-                        zos.flush()
-                        zos.close()
-                    }
-                }
-                //后续处理
-                model.invokeComplete(this@ExtortWorker)
-                return@launch
-            } catch (e: Throwable) {
-                mCurrentWritingFile?.delete()
-                model.invokeComplete(this@ExtortWorker, e)
-            }
+            extort()
         }
+    }
+
+    /**
+     * 开始导出
+     */
+    private suspend fun doExport(): FileItem {
+        try {
+            val dataObbWorker = GetDataObbWorker(items)
+            val dataObbSizeInfo = dataObbWorker.execute().await()
+            val totalLength = getTotalLength(dataObbSizeInfo)
+            var startTime = System.currentTimeMillis()
+            dLog { "getTotalLength, totalLength $totalLength,isActive:$isActive" }
+            for ((index, item) in items.withIndex()) {
+                if (!isActive) {
+                    mCurrentWritingFile.delete()
+                    break
+                }
+                if (!item.exportData && !item.exportObb) {
+                    val outputStream: OutputStream?
+                    if (isExternal) {
+                        val documentFile =
+                            getWritingDocumentFileForAppItem(
+                                context,
+                                item,
+                                "apk",
+                                index + 1
+                            ) ?: continue
+                        mCurrentWritingPath = documentFile.uri.toString()
+                        mCurrentWritingFile = FileItem.createFileItemInstance(documentFile)
+                        outputStream = documentFile.outputStreamForDocumentFile
+                    } else {
+                        val writePath =
+                            getAbsoluteWritePath(context, item, "apk", index + 1)
+                        mCurrentWritingPath = writePath
+                        mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
+                        outputStream = FileOutputStream(writePath)
+                    }
+                    val file = File(item.sourcePath)
+                    val input: InputStream = FileInputStream(file) //读入原文件
+                    val result = input.writeToFile(outputStream, byteLength) { progress, speed ->
+                        mProgress += speed
+                        val endTime = System.currentTimeMillis()
+                        if (endTime - startTime >= 1000) {
+                            startTime = endTime
+                            model.invokeSpeed(mCurrentWritingFile, speed)
+                            model.invokeProgress(
+                                mCurrentWritingFile,
+                                mProgress,
+                                totalLength
+                            )
+                        }
+                    }
+                    dLog { "writeToFile, save file  to ${mCurrentWritingFile.path} ${if (result) "successful" else "Failure"}" }
+                } else {
+                    val outputStream: OutputStream?
+                    if (isExternal) {
+                        val documentFile =
+                            getWritingDocumentFileForAppItem(
+                                context,
+                                item,
+                                "zip",
+                                index + 1
+                            ) ?: continue
+                        mCurrentWritingPath = documentFile.uri.toString()
+                        mCurrentWritingFile = FileItem.createFileItemInstance(documentFile)
+                        outputStream = documentFile.outputStreamForDocumentFile
+                    } else {
+                        val writePath =
+                            getAbsoluteWritePath(context, item, "zip", index + 1)
+                        mCurrentWritingPath = writePath
+                        mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
+                        outputStream = FileOutputStream(writePath)
+                    }
+
+                    val zos = ZipOutputStream(BufferedOutputStream(outputStream))
+                    zos.setComment("Packaged by com.peihua8858.assists \nhttps://github.com/peihua8858/assists")
+                    if (zipLevel >= 0 && zipLevel <= 9) zos.setLevel(zipLevel)
+                    writeToZip(item.fileItem, "", zos, zipLevel)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && PermissionChecker.checkSelfPermission(
+                            context,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) == PermissionChecker.PERMISSION_GRANTED
+                    ) {
+                        if (item.exportData) {
+                            writeToZip(
+                                FileItem.createFileItemInstance(File(externalStoragePath + "/android/data/" + item.packageName)),
+                                "Android/data/",
+                                zos,
+                                zipLevel
+                            )
+                        }
+                        if (item.exportObb) {
+                            writeToZip(
+                                FileItem.createFileItemInstance(File(externalStoragePath + "/android/obb/" + item.packageName)),
+                                "Android/obb/",
+                                zos,
+                                zipLevel
+                            )
+                        }
+                    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                        if (item.exportData) {
+                            var dataFileItem: FileItem? = null
+                            try {
+                                val dataDocumentFile = GetDataObbWorker.dataDocumentFile
+                                if (dataDocumentFile != null) {
+                                    val pkgDataDocumentFile =
+                                        dataDocumentFile.getDocumentFileBySegments(
+                                            item.packageName,
+                                            false
+                                        )
+                                    if (pkgDataDocumentFile != null) {
+                                        dataFileItem =
+                                            FileItem.createFileItemInstance(
+                                                pkgDataDocumentFile
+                                            )
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.i(javaClass.getSimpleName(), e.toString())
+                            }
+                            if (dataFileItem != null) {
+                                writeToZip(dataFileItem, "Android/data/", zos, zipLevel)
+                            }
+                        }
+                        if (item.exportObb) {
+                            var obbFileItem: FileItem? = null
+                            try {
+                                val obbDocumentFile = GetDataObbWorker.obbDocumentFile
+                                if (obbDocumentFile != null) {
+                                    val pkgObbDocumentFile =
+                                        obbDocumentFile.getDocumentFileBySegments(
+                                            item.packageName,
+                                            false
+                                        )
+                                    if (pkgObbDocumentFile != null) {
+                                        obbFileItem =
+                                            FileItem.createFileItemInstance(pkgObbDocumentFile)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.i(javaClass.getSimpleName(), e.toString())
+                            }
+                            if (obbFileItem != null) {
+                                writeToZip(obbFileItem, "Android/obb/", zos, zipLevel)
+                            }
+                        }
+                    } else {
+                        if (item.exportData) {
+                            var dataFileItem: FileItem? = null
+                            try {
+                                val dataDocumentFile = GetDataObbWorker.dataDocumentFile
+                                if (dataDocumentFile != null) {
+                                    dataFileItem =
+                                        FileItem.createFileItemInstance(dataDocumentFile)
+                                }
+                            } catch (e: Exception) {
+                                Log.i(javaClass.getSimpleName(), e.toString())
+                            }
+                            if (dataFileItem != null) {
+                                writeToZip(dataFileItem, "Android/data/", zos, zipLevel)
+                            }
+                        }
+                        if (item.exportObb) {
+                            var obbFileItem: FileItem? = null
+                            try {
+                                val obbDocumentFile = GetDataObbWorker.obbDocumentFile
+                                if (obbDocumentFile != null) {
+                                    obbFileItem =
+                                        FileItem.createFileItemInstance(obbDocumentFile)
+                                }
+                            } catch (e: Exception) {
+                                Log.i(javaClass.getSimpleName(), e.toString())
+                            }
+                            if (obbFileItem != null) {
+                                writeToZip(obbFileItem, "Android/obb/", zos, zipLevel)
+                            }
+                        }
+                    }
+                    zos.flush()
+                    zos.close()
+                }
+            }
+            //后续处理
+            model.invokeComplete(mCurrentWritingFile)
+            return mCurrentWritingFile
+        } catch (e: Throwable) {
+            mCurrentWritingFile.delete()
+            model.invokeComplete(mCurrentWritingFile, e)
+        }
+        return mCurrentWritingFile
+    }
+
+    fun extort(): Deferred<FileItem> {
+        return async { doExport() }
     }
 
     private suspend fun writeToZip(
@@ -281,13 +294,13 @@ class ExtortWorker(
                 zipEntry.setCrc(fis?.cRC32?.value ?: 0L)
             }
             zos.putNextEntry(zipEntry)
-            fis.writeToFile(zos, isCloseOs = false) { progress, speed ->
+            fis.writeToFile(zos, bufferSize = byteLength, isCloseOs = false) { progress, speed ->
                 mProgress += speed
                 val endTime = System.currentTimeMillis()
                 if (endTime - startTime >= 1000) {
                     startTime = endTime
-                    model.invokeSpeed(this@ExtortWorker, speed)
-                    model.invokeProgress(this@ExtortWorker, mProgress, totalLength)
+                    model.invokeSpeed(mCurrentWritingFile, speed)
+                    model.invokeProgress(mCurrentWritingFile, mProgress, totalLength)
                 }
             }
         }
@@ -369,16 +382,17 @@ class ExtortWorker(
         extension: String,
         sequenceNumber: Int,
     ): String {
-        return "${item.packageName}_${sequenceNumber}.${extension}"
+        val name = item.name.ifNullOrEmpty { item.packageName }
+        return "${name}_${item.versionName}_${sequenceNumber}.${extension}"
     }
 }
 
 class TaskProcessModel<T> {
-    private var onStart: ((T) -> Unit)? = null
+    private var onStart: (() -> Unit)? = null
     private var onComplete: ((T, Throwable?) -> Unit)? = null
     private var onProgress: ((T, Long, Long) -> Unit)? = null
     private var onSpeed: ((T, Long) -> Unit)? = null
-    infix fun onStart(onStart: ((T) -> Unit)?): TaskProcessModel<T> {
+    infix fun onStart(onStart: (() -> Unit)?): TaskProcessModel<T> {
         this.onStart = onStart
         return this
     }
@@ -399,8 +413,8 @@ class TaskProcessModel<T> {
         return this
     }
 
-    fun invokeStart(model: T) {
-        this.onStart?.invoke(model)
+    fun invokeStart() {
+        this.onStart?.invoke()
     }
 
     fun invokeComplete(model: T, e: Throwable? = null) {

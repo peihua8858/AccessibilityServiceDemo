@@ -48,7 +48,7 @@ abstract class FileItem : Comparable<FileItem> {
 
     abstract fun canGetRealPath(): Boolean
 
-    abstract val path: String?
+    abstract val path: String
 
     abstract fun delete(): Boolean
 
@@ -184,7 +184,7 @@ class StandardFileItem(file: File) : FileItem() {
 
     @Throws(java.lang.Exception::class)
     override fun renameTo(newName: String): Boolean {
-        val destFile: File = File(file.getParentFile(), newName)
+        val destFile = File(file.getParentFile(), newName)
         if (destFile.exists()) {
             throw Exception(destFile.absolutePath + " already exists")
         }
@@ -420,10 +420,10 @@ class ShareUriFileItem(override val contentUri: Uri) : FileItem() {
         return contentResolver.getFileFromContentUri(contentUri) != null
     }
 
-    override val path: String?
+    override val path: String
         get() {
             if (ContentResolver.SCHEME_FILE.equals(contentUri.scheme, ignoreCase = true)) {
-                return contentUri.path
+                return contentUri.path?:""
             }
             val file = contentResolver.getFileFromContentUri(contentUri)
             if (file != null) return file.absolutePath

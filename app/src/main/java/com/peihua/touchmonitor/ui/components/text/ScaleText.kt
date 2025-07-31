@@ -40,8 +40,6 @@ fun ScaleText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val textStyle = LocalTextStyle.current
-    dLog { "textStyle:${textStyle.fontSize},${textStyle.fontWeight}" }
     val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
     val textScale = 1
     val fontSize = when {

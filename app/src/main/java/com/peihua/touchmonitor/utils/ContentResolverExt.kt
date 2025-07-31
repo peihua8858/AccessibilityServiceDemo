@@ -5,10 +5,35 @@ import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.text.isNonEmpty
+import com.peihua.touchmonitor.ServiceApplication
 import java.io.File
 
+/**
+ * 传入的file须为主存储下的文件，且对file有完整的读写权限
+ */
+fun Context.getUriForFileByFileProvider(file: File): Uri? {
+    return FileProvider.getUriForFile(this, "$packageName.fileProvider", file)
+}
+
+/**
+ * 传入的file须为主存储下的文件，且对file有完整的读写权限
+ */
+val File.fileProvider: Uri
+    get() {
+        val context = ServiceApplication.application
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileProvider", this)
+    }
+
+/**
+ * 传入的file须为主存储下的文件，且对file有完整的读写权限
+ */
+val String.fileProvider: Uri
+    get() {
+        return File(this).fileProvider
+    }
 
 /**
  * 根据uri获取文件

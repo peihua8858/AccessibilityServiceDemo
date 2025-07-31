@@ -23,6 +23,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +44,8 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.IconText
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingRoundView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.TitleValueView
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -51,6 +54,7 @@ import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.shareCertainFiles
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
 import kotlinx.coroutines.cancel
@@ -95,7 +99,7 @@ fun AppDetailScreen(
                 }
 
                 is ResultData.Starting -> {
-                    LoadingView()
+                    LoadingViewFillMaxSize()
                 }
             }
         }
@@ -108,10 +112,12 @@ private fun AppInfoScreenContent(
     model: AppInfoModel,
 ) {
     val context = LocalContext.current
-    val exportAppPkg = remember { mutableStateOf("") }
-    if (exportAppPkg.value.isNotEmpty()) {
-        exportAppPkg.value = ""
-        ExportApp(model)
+    val exportAppPkg = remember { mutableStateOf(false to false) }
+    if (exportAppPkg.value.first) {
+        val isShare = exportAppPkg.value.second
+        ExportApp(model, isShare) {
+            exportAppPkg.value = false to false
+        }
     }
     Column(
         modifier
@@ -161,7 +167,7 @@ private fun AppInfoScreenContent(
                 tint = Colors.Cyan[800]
             ) {
                 // 导出应用
-                exportAppPkg.value = model.packageName
+                exportAppPkg.value = true to false
             }
             IconText(
                 text = stringResource(id = R.string.text_share),
@@ -169,7 +175,7 @@ private fun AppInfoScreenContent(
                 tint = Colors.Cyan[600]
             ) {
                 // 分享应用
-                showToast(R.string.text_function_developing)
+                exportAppPkg.value = true to true
             }
             IconText(
                 text = stringResource(id = R.string.text_app_detail),
@@ -298,48 +304,66 @@ private fun AppInfoScreenContent(
     }
 }
 
-
 @Composable
-fun ExportApp(item: AppInfoModel) {
+fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Unit = {}) {
+    // 状态管理
+    val progress = remember { mutableFloatStateOf(0f) }
     val showDialog = remember { mutableStateOf(true) }
     val context = LocalContext.current
     val worker = ExtortWorker(context, item) {
-        onStart { }
+        onStart { /* 可以在这里处理开始状态，比如设置标志或更新 UI */ }
         onSpeed { w, speed ->
             dLog { "speed: $speed" }
         }
-        onComplete { w, e ->
-            w.cancel()
-            showDialog.value = false
-            dLog { "exportApp, save file  to $e successful" }
+        onComplete { file, e ->
+            dLog { "exportApp, save file to $e successful" }
+            showDialog.value = false // 隐藏 loading
+            if (isShare) {
+                context.shareCertainFiles(file)
+            }
+            onComplete()
         }
         onProgress { w, total, current ->
             dLog { "progress: $current/$total" }
+            progress.floatValue = current.toFloat() / total
         }
     }
+
     val callback = remember {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                worker.cancel()
-                showDialog.value = false
+                worker.cancel() // 取消导出操作
+                showDialog.value = false // 隐藏 loading
             }
         }
     }
-    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    DisposableEffect(key1 = Unit) {
-        dispatcher?.addCallback(callback)
-        onDispose {
-            showDialog.value = false
-            worker.cancel()
-            callback.remove()
-        }
-    }
+
+    // 显示 loading 弹窗
     if (showDialog.value) {
         Dialog(onDismissRequest = {
-            showDialog.value = false
+            showDialog.value = false // 用户取消时的处理
+            worker.cancel() // 取消 worker
+            callback.remove()
         }) {
-            LoadingView()
+            LoadingRoundView() // 加载视图内容
+        }
+    }
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    DisposableEffect(callback) {
+        dispatcher?.addCallback(callback)
+        onDispose {
+            showDialog.value = false // 用户取消时的处理
+            worker.cancel() // 取消 worker
+            callback.remove()
+            onComplete()
         }
     }
     worker.start()
+//    //启动 worker
+//    LaunchedEffect(Unit) {
+//        val result = worker.extort().await() // 开始导出
+//        dLog { "exportApp, save file  to $result successful" }
+//        onComplete()
+//    }
 }
+

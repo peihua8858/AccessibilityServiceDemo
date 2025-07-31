@@ -20,16 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import com.fz.common.file.deleteFileOrDir
 import com.fz.common.text.isNonEmpty
 import com.fz.common.utils.showToast
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.eLog
+import com.peihua.touchmonitor.utils.fileProvider
 import com.peihua.touchmonitor.utils.writeToFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -46,7 +46,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
         super.onCreate(savedInstanceState)
         setContent {
             Box(Modifier.fillMaxSize()) {
-                LoadingView(
+                LoadingViewFillMaxSize(
                     Modifier
                         .size(100.dp)
                         .align(Alignment.Center)
@@ -139,7 +139,8 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
                 val tempFile = File.createTempFile("ShareTempApk", ".apk", r2)
                 dLog { "copyFile>>>>>>tempFile:${tempFile.absolutePath}" }
                 it.writeToFile(tempFile)
-                return FileProvider.getUriForFile(this, "$packageName.provider", tempFile)
+                return tempFile.fileProvider
+//                return FileProvider.getUriForFile(this, "$packageName.provider", tempFile)
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
@@ -252,7 +253,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        val newFileUri = FileProvider.getUriForFile(this, "$packageName.provider", newFile)
+        val newFileUri = newFile.fileProvider//FileProvider.getUriForFile(this, "$packageName.provider", newFile)
         if (newFileUri == null) {
             return null
         }
@@ -331,7 +332,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
             if (file == null) {
                 return
             }
-            intent.setData(FileProvider.getUriForFile(this, "$packageName.provider", file))
+            intent.setData(file.fileProvider/*FileProvider.getUriForFile(this, "$packageName.provider", file)*/)
             startActivity(intent)
         }
         finish()

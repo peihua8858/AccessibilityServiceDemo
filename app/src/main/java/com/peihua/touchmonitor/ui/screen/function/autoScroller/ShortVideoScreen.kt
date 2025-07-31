@@ -17,8 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -30,13 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -49,7 +44,7 @@ import com.peihua.touchmonitor.ui.AppProvider
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.ExtendedListTile
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -131,7 +126,7 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
                 }
 
                 is ResultData.Starting -> {
-                    LoadingView()
+                    LoadingViewFillMaxSize()
                 }
             }
         }

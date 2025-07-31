@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
@@ -61,7 +61,7 @@ fun LogDetailScreen(
                 }
 
                 is ResultData.Starting -> {
-                    LoadingView()
+                    LoadingViewFillMaxSize()
                 }
             }
         }

@@ -17,7 +17,7 @@ import com.peihua.touchmonitor.model.LogModel
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.EmptyView
 import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingView
+import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.ResultData
@@ -58,7 +58,7 @@ fun CrashLogScreen(modifier: Modifier = Modifier, viewModel: LogViewModel = view
             }
 
             is ResultData.Starting -> {
-                LoadingView()
+                LoadingViewFillMaxSize()
             }
         }
     }

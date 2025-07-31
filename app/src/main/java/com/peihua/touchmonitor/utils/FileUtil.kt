@@ -17,6 +17,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.ByteBuffer
+import java.util.Locale
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -103,7 +105,7 @@ suspend fun File?.writeToZip(
             }
             zos.putNextEntry(zipEntry)
             val fis = inputStream()
-             fis.writeToZip(zos, bufferSize, callback = callback)
+            fis.writeToZip(zos, bufferSize, callback = callback)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -135,7 +137,7 @@ suspend fun InputStream?.writeToZip(
  */
 suspend fun InputStream.writeToFileNoClose(
     ios: OutputStream,
-    bufferSize: Int = 4096,
+    bufferSize: Int = 1024 * 8,
     callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
     try {
@@ -149,14 +151,13 @@ suspend fun InputStream.writeToFileNoClose(
             val buffer = ByteArray(bufferSize)
             var length: Int
             var progress = 0L
-            dLog { "writeToFile, save file  to $ios successful" }
+            val totalLength = available().toLong()
             while ((fis.read(buffer).also { length = it }) != -1 && isActive) {
                 ios.write(buffer, 0, length)
                 progress += length.toLong()
                 callback(progress, length.toLong())
-                dLog { "writeToFile, save file  progress:$progress length:$length" }
+                dLog { "writeToFile, save file   progress:${progress.formatFileSize()},totalLength:${totalLength.formatFileSize()} length:${length}" }
             }
-            dLog { "writeToFile, save file  progress:$progress length:$length" }
             callback(progress, length.toLong())
             ios.flush()
             dLog { "writeToFile, save file  to $ios successful" }
@@ -167,6 +168,57 @@ suspend fun InputStream.writeToFileNoClose(
         dLog { "writeToFile, save file  to $ios failed,e:${e.message}" }
         return false
     }
+}
+
+suspend fun File.copyToFile(
+    destinationFile: File,
+    bufferSize: Int = 1024 * 20,
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
+) {
+    FileInputStream(this).copyToFile(FileOutputStream(destinationFile), bufferSize,callback)
+}
+
+suspend fun FileInputStream.copyToFile(
+    fos: FileOutputStream,
+    bufferSize: Int = 1024 * 20,
+    callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
+): Boolean {
+    val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
+        Dispatchers.IO
+    } else {
+        coroutineContext
+    }
+    val fis = this
+    return withContext(context) {
+        try {
+            fis.use { inputStream ->
+                fos.use { outputStream ->
+                    val channelInput = inputStream.channel
+                    val channelOutput = outputStream.channel
+                    val buffer = ByteBuffer.allocate(bufferSize)
+                    var progress = 0L
+                    var length: Int
+                    while ((channelInput.read(buffer).also { length = it }) > 0 && isActive) {
+                        progress += length.toLong()
+                        buffer.flip() // 切换到读模式
+                        channelOutput.write(buffer)
+                        buffer.clear() // 清空缓冲区以供下次使用
+                        callback(progress, length.toLong())
+                    }
+                    callback(progress, length.toLong())
+                    fos.flush()
+                }
+            }
+            true
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            false
+        }
+    }
+}
+
+fun format(speed: Float): String {
+    return String.format(Locale.ENGLISH, "%.2f", speed)
 }
 
 fun String.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
