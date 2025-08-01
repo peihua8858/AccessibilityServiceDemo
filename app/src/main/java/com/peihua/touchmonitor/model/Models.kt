@@ -9,8 +9,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import com.google.gson.annotations.SerializedName
+import com.peihua.touchmonitor.BuildConfig
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.ui.Constants
 import com.peihua.touchmonitor.ui.theme.ThemeMode
+import com.peihua.touchmonitor.utils.externalStoragePath
 import kotlinx.serialization.json.Json
 
 data class SettingsModel(
@@ -59,12 +62,13 @@ data class ApkModel(
         get() = packInfo?.versionName ?: ""
 }
 
-data class SystemSettings(
+data class SystemSettings (
     val theme: ThemeModel = ThemeModel(),
-    val language: LanguageModel,
+    val language: LanguageModel = LanguageModel.default,
+    val exportPath: String = Constants.EXTERNAL_EXPORT_PATH,
 ) {
     companion object {
-        val default: SystemSettings = SystemSettings(language = LanguageModel("", "system"))
+        val default: SystemSettings = SystemSettings(language = LanguageModel.default)
     }
 }
 
@@ -90,12 +94,6 @@ data class LanguageModel(
     val countryCode: String = "",
 ) {
     companion object {
-        @Composable
-        fun getDefault(): LanguageModel {
-            return LanguageModel(
-                stringResource(id = R.string.theme_system),
-                "system",
-            )
-        }
+        val default: LanguageModel = LanguageModel("", "system")
     }
 }

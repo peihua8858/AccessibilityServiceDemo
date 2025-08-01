@@ -76,30 +76,30 @@
     <string name="text_no">否</string>
 
     <string name="text_daily_tools">日常工具</string>
-<!--    刻度尺-->
+    <!--    刻度尺-->
     <string name="text_scale_ruler">刻度尺</string>
-<!--    指南针-->
+    <!--    指南针-->
     <string name="text_compass">指南针</string>
-<!--    水平仪-->
+    <!--    水平仪-->
     <string name="text_horizon">水平仪</string>
-<!--    量角器-->
+    <!--    量角器-->
     <string name="text_angle_meter">量角器</string>
-<!--    简易画板-->
+    <!--    简易画板-->
     <string name="text_simple_paint">简易画板</string>
-<!--    LED手机字幕-->
+    <!--    LED手机字幕-->
     <string name="text_led_subtitle">LED手机字幕</string>
-<!--    时间屏幕-->
+    <!--    时间屏幕-->
     <string name="text_time_screen">时间屏幕</string>
-<!--    每日60秒早报-->
+    <!--    每日60秒早报-->
     <string name="text_daily_60_seconds_early_report">每日60秒早报</string>
     <string name="text_calculator">计算器</string>
     <string name="text_system_tool">系统工具</string>
     <string name="text_app_kit">apk 提取器</string>
     <string name="text_check_screen_bad_point">屏幕坏点检测</string>
     <string name="text_see_device_info">查看设备信息</string>
-<!--    桌面视频壁纸-->
+    <!--    桌面视频壁纸-->
     <string name="text_desktop_video_wallpaper">桌面视频壁纸</string>
-<!--    系统字体大小调节-->
+    <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
     <string name="text_photo_tools">图片工具</string>
     <string name="text_running">运行</string>
@@ -149,6 +149,11 @@
 
 
     <string name="share_title">分享</string>
-<string name="text_copy_success">复制成功</string>
-
+    <string name="text_copy_success">复制成功</string>
+    <string name="text_copy_fail">复制失败</string>
+    <string name="text_copy">复制</string>
+    <string name="text_cancel">取消</string>
+    <string name="text_ok">确定</string>
+    <string name="text_about">关于</string>
+    <string name="text_export_path">导出路径</string>
 </resources>

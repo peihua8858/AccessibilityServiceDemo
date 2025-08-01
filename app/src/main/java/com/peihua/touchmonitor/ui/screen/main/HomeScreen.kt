@@ -44,6 +44,7 @@ import com.peihua.touchmonitor.utils.showToast
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val content = StringBuilder()
@@ -95,8 +96,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 )
 
             ) { item, index ->
-                item.second?.let { navigateTo(it.route) }
-                    ?: showToast(R.string.text_function_developing)
+                item.second?.let {
+                    if (it != AppRouter.AutoScroller) {
+                        if (!context.checkStorgePermission()) {
+                            return@let
+                        }
+                    }
+                    navigateTo(it.route)
+                } ?: showToast(R.string.text_function_developing)
                 true
             }
             HomeHorList(

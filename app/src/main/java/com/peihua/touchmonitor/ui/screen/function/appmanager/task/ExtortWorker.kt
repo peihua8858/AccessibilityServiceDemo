@@ -8,8 +8,11 @@ import androidx.core.content.PermissionChecker
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import com.fz.common.text.ifNullOrEmpty
+import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.AppInfoModel
+import com.peihua.touchmonitor.ui.Constants
 import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
+import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.appExternalStoragePath
 import com.peihua.touchmonitor.utils.cRC32
@@ -18,6 +21,7 @@ import com.peihua.touchmonitor.utils.externalStoragePath
 import com.peihua.touchmonitor.utils.findDocumentFile
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getExportPathDocumentFile
+import com.peihua.touchmonitor.utils.isGrantedStoragePermission
 import com.peihua.touchmonitor.utils.outputStreamForDocumentFile
 import com.peihua.touchmonitor.utils.writeToFile
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +62,22 @@ class ExtortWorker(
     private var mCurrentWritingFile: FileItem = FileItem.createFileItemInstance("")
     private var mCurrentWritingPath: String? = null
     private val byteLength = 1024 * 10
+//    /**
+//     * api19及以上使用App所属外置存储作为默认导出路径(/storage/emulated/0/android/data/com.github.ghmxr.apkextractor/files)，对于旧版本已授权过并升级到此的，sp取值不变
+//     */
+//    var PREFERENCE_SAVE_PATH_DEFAULT: String? = null
+//
+//    init {
+//        PREFERENCE_SAVE_PATH_DEFAULT = if (PermissionChecker.checkSelfPermission(
+//                context,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            ) == PermissionChecker.PERMISSION_GRANTED
+//        ) {
+//            "$externalStoragePath/Backup"
+//        } else {
+//            context.appExternalStoragePath + "/Backup"
+//        }
+//    }
     fun start() {
         model.invokeStart()
         launch {
@@ -70,6 +90,8 @@ class ExtortWorker(
      */
     private suspend fun doExport(): FileItem {
         try {
+            val settings: SystemSettings = SystemSettingsStore.getSystemSettings()
+            val exportPath = if(context.isGrantedStoragePermission()) settings.exportPath else Constants.DEFAULT_EXPORT_PATH
             val dataObbWorker = GetDataObbWorker(items)
             val dataObbSizeInfo = dataObbWorker.execute().await()
             val totalLength = getTotalLength(dataObbSizeInfo)
@@ -94,8 +116,11 @@ class ExtortWorker(
                         mCurrentWritingFile = FileItem.createFileItemInstance(documentFile)
                         outputStream = documentFile.outputStreamForDocumentFile
                     } else {
-                        val writePath =
-                            getAbsoluteWritePath(context, item, "apk", index + 1)
+                        val writeFileName = context.getWriteFileNameForAppItem(
+                            item,
+                            "apk", index + 1
+                        )
+                        val writePath ="$exportPath/$writeFileName"
                         mCurrentWritingPath = writePath
                         mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
                         outputStream = FileOutputStream(writePath)
@@ -130,8 +155,11 @@ class ExtortWorker(
                         mCurrentWritingFile = FileItem.createFileItemInstance(documentFile)
                         outputStream = documentFile.outputStreamForDocumentFile
                     } else {
-                        val writePath =
-                            getAbsoluteWritePath(context, item, "zip", index + 1)
+                        val writeFileName = context.getWriteFileNameForAppItem(
+                            item,
+                            "zip", index + 1
+                        )
+                        val writePath ="$exportPath/$writeFileName"
                         mCurrentWritingPath = writePath
                         mCurrentWritingFile = FileItem.createFileItemInstance(writePath)
                         outputStream = FileOutputStream(writePath)
@@ -340,41 +368,6 @@ class ExtortWorker(
             ) "application/vnd.android.package-archive" else "application/x-zip-compressed",
             fileName
         )
-    }
-
-    /**
-     * api19及以上使用App所属外置存储作为默认导出路径(/storage/emulated/0/android/data/com.github.ghmxr.apkextractor/files)，对于旧版本已授权过并升级到此的，sp取值不变
-     */
-    var PREFERENCE_SAVE_PATH_DEFAULT: String? = null
-
-    init {
-        PREFERENCE_SAVE_PATH_DEFAULT = if (PermissionChecker.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PermissionChecker.PERMISSION_GRANTED
-        ) {
-            "$externalStoragePath/Backup"
-        } else {
-            context.appExternalStoragePath + "/Backup"
-        }
-    }
-
-    /**
-     * 为AppItem获取一个内置存储绝对写入路径
-     *
-     * @param extension "apk"或者"zip"
-     */
-    fun getAbsoluteWritePath(
-        context: Context,
-        item: AppInfoModel,
-        extension: String,
-        sequenceNumber: Int,
-    ): String {
-        return ("$PREFERENCE_SAVE_PATH_DEFAULT/" + context.getWriteFileNameForAppItem(
-            item,
-            extension,
-            sequenceNumber
-        ))
     }
 
     fun Context.getWriteFileNameForAppItem(
