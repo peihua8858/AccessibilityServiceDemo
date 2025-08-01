@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui.components
 
 import androidx.compose.foundation.MarqueeAnimationMode
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -14,7 +15,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -31,10 +31,12 @@ fun TitleValueView(
     titleStyle: TextStyle = MaterialTheme.typography.labelLargeNormal,
     valueStyle: TextStyle = TextStyle.Default,
     orientation: Orientation = Orientation.Horizontal,
+    onClick: (String, String) -> Unit = {title,value ->},
 ) {
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = { onClick(title, value) })
             .heightIn(min = dimensionResource(id = R.dimen.dp_28)),
     ) {
         val (vTitle, vValue) = createRefs()
@@ -73,7 +75,7 @@ fun TitleValueView(
                         end.linkTo(parent.end)
                         top.linkTo(vTitle.bottom)
                         bottom.linkTo(parent.bottom)
-                       horizontalBias = 0f
+                        horizontalBias = 0f
                     } else {
                         start.linkTo(vTitle.end)
                         end.linkTo(parent.end)

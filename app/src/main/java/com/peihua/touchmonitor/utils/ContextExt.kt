@@ -11,7 +11,6 @@ import android.os.Build
 import android.provider.Settings
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.utils.showToast
 import com.peihua.touchmonitor.R
@@ -70,7 +69,7 @@ fun Context.installApk(apkPath: String) {
 }
 
 fun Context.installApk(apkFile: File) {
-    installApk(FileProvider.getUriForFile(this, "$packageName.provider", apkFile))
+    installApk(apkFile.fileProvider)
 }
 
 fun Context.installApk(uri: Uri) {
@@ -102,7 +101,7 @@ fun Context.installLocalApk(uri: Uri?) {
         if (file == null) {
             return
         }
-        intent.setData(FileProvider.getUriForFile(this, "$packageName.provider", file))
+        intent.setData(file.fileProvider)
         startActivity(intent)
     }
     finish()

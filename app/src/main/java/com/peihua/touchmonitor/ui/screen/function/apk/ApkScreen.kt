@@ -64,10 +64,7 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
     Column(
         modifier
             .fillMaxSize()
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
+            .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
         when (result) {
             is ResultData.Success -> {

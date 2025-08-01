@@ -6,11 +6,8 @@ package com.peihua.touchmonitor.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.os.Looper
 import androidx.exifinterface.media.ExifInterface
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -22,8 +19,7 @@ import java.util.Locale
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
+import kotlin.coroutines.resume
 import kotlin.math.max
 
 suspend fun InputStream?.writeToFile(
@@ -140,19 +136,13 @@ suspend fun InputStream.writeToFileNoClose(
     bufferSize: Int = 1024 * 8,
     callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
-    try {
-        val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
-            Dispatchers.IO
-        } else {
-            coroutineContext
-        }
-        val fis = this
-        return withContext(context) {
+    return try {
+        suspendCancellableCoroutine { continuation ->
             val buffer = ByteArray(bufferSize)
             var length: Int
             var progress = 0L
             val totalLength = available().toLong()
-            while ((fis.read(buffer).also { length = it }) != -1 && isActive) {
+            while ((this.read(buffer).also { length = it }) != -1 && continuation.isActive) {
                 ios.write(buffer, 0, length)
                 progress += length.toLong()
                 callback(progress, length.toLong())
@@ -161,12 +151,12 @@ suspend fun InputStream.writeToFileNoClose(
             callback(progress, length.toLong())
             ios.flush()
             dLog { "writeToFile, save file  to $ios successful" }
-            true
+            continuation.resume(true)
         }
     } catch (e: Throwable) {
         e.printStackTrace()
         dLog { "writeToFile, save file  to $ios failed,e:${e.message}" }
-        return false
+        false
     }
 }
 
@@ -175,7 +165,7 @@ suspend fun File.copyToFile(
     bufferSize: Int = 1024 * 20,
     callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ) {
-    FileInputStream(this).copyToFile(FileOutputStream(destinationFile), bufferSize,callback)
+    FileInputStream(this).copyToFile(FileOutputStream(destinationFile), bufferSize, callback)
 }
 
 suspend fun FileInputStream.copyToFile(
@@ -183,22 +173,18 @@ suspend fun FileInputStream.copyToFile(
     bufferSize: Int = 1024 * 20,
     callback: (progress: Long, speed: Long) -> Unit = { process, speed -> },
 ): Boolean {
-    val context: CoroutineContext = if (Looper.myLooper() == Looper.getMainLooper()) {
-        Dispatchers.IO
-    } else {
-        coroutineContext
-    }
-    val fis = this
-    return withContext(context) {
-        try {
-            fis.use { inputStream ->
+    return try {
+        suspendCancellableCoroutine { continuation ->
+            this.use { inputStream ->
                 fos.use { outputStream ->
                     val channelInput = inputStream.channel
                     val channelOutput = outputStream.channel
                     val buffer = ByteBuffer.allocate(bufferSize)
                     var progress = 0L
                     var length: Int
-                    while ((channelInput.read(buffer).also { length = it }) > 0 && isActive) {
+                    while ((channelInput.read(buffer)
+                            .also { length = it }) > 0 && continuation.isActive
+                    ) {
                         progress += length.toLong()
                         buffer.flip() // 切换到读模式
                         channelOutput.write(buffer)
@@ -207,13 +193,13 @@ suspend fun FileInputStream.copyToFile(
                     }
                     callback(progress, length.toLong())
                     fos.flush()
+                    continuation.resume(true)
                 }
             }
-            true
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            false
         }
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        false
     }
 }
 
@@ -258,38 +244,49 @@ fun String.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
     return null
 }
 
-fun Bitmap.adjustBitmapOrientation(filePath: String): Bitmap? {
-    var exifInterface: ExifInterface? = null
-    try {
-        exifInterface = ExifInterface(filePath)
+suspend fun String.adjustBitmapOrientation(): Bitmap? {
+    return try {
+        suspendCancellableCoroutine<Bitmap> { continuation ->
+            var exifInterface: ExifInterface? = null
+            var bitmap = BitmapFactory.decodeFile(this)
+            try {
+                exifInterface = ExifInterface(this)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            var rotation = 0
+            if (exifInterface != null) {
+                val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
+                when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> rotation = 90
+                    ExifInterface.ORIENTATION_ROTATE_180 -> rotation = 180
+                    ExifInterface.ORIENTATION_ROTATE_270 -> rotation = 270
+                    else -> {}
+                }
+            }
+            dLog { "adjustBitmapOrientation, adjust degree " + rotation + "to 0." }
+            bitmap = if (rotation == 0) {
+                bitmap
+            } else {
+                val matrix = Matrix()
+                matrix.postRotate(rotation.toFloat())
+                Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    0,
+                    bitmap.getWidth(),
+                    bitmap.getHeight(),
+                    matrix,
+                    true
+                )
+            }
+            continuation.resume(bitmap)
+        }
     } catch (e: Throwable) {
         e.printStackTrace()
+        null
     }
-    var rotation = 0
-    if (exifInterface != null) {
-        val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
-        when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotation = 90
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotation = 180
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotation = 270
-            else -> {}
-        }
-    }
-    dLog { "adjustBitmapOrientation, adjust degree " + rotation + "to 0." }
-    if (rotation == 0) {
-        return this
-    }
-    val matrix = Matrix()
-    matrix.postRotate(rotation.toFloat())
-    return Bitmap.createBitmap(
-        this,
-        0,
-        0,
-        getWidth(),
-        getHeight(),
-        matrix,
-        true
-    )
+
 }
 
 

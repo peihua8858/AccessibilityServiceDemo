@@ -23,7 +23,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +52,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
+import com.peihua.touchmonitor.utils.copyToClipBoard
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.shareCertainFiles
 import com.peihua.touchmonitor.utils.showToast
@@ -75,7 +75,8 @@ fun AppDetailScreen(
         title = stringResource(id = R.string.text_app_manager),
         navigateUp = {
             popBackStack()
-        }) {
+        }
+    ) {
         Column(
             modifier
                 .fillMaxSize()
@@ -119,6 +120,12 @@ private fun AppInfoScreenContent(
             exportAppPkg.value = false to false
         }
     }
+    val onClickInfo = { title: String, value: String ->
+        context.copyToClipBoard(value) {
+           showToast(R.string.text_copy_success)
+        }
+    }
+
     Column(
         modifier
             .fillMaxSize()
@@ -233,54 +240,67 @@ private fun AppInfoScreenContent(
             TitleValueView(
                 title = stringResource(id = R.string.text_package_name),
                 value = model.packageName,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_version_name),
                 value = model.versionName,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_version_code),
                 value = model.versionCode.toString(),
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_file_size),
                 value = Formatter.formatFileSize(context, model.fileSize),
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_first_install_time),
                 value = model.firstInstallTime,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_last_update_time),
                 value = model.lastUpdateTime,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_install_source),
                 value = model.installSource,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_low_api),
                 value = model.lowApi,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_target_api),
                 value = model.targetApi,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_system_app),
                 value = stringResource(if (model.isSystemApp) R.string.text_yes else R.string.text_no),
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_uid),
                 value = model.uid.toString(),
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_path),
                 value = model.path,
+                onClick = onClickInfo
             )
             TitleValueView(
                 title = stringResource(id = R.string.text_app_launch_class),
                 value = model.launchClass,
+                onClick = onClickInfo
             )
         }
         Spacer(Modifier.height(dimensionResource(id = R.dimen.dp_8)))
@@ -298,7 +318,9 @@ private fun AppInfoScreenContent(
             TitleValueView(
                 title = stringResource(id = R.string.app_signature_issuer),
                 value = model.launchClass,
-                orientation = Orientation.Vertical
+                orientation = Orientation.Vertical,
+                onClick = onClickInfo
+
             )
         }
     }

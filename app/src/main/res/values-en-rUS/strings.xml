@@ -137,4 +137,5 @@
     <string name="text_not_login">Not logged in</string>
 
     <string name="share_title">Share</string>
+    <string name="text_copy_success">Copy successfully</string>
 </resources>

@@ -95,10 +95,7 @@ private fun UserAppScreen(
     Column(
         modifier
             .fillMaxSize()
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
+            .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
 
         when (result) {
@@ -134,10 +131,7 @@ fun SystemAppScreen(
     Column(
         modifier
             .fillMaxSize()
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
-            )
+            .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
 
         when (result) {

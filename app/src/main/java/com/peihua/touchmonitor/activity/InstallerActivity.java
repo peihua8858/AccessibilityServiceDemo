@@ -61,7 +61,7 @@ public class InstallerActivity extends ComponentActivity {
             }
             inputStream.close();
             fos.close();
-            return FileProvider.getUriForFile(this, getPackageName() + ".provider", tempFile);
+            return FileProvider.getUriForFile(this, getPackageName() + ".fileProvider", tempFile);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -232,7 +232,7 @@ public class InstallerActivity extends ComponentActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Uri r9 = FileProvider.getUriForFile(this, getPackageName() + ".provider", uri1File);
+        Uri r9 = FileProvider.getUriForFile(this, getPackageName() + ".fileProvider", uri1File);
         if (r9 == null) {
             return;
         }
@@ -284,7 +284,7 @@ public class InstallerActivity extends ComponentActivity {
             if (file == null) {
                 return;
             }
-            intent.setData(FileProvider.getUriForFile(this, getPackageName() + ".provider", file));
+            intent.setData(FileProvider.getUriForFile(this, getPackageName() + ".fileProvider", file));
             startActivity(intent);
         }
     }
