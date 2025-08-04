@@ -1,8 +1,9 @@
 package com.peihua.touchmonitor.ui.screen.function.apk
 
 import android.text.format.Formatter
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +41,7 @@ import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.installApk
 import com.peihua.touchmonitor.utils.items
+import com.peihua.touchmonitor.utils.shareCertainFiles
 import com.peihua.touchmonitor.viewmodel.ApkViewModel
 
 @Composable
@@ -90,6 +92,7 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ApkListScreenContent(
     modifier: Modifier = Modifier,
@@ -104,9 +107,11 @@ private fun ApkListScreenContent(
             ApkItemView(
                 Modifier
                     .padding(bottom = dimensionResource(id = R.dimen.dp_16))
-                    .clickable {
+                    .combinedClickable(onClick = {
                         context.installApk(item.path)
-                    }, item, iconSize
+                    }, onLongClick = {
+                        context.shareCertainFiles(item.path)
+                    }), item, iconSize
             )
         }
     }

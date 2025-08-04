@@ -11,6 +11,7 @@ import androidx.lifecycle.application
 import com.fz.common.file.getFileSize
 import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.utils.ResultData
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.request
 import java.io.File
 
@@ -79,6 +80,8 @@ class ApkViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     } while (cursor.moveToNext())
                 }
+
+                apkList.sortBy{it.apkName.first().dLog { ">>>>$this" }}
                 apkList
             } ?: arrayListOf()
         }

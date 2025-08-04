@@ -4,16 +4,10 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.graphics.drawable.Drawable
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.intl.Locale
 import com.google.gson.annotations.SerializedName
-import com.peihua.touchmonitor.BuildConfig
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.Constants
 import com.peihua.touchmonitor.ui.theme.ThemeMode
-import com.peihua.touchmonitor.utils.externalStoragePath
 import kotlinx.serialization.json.Json
 
 data class SettingsModel(

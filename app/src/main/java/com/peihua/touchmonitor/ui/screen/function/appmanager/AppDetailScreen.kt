@@ -338,12 +338,12 @@ fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Un
             dLog { "speed: $speed" }
         }
         onComplete { file, e ->
+            onComplete()
             dLog { "exportApp, save file to $e successful" }
             showDialog.value = false // 隐藏 loading
             if (isShare) {
                 context.shareCertainFiles(file)
             }
-            onComplete()
         }
         onProgress { w, total, current ->
             dLog { "progress: $current/$total" }

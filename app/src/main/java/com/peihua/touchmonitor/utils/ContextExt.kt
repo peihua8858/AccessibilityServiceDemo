@@ -153,21 +153,21 @@ fun Context.shareCertainFiles(fileItem: FileItem) {
         fileItem.getDocumentFile()?.uri
     } else if (fileItem.isShareUriInstance) {
         fileItem.contentUri
-    }else null
+    } else null
     if (uri == null) return
     dLog { "shareCertainFiles file:${uri}" }
     shareCertainFiles(uri, getString(R.string.share_title))
 }
 
-fun Context.shareCertainFiles(filePath: String, title: String) {
+fun Context.shareCertainFiles(filePath: String, title: String = "") {
     shareCertainFiles(File(filePath), title)
 }
 
-fun Context.shareCertainFiles(file: File, title: String) {
+fun Context.shareCertainFiles(file: File, title: String = "") {
     shareCertainFiles(file.fileProvider, title)
 }
 
-fun Context.shareCertainFiles(uri: Uri, title: String) {
+fun Context.shareCertainFiles(uri: Uri, title: String = "") {
     shareCertainFiles(arrayListOf(uri), title)
 }
 
@@ -183,8 +183,9 @@ fun Context.shareCertainFiles(uris: MutableList<Uri>, title: String) {
         intent.setAction(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_STREAM, uris[0])
     }
-    intent.putExtra(Intent.EXTRA_SUBJECT, title)
-    intent.putExtra(Intent.EXTRA_TEXT, title)
+    val tempTitle = title.ifEmpty { getString(R.string.share_title) }
+    intent.putExtra(Intent.EXTRA_SUBJECT, tempTitle)
+    intent.putExtra(Intent.EXTRA_TEXT, tempTitle)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
         val chooser = Intent.createChooser(intent, "Share File")

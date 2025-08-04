@@ -14,7 +14,6 @@ import com.peihua.touchmonitor.ui.Constants
 import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.utils.WorkScope
-import com.peihua.touchmonitor.utils.appExternalStoragePath
 import com.peihua.touchmonitor.utils.cRC32
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.externalStoragePath
@@ -62,26 +61,10 @@ class ExtortWorker(
     private var mCurrentWritingFile: FileItem = FileItem.createFileItemInstance("")
     private var mCurrentWritingPath: String? = null
     private val byteLength = 1024 * 10
-//    /**
-//     * api19及以上使用App所属外置存储作为默认导出路径(/storage/emulated/0/android/data/com.github.ghmxr.apkextractor/files)，对于旧版本已授权过并升级到此的，sp取值不变
-//     */
-//    var PREFERENCE_SAVE_PATH_DEFAULT: String? = null
-//
-//    init {
-//        PREFERENCE_SAVE_PATH_DEFAULT = if (PermissionChecker.checkSelfPermission(
-//                context,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ) == PermissionChecker.PERMISSION_GRANTED
-//        ) {
-//            "$externalStoragePath/Backup"
-//        } else {
-//            context.appExternalStoragePath + "/Backup"
-//        }
-//    }
     fun start() {
         model.invokeStart()
         launch {
-            extort()
+            doExport()
         }
     }
 
@@ -283,7 +266,7 @@ class ExtortWorker(
         return mCurrentWritingFile
     }
 
-    fun extort(): Deferred<FileItem> {
+    fun extortAsync(): Deferred<FileItem> {
         return async { doExport() }
     }
 
