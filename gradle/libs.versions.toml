@@ -53,6 +53,7 @@ runner = "1.5.2"
 core = "1.5.0"
 multiplatformSettings = "1.2.0"
 dataStore = "1.1.4"
+androidx-security-crypto = "1.0.0"
 androidx-room = "2.7.2"
 androidx-paging = "3.3.6"
 pagingComposeAndroid = "3.3.6"
@@ -63,7 +64,7 @@ sqlite = "2.5.0-rc03"
 okio = "3.10.2"
 roomCommonJvm = "2.7.2"
 sqliteBundledAndroid = "2.5.2"
-
+tink = "1.15.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -85,9 +86,13 @@ androidx-material = { group = "androidx.compose.material", name = "material", ve
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemuicontroller" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions" ,version.ref = "permissions" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidx-paging" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "dataStore" }
 androidx-datastore-core-okio = { group = "androidx.datastore", name = "datastore-core-okio", version.ref = "dataStore" }
 androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "dataStore" }
 androidx-datastore-preferences-protobuf = { group = "androidx.datastore", name = "datastore-preferences-protobuf", version.ref = "dataStore" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security-crypto" }
+tink = { module = "com.google.crypto.tink:tink", version.ref = "tink" }
+tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 androidx-paging-compose-android = { group = "androidx.paging", name = "paging-compose-android", version.ref = "pagingComposeAndroid" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }

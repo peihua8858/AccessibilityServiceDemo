@@ -77,6 +77,7 @@ dependencies {
 //    implementation libs.androidx.material
 
     implementation(libs.coil3.coil.compose)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.datastore.core.okio)
     implementation(libs.ktor.serialization.kotlinx.json)
@@ -88,6 +89,9 @@ dependencies {
     implementation(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose.android)
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.tink)
+    implementation(libs.tink.android)
 //    implementation("androidx.room:room-runtime:2.7.2")
 //    implementation("androidx.room:room-ktx:2.7.2")
 //    implementation("androidx.room:room-paging:2.7.2")
