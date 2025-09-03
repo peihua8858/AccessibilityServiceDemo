@@ -9,11 +9,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
@@ -25,6 +27,7 @@ import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.applications.AppScreen
@@ -166,6 +169,8 @@ fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter
             ServiceApplication.updateLanguage(it.language)
         }
     }
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setNavigationBarColor( Color.Black)
     AppTheme(settings.value.theme) { model, colorScheme ->
         AppNavHost(navController = navController, modifier = modifier, defaultPage)
     }
