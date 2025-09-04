@@ -2,10 +2,22 @@ package com.peihua.touchmonitor.ui.screen.function.autoScroller.settings
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -13,38 +25,76 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.DrawResult
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupPositionProvider
+import com.fz.common.text.isInteger
+import com.fz.common.text.isNumber
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.dimensionSpResource
+import com.peihua.touchmonitor.utils.roundToPx
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
@@ -52,6 +102,7 @@ private data class OrientationModel(val orientation: Orientation, val displayNam
 @Composable
 fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> Unit) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val settingsState = remember { mutableStateOf(model.settings) }
     val settings = model.settings
     settingsState.value = settings
@@ -65,6 +116,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val selOption = models.find { it.orientation == settings.orientation } ?: models[0]
     val selectedOption = remember { mutableStateOf(selOption) }
     selectedOption.value = selOption
+    val slidingSpeed = remember { mutableStateOf(settings.slidingSpeed.toString()) }
     val doubleSaver = remember { mutableStateOf(settings.isDoubleSaver) }
     doubleSaver.value = settings.isDoubleSaver
     val skipAdOrLive = remember { mutableStateOf(settings.isSkipAdOrLive) }
@@ -166,7 +218,47 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 }
             }
         }
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+        OutlinedTextField(
+            value = slidingSpeed.value,
+            onValueChange = {
+                if (it.all { it.isDigit() } || it.isEmpty()) {
+                    if (it.isEmpty() || it.toLong() in 1..1000) {
+                        slidingSpeed.value = it
+                        if (it.isEmpty()) {
+                            return@OutlinedTextField
+                        }
+                        model.settings = settings.copy(slidSpeed = it.toInt())
+                        scope.launch {
+                            modelChange(model)
+                        }
+                    }
+                }
+            },
+            supportingText = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        tint = colorScheme.error,
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.dp_10)),
+                        contentDescription = null
+                    )
+                    ScaleText(
+                        text = stringResource(R.string.sliding_speed_tips),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_8),
+                        color = colorScheme.error
+                    )
+                }
+            },
+            label = { ScaleText(stringResource(R.string.sliding_speed)) },
+            textStyle = MaterialTheme.typography.labelMediumNormal,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_8)))
         Column {
             ScaleText(
                 stringResource(R.string.delay_time),
@@ -326,3 +418,4 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         }
     }
 }
+

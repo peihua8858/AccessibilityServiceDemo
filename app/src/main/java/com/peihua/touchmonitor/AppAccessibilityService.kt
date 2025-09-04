@@ -1,11 +1,17 @@
 package com.peihua.touchmonitor
 
 import android.accessibilityservice.AccessibilityService
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.media.AudioManager
+import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
@@ -39,6 +45,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         mProcessRunner?.onStop()
         changeSystemSettings(true)
         cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     override fun onDestroy() {
@@ -48,6 +55,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         changeSystemSettings(true)
         mProcessRunner?.onStop()
         cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     private val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
@@ -131,7 +139,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
             dLog { "runningService>>>><><<<<<start" }
             while (isServiceRunning) {
                 val currentPackageName = rootInActiveWindow?.packageName
-                val isProcesserRunning = settings.value.packageName == currentPackageName
+                val isProcesserRunning = settings.value.packageName == currentPackageName || settings.value.packageName.isEmpty()
                 dLog { "settings.value:${settings.value}" }
                 dLog { "Service start>>>> currentPackageName:$currentPackageName,isProcesserRunning:$isProcesserRunning" }
                 chaneState(isProcesserRunning)
@@ -208,5 +216,29 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         // 启动定时执行手势
         runningService()
         dLog { "onServiceConnected" }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createForegroundNotification()
+        }
+    }
+
+    /**
+     * 创建前台通知
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createForegroundNotification() {
+        val channelName = getString(R.string.app_name)
+        val notificationManager = NotificationManagerCompat.from(this)
+        val notificationChannels = notificationManager.notificationChannelsCompat
+        if (notificationChannels.isEmpty()) {
+            val notificationChannel = NotificationChannel(channelName, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+        val channel = notificationManager.notificationChannelsCompat.first()
+        val notification = NotificationCompat.Builder(this, channel.id)
+            .setContentTitle(channelName)
+            .setContentText(channelName+"正在运行")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .build()
+        startForeground(0x195288, notification)
     }
 }

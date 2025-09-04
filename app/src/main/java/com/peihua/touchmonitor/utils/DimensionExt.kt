@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 
 
 @get:Composable
@@ -23,3 +24,7 @@ val <T : Number> T.toSp: TextUnit
         val pxValue = this.toFloat()
         return (pxValue / density.density).dLog { "toSp>r$pxValue/${density.density}=$this" }.sp
     }
+
+fun Dp.roundToPx():Int {
+    return (this.value).roundToInt()
+}

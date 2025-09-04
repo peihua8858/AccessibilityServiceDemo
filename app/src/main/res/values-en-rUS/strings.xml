@@ -23,6 +23,8 @@
     <string name="settings">Settings</string>
     <string name="app_provider">Applications</string>
     <string name="scroll_orientation">List Scroll Direction</string>
+    <string name="sliding_speed">Sliding speed (unit: milliseconds)</string>
+    <string name="sliding_speed_tips">The sliding speed is 800 by default, with a value range of 1–1000. The larger the number, the slower the speed. If the number is too small, the slide cannot turn the page!</string>
     <string name="delay_time">Swipe Time Interval (Unit: Seconds)</string>
     <string name="random_reverse">Enable Random Reverse Swipe?</string>
     <string name="sound_mute">Mute Sound?</string>

@@ -54,15 +54,23 @@ abstract class BaseDataStore<T>(vararg typePairs: Pair<Class<*>, Any>) :
         return data.toList()
     }
 
+    suspend fun updateSync(settings: T) {
+        db.updateData { settings }
+    }
+
     fun update(settings: T) {
         launch {
-            db.updateData { settings }
+            updateSync(settings)
         }
+    }
+
+    suspend fun updateSync(block: suspend (T) -> T) {
+        db.updateData { block(it) }
     }
 
     fun update(block: suspend (T) -> T) {
         launch {
-            db.updateData { block(it) }
+            updateSync { block(it) }
         }
     }
 

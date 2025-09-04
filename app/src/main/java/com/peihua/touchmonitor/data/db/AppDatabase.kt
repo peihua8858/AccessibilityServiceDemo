@@ -21,8 +21,8 @@ import com.peihua.touchmonitor.ui.ListToStringConverter
 import com.peihua.touchmonitor.ui.Settings
 import kotlinx.coroutines.Dispatchers
 
-@Database(entities = [Settings::class, History::class], version = 2, autoMigrations = [
-    AutoMigration(from = 1, to = 2, spec = V1ToV2Migration::class)
+@Database(entities = [Settings::class, History::class], version = 3, autoMigrations = [
+    AutoMigration(from = 1, to = 2, spec = V1ToV2Migration::class),
 ])
 @TypeConverters(ListToStringConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -44,6 +44,7 @@ class Factory(private val app: Context) {
             .addTypeConverter(ListToStringConverter())
             .setDriver(AndroidSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 }

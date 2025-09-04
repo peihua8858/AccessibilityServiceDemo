@@ -23,6 +23,8 @@
     <string name="settings">设置</string>
     <string name="app_provider">应用程序</string>
     <string name="scroll_orientation">列表滚动方向</string>
+    <string name="sliding_speed">滑动速度(单位：毫秒)</string>
+    <string name="sliding_speed_tips">滑动速度默认800，取值范围为1–1000，数字越大速度越慢，数字过小可能导致滑动无法翻页!</string>
     <string name="delay_time">滑动时间间隔(单位：秒)</string>
     <string name="random_reverse">是否启用随机反向滚动</string>
     <string name="sound_mute">是否静音</string>

@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
             LaunchedEffect(null) {
-                delay(3_000)
+                delay(300)
                 isReady = true
                 keepOnScreenCondition.compareAndSet(true,false)
             }

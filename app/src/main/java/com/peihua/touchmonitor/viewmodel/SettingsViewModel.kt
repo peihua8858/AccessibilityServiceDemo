@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
+import androidx.lifecycle.viewModelScope
 import com.fz.common.text.isNonEmpty
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.data.db.AppDatabase
@@ -24,7 +25,10 @@ import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.getString
 import com.peihua.touchmonitor.utils.request
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
@@ -63,6 +67,8 @@ class SettingsViewModel(
             val settings = runBlocking {
                 settingsStore.data.first()
             }
+            dLog { "queryData>>>historySettings:$historySettings" }
+            dLog { "queryData>>>settings:$settings" }
             historySettings.forEach {
                 val provider = values.find { value -> value.settings.packageName == it.packageName }
                 val newModel = (provider ?: AppProvider.New).createModel(it)
@@ -117,7 +123,7 @@ class SettingsViewModel(
                     "",
                     getString(R.string.no_limit),
                     icon = application.packageManager.defaultActivityIcon,
-                    settings = AppProvider.ALL.settings
+                    settings = if (settings.packageName.isEmpty()) settings else AppProvider.ALL.settings
                 )
             )
             result.add(
@@ -133,9 +139,15 @@ class SettingsViewModel(
         }
     }
 
+    var saveDbJob: Job? = null
     fun saveToDb(model: AppModel, isSaveToHistory: Boolean) {
-        model.saveToDb()
-        request {
+        if (saveDbJob != null) {
+            saveDbJob?.cancel()
+            saveDbJob = null
+        }
+        saveDbJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(500)
+            model.saveToDbSync()
             if (isSaveToHistory) {
                 val findItem = historyDao.queryAll().find { it.packageName == model.pkgName }
                 if (findItem != null) {
@@ -155,7 +167,6 @@ class SettingsViewModel(
             } else {
                 settingsDao.insert(model.settings)
             }
-            true
         }
     }
 

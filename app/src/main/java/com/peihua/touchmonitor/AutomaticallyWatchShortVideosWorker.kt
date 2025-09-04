@@ -196,7 +196,7 @@ class AutomaticallyWatchShortVideosWorker(
             dLog { "dispatchGesture,startX:${centerX},startY:$startY,endX:$centerX,endY:$endY, path:$path" }
             val builder = GestureDescription.Builder()
             val gestureDescription = builder.addStroke(
-                GestureDescription.StrokeDescription(path, 0, (1000 * swipeFactor).toLong())
+                GestureDescription.StrokeDescription(path, 0, (settings.slidingSpeed * swipeFactor).toLong())
             ).build()
             // 执行手势并尝试处理结果
             val gestureCallback = object : GestureResultCallback() {

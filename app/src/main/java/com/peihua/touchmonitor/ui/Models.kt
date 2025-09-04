@@ -36,7 +36,7 @@ enum class AppProvider(
     },
 ) {
     ALL(
-        settings = Settings("All", Orientation.Vertical, true),
+        settings = Settings("", Orientation.Vertical, true),
         contentView = { modifier, model, modelChange ->
             AllSettings(modifier, model, modelChange)
         }),
@@ -131,6 +131,9 @@ data class AppModel(
     fun saveToDb() {
         settingsStore.update(settings)
     }
+   suspend fun saveToDbSync() {
+        settingsStore.updateSync(settings)
+    }
 }
 
 
@@ -150,7 +153,13 @@ data class Settings(
     val isBrightnessMin: Boolean = false,
     @ColumnInfo(name = "isSoundMute", defaultValue = "false")
     val isSoundMute: Boolean = false,
+    @ColumnInfo(name = "slidingSpeed", defaultValue = "800")
+    internal val slidSpeed: Int = 800,
 ) {
+
+    val slidingSpeed: Int
+        get() = if (this.slidSpeed in 1..1000) this.slidSpeed else 800
+
     companion object {
         val default: Settings = Settings("", Orientation.Vertical, true)
     }

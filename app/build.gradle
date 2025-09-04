@@ -15,8 +15,8 @@ android {
         applicationId "com.peihua.toutchmonitor"
         minSdk 24
         targetSdk 35
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,10 +87,11 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 //    annotationProcessor libs.androidx.room.compiler
     implementation(libs.androidx.room.paging)
+//    implementation libs.androidbrowserhelper
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose.android)
     implementation(libs.androidx.security.crypto)
-    implementation(libs.tink)
+//    implementation(libs.tink)
     implementation(libs.tink.android)
 //    implementation("androidx.room:room-runtime:2.7.2")
 //    implementation("androidx.room:room-ktx:2.7.2")
