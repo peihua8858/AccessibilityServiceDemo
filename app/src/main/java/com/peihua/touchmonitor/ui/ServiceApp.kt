@@ -36,7 +36,15 @@ import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
+import com.peihua.touchmonitor.ui.screen.function.audio.AudioScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
+import com.peihua.touchmonitor.ui.screen.function.collect.CollectScreen
+import com.peihua.touchmonitor.ui.screen.function.document.DocumentScreen
+import com.peihua.touchmonitor.ui.screen.function.download.DownloadScreen
+import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
+import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
+import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
+import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
 import com.peihua.touchmonitor.ui.screen.settings.SettingsScreen
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.theme.AppTheme
@@ -170,7 +178,7 @@ fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter
         }
     }
     val systemUiController = rememberSystemUiController()
-    systemUiController.setNavigationBarColor( Color.Black)
+    systemUiController.setNavigationBarColor(Color.Black)
     AppTheme(settings.value.theme) { model, colorScheme ->
         AppNavHost(navController = navController, modifier = modifier, defaultPage)
     }
@@ -243,6 +251,30 @@ fun AppNavHost(
         }
         composable(route = AppRouter.SettingsScreen.route) {
             SettingsScreen(modifier)
+        }
+        composable(route = AppRouter.PictureScreen.route) {
+            PictureScreen(modifier)
+        }
+        composable(route = AppRouter.AudioScreen.route) {
+            AudioScreen(modifier)
+        }
+        composable(route = AppRouter.VideoScreen.route) {
+            VideoScreen(modifier)
+        }
+        composable(route = AppRouter.CollectScreen.route) {
+            CollectScreen(modifier)
+        }
+        composable(route = AppRouter.DocumentScreen.route) {
+            DocumentScreen(modifier)
+        }
+        composable(route = AppRouter.SearchScreen.route) {
+            SearchScreen(modifier)
+        }
+        composable(route = AppRouter.ZipScreen.route) {
+            ZipScreen(modifier)
+        }
+        composable(route = AppRouter.DownloadScreen.route) {
+            DownloadScreen(modifier)
         }
     }
 }

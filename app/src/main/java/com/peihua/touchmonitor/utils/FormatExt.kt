@@ -8,7 +8,7 @@ private const val KB = 1024f
 private const val MB = KB * KB
 private const val GB = MB * KB
 
-
+private val PICTURE_FORMAT_DATE = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
 fun Float.formatSpeed(): String {
     return this.toDouble().formatSpeed()
 }
@@ -82,4 +82,11 @@ fun Long.formatToDate(format: String): String {
         return ""
     }
     return SimpleDateFormat(format, Locale.getDefault()).format(this)
+}
+
+fun Long.formatPictureDate(): String {
+    if (this == 0L) {
+        return ""
+    }
+    return PICTURE_FORMAT_DATE.format(this)
 }
