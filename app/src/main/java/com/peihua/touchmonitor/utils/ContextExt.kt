@@ -10,6 +10,10 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.fz.common.utils.showToast
@@ -56,6 +60,22 @@ val Context.screenWidth: Int
 val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
+@get:Composable
+val Context.screenWidthDp: Dp
+    get() {
+        val density = LocalDensity.current
+        val widthPixels = resources.displayMetrics.widthPixels
+        return (widthPixels.toFloat() / density.density).dp
+    }
+
+@get:Composable
+val Context.screenHeightDp: Dp
+    get() {
+        val density = LocalDensity.current
+        val heightPixels = resources.displayMetrics.heightPixels
+        return (heightPixels.toFloat() / density.density).dp
+    }
+
 object ContextExt {
 
     @JvmStatic
@@ -63,7 +83,8 @@ object ContextExt {
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }
-
+val Context.isLandscape: Boolean
+    get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 fun Context.installApk(apkPath: String) {
     installApk(File(apkPath))
 }

@@ -65,7 +65,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         .append("字体缩放系数：${density.fontScale}")
     Toolbar(
         modifier = modifier,
-        title = stringResource(id = R.string.text_home)) {
+        title = stringResource(id = R.string.text_home)
+    ) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -75,10 +76,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier,
                 titles = listOf(
                     stringResource(id = R.string.text_auto_scroll) to AppRouter.AutoScroller,
-                    stringResource(id = R.string.text_images) to null,
-                    stringResource(id = R.string.text_audio) to null,
-                    stringResource(id = R.string.text_videos) to null,
-                    stringResource(id = R.string.text_documents) to null
+                    stringResource(id = R.string.text_images) to AppRouter.PictureScreen,
+                    stringResource(id = R.string.text_audio) to AppRouter.AudioScreen,
+                    stringResource(id = R.string.text_videos) to AppRouter.VideoScreen,
+                    stringResource(id = R.string.text_documents) to AppRouter.DocumentScreen
                 ),
                 painters = listOf(
                     painterResource(id = R.drawable.ic_home_scroller),
@@ -110,10 +111,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier,
                 titles = listOf(
                     stringResource(id = R.string.text_apk) to AppRouter.ApkManagerScreen,
-                    stringResource(id = R.string.text_compression) to null,
-                    stringResource(id = R.string.text_download) to null,
-                    stringResource(id = R.string.text_collect_folder) to null,
-                    stringResource(id = R.string.text_search) to null
+                    stringResource(id = R.string.text_compression) to AppRouter.ZipScreen,
+                    stringResource(id = R.string.text_download) to AppRouter.DownloadScreen,
+                    stringResource(id = R.string.text_collect_folder) to AppRouter.CollectScreen,
+                    stringResource(id = R.string.text_search) to AppRouter.SearchScreen
                 ),
                 painters = listOf(
                     painterResource(id = R.mipmap.ic_apk_home),
