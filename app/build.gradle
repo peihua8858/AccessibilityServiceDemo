@@ -15,8 +15,8 @@ android {
         applicationId "com.peihua.toutchmonitor"
         minSdk 24
         targetSdk 35
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.3-alpha"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,6 +58,13 @@ android {
     room {
         schemaDirectory("$projectDir/schemas")
         version 2
+    }
+
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                outputFileName = "AccessibilityTools" + defaultConfig.versionName + ".apk"
+            }
     }
 }
 
