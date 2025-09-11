@@ -4,11 +4,18 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Environment
+import android.os.Process
 import android.provider.Settings
+import android.text.TextUtils
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.util.ObjectsCompat
 import com.fz.common.utils.fromHtml
 import com.peihua.touchmonitor.R
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 
 fun Context.checkPermissions(vararg permission: String): Boolean {
@@ -23,18 +30,25 @@ fun Context.checkPermissions(vararg permission: String): Boolean {
     return true
 }
 
-fun Context.isGrantedPermission(vararg permission: String): Boolean {
+@OptIn(ExperimentalStdlibApi::class)
+fun Context.isGrantedPermission(permission: String): Boolean {
     if (permission.isEmpty() || !isM) {
         return true
     }
-    for (p in permission) {
-        if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-    }
-    return true
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
+@OptIn(ExperimentalContracts::class)
+fun Context.isGrantedPermission(vararg permissions: String): Boolean {
+    contract { returns() }
+    if (permissions.isEmpty() || !isM) {
+        return true
+    }
+    return permissions.all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED }
+}
+
+
+@OptIn(ExperimentalContracts::class)
 fun Context.isGrantedStoragePermission(): Boolean {
     if (isR) {
         return Environment.isExternalStorageManager()
@@ -49,6 +63,7 @@ fun isGrantedWindowPermission(context: Context?): Boolean {
     return true
 }
 
+@OptIn(ExperimentalContracts::class)
 fun Context.checkStorgePermission(): Boolean {
     val result = isGrantedStoragePermission()
     if (!result) {

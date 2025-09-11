@@ -156,7 +156,7 @@ private fun AppInfoScreenContent(
             elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
         ) {
             IconText(
-                text = stringResource(id = R.string.text_running),
+                text = stringResource(id = R.string.text_run),
                 painter = painterResource(id = R.drawable.ic_play_arrow_24),
                 tint = Colors.Cyan[800]
             ) {

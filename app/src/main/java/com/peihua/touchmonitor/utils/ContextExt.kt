@@ -208,3 +208,42 @@ fun Context.shareCertainFiles(uris: MutableList<Uri>, title: String) {
         showToast(e.toString())
     }
 }
+
+
+fun Context.startAccessibilitySettings() {
+    // 引导用户到系统辅助功能设置
+    try {
+        toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+    } catch (e: Throwable) {
+        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+        try {
+            toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        } catch (e: Exception) {
+            writeLogFile { e.stackTraceToString() }
+        }
+    }
+}
+
+fun Context.toAccessibilitySettingActivity(action: String) {
+    try {
+        val intent = Intent(action)
+        intent.setData("package:${packageName}".toUri())
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    } catch (e: Throwable) {
+        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
+        val intent = Intent(action)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+}
+
+
+val Context.isAccessibilityServiceEnabled: Boolean
+    get() {
+        return Settings.Secure.getInt(
+            contentResolver,
+            Settings.Secure.ACCESSIBILITY_ENABLED,
+            0
+        ) == 1
+    }

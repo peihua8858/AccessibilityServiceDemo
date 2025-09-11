@@ -104,7 +104,7 @@
     <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
     <string name="text_photo_tools">图片工具</string>
-    <string name="text_running">运行</string>
+    <string name="text_run">运行</string>
     <string name="text_export">导出</string>
     <string name="text_share">分享</string>
     <string name="text_app_detail">详情</string>
@@ -158,4 +158,7 @@
     <string name="text_ok">确定</string>
     <string name="text_about">关于</string>
     <string name="text_export_path">导出路径</string>
+
+    <string name="text_stop_running">已经停止运行</string>
+    <string name="text_running">正在运行</string>
 </resources>

@@ -1,8 +1,13 @@
 package com.peihua.touchmonitor
 
+import android.Manifest
 import android.accessibilityservice.AccessibilityService
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.media.AudioManager
 import android.os.Build
 import android.util.Log
@@ -17,12 +22,17 @@ import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.isOreo
+import com.peihua.touchmonitor.utils.isS
+import com.peihua.touchmonitor.utils.isUpsideDownCake
 import com.peihua.touchmonitor.utils.wLog
+import com.peihua8858.permissions.core.checkPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
 
 class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
@@ -40,6 +50,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
 
     override fun onInterrupt() {
         // 处理中断
+        sendNotificationServerStop()
         isServiceRunning = false
         isProcesserRunning = false
         mProcessRunner?.onStop()
@@ -51,11 +62,41 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
     override fun onDestroy() {
         isServiceRunning = false
         isProcesserRunning = false
+        sendNotificationServerStop()
         super.onDestroy()
         changeSystemSettings(true)
         mProcessRunner?.onStop()
         cancel()
         stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    @SuppressLint("LaunchActivityFromNotification")
+    private fun sendNotificationServerStop() {
+        if (checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+            var channelName = getString(R.string.app_name)
+            val notificationManager = NotificationManagerCompat.from(this)
+            channelName = if (isOreo) {
+                val notificationChannels = notificationManager.notificationChannelsCompat
+                if (notificationChannels.isEmpty()) {
+                    val notificationChannel = NotificationChannel(channelName, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+                    notificationManager.createNotificationChannel(notificationChannel)
+                }
+                notificationManager.notificationChannelsCompat.first().id
+            } else channelName
+            val intent = Intent(this, AccessibilityBootReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                this, 0,
+                intent, if (isS) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                else PendingIntent.FLAG_UPDATE_CURRENT
+            );
+            val notification = NotificationCompat.Builder(this, channelName)
+                .setContentText(channelName + getString(R.string.text_stop_running))
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build()
+            notificationManager.notify(0x195288, notification)
+        }
     }
 
     private val settings = mutableStateOf(Settings("", Orientation.Vertical, true))
@@ -235,10 +276,15 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         }
         val channel = notificationManager.notificationChannelsCompat.first()
         val notification = NotificationCompat.Builder(this, channel.id)
-            .setContentTitle(channelName)
-            .setContentText(channelName+"正在运行")
+            .setContentText(channelName + getString(R.string.text_running))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
-        startForeground(0x195288, notification)
+        if (isUpsideDownCake) {
+            if (checkPermission(android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC)) {
+                startForeground(0x195288, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            }
+        } else {
+            startForeground(0x195288, notification)
+        }
     }
 }

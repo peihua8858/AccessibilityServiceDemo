@@ -15,6 +15,8 @@ inline val isTiramisu: Boolean
 inline val isOreo: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
+inline val isS: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 /**
  * [Build.VERSION.SDK_INT]>= Android 9
  */

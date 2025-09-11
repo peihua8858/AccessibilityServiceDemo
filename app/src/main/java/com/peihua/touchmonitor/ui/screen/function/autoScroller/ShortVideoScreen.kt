@@ -1,8 +1,10 @@
 package com.peihua.touchmonitor.ui.screen.function.autoScroller
 
+import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.fz.common.utils.showToast
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.activity.AutoScrollScreenActivity
@@ -54,8 +57,11 @@ import com.peihua.touchmonitor.ui.stackEntry
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.isUpsideDownCake
+import com.peihua.touchmonitor.utils.startAccessibilitySettings
 import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
+import com.peihua8858.permissions.core.requestPermission
 import kotlinx.coroutines.launch
 
 
@@ -165,9 +171,9 @@ private fun ShortVideoScreenContent(
                     },
                     leadingIcon = {
                         val icon = selectedOption.value.icon
-                        if (icon!=null) {
+                        if (icon != null) {
                             Image(
-                               painter = rememberDrawablePainter(icon),
+                                painter = rememberDrawablePainter(icon),
                                 "",
                                 modifier = Modifier
                                     .size(dimensionResource(id = R.dimen.dp_16))
@@ -309,31 +315,30 @@ private fun ShortVideoScreenContent(
                 .padding(bottom = dimensionResource(id = R.dimen.dp_32)),
             onClick = {
                 saveDb(selectedOption.value, false)
-                // 引导用户到系统辅助功能设置
-                try {
-                    context.toAccessibilitySettingActivity("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-                } catch (e: Exception) {
-                    dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-                    try {
-                        context.toAccessibilitySettingActivity(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    } catch (e: Exception) {
-                        writeLogFile { e.stackTraceToString() }
+                if (isUpsideDownCake) {
+                    (context as ComponentActivity).requestPermission(android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC) {
+                        onDenied {
+                            dLog { "MainScreen>>>>>>>onDenied" }
+                            context.showToast("请授权前台服务权限，如果不授予，可能无法使用刷屏器功能")
+                            context.startAccessibilitySettings()
+                        }
+                        onShowRationale {
+                            dLog { "MainScreen>>>>>>>onShowRationale" }
+                            context.showToast("请授权前台服务权限，如果不授予，可能无法使用刷屏器功能")
+                            context.startAccessibilitySettings()
+                        }
+                        onGranted {
+                            dLog { "MainScreen>>>>>>>onGranted" }
+                            context.startAccessibilitySettings()
+                        }
                     }
+
+                } else {
+                    context.startAccessibilitySettings()
                 }
+
             }) {
             ScaleText(stringResource(R.string.accessibility_service_authorization))
         }
-    }
-}
-
-private fun Context.toAccessibilitySettingActivity(action: String) {
-    try {
-        val intent = Intent(action)
-        intent.setData("package:${packageName}".toUri())
-        startActivity(intent)
-    } catch (e: Exception) {
-        dLog { "MainScreen>>>>>>>error:${e.stackTraceToString()}" }
-        val intent = Intent(action)
-        startActivity(intent)
     }
 }
