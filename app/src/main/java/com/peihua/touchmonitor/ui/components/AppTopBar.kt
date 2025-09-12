@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
@@ -127,14 +129,42 @@ fun AppTopBar(
  */
 @Composable
 fun NavigationIcon(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector = AppIcons.IosArrowBack,
     navigateUp: () -> Unit = {},
 ) {
-    Icon(
-        modifier = Modifier
-            .size(dimensionResource(id = R.dimen.dp_36))
-            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-            .clickable { navigateUp() },
-        imageVector = imageVector, contentDescription = ""
+    NavigationIcon2(
+        modifier
+            .size(dimensionResource(id = R.dimen.dp_24))
+            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))),
+        imageVector, navigateUp = navigateUp
     )
+}
+
+/**
+ * 导航图标
+ */
+@Composable
+fun NavigationIcon2(
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector = AppIcons.IosArrowBack,
+    tintColor: Color = Color.Black,
+    navigateUp: () -> Unit = {},
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clickable { navigateUp() },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.dp_4))
+                .aspectRatio(1f)
+                .fillMaxSize(),
+            imageVector = imageVector,
+            tint = tintColor,
+            contentDescription = ""
+        )
+    }
 }

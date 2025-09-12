@@ -1,13 +1,13 @@
 package com.peihua.touchmonitor.model
 
-class PhotoHeader (
+class MediaHeader (
     var title: String,
-    var photoList: ArrayList<PhotoData> = ArrayList(),
+    var mediaList: ArrayList<MediaData> = ArrayList(),
     var folderPath: String? = null,
     var isSelect: Boolean = false
 ){
-    fun addPhotoData(photoData: PhotoData):PhotoHeader{
-        photoList.add(photoData)
+    fun addMediaData(mediaData: MediaData):MediaHeader{
+        mediaList.add(mediaData)
         return this
     }
 
@@ -15,7 +15,7 @@ class PhotoHeader (
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as PhotoHeader
+        other as MediaHeader
 
         return title == other.title
 //        if (isSelect != other.isSelect) return false

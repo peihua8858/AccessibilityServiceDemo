@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isUnspecified
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
 
@@ -64,5 +63,55 @@ fun ScaleText(
         minLines = minLines,
         onTextLayout = onTextLayout,
         style = style
+    )
+}
+
+
+@Composable
+fun AutoLineHeightScaleText(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    style: TextStyle = LocalTextStyle.current,
+) {
+    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
+    val textScale = 1
+    val fontSize = when {
+        fontSize.isUnspecified -> if (style.fontSize.isUnspecified) defaultFontSize else style.fontSize
+        else -> fontSize
+    }
+    val finalFontSize = fontSize * textScale
+    val finalStyle = style.copy(lineHeight = finalFontSize * 1.5f)
+    Text(
+        text = text,
+        modifier = modifier,
+        color = color,
+        fontSize = finalFontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        onTextLayout = onTextLayout,
+        style = finalStyle
     )
 }

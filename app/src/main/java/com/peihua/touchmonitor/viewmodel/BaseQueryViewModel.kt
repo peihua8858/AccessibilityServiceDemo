@@ -7,7 +7,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
+import com.peihua.touchmonitor.model.MediaData
+import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.formatFileSize
 import com.peihua.touchmonitor.utils.formatPictureDate
 import com.peihua.touchmonitor.utils.getLong
 import com.peihua.touchmonitor.utils.getString
@@ -26,7 +29,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
 
     fun queryCursor(
         queryType: Int,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
     ): ArrayList<T> {
         val uri = when (queryType) {
             QUERY_TYPE_IMAGE -> {
@@ -52,30 +55,37 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
 
     fun queryCursor(
         uri: Uri,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
     ): ArrayList<T> {
         val result = arrayListOf<T>()
-        val data = "_data"
         val cursor = contentResolver.query(uri, columns, null, null, "LOWER(date_modified) DESC")
+        dLog { ">>>>>cursor.count:${cursor?.count}" }
         cursor?.use {
             while (it.moveToNext()) {
-                val path = it.getString(data)
-                val fileName = it.getString("_display_name")
-                val fileSize = it.getLong("_size")
-                val dateModified = it.getLong("date_modified")
+                val path = it.getString(MediaStore.MediaColumns.DATA)
+                val fileName = it.getString(MediaStore.MediaColumns.DISPLAY_NAME)
+                val fileSize = it.getLong(MediaStore.MediaColumns.SIZE)
+                val dateModified = it.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
                 val formatTime = (dateModified * 1000).formatPictureDate()
                 dLog { ">>>>>formatTime:$formatTime" }
+                dLog { ">>>>>path:$path,\nfileName:$fileName,\nfileSize:$fileSize,\ndateModified:$dateModified" }
                 convert(it, result, path, fileName, formatTime, dateModified, fileSize)
             }
         }
+        dLog { ">>>>>result.size:${result.size}" }
         return result
     }
 
+    open val columns: Array<String>
+        get() = arrayOf(
+            MediaStore.MediaColumns.DATA,
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            MediaStore.MediaColumns.SIZE,
+            MediaStore.MediaColumns.DATE_MODIFIED,
+        )
+
     private val contentResolver: ContentResolver
         get() = application.contentResolver
-
-    open val columns: Array<String>
-        get() = arrayOf("_data", "date_modified", "_display_name", "_size")
 
     protected fun getDurationString(duration: Long): String {
         val timeUnit = TimeUnit.MILLISECONDS
@@ -101,5 +111,75 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
             return "$minute:$second"
         }
         return "$hour:$minute:$second"
+    }
+
+}
+
+open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<MediaHeader>(application) {
+    fun queryCursor(
+        queryType: Int,
+        sortType: Int,
+        convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
+    ): ArrayList<MediaHeader> {
+        val titleArray = arrayListOf<String>()
+        val result = queryCursor(queryType) { cursor, result, path, fileName, formatTime,  dateTime, fileSize ->
+            var media = MediaData(
+                dateValue = dateTime,
+                fileName = fileName,
+                filePath = path,
+                size = fileSize,
+                fileSize = fileSize.formatFileSize()
+            )
+            media = convert(cursor, media)
+            if (titleArray.contains(formatTime)) {
+                val index = titleArray.indexOf(formatTime)
+                dLog { ">>>>>formatTime:$formatTime,index:$index" }
+                result[index].addMediaData(media)
+            } else {
+                dLog { ">>>>>formatTime:$formatTime" }
+                val photoHeader = MediaHeader(title = formatTime).addMediaData(media)
+                titleArray.add(formatTime)
+                result.add(photoHeader)
+            }
+        }
+        result.sortList(sortType)
+        return result
+    }
+
+    protected fun ArrayList<MediaHeader>.sortList(sortType: Int): ArrayList<MediaHeader> {
+        dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
+        val comparator = when (sortType) {
+            1 -> {
+                Comparator { o1, o2 -> o1.fileName.compareTo(o2.fileName, true) }
+            }
+
+            2 -> {
+                Comparator { o1, o2 -> o2.fileName.compareTo(o1.fileName, true) }
+            }
+
+            3 -> {
+                Comparator { o1, o2 -> o1.size.compareTo(o2.size) }
+            }
+
+            4 -> {
+                Comparator { o1, o2 -> o2.size.compareTo(o1.size) }
+            }
+
+            5 -> {
+                Comparator { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+
+            6 -> {
+                Comparator { o1, o2 -> o2.dateValue.compareTo(o1.dateValue) }
+            }
+
+            else -> {
+                Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+        }
+        for (item in this) {
+            item.mediaList.sortWith(comparator = comparator)
+        }
+        return this
     }
 }

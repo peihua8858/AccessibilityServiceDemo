@@ -57,40 +57,55 @@ sealed class AppRouter(
     /**
      * 图片列表页面
      */
-    data object PictureScreen:AppRouter("picture")
+    data object PictureScreen : AppRouter("picture")
 
     /**
      * 音频列表页面
      */
-    data object AudioScreen:AppRouter("audio")
+    data object AudioScreen : AppRouter("audio")
 
     /**
      * 视频列表页面
      */
-    data object VideoScreen:AppRouter("video")
+    data object VideoScreen : AppRouter("video")
 
     /**
      * 文档列表页面
      */
-    data object DocumentScreen:AppRouter("document")
+    data object DocumentScreen : AppRouter("document")
 
     /**
      * 压缩文件列表页面
      */
-    data object ZipScreen:AppRouter("zip")
+    data object ZipScreen : AppRouter("zip")
 
     /**
      * 下载文件夹页面
      */
-    data object DownloadScreen:AppRouter("download")
+    data object DownloadScreen : AppRouter("download")
 
     /**
      * 收藏夹列表页面
      */
-    data object CollectScreen:AppRouter("collect")
+    data object CollectScreen : AppRouter("collect")
 
     /**
      * 搜索页面
      */
-    data object SearchScreen:AppRouter("search")
+    data object SearchScreen : AppRouter("search")
+
+    /**
+     * 视频播放页面
+     */
+    data object VideoPlayerScreen : AppRouter("videoPlayer")
+
+    /**
+     * 图片预览页面
+     */
+    data object PhotoPreviewScreen : AppRouter("photoPreview")
+
+    /**
+     * 音频播放页面
+     */
+    data object AudioPlayerScreen : AppRouter("audioPlayer")
 }

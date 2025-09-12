@@ -1,5 +1,10 @@
 package com.peihua.touchmonitor.utils
 
+import android.content.Context
+import android.text.format.Formatter
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import com.peihua.touchmonitor.ServiceApplication
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -8,7 +13,7 @@ private const val KB = 1024f
 private const val MB = KB * KB
 private const val GB = MB * KB
 
-private val PICTURE_FORMAT_DATE = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+private val PICTURE_FORMAT_DATE = SimpleDateFormat("MMM dd, yyyy", Locale.CHINA)
 fun Float.formatSpeed(): String {
     return this.toDouble().formatSpeed()
 }
@@ -37,26 +42,11 @@ fun Double.formatSpeed(): String {
 }
 
 fun Long.formatFileSize(): String {
-    if (this == 0L) {
-        return "0 B"
-    }
-    return when {
-        this < KB -> {
-            String.format(Locale.US, "%.2f B", this.toFloat())
-        }
+    return Formatter.formatFileSize(ServiceApplication.application, this)
+}
 
-        this < MB -> {
-            String.format(Locale.US, "%.2f KB", this / KB)
-        }
-
-        this < GB -> {
-            String.format(Locale.US, "%.2f MB", this / MB)
-        }
-
-        else -> {
-            String.format(Locale.US, "%.2f GB", this / GB)
-        }
-    }
+fun Context.formatFileSize(size:Long): String {
+    return Formatter.formatFileSize(this, size)
 }
 
 fun formatFloat(speed: Float): String {

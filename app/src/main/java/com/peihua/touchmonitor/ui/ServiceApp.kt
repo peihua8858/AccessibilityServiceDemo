@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -36,21 +35,22 @@ import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
+import com.peihua.touchmonitor.ui.screen.function.audio.AudioPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.audio.AudioScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
 import com.peihua.touchmonitor.ui.screen.function.collect.CollectScreen
 import com.peihua.touchmonitor.ui.screen.function.document.DocumentScreen
 import com.peihua.touchmonitor.ui.screen.function.download.DownloadScreen
+import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
+import com.peihua.touchmonitor.ui.screen.function.video.VideoPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
 import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
 import com.peihua.touchmonitor.ui.screen.settings.SettingsScreen
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var appRouter: NavHostController
@@ -276,5 +276,27 @@ fun AppNavHost(
         composable(route = AppRouter.DownloadScreen.route) {
             DownloadScreen(modifier)
         }
+        composable(
+            route = AppRouter.VideoPlayerScreen.route,
+            arguments = AppRouter.VideoPlayerScreen.navArguments
+        ) {
+            val videoPath = it.savedStateHandle.get<String>("videoPath") ?: ""
+            dLog { "VideoPlayerScreen>>>>>>>filePath:$videoPath" }
+            VideoPlayerScreen(modifier, videoPath)
+        }
+        composable(
+            route = AppRouter.PhotoPreviewScreen.route,
+            arguments = AppRouter.PhotoPreviewScreen.navArguments
+        ) {
+            val photoPath = it.savedStateHandle.get<String>("photoPath") ?: ""
+            dLog { "PhotoPreviewScreen>>>>>>>filePath:$photoPath" }
+            PhotoPreviewScreen(modifier, photoPath)
+        }
+        composable(route = AppRouter.AudioPlayerScreen.route) {
+            val audioPath = it.savedStateHandle.get<String>("audioPath") ?: ""
+            dLog { "PhotoPreviewScreen>>>>>>>filePath:$audioPath" }
+            AudioPlayerScreen(modifier,audioPath)
+        }
+
     }
 }

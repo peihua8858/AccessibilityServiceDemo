@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
+import com.peihua.touchmonitor.utils.dLog
 
 @Composable
 fun <T> MultiStateScreen(
@@ -45,7 +46,9 @@ fun <T> MultiStateScreen(
             when (result) {
                 is ResultData.Success -> {
                     val data = result.data
+                    dLog { ">>>>>data:${data}" }
                     if (data is List<*> && data.isEmpty()) {
+                        dLog { ">>>>>data:${data.size}" }
                         EmptyView(modifier, retry = refresh)
                     } else {
                         content(data)
