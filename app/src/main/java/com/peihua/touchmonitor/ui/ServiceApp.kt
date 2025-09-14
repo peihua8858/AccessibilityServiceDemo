@@ -49,6 +49,7 @@ import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
 import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
 import com.peihua.touchmonitor.ui.screen.settings.SettingsScreen
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
+import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
 
@@ -295,7 +296,18 @@ fun AppNavHost(
         composable(route = AppRouter.AudioPlayerScreen.route) {
             val audioPath = it.savedStateHandle.get<String>("audioPath") ?: ""
             dLog { "PhotoPreviewScreen>>>>>>>filePath:$audioPath" }
-            AudioPlayerScreen(modifier,audioPath)
+            AudioPlayerScreen(modifier, audioPath)
+        }
+        composable(
+            route = AppRouter.StorageScreen.route,
+            arguments = AppRouter.LogDetail.navArguments
+        ) {
+            it.savedStateHandle.apply {
+                val title = get<String>("title") ?: ""
+                val path = get<String>("path") ?: ""
+                dLog { "AppDetailScreen>>>>>>>title:$title,path:$path" }
+                StorageScreen(modifier, title, path)
+            }
         }
 
     }

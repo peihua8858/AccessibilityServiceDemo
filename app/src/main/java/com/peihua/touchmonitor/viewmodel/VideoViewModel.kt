@@ -27,7 +27,7 @@ class VideoViewModel(application: Application) : BaseMediaViewModel(application)
             queryCursor(QUERY_TYPE_VIDEO, sortType) { cursor, mediaData ->
                 val duration = cursor.getLong("duration")
                 mediaData.duration = getDurationString(duration)
-                val fileUri = mediaData.filePath?.toUri()
+                val fileUri = mediaData.filePath.toUri()
                 dLog { "getVideoThumbnail>>>fileUri: $fileUri" }
                 val bitmap = application.getVideoThumbnailFromMediaMetadataRetriever(fileUri, Size(640, 480))
                 dLog { "getVideoThumbnail: $bitmap" }

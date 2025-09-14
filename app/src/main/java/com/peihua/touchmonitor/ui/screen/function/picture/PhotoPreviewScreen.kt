@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,24 +20,28 @@ import com.peihua.touchmonitor.ui.popBackStack
 
 @Composable
 fun PhotoPreviewScreen(modifier: Modifier, photoPath: String) {
-    Box(
-        modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Scaffold(
+        modifier = modifier
     ) {
-        ZoomableImage(model = photoPath, modifier = Modifier.fillMaxSize())
-        NavigationIcon2(
-            modifier = Modifier
-                .padding(top = dimensionResource(id = R.dimen.dp_16), start = dimensionResource(id = R.dimen.dp_16))
-                .size(dimensionResource(id = R.dimen.dp_24))
-                .background(
-                    Color.Black.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
-                )
-                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-                .align(Alignment.TopStart),
-            tintColor = Color.White
+        Box(
+            modifier.padding(it).fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            popBackStack()
+            ZoomableImage(model = photoPath, modifier = Modifier.fillMaxSize())
+            NavigationIcon2(
+                modifier = Modifier
+                    .padding(top = dimensionResource(id = R.dimen.dp_16), start = dimensionResource(id = R.dimen.dp_16))
+                    .size(dimensionResource(id = R.dimen.dp_24))
+                    .background(
+                        Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                    )
+                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                    .align(Alignment.TopStart),
+                tintColor = Color.White
+            ) {
+                popBackStack()
+            }
         }
     }
 }

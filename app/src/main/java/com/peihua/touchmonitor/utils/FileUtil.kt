@@ -6,6 +6,7 @@ package com.peihua.touchmonitor.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.webkit.MimeTypeMap
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
@@ -21,6 +22,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.coroutines.resume
 import kotlin.math.max
+import kotlin.text.substringBeforeLast
 
 suspend fun InputStream?.writeToFile(
     file: File?,
@@ -309,4 +311,12 @@ val InputStream.cRC32: CRC32
             }
             return crc
         }
+    }
+
+
+val String.mimeTypeFromFilePath: String?
+    get() {
+        val extension = substringBeforeLast(".")
+        return MimeTypeMap.getSingleton()
+            .getMimeTypeFromExtension(extension)
     }

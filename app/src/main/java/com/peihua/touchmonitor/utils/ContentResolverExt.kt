@@ -218,6 +218,7 @@ fun Context?.getPictureThumbnail(
     }
 }
 
+
 fun Context?.getVideoThumbnail(
     fileId: Long, fileUri: Uri?, size: Size,
 ): Bitmap? {
@@ -243,36 +244,50 @@ fun Context?.getVideoThumbnail(
  */
 fun Context.getVideoThumbnailFromMediaMetadataRetriever(uri: Uri?, size: Size): Bitmap? {
     uri ?: return null
-    val mediaMetadataRetriever = MediaMetadataRetriever()
-    mediaMetadataRetriever.setDataSource(this, uri)
-    val thumbnailBytes = mediaMetadataRetriever.embeddedPicture
-    if (isS) {
-        thumbnailBytes?.let {
-            return ImageDecoder.decodeBitmap(ImageDecoder.createSource(it));
+    try {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(this, uri)
+        val thumbnailBytes = mediaMetadataRetriever.embeddedPicture
+        if (isS) {
+            thumbnailBytes?.let {
+                return ImageDecoder.decodeBitmap(ImageDecoder.createSource(it));
+            }
+        }
+        val width = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+            ?.toFloat() ?: size.width.toFloat()
+        val height = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+            ?.toFloat() ?: size.height.toFloat()
+        val widthRatio = size.width.toFloat() / width
+        val heightRatio = size.height.toFloat() / height
+        val ratio = max(widthRatio, heightRatio)
+        if (ratio > 1) {
+            val requestedWidth = width * ratio
+            val requestedHeight = height * ratio
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val frame = mediaMetadataRetriever.getScaledFrameAtTime(
+                    -1, MediaMetadataRetriever.OPTION_PREVIOUS_SYNC,
+                    requestedWidth.toInt(), requestedHeight.toInt()
+                )
+                mediaMetadataRetriever.close()
+                return frame
+            }
+        }
+        val frame = mediaMetadataRetriever.frameAtTime
+        mediaMetadataRetriever.close()
+        return frame
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        try {
+            return if (isQ) {
+                contentResolver.loadThumbnail(uri, size, null)
+            }else{
+                decodeResizedBitmap(uri,size)
+            }
+        } catch (e: Throwable) {
+          e.printStackTrace()
+            return null
         }
     }
-    val width = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-        ?.toFloat() ?: size.width.toFloat()
-    val height = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-        ?.toFloat() ?: size.height.toFloat()
-    val widthRatio = size.width.toFloat() / width
-    val heightRatio = size.height.toFloat() / height
-    val ratio = max(widthRatio, heightRatio)
-    if (ratio > 1) {
-        val requestedWidth = width * ratio
-        val requestedHeight = height * ratio
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val frame = mediaMetadataRetriever.getScaledFrameAtTime(
-                -1, MediaMetadataRetriever.OPTION_PREVIOUS_SYNC,
-                requestedWidth.toInt(), requestedHeight.toInt()
-            )
-            mediaMetadataRetriever.close()
-            return frame
-        }
-    }
-    val frame = mediaMetadataRetriever.frameAtTime
-    mediaMetadataRetriever.close()
-    return frame
 }
 
 /**

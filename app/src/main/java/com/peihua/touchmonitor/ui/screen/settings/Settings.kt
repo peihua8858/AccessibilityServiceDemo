@@ -260,7 +260,7 @@ fun SettingsScreen(
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 SettingsCheckBox(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(top = dimensionResource(id = R.dimen.dp_16)),
                     title = stringResource(R.string.text_dynamic_color),
                     selected = systemSettings.value.theme.dynamicColor,
@@ -275,7 +275,7 @@ fun SettingsScreen(
                 )
             }
             SettingsItemView(
-                modifier = modifier,
+                modifier = Modifier,
                 title = stringResource(R.string.text_export_path),
                 value = systemSettings.value.exportPath,
             )

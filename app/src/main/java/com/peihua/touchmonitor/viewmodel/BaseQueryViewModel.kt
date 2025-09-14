@@ -47,8 +47,8 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
                 else MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             }
 
-            else -> if (isQ) MediaStore.Images.Media.getContentUri("external")
-            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            QUERY_TYPE_ZIP -> MediaStore.Files.getContentUri("external")
+            else -> MediaStore.Files.getContentUri("external")
         }
         return queryCursor(uri, convert)
     }
@@ -62,14 +62,16 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         dLog { ">>>>>cursor.count:${cursor?.count}" }
         cursor?.use {
             while (it.moveToNext()) {
-                val path = it.getString(MediaStore.MediaColumns.DATA)
-                val fileName = it.getString(MediaStore.MediaColumns.DISPLAY_NAME)
-                val fileSize = it.getLong(MediaStore.MediaColumns.SIZE)
-                val dateModified = it.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
-                val formatTime = (dateModified * 1000).formatPictureDate()
-                dLog { ">>>>>formatTime:$formatTime" }
-                dLog { ">>>>>path:$path,\nfileName:$fileName,\nfileSize:$fileSize,\ndateModified:$dateModified" }
-                convert(it, result, path, fileName, formatTime, dateModified, fileSize)
+                if (filter(it)) {
+                    val path = it.getString(MediaStore.MediaColumns.DATA)
+                    val fileName = it.getString(MediaStore.MediaColumns.DISPLAY_NAME)
+                    val fileSize = it.getLong(MediaStore.MediaColumns.SIZE)
+                    val dateModified = it.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
+                    val formatTime = (dateModified * 1000).formatPictureDate()
+                    dLog { ">>>>>formatTime:$formatTime" }
+                    dLog { ">>>>>path:$path,\nfileName:$fileName,\nfileSize:$fileSize,\ndateModified:$dateModified" }
+                    convert(it, result, path, fileName, formatTime, dateModified, fileSize)
+                }
             }
         }
         dLog { ">>>>>result.size:${result.size}" }
@@ -83,6 +85,8 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
             MediaStore.MediaColumns.SIZE,
             MediaStore.MediaColumns.DATE_MODIFIED,
         )
+    open val filter: (Cursor) -> Boolean
+        get() = { true }
 
     private val contentResolver: ContentResolver
         get() = application.contentResolver
@@ -122,7 +126,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
         convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
     ): ArrayList<MediaHeader> {
         val titleArray = arrayListOf<String>()
-        val result = queryCursor(queryType) { cursor, result, path, fileName, formatTime,  dateTime, fileSize ->
+        val result = queryCursor(queryType) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
             var media = MediaData(
                 dateValue = dateTime,
                 fileName = fileName,

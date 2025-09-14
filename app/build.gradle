@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 //    annotationProcessor libs.androidx.room.compiler
     implementation(libs.androidx.room.paging)
+    implementation libs.androidx.media3.ui
 //    implementation libs.androidbrowserhelper
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose.android)
@@ -122,5 +123,7 @@ dependencies {
     implementation 'com.github.peihua8858.AndroidxPermissions:permissions-compose:1.0.0'
     implementation "com.google.accompanist:accompanist-drawablepainter:0.34.0"
     implementation "androidx.documentfile:documentfile:1.1.0"
+    // https://mvnrepository.com/artifact/androidx.media3/media3-exoplayer
+    implementation("androidx.media3:media3-exoplayer:1.8.0")
 }
 

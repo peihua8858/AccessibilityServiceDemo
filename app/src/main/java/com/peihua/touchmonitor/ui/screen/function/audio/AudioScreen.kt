@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,6 +26,7 @@ import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.utils.openWithFile
 import com.peihua.touchmonitor.viewmodel.AudioViewModel
 
 @Composable
@@ -43,6 +45,7 @@ fun AudioScreen(modifier: Modifier, viewModel: AudioViewModel = viewModel()) {
 @Composable
 fun AudioScreenContent(modifier: Modifier = Modifier, result: MutableList<MediaHeader>) {
     val dp8 = dimensionResource(R.dimen.dp_8)
+    val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(dp8),
@@ -59,7 +62,8 @@ fun AudioScreenContent(modifier: Modifier = Modifier, result: MutableList<MediaH
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
+                            context.openWithFile(photo.filePath)
+//                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
                         }
                         .padding(vertical = dp8),
                     verticalAlignment = Alignment.CenterVertically

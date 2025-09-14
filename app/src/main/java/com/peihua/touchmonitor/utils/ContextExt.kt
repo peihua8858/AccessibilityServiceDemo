@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.utils.showToast
 import com.peihua.touchmonitor.R
@@ -83,8 +84,10 @@ object ContextExt {
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }
+
 val Context.isLandscape: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
 fun Context.installApk(apkPath: String) {
     installApk(File(apkPath))
 }
@@ -268,3 +271,12 @@ val Context.isAccessibilityServiceEnabled: Boolean
             0
         ) == 1
     }
+
+fun Context.openWithFile(filePath: String) {
+    val uriForFile = filePath.fileProvider
+    val intent = Intent()
+    intent.setAction("android.intent.action.VIEW")
+    intent.setDataAndType(uriForFile, filePath.mimeTypeFromFilePath)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(Intent.createChooser(intent, "Open with"))
+}

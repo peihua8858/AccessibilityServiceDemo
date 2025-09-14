@@ -43,13 +43,6 @@ import com.peihua.touchmonitor.viewmodel.VideoViewModel
 
 @Composable
 fun VideoScreen(modifier: Modifier, viewModel: VideoViewModel = viewModel()) {
-    Toolbar(
-        modifier = modifier,
-        title = stringResource(id = R.string.text_videos),
-        navigateUp = {
-            popBackStack()
-        }) {
-    }
     val result = viewModel.pictureState.value
     val sortType = 1
     //请求数据

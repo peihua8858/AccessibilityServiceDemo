@@ -16,5 +16,7 @@ data class MediaData(
     var date: Date? = null,
     var folderName: String = "",
     var isCheckboxVisible: Boolean = false,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var dateFormat:String="",
+    val isDirectory: Boolean=false
 )

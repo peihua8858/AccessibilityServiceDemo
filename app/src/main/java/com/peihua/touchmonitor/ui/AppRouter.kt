@@ -108,4 +108,17 @@ sealed class AppRouter(
      * 音频播放页面
      */
     data object AudioPlayerScreen : AppRouter("audioPlayer")
+
+    /**
+     * 存储页
+     */
+    data object StorageScreen :
+        AppRouter(
+            "storage/{packageName}",
+            listOf(navArgument("type") { type = NavType.IntType })
+        ) {
+        const val TYPE_DOWNLOAD = 0
+        const val TYPE_ROOT = 1
+
+    }
 }
