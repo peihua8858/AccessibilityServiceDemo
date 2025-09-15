@@ -1,8 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.function.video
 
 import android.view.ViewGroup
-import android.widget.MediaController
-import android.widget.VideoView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,14 +17,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.screenHeight
-import com.peihua.touchmonitor.utils.screenWidth
 
 @Composable
 fun VideoPlayerScreen(modifier: Modifier, videoPath: String) {

@@ -22,7 +22,7 @@ class VideoViewModel(application: Application) : BaseMediaViewModel(application)
     override val columns: Array<String>
         get() = arrayOf(*super.columns, MediaStore.Video.Media.DURATION)
 
-    fun requestImages(sortType: Int) {
+    fun requestImages(@SortType sortType: Int = SortType.SORT_TYPE_DATE_ASC) {
         request(pictureState) {
             queryCursor(QUERY_TYPE_VIDEO, sortType) { cursor, mediaData ->
                 val duration = cursor.getLong("duration")

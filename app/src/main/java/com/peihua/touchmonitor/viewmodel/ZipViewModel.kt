@@ -12,7 +12,7 @@ import com.peihua.touchmonitor.utils.request
 
 class ZipViewModel(application: Application) : BaseMediaViewModel(application) {
     val pictureState = mutableStateOf<ResultData<MutableList<MediaHeader>>>(ResultData.Initialize())
-    fun requestAudio(sortType: Int) {
+    fun requestAudio(@SortType sortType: Int = SortType.SORT_TYPE_DATE_ASC) {
         request(pictureState) {
             queryCursor(QUERY_TYPE_ZIP, sortType)
         }

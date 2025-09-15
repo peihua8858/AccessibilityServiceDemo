@@ -168,6 +168,7 @@ androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.re
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
@@ -176,6 +177,7 @@ room = { id = "androidx.room", version.ref = "androidx-room" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+parcelize = { id = "kotlin-parcelize", version.ref = "kotlin" }
 
 
 

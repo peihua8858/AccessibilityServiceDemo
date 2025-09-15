@@ -2,13 +2,16 @@ package com.peihua.touchmonitor.viewmodel
 
 import android.app.Application
 import android.content.ContentResolver
+import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.annotation.IntDef
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
+import com.peihua.touchmonitor.ui.components.MenuItem
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.formatFileSize
 import com.peihua.touchmonitor.utils.formatPictureDate
@@ -122,7 +125,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
 open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<MediaHeader>(application) {
     fun queryCursor(
         queryType: Int,
-        sortType: Int,
+        @SortType sortType: Int,
         convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
     ): ArrayList<MediaHeader> {
         val titleArray = arrayListOf<String>()
@@ -150,34 +153,41 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
         return result
     }
 
-    protected fun ArrayList<MediaHeader>.sortList(sortType: Int): ArrayList<MediaHeader> {
+    protected fun ArrayList<MediaHeader>.sortList(@SortType sortType: Int): ArrayList<MediaHeader> {
         dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
         val comparator = when (sortType) {
-            1 -> {
+            SortType.SORT_TYPE_NAME_ASC -> {
+                // 按文件名升序
                 Comparator { o1, o2 -> o1.fileName.compareTo(o2.fileName, true) }
             }
 
-            2 -> {
+            SortType.SORT_TYPE_NAME_DESC -> {
+                // 按文件名降序
                 Comparator { o1, o2 -> o2.fileName.compareTo(o1.fileName, true) }
             }
 
-            3 -> {
+            SortType.SORT_TYPE_SIZE_ASC -> {
+                // 按文件大小升序
                 Comparator { o1, o2 -> o1.size.compareTo(o2.size) }
             }
 
-            4 -> {
+            SortType.SORT_TYPE_SIZE_DESC -> {
+                // 按文件大小降序
                 Comparator { o1, o2 -> o2.size.compareTo(o1.size) }
             }
 
-            5 -> {
+            SortType.SORT_TYPE_DATE_ASC -> {
+                // 按文件日期升序
                 Comparator { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
             }
 
-            6 -> {
+            SortType.SORT_TYPE_DATE_DESC -> {
+                // 按文件日期降序
                 Comparator { o1, o2 -> o2.dateValue.compareTo(o1.dateValue) }
             }
 
             else -> {
+                // 按文件日期升序
                 Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
             }
         }
@@ -185,5 +195,36 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
             item.mediaList.sortWith(comparator = comparator)
         }
         return this
+    }
+}
+
+@Retention(AnnotationRetention.SOURCE)
+@IntDef(
+    SortType.SORT_TYPE_NAME_ASC,
+    SortType.SORT_TYPE_NAME_DESC,
+    SortType.SORT_TYPE_SIZE_ASC,
+    SortType.SORT_TYPE_SIZE_DESC,
+    SortType.SORT_TYPE_DATE_ASC,
+    SortType.SORT_TYPE_DATE_DESC
+)
+annotation class SortType {
+    companion object {
+        const val SORT_TYPE_NAME_ASC = 1
+        const val SORT_TYPE_NAME_DESC = 2
+        const val SORT_TYPE_SIZE_ASC = 3
+        const val SORT_TYPE_SIZE_DESC = 4
+        const val SORT_TYPE_DATE_ASC = 5
+        const val SORT_TYPE_DATE_DESC = 6
+
+        fun createSortList(context: Context): List<MenuItem<Int>> {
+            return listOf(
+                MenuItem(displayName = "按文件日期升序", value = SORT_TYPE_DATE_ASC),
+                MenuItem(displayName = "按文件日期降序", value = SORT_TYPE_DATE_DESC),
+                MenuItem(displayName = "按文件名升序", value = SORT_TYPE_NAME_ASC),
+                MenuItem(displayName = "按文件名降序", value = SORT_TYPE_NAME_DESC),
+                MenuItem(displayName = "按文件大小升序", value = SORT_TYPE_SIZE_ASC),
+                MenuItem(displayName = "按文件大小降序", value = SORT_TYPE_SIZE_DESC),
+            )
+        }
     }
 }

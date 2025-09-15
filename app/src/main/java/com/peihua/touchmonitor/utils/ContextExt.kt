@@ -19,6 +19,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.utils.showToast
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.activity.FileViewerActivity
 import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
 import java.io.File
 import java.util.Locale
@@ -93,12 +94,28 @@ fun Context.installApk(apkPath: String) {
 }
 
 fun Context.installApk(apkFile: File) {
-    installApk(apkFile.fileProvider)
+    val mediaType = apkFile.mimeTypeFromFilePath
+    installApk(apkFile.fileProvider, mediaType)
 }
 
-fun Context.installApk(uri: Uri) {
+fun Context.installApk(uri: Uri?) {
+    if (uri == null) {
+        dLog { "installApk>>>>>>uri is null" }
+        return
+    }
+    val mediaType = uri.mimeTypeFromFilePath
+    installApk(uri, mediaType)
+}
+
+fun Context.installApk(uri: Uri, mediaType: String?) {
     try {
-        val mediaType = "application/vnd.android.package-archive"
+        if (mediaType == null) {
+            val intent = Intent(this, FileViewerActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.setDataAndType(uri, "*/*")
+            startActivity(intent)
+            return
+        }
         val intent = Intent(Intent.ACTION_VIEW)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -128,7 +145,6 @@ fun Context.installLocalApk(uri: Uri?) {
         intent.setData(file.fileProvider)
         startActivity(intent)
     }
-    finish()
 }
 
 
@@ -276,7 +292,9 @@ fun Context.openWithFile(filePath: String) {
     val uriForFile = filePath.fileProvider
     val intent = Intent()
     intent.setAction("android.intent.action.VIEW")
-    intent.setDataAndType(uriForFile, filePath.mimeTypeFromFilePath)
+    val mimeType = filePath.mimeTypeFromFilePath
+    intent.setDataAndType(uriForFile, mimeType ?: "*/*")
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     startActivity(Intent.createChooser(intent, "Open with"))
+    dLog { "openWithFile mimeType:$mimeType, file:${filePath}" }
 }

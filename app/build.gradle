@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelize)
+//    alias(libs.plugins.parcelize)
+//    id("org.jetbrains.kotlin.plugin.parcelize") version "2.2.20"
 }
 
 android {
@@ -15,8 +18,8 @@ android {
         applicationId "com.peihua.toutchmonitor"
         minSdk 24
         targetSdk 35
-        versionCode 4
-        versionName "1.0.3-alpha"
+        versionCode 5
+        versionName "1.0.3-alpha2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

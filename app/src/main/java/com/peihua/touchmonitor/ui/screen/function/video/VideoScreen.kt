@@ -17,39 +17,52 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
-import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
-import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.isLandscape
+import com.peihua.touchmonitor.viewmodel.SortType
 import com.peihua.touchmonitor.viewmodel.VideoViewModel
 
 @Composable
 fun VideoScreen(modifier: Modifier, viewModel: VideoViewModel = viewModel()) {
     val result = viewModel.pictureState.value
-    val sortType = 1
+    val menus = SortType.createSortList(LocalContext.current)
+    val sortType = rememberSaveable { mutableStateOf(menus[0]) }
     //请求数据
     val refresh = {
-        viewModel.requestImages(sortType)
+        viewModel.requestImages(sortType.value.value)
     }
-    MultiStateScreen(modifier, R.string.text_videos, result, refresh) {
+
+    MultiStateScreen(modifier, R.string.text_videos, result, refresh, actions = {
+        ActionDropMenu(modifier = Modifier, models = menus, sortType.value, iconRes = R.drawable.ic_sort) {
+            sortType.value = it
+            refresh()
+        }
+    }) {
         VideoScreenContent(result = it)
     }
 }

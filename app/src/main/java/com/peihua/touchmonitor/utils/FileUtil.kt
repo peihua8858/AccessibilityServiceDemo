@@ -312,11 +312,15 @@ val InputStream.cRC32: CRC32
             return crc
         }
     }
-
+val File.mimeTypeFromFilePath: String?
+    get() {
+        return name.mimeTypeFromFilePath
+    }
 
 val String.mimeTypeFromFilePath: String?
     get() {
-        val extension = substringBeforeLast(".")
+        val extension = substringAfterLast('.', "")
+        dLog { "openWithFile>>>>extension：$extension" }
         return MimeTypeMap.getSingleton()
             .getMimeTypeFromExtension(extension)
     }

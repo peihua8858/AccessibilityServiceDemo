@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
@@ -14,17 +15,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
 
     <!--    <queries>-->
-<!--        <provider android:authorities="${applicationId}.fileProvider" />-->
-<!--        <provider android:authorities="${applicationId}.provider" />-->
-<!--    </queries>-->
+    <!--        <provider android:authorities="${applicationId}.fileProvider" />-->
+    <!--        <provider android:authorities="${applicationId}.provider" />-->
+    <!--    </queries>-->
     <application
         android:name=".ServiceApplication"
         android:allowBackup="true"
@@ -49,12 +50,12 @@
         <activity
             android:name=".activity.HomeScreenActivity"
             android:exported="true"
-            android:theme="@style/Theme.MainScreen"/>
+            android:theme="@style/Theme.MainScreen" />
         <activity
             android:name=".activity.AutoScrollScreenActivity"
             android:exported="false"
-            android:theme="@style/Theme.MainScreen">
-        </activity>
+            android:theme="@style/Theme.MainScreen"></activity>
+
         <service
             android:name=".AppAccessibilityService"
             android:enabled="true"
@@ -70,25 +71,9 @@
         </service>
         <activity
             android:name=".activity.FileViewerActivity"
-            android:theme="@style/Theme.Transparent"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Transparent">
             <!-- 处理文件打开请求 -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="file"/>
-                <data android:mimeType="application/apk"/>
-                <data android:mimeType="application/apk.1"/>
-                <data android:mimeType="application/apk.1.1"/>
-                <data android:mimeType="application/apk.1.1.1"/>
-                <data android:mimeType="application/apk.1.1.1.1"/>
-                <data android:mimeType="application/apk.1.1.1.1.1"/>
-                <data android:scheme="content"/>
-                <data android:mimeType="*/*"/>
-                <data android:host="*"/>
-            </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -97,45 +82,72 @@
 
                 <!-- 指定你的应用可以处理的文件类型 -->
                 <data android:scheme="file" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.apk" />  <!-- APK 文件 -->
-                <data android:pathPattern=".*\\.1" />    <!-- .1 文件 -->
-                <data android:pathPattern=".*\\.2" />    <!-- .2 文件 -->
-                <!-- 可以添加更多文件类型 -->
-            </intent-filter>
-
-            <!-- 处理 content:// URI (Android 7.0+) -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:scheme="content" />
-                <data android:host="*" />
-                <data android:mimeType="*/*" />
+                <!--         Android api 31以上支持直接匹配后缀       -->
+                <data android:pathSuffix=".apk" />
+                <data android:pathSuffix=".1" />
+                <data android:pathSuffix=".2" />
+
+                <!--        Android api 31 以下只能逐个匹配.        -->
                 <data android:pathPattern=".*\\.apk" />
+                <data android:pathPattern=".*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.apk" />
                 <data android:pathPattern=".*\\.1" />
+                <data android:pathPattern=".*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.1" />
                 <data android:pathPattern=".*\\.2" />
+                <data android:pathPattern=".*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.2" />
+                <data android:mimeType="*/*" />
+                <data android:host="*" />
             </intent-filter>
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:exported="false"
             android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
-        <receiver android:name=".AccessibilityBootReceiver"/>
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="${applicationId}.fileProvider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/provider_paths" />-->
-<!--        </provider>-->
+        <receiver android:name=".AccessibilityBootReceiver" />
+        <!--        <provider-->
+        <!--            android:name="androidx.core.content.FileProvider"-->
+        <!--            android:authorities="${applicationId}.fileProvider"-->
+        <!--            android:exported="false"-->
+        <!--            android:grantUriPermissions="true">-->
+        <!--            <meta-data-->
+        <!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--                android:resource="@xml/provider_paths" />-->
+        <!--        </provider>-->
 
     </application>
 

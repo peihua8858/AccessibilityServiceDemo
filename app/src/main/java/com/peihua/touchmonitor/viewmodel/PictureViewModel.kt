@@ -8,7 +8,7 @@ import com.peihua.touchmonitor.utils.request
 
 class PictureViewModel(application: Application) : BaseMediaViewModel(application) {
     val pictureState = mutableStateOf<ResultData<MutableList<MediaHeader>>>(ResultData.Initialize())
-    fun requestImages(sortType: Int) {
+    fun requestImages(@SortType sortType: Int = SortType.SORT_TYPE_DATE_ASC) {
         request(pictureState) {
             queryCursor(QUERY_TYPE_IMAGE, sortType)
         }
