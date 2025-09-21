@@ -108,7 +108,9 @@ class VideoViewModel(
         val bundle = Bundle()
         bundle.putInt("SORT_TYPE", sortType)
         dLog { "sortType:$sortType" }
-        val source = PagingSourceImpl(gridViewPagingConfig, bundle) { page, pageSize, bundle ->
+        val source = PagingSourceImpl(
+            gridViewPagingConfig, bundle,
+            refreshKey = { null }) { page, pageSize, bundle ->
             requestGridPagingData(pageSize, bundle.getInt("SORT_TYPE", 5))
         }
         return Pager(gridViewPagingConfig, initialKey = 1) { source }.flow

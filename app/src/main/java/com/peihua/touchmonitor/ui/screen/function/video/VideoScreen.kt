@@ -85,6 +85,7 @@ fun VideoScreen(modifier: Modifier, viewModel: VideoViewModel = viewModel()) {
             iconRes = R.drawable.ic_sort
         ) {
             uiAction.invoke(UiAction.Sort(it.value))
+            result.refresh()
         }
     }) {
         VideoScreenContent(result = it)
