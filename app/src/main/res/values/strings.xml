@@ -161,4 +161,17 @@
 
     <string name="text_stop_running">已经停止运行</string>
     <string name="text_running">正在运行</string>
+
+    <string name="cptr_pull_to_refresh">下拉刷新</string>
+    <string name="cptr_release_to_refresh">松开刷新</string>
+    <string name="cptr_refreshing">刷新中…</string>
+    <string name="cptr_pull_to_load">上拉加载</string>
+    <string name="cptr_release_to_load">松开加载更多</string>
+    <string name="cptr_loading">加载中…</string>
+    <string name="text_sort_type_date_asc">按文件日期升序</string>
+    <string name="text_sort_type_date_desc">按文件日期降序</string>
+    <string name="text_sort_type_name_asc">按文件名升序</string>
+    <string name="text_sort_type_name_desc">按文件名降序</string>
+    <string name="text_sort_type_size_asc">按文件大小升序</string>
+    <string name="text_sort_type_size_desc">按文件大小降序</string>
 </resources>

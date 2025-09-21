@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 isReady = true
                 keepOnScreenCondition.compareAndSet(true,false)
             }
-            ServiceApp(Modifier.fillMaxSize())
+            ServiceApp(Modifier)
         }
     }
 

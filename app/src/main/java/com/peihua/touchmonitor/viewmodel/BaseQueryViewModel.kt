@@ -7,8 +7,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.annotation.IntDef
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.application
+import androidx.savedstate.SavedStateRegistryOwner
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.ui.components.MenuItem
@@ -146,6 +151,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
                 dLog { ">>>>>formatTime:$formatTime" }
                 val photoHeader = MediaHeader(title = formatTime).addMediaData(media)
                 titleArray.add(formatTime)
+                photoHeader.time=System.currentTimeMillis()
                 result.add(photoHeader)
             }
         }
@@ -191,7 +197,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
                 Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
             }
         }
-        for (item in this) {
+        for((index,item) in this.withIndex()) {
             item.mediaList.sortWith(comparator = comparator)
         }
         return this
@@ -218,13 +224,48 @@ annotation class SortType {
 
         fun createSortList(context: Context): List<MenuItem<Int>> {
             return listOf(
-                MenuItem(displayName = "按文件日期升序", value = SORT_TYPE_DATE_ASC),
-                MenuItem(displayName = "按文件日期降序", value = SORT_TYPE_DATE_DESC),
-                MenuItem(displayName = "按文件名升序", value = SORT_TYPE_NAME_ASC),
-                MenuItem(displayName = "按文件名降序", value = SORT_TYPE_NAME_DESC),
-                MenuItem(displayName = "按文件大小升序", value = SORT_TYPE_SIZE_ASC),
-                MenuItem(displayName = "按文件大小降序", value = SORT_TYPE_SIZE_DESC),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_date_asc),
+                    value = SORT_TYPE_DATE_ASC
+                ),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_date_desc),
+                    value = SORT_TYPE_DATE_DESC
+                ),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_name_asc),
+                    value = SORT_TYPE_NAME_ASC
+                ),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_name_desc),
+                    value = SORT_TYPE_NAME_DESC
+                ),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_size_asc),
+                    value = SORT_TYPE_SIZE_ASC
+                ),
+                MenuItem(
+                    displayName = context.getString(R.string.text_sort_type_size_desc),
+                    value = SORT_TYPE_SIZE_DESC
+                ),
             )
         }
     }
+
+//    class ViewModelFactory(
+//        owner: SavedStateRegistryOwner,
+//    ) : AbstractSavedStateViewModelFactory(owner, null) {
+//
+//        override fun <T : ViewModel> create(
+//            key: String,
+//            modelClass: Class<T>,
+//            handle: SavedStateHandle
+//        ): T {
+//            if (modelClass.isAssignableFrom(GithubViewModel::class.java)) {
+//                @Suppress("UNCHECKED_CAST")
+//                return GithubViewModel(repository, handle) as T
+//            }
+//            throw IllegalArgumentException("Unknown ViewModel class")
+//        }
+//    }
 }

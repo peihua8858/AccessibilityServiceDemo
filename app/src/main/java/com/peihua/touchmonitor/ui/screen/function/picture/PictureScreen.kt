@@ -11,32 +11,44 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.size.Scale
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.isLandscape
 import com.peihua.touchmonitor.viewmodel.PictureViewModel
+import com.peihua.touchmonitor.viewmodel.SortType
 
 @Composable
 fun PictureScreen(modifier: Modifier, viewModel: PictureViewModel = viewModel()) {
     val result = viewModel.pictureState.value
-    val sortType = 1
+    val menus = SortType.createSortList(LocalContext.current)
+    val sortType = rememberSaveable { mutableStateOf(menus[0]) }
     //请求数据
     val refresh = {
-        viewModel.requestImages(sortType)
+        viewModel.requestImages(sortType.value.value)
     }
-    MultiStateScreen(modifier, R.string.text_images, result, refresh) {
+    MultiStateScreen(modifier, R.string.text_images, result, refresh, actions = {
+        ActionDropMenu(
+            modifier = Modifier, models = menus, {
+                it == sortType.value
+            },
+            iconRes = R.drawable.ic_sort
+        ) {
+            sortType.value=it
+            refresh()
+        }
+    }) {
         PictureScreenContent(result = it)
     }
 }

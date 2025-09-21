@@ -17,6 +17,11 @@ data class MediaData(
     var folderName: String = "",
     var isCheckboxVisible: Boolean = false,
     var isFavorite: Boolean = false,
-    var dateFormat:String="",
-    val isDirectory: Boolean=false
-)
+    var dateFormat: String = "",
+    val isDirectory: Boolean = false,
+    var time: Long = System.currentTimeMillis()
+){
+    override fun toString(): String {
+        return "MediaData(fileName='$fileName', filePath='$filePath', dateValue=$dateValue, duration=$duration, fileSize=$fileSize, isSelected=$isSelected, thumbnailsBitmap=$thumbnailsBitmap, size=$size, thumbnails=$thumbnails, date=$date, folderName='$folderName', isCheckboxVisible=$isCheckboxVisible, isFavorite=$isFavorite, dateFormat='$dateFormat', isDirectory=$isDirectory, time=$time)"
+    }
+}

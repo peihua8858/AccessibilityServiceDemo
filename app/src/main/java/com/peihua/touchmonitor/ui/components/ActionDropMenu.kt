@@ -33,14 +33,14 @@ import java.io.Serializable
 fun <T : IMenuItem> ActionDropMenu(
     modifier: Modifier,
     models: List<T>,
-    model: T,
+    selected: (T) -> Boolean,
     @DrawableRes iconRes: Int,
     changeValue: (T) -> Unit,
 ) {
     ActionDropMenu(
         modifier = modifier,
         models = models,
-        model = model,
+        selected = selected,
         changeValue = changeValue,
     ) {
         Icon(
@@ -56,12 +56,13 @@ fun <T : IMenuItem> ActionDropMenu(
 fun <T : IMenuItem> ActionDropMenu(
     modifier: Modifier,
     models: List<T>,
-    model: T,
+    selected: (T) -> Boolean,
     changeValue: (T) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val isExtended = remember { mutableStateOf(false) }
-    val selectedOption = remember { mutableStateOf(model) }
+    val selFirst = models.first { selected(it) }
+    val selectedOption = remember { mutableStateOf(selFirst) }
     val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = Modifier

@@ -1,11 +1,14 @@
 package com.peihua.touchmonitor.utils
 
+import android.os.Looper
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
@@ -17,6 +20,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+
+fun Any?.isWorkThread(): Boolean {
+    return Looper.myLooper() !== Looper.getMainLooper()
+}
 
 private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -261,6 +268,23 @@ fun <T : Any> LazyStaggeredGridState.LaunchedLoadMore(items: LazyPagingItems<T>)
     }
 }
 
+inline fun <T> LazyGridScope.items(
+    items: List<T>,
+    noinline key: ((item: T) -> Any)? = null,
+    noinline span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    noinline contentType: (item: T) -> Any? = { null },
+    crossinline itemContent: @Composable LazyGridItemScope.(index:Int,item: T) -> Unit
+) {
+    items(
+        count = items.size,
+        key = if (key != null) { index: Int -> key(items[index]) } else null,
+        span = if (span != null) { { span(items[it]) } } else null,
+        contentType = { index: Int -> contentType(items[index]) }
+    ) {
+        itemContent(it,items[it])
+    }
+}
+
 fun <T : Any> LazyPagingItems<T>.forEach(action: (T) -> Unit) {
     for (index in 0 until itemCount) {
         val item = peek(index)
@@ -269,3 +293,14 @@ fun <T : Any> LazyPagingItems<T>.forEach(action: (T) -> Unit) {
         }
     }
 }
+
+fun <T : Any> LazyPagingItems<T>.forEach(action: (Int, T) -> Unit) {
+    for (index in 0 until itemCount) {
+        val item = peek(index)
+        if (item != null) {
+            action(index, item)
+        }
+    }
+}
+
+
