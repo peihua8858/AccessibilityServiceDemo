@@ -121,6 +121,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
     ): ArrayList<T> {
         val result = arrayListOf<T>()
+        val orderBy = orderBy.ifEmpty { ORDER_BY }
         val cursor = if (isAtLeastQ) contentResolver.query(uri, columns, queryArgsBundle(orderBy, offset, limit), null)
         else contentResolver.query(uri, columns, selection, selectionArgs, "$orderBy LIMIT $limit offset ${(offset - 1)*limit}")
         dLog { ">>>>>cursor.count:${cursor?.count}" }
@@ -230,6 +231,15 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
             else -> sortOrder(MediaStore.MediaColumns.DATE_MODIFIED, false)
         }
     }
+
+    fun queryCursor2(
+        queryType: Int,
+        offset: Int = 1,
+        limit: Int = Int.MAX_VALUE,
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
+    ): ArrayList<T> {
+        return queryCursor(queryType, offset, limit, ORDER_BY, convert)
+    }
 }
 
 open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<MediaHeader>(application) {
@@ -262,7 +272,50 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
                 result.add(photoHeader)
             }
         }
-        return result
+        return result.sortList(sortType)
+    }
+    protected fun ArrayList<MediaHeader>.sortList(@SortType sortType: Int): ArrayList<MediaHeader> {
+        dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
+        val comparator = when (sortType) {
+            SortType.SORT_TYPE_NAME_ASC -> {
+                // 按文件名升序
+                Comparator { o1, o2 -> o1.fileName.compareTo(o2.fileName, true) }
+            }
+
+            SortType.SORT_TYPE_NAME_DESC -> {
+                // 按文件名降序
+                Comparator { o1, o2 -> o2.fileName.compareTo(o1.fileName, true) }
+            }
+
+            SortType.SORT_TYPE_SIZE_ASC -> {
+                // 按文件大小升序
+                Comparator { o1, o2 -> o1.size.compareTo(o2.size) }
+            }
+
+            SortType.SORT_TYPE_SIZE_DESC -> {
+                // 按文件大小降序
+                Comparator { o1, o2 -> o2.size.compareTo(o1.size) }
+            }
+
+            SortType.SORT_TYPE_DATE_ASC -> {
+                // 按文件日期升序
+                Comparator { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+
+            SortType.SORT_TYPE_DATE_DESC -> {
+                // 按文件日期降序
+                Comparator { o1, o2 -> o2.dateValue.compareTo(o1.dateValue) }
+            }
+
+            else -> {
+                // 按文件日期升序
+                Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+        }
+        for((index,item) in this.withIndex()) {
+            item.mediaList.sortWith(comparator = comparator)
+        }
+        return this
     }
 }
 

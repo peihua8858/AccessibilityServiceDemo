@@ -164,7 +164,7 @@ fun VideoScreenContent(
                 }
             }
         }
-        item { result.LoadMoreView() }
+        item(span = { GridItemSpan(columns) }) { result.LoadMoreView() }
     }
     state.LaunchedLoadMore(result)
 }

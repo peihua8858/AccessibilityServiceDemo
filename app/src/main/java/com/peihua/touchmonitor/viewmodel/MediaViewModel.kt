@@ -89,6 +89,8 @@ open class MediaViewModel(
         }
     }
 
+    private val titleArray = arrayListOf<String>()
+
     @OptIn(ExperimentalPagingApi::class)
     fun requestVideos(sortType: Int): Flow<PagingData<MediaModel>> {
         val bundle = Bundle()
@@ -111,10 +113,18 @@ open class MediaViewModel(
                     }
 
                     if (before == null) {
+                        if (titleArray.contains(after.mediaData.dateFormat)) {
+                            return@insertSeparators null
+                        }
+                        titleArray.add(after.mediaData.dateFormat)
                         // we're at the beginning of the list
                         return@insertSeparators MediaModel.Header(MediaHeader(after.mediaData.dateFormat))
                     }
                     if (before.mediaData.dateFormat != after.mediaData.dateFormat) {
+                        if (titleArray.contains(after.mediaData.dateFormat)) {
+                            return@insertSeparators null
+                        }
+                        titleArray.add(after.mediaData.dateFormat)
                         MediaModel.Header(MediaHeader(after.mediaData.dateFormat))
                     }
                     null
@@ -144,7 +154,7 @@ open class MediaViewModel(
         @SortType sortType: Int,
         convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
     ): ArrayList<MediaData> {
-        val result = queryCursor(queryType, offset, limit, sortType) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
+        val result = queryCursor2(queryType, offset, limit) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
             var media = MediaData(
                 dateValue = dateTime,
                 fileName = fileName,
@@ -173,7 +183,50 @@ open class MediaViewModel(
             }
             result.add(media)
         }
+        result.sortList(sortType)
         return result
+    }
+
+    protected fun ArrayList<MediaData>.sortList(@SortType sortType: Int): ArrayList<MediaData> {
+        dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
+        val comparator = when (sortType) {
+            SortType.SORT_TYPE_NAME_ASC -> {
+                // 按文件名升序
+                Comparator { o1, o2 -> o1.fileName.compareTo(o2.fileName, true) }
+            }
+
+            SortType.SORT_TYPE_NAME_DESC -> {
+                // 按文件名降序
+                Comparator { o1, o2 -> o2.fileName.compareTo(o1.fileName, true) }
+            }
+
+            SortType.SORT_TYPE_SIZE_ASC -> {
+                // 按文件大小升序
+                Comparator { o1, o2 -> o1.size.compareTo(o2.size) }
+            }
+
+            SortType.SORT_TYPE_SIZE_DESC -> {
+                // 按文件大小降序
+                Comparator { o1, o2 -> o2.size.compareTo(o1.size) }
+            }
+
+            SortType.SORT_TYPE_DATE_ASC -> {
+                // 按文件日期升序
+                Comparator { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+
+            SortType.SORT_TYPE_DATE_DESC -> {
+                // 按文件日期降序
+                Comparator { o1, o2 -> o2.dateValue.compareTo(o1.dateValue) }
+            }
+
+            else -> {
+                // 按文件日期升序
+                Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+            }
+        }
+        this.sortWith(comparator = comparator)
+        return this
     }
 
     companion object {

@@ -18,22 +18,11 @@ class MediaHeader (
         other as MediaHeader
 
         return title == other.title
-//        if (isSelect != other.isSelect) return false
-//        if (photoList != other.photoList) return false
-//        if (folderPath != other.folderPath) return false
     }
 
     override fun toString(): String {
         return "MediaHeader(title='$title', mediaList=$mediaList, folderPath=$folderPath, isSelect=$isSelect)"
     }
-
-//    override fun hashCode(): Int {
-//        var result = isSelect.hashCode()
-//        result = 31 * result + (title?.hashCode() ?: 0)
-//        result = 31 * result + photoList.hashCode()
-//        result = 31 * result + (folderPath?.hashCode() ?: 0)
-//        return result
-//    }
 
 
 }

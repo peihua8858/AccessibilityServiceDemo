@@ -25,6 +25,7 @@ import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
+import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
@@ -101,6 +102,7 @@ fun PictureScreenContent(modifier: Modifier = Modifier,
                 }
             }
         }
+        item(span = { GridItemSpan(columns) }) { result.LoadMoreView() }
     }
     // 自动加载下一页逻辑
     state.LaunchedLoadMore(result)
