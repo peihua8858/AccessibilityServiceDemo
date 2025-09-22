@@ -81,7 +81,10 @@ open class MediaViewModel(
                 MediaUiState(sortType = initialSortType, currentSortType = initialSortType)
             )
         pagingDataFlow =
-            searchAction.flatMapLatest { requestVideos(it.sortType) }
+            searchAction.flatMapLatest {
+                titleArray.clear()
+                requestVideos(it.sortType)
+            }
                 .flowOn(Dispatchers.IO)
                 .cachedIn(viewModelScope)
         userAction = {
@@ -89,7 +92,6 @@ open class MediaViewModel(
         }
     }
 
-    private val titleArray = arrayListOf<String>()
 
     @OptIn(ExperimentalPagingApi::class)
     fun requestVideos(sortType: Int): Flow<PagingData<MediaModel>> {
@@ -104,47 +106,23 @@ open class MediaViewModel(
                 result
             }
         }.flow
-            .map { pagingData -> pagingData.map { MediaModel.Item(it) } }
-            .map {
-                it.insertSeparators { before, after ->
-                    if (after == null) {
-                        // we're at the end of the list
-                        return@insertSeparators null
-                    }
-
-                    if (before == null) {
-                        if (titleArray.contains(after.mediaData.dateFormat)) {
-                            return@insertSeparators null
-                        }
-                        titleArray.add(after.mediaData.dateFormat)
-                        // we're at the beginning of the list
-                        return@insertSeparators MediaModel.Header(MediaHeader(after.mediaData.dateFormat))
-                    }
-                    if (before.mediaData.dateFormat != after.mediaData.dateFormat) {
-                        if (titleArray.contains(after.mediaData.dateFormat)) {
-                            return@insertSeparators null
-                        }
-                        titleArray.add(after.mediaData.dateFormat)
-                        MediaModel.Header(MediaHeader(after.mediaData.dateFormat))
-                    }
-                    null
-                }
-            }
     }
 
-    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<MediaData> {
+    private val titleArray = arrayListOf<String>()
+    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<MediaModel> {
         dLog { "sortType:$sortType" }
+        val data = ArrayList<MediaModel>()
         val result = queryCursor(mediaType, page, loadSize, sortType = sortType) { cursor, media ->
             media
         }
-//        result.forEach {
-//            val mediaHeader = MediaHeader(it.title)
-//            data.add(VideoModel.Header(mediaHeader))
-//            it.mediaList.forEach { mediaData ->
-//                data.add(VideoModel.Video(mediaData))
-//            }
-//        }
-        return result
+        result.forEach {
+            if (!titleArray.contains(it.dateFormat)) {
+                titleArray.add(it.dateFormat)
+                data.add(MediaModel.Header(MediaHeader(it.dateFormat)))
+            }
+            data.add(MediaModel.Item(it))
+        }
+        return data
     }
 
     fun queryCursor(

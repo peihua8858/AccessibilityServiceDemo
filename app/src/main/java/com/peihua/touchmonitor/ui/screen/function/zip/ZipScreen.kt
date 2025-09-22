@@ -16,6 +16,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -45,13 +47,15 @@ fun ZipScreen(modifier: Modifier, viewModel: ZipViewModel = viewModel()) {
     val uiState = viewModel.mUiState
     val menus = SortType.createSortList(LocalContext.current)
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
-    MultiStatePagingScreen(modifier, R.string.text_compression, result, actions = {
+    val isUserRefresh = remember { mutableStateOf(false) }
+    MultiStatePagingScreen(modifier, R.string.text_compression, result,isUserRefresh, actions = {
         ActionDropMenu(
             modifier = Modifier, models = menus, {
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
         ) {
+            isUserRefresh.value = true
             uiAction.invoke(MediaUiAction.Sort(it.value))
             result.refresh()
         }

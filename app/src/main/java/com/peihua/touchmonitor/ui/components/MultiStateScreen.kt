@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -117,6 +118,7 @@ fun <T : Any> MultiStatePagingScreen(
     modifier: Modifier,
     @StringRes titleRes: Int,
     result: LazyPagingItems<T>,
+    isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
     navigateUp: () -> Unit = { popBackStack() },
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -129,6 +131,7 @@ fun <T : Any> MultiStatePagingScreen(
         modifier,
         title = stringResource(titleRes),
         result = result,
+        isUserRefresh = isUserRefresh,
         navigateUp = navigateUp,
         navigationIcon = navigationIcon,
         actions = actions,
@@ -142,6 +145,7 @@ fun <T : Any> MultiStatePagingScreen(
     modifier: Modifier,
     title: String,
     result: LazyPagingItems<T>,
+    isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
     navigateUp: () -> Unit = { popBackStack() },
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -151,7 +155,6 @@ fun <T : Any> MultiStatePagingScreen(
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     val isRefreshing = result.loadState.refresh is LoadState.Loading
-    val isUserRefresh = remember { mutableStateOf(false) }
     val refreshing =
         rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
 
@@ -209,7 +212,7 @@ fun <T : Any> MultiStatePagingScreen(
 
 @Composable
 fun <T : Any> LazyPagingItems<T>.LoadMoreView(modifier: Modifier = Modifier) {
-    if (this.itemCount == 0) {
+    if (this.itemCount == 0 || this.loadState.refresh is LoadState.Loading) {
         return
     }
     val appendState = this.loadState.append
@@ -221,7 +224,7 @@ fun <T : Any> LazyPagingItems<T>.LoadMoreView(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                stringResource(R.string.text_load_fail)+":${appendState.error.localizedMessage}",
+                stringResource(R.string.text_load_fail) + ":${appendState.error.localizedMessage}",
                 modifier = Modifier
             )
             Text(
