@@ -187,6 +187,13 @@ fun <T : Any> LazyStaggeredGridScope.items(
     }
 }
 
+private fun <T : Any> LazyPagingItems<T>.isLastLoadMore(): Boolean {
+    return loadState.append.endOfPaginationReached.not()
+            && loadState.append is LoadState.NotLoading
+            && loadState.refresh is LoadState.NotLoading
+            && loadState.prepend is LoadState.NotLoading
+}
+
 /**
  *
  * 滑动到最后触发加载更多
@@ -202,10 +209,7 @@ fun <T : Any> LazyListState.LaunchedLoadMore(items: LazyPagingItems<T>) {
                 val itemCount = items.itemCount
                 val lastVisibleItemIndex =
                     layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1
-                    && items.loadState.append.endOfPaginationReached.not()
-                    && items.loadState.append is LoadState.NotLoading
-                ) {
+                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1 && items.isLastLoadMore()) {
                     // 当最后一项可见，并且没有加载状态时
                     dLog { "lastVisibleItemIndex:$lastVisibleItemIndex,itemCount:$itemCount,加载更多" }
                     items[itemCount - 1] // 触发加载更多
@@ -229,10 +233,7 @@ fun <T : Any> LazyGridState.LaunchedLoadMore(items: LazyPagingItems<T>) {
                 val itemCount = items.itemCount
                 val lastVisibleItemIndex =
                     layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1
-                    && items.loadState.append.endOfPaginationReached.not()
-                    && items.loadState.append is LoadState.NotLoading
-                ) {
+                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1 && items.isLastLoadMore()) {
                     // 当最后一项可见，并且没有加载状态时
                     dLog { "lastVisibleItemIndex:$lastVisibleItemIndex,itemCount:$itemCount,加载更多" }
                     items[itemCount - 1] // 触发加载更多
@@ -256,10 +257,7 @@ fun <T : Any> LazyStaggeredGridState.LaunchedLoadMore(items: LazyPagingItems<T>)
                 val itemCount = items.itemCount
                 val lastVisibleItemIndex =
                     layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1
-                    && items.loadState.append.endOfPaginationReached.not()
-                    && items.loadState.append is LoadState.NotLoading
-                ) {
+                if (itemCount > 0 && lastVisibleItemIndex >= itemCount - 1 && items.isLastLoadMore()) {
                     // 当最后一项可见，并且没有加载状态时
                     dLog { "lastVisibleItemIndex:$lastVisibleItemIndex,itemCount:$itemCount,加载更多" }
                     items[itemCount - 1] // 触发加载更多
@@ -273,15 +271,17 @@ inline fun <T> LazyGridScope.items(
     noinline key: ((item: T) -> Any)? = null,
     noinline span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     noinline contentType: (item: T) -> Any? = { null },
-    crossinline itemContent: @Composable LazyGridItemScope.(index:Int,item: T) -> Unit
+    crossinline itemContent: @Composable LazyGridItemScope.(index: Int, item: T) -> Unit,
 ) {
     items(
         count = items.size,
         key = if (key != null) { index: Int -> key(items[index]) } else null,
-        span = if (span != null) { { span(items[it]) } } else null,
+        span = if (span != null) {
+            { span(items[it]) }
+        } else null,
         contentType = { index: Int -> contentType(items[index]) }
     ) {
-        itemContent(it,items[it])
+        itemContent(it, items[it])
     }
 }
 

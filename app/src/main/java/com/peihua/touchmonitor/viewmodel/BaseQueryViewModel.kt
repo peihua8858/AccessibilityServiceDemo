@@ -122,7 +122,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
     ): ArrayList<T> {
         val result = arrayListOf<T>()
         val cursor = if (isAtLeastQ) contentResolver.query(uri, columns, queryArgsBundle(orderBy, offset, limit), null)
-        else contentResolver.query(uri, columns, selection, selectionArgs, "$orderBy LIMIT $limit offset ${offset - 1}")
+        else contentResolver.query(uri, columns, selection, selectionArgs, "$orderBy LIMIT $limit offset ${(offset - 1)*limit}")
         dLog { ">>>>>cursor.count:${cursor?.count}" }
         cursor?.use {
             while (it.moveToNext()) {
@@ -161,7 +161,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
             queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, orderBy)
             if (isAtLeastR) {
                 if (limit > 0 && offset >= 0) {
-                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_LIMIT, "$limit offset ${offset - 1}")
+                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_LIMIT, "$limit offset ${(offset - 1)*limit}")
                 }
             }
         }

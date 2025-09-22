@@ -1,27 +1,34 @@
 package com.peihua.touchmonitor.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.ShowToast
 import com.peihua.touchmonitor.utils.dLog
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun <T> MultiStateScreen(
@@ -179,9 +186,9 @@ fun <T : Any> MultiStatePagingScreen(
                 is LoadState.Error -> {
                     isUserRefresh.value = false
                     if (result.itemCount == 0) {
-                        ErrorView(retry = result::refresh)
+                        ErrorView(retry = result::retry)
                     } else {
-                        ShowToast("刷新失败")
+                        ShowToast(R.string.text_request_fail)
                     }
                 }
 
@@ -192,10 +199,47 @@ fun <T : Any> MultiStatePagingScreen(
             dLog { ">>>>>result:${result}" }
             if (result.itemCount == 0) {
                 dLog { ">>>>>result:${result.itemCount}" }
-                EmptyView(modifier, retry = result::refresh)
+                EmptyView(modifier, retry = result::retry)
             } else {
                 content(result)
             }
+        }
+    }
+}
+
+@Composable
+fun <T : Any> LazyPagingItems<T>.LoadMoreView(modifier: Modifier = Modifier) {
+    if (this.itemCount == 0) {
+        return
+    }
+    val appendState = this.loadState.append
+    if (appendState is LoadState.Error) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.dp_16)),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                stringResource(R.string.text_load_fail)+":${appendState.error.localizedMessage}",
+                modifier = Modifier
+            )
+            Text(
+                stringResource(R.string.text_retry),
+                color = colorResource(id = R.color.light_blue_600),
+                modifier = Modifier
+                    .clickable {
+                        retry()
+                    }
+            )
+        }
+    } else if (appendState.endOfPaginationReached.not()) {
+        Box(modifier = modifier.fillMaxWidth()) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(dimensionResource(R.dimen.dp_16))
+            )
         }
     }
 }

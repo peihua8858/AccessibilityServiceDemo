@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ShapeDefaults
@@ -34,9 +36,11 @@ import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
+import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.forEach
@@ -71,7 +75,11 @@ fun VideoScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
 }
 
 @Composable
-fun VideoScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<MediaModel>) {
+fun VideoScreenContent(
+    modifier: Modifier = Modifier,
+    state: LazyGridState = rememberLazyGridState(),
+    result: LazyPagingItems<MediaModel>,
+) {
     val dp16 = dimensionResource(R.dimen.dp_16)
     val dp8 = dimensionResource(R.dimen.dp_8)
     val dp2 = dimensionResource(R.dimen.dp_2)
@@ -81,6 +89,7 @@ fun VideoScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<Me
     val columns = if (isLandscape) 6 else 3
     LazyVerticalGrid(
         modifier = modifier.fillMaxWidth(),
+        state = state,
         columns = GridCells.Fixed(columns),
         contentPadding = PaddingValues(dp8),
         horizontalArrangement = Arrangement.spacedBy(dp16),
@@ -93,7 +102,7 @@ fun VideoScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<Me
                 item(span = { GridItemSpan(columns) }) {
                     AutoLineHeightScaleText(modifier = Modifier, text = header.title)
                 }
-            }else if(item is MediaModel.Item){
+            } else if (item is MediaModel.Item) {
                 val mediaData = item.mediaData
                 item {
                     Box(
@@ -155,5 +164,7 @@ fun VideoScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<Me
                 }
             }
         }
+        item { result.LoadMoreView() }
     }
+    state.LaunchedLoadMore(result)
 }

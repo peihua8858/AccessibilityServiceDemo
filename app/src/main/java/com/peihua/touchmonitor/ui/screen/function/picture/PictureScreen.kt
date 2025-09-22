@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,6 +27,7 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.utils.isLandscape
 import com.peihua.touchmonitor.viewmodel.MediaModel
@@ -54,7 +59,9 @@ fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
 }
 
 @Composable
-fun PictureScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<MediaModel>) {
+fun PictureScreenContent(modifier: Modifier = Modifier,
+                         state: LazyGridState = rememberLazyGridState(),
+                         result: LazyPagingItems<MediaModel>) {
     val dp16 = dimensionResource(R.dimen.dp_16)
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
@@ -62,6 +69,7 @@ fun PictureScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<
     val columns = if (isLandscape) 6 else 3
     LazyVerticalGrid(
         modifier = modifier.fillMaxWidth(),
+        state = state,
         columns = GridCells.Fixed(columns),
         contentPadding = PaddingValues(dp8),
         horizontalArrangement = Arrangement.spacedBy(dp16),
@@ -94,4 +102,6 @@ fun PictureScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<
             }
         }
     }
+    // 自动加载下一页逻辑
+    state.LaunchedLoadMore(result)
 }

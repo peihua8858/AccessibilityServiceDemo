@@ -32,7 +32,7 @@ class PagingSourceImpl<T : Any>(
             val maxSize = config.maxSize
             val response = loadData(currentPage, loadSize, bundle)
             val curTotalSize = currentPage * loadSize
-            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()) {
+            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()|| response.size < loadSize) {
                 null
             } else {
                 currentPage + 1

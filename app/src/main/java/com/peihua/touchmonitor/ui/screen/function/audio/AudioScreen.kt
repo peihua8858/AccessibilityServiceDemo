@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +29,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
+import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
+import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.utils.items
@@ -59,11 +65,16 @@ fun AudioScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
 }
 
 @Composable
-fun AudioScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<MediaModel>) {
+fun AudioScreenContent(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    result: LazyPagingItems<MediaModel>,
+) {
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
+        state = state,
         contentPadding = PaddingValues(dp8),
     ) {
         items(result) { item ->
@@ -106,5 +117,7 @@ fun AudioScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<Me
                 HorizontalDivider(modifier = Modifier.fillMaxWidth())
             }
         }
+        item { result.LoadMoreView() }
     }
+    state.LaunchedLoadMore(result)
 }
