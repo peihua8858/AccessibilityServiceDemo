@@ -5,7 +5,6 @@ class MediaHeader (
     var mediaList: ArrayList<MediaData> = ArrayList(),
     var folderPath: String? = null,
     var isSelect: Boolean = false,
-    var time : Long =System.currentTimeMillis()
 ){
     fun addMediaData(mediaData: MediaData):MediaHeader{
         mediaList.add(mediaData)
@@ -25,7 +24,7 @@ class MediaHeader (
     }
 
     override fun toString(): String {
-        return "MediaHeader(title='$title', mediaList=$mediaList, folderPath=$folderPath, isSelect=$isSelect, time=$time)"
+        return "MediaHeader(title='$title', mediaList=$mediaList, folderPath=$folderPath, isSelect=$isSelect)"
     }
 
 //    override fun hashCode(): Int {

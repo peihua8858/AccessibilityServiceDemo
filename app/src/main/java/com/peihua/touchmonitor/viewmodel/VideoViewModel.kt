@@ -13,6 +13,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
+import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.paging3.PagingSourceImpl
 import com.peihua.touchmonitor.utils.dLog
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -38,7 +41,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class VideoViewModel(
     application: Application,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : BaseMediaViewModel(application) {
 
     private val gridViewPagingConfig = PagingConfig(
@@ -55,15 +58,10 @@ class VideoViewModel(
         maxSize = 100, // 可选，最大加载数据量
         enablePlaceholders = false // 根据需要设置
     )
-    val data = Pager(config, null) {
-        PagingSourceImpl(config) { page, pageSize, bundle ->
-            requestGridPagingData(pageSize, 1)
-        }
-    }.flow.cachedIn(viewModelScope)
 
     val mUiState: StateFlow<UiState>
     val userAction: (UiAction) -> Unit
-    val pagingDataFlow: Flow<PagingData<MediaHeader>>
+    val pagingDataFlow: Flow<PagingData<VideoModel>>
 
     init {
         val initialSortType = savedStateHandle[LAST_SORT_TYPE] ?: 3
@@ -104,21 +102,24 @@ class VideoViewModel(
         get() = arrayOf(*super.columns, MediaStore.Video.Media.DURATION)
 
     @OptIn(ExperimentalPagingApi::class)
-    fun requestVideos(sortType: Int): Flow<PagingData<MediaHeader>> {
+    fun requestVideos(sortType: Int): Flow<PagingData<VideoModel>> {
         val bundle = Bundle()
         bundle.putInt("SORT_TYPE", sortType)
         dLog { "sortType:$sortType" }
-        val source = PagingSourceImpl(
-            gridViewPagingConfig, bundle,
-            refreshKey = { null }) { page, pageSize, bundle ->
-            requestGridPagingData(pageSize, bundle.getInt("SORT_TYPE", 5))
-        }
-        return Pager(gridViewPagingConfig, initialKey = 1) { source }.flow
+        return Pager(gridViewPagingConfig, initialKey = 1) {
+            PagingSourceImpl(
+                gridViewPagingConfig, bundle,
+                refreshKey = { null }) { page, pageSize, bundle ->
+                val result = requestGridPagingData(page, pageSize, bundle.getInt("SORT_TYPE", 5))
+                result
+            }
+        }.flow
     }
 
-    fun requestGridPagingData(loadSize: Int, sortType: Int): MutableList<MediaHeader> {
+    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<VideoModel> {
         dLog { "sortType:$sortType" }
-        return queryCursor(QUERY_TYPE_VIDEO, sortType) { cursor, mediaData ->
+        val data = arrayListOf<VideoModel>()
+        val result = queryCursor(QUERY_TYPE_VIDEO, page, loadSize, sortType = sortType) { cursor, mediaData ->
             val duration = cursor.getLong("duration")
             mediaData.duration = getDurationString(duration)
             val fileUri = mediaData.filePath.toUri()
@@ -126,9 +127,16 @@ class VideoViewModel(
             val bitmap = application.getVideoThumbnailFromMediaMetadataRetriever(fileUri, Size(640, 480))
             dLog { "getVideoThumbnail: $bitmap" }
             mediaData.thumbnailsBitmap = bitmap
-            mediaData.time = System.currentTimeMillis()
             mediaData
         }
+        result.forEach {
+            val mediaHeader = MediaHeader(it.title)
+            data.add(VideoModel.Header(mediaHeader))
+            it.mediaList.forEach { mediaData ->
+                data.add(VideoModel.Video(mediaData))
+            }
+        }
+        return data
     }
 
 }
@@ -142,6 +150,11 @@ sealed class UiAction {
 
 data class UiState(
     val sortType: Int,
-    val currentSortType: Int
+    val currentSortType: Int,
 )
+
+sealed class VideoModel {
+    data class Video(val mediaData: MediaData) : VideoModel()
+    data class Header(val mediaHeader: MediaHeader) : VideoModel()
+}
 

@@ -8,45 +8,45 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
-import com.peihua.touchmonitor.ui.components.MultiStateScreen
+import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.utils.isLandscape
-import com.peihua.touchmonitor.viewmodel.PictureViewModel
+import com.peihua.touchmonitor.viewmodel.MediaModel
+import com.peihua.touchmonitor.viewmodel.MediaUiAction
+import com.peihua.touchmonitor.viewmodel.MediaViewModel
+import com.peihua.touchmonitor.viewmodel.QueryType
 import com.peihua.touchmonitor.viewmodel.SortType
 
 @Composable
-fun PictureScreen(modifier: Modifier, viewModel: PictureViewModel = viewModel()) {
-    val result = viewModel.pictureState.value
+fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
+    viewModel.mediaType = QueryType.QUERY_TYPE_IMAGE
+    val uiAction = viewModel.userAction
+    val uiState = viewModel.mUiState
     val menus = SortType.createSortList(LocalContext.current)
-    val sortType = rememberSaveable { mutableStateOf(menus[0]) }
-    //请求数据
-    val refresh = {
-        viewModel.requestImages(sortType.value.value)
-    }
-    MultiStateScreen(modifier, R.string.text_images, result, refresh, actions = {
+    val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
+    MultiStatePagingScreen(modifier, R.string.text_images, result, actions = {
         ActionDropMenu(
             modifier = Modifier, models = menus, {
-                it == sortType.value
+                it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
         ) {
-            sortType.value=it
-            refresh()
+            uiAction.invoke(MediaUiAction.Sort(it.value))
+            result.refresh()
         }
     }) {
         PictureScreenContent(result = it)
@@ -54,7 +54,7 @@ fun PictureScreen(modifier: Modifier, viewModel: PictureViewModel = viewModel())
 }
 
 @Composable
-fun PictureScreenContent(modifier: Modifier = Modifier, result: MutableList<MediaHeader>) {
+fun PictureScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<MediaModel>) {
     val dp16 = dimensionResource(R.dimen.dp_16)
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
@@ -67,25 +67,30 @@ fun PictureScreenContent(modifier: Modifier = Modifier, result: MutableList<Medi
         horizontalArrangement = Arrangement.spacedBy(dp16),
         verticalArrangement = Arrangement.spacedBy(dp16)
     ) {
-        for (item in result) {
-            item(span = { GridItemSpan(columns) }) {
-                Text(
-                    modifier = Modifier,
-                    text = item.title
-                )
-            }
-            itemsIndexed(item.mediaList) { index, photo ->
-                AsyncImage(
-                    modifier = Modifier
-                        .clickable {
-                            navigateTo2(AppRouter.PhotoPreviewScreen.route, ("photoPath" to (photo.filePath ?: "")))
-                        }
-                        .aspectRatio(1f)
-                        .fillMaxWidth(),
-                    model = photo.filePath,
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop
-                )
+        result.forEach { index, item ->
+            if (item is MediaModel.Header) {
+                val header = item.mediaHeader
+                item(span = { GridItemSpan(columns) }) {
+                    Text(
+                        modifier = Modifier,
+                        text = header.title
+                    )
+                }
+            }else if (item is MediaModel.Item) {
+                val mediaData = item.mediaData
+                item {
+                    AsyncImage(
+                        modifier = Modifier
+                            .clickable {
+                                navigateTo2(AppRouter.PhotoPreviewScreen.route, ("photoPath" to mediaData.filePath))
+                            }
+                            .aspectRatio(1f)
+                            .fillMaxWidth(),
+                        model = mediaData.filePath,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
     }

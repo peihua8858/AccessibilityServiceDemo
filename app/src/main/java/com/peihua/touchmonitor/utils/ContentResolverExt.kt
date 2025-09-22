@@ -11,7 +11,6 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Size
-import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.text.isNonEmpty
@@ -248,7 +247,7 @@ fun Context.getVideoThumbnailFromMediaMetadataRetriever(uri: Uri?, size: Size): 
         val mediaMetadataRetriever = MediaMetadataRetriever()
         mediaMetadataRetriever.setDataSource(this, uri)
         val thumbnailBytes = mediaMetadataRetriever.embeddedPicture
-        if (isS) {
+        if (isAtLeastS) {
             thumbnailBytes?.let {
                 return ImageDecoder.decodeBitmap(ImageDecoder.createSource(it));
             }
@@ -278,7 +277,7 @@ fun Context.getVideoThumbnailFromMediaMetadataRetriever(uri: Uri?, size: Size): 
     } catch (e: Throwable) {
         e.printStackTrace()
         try {
-            return if (isQ) {
+            return if (isAtLeastQ) {
                 contentResolver.loadThumbnail(uri, size, null)
             }else{
                 decodeResizedBitmap(uri,size)

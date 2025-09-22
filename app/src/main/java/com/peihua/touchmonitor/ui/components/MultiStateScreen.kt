@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -115,7 +116,7 @@ fun <T : Any> MultiStatePagingScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable (LazyPagingItems<T>) -> Unit
+    content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     MultiStatePagingScreen(
         modifier,
@@ -140,10 +141,12 @@ fun <T : Any> MultiStatePagingScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable (LazyPagingItems<T>) -> Unit
+    content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
+    val isRefreshing = result.loadState.refresh is LoadState.Loading
+    val isUserRefresh = remember { mutableStateOf(false) }
     val refreshing =
-        rememberPullToRefreshState(isRefreshing = result.loadState.refresh is LoadState.Loading)
+        rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
 
     Toolbar(
         modifier = modifier,
@@ -156,6 +159,7 @@ fun <T : Any> MultiStatePagingScreen(
         PullToRefresh(
             state = refreshing,
             onRefresh = {
+                isUserRefresh.value = true
                 result.refresh()
             },
             modifier = modifier
@@ -173,6 +177,7 @@ fun <T : Any> MultiStatePagingScreen(
                 }
 
                 is LoadState.Error -> {
+                    isUserRefresh.value = false
                     if (result.itemCount == 0) {
                         ErrorView(retry = result::refresh)
                     } else {
@@ -181,6 +186,7 @@ fun <T : Any> MultiStatePagingScreen(
                 }
 
                 else -> {
+                    isUserRefresh.value = false
                 }
             }
             dLog { ">>>>>result:${result}" }

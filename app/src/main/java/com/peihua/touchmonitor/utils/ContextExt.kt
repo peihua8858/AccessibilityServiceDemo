@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.fz.common.utils.showToast
 import com.peihua.touchmonitor.R
@@ -149,7 +148,7 @@ fun Context.installLocalApk(uri: Uri?) {
 
 
 fun Context.startStorageSettingsActivity() {
-    if (isR) {
+    if (isAtLeastR) {
         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
         intent.setData(("package:$packageName").toUri())
         try {

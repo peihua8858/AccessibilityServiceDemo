@@ -4,14 +4,9 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Environment
-import android.os.Process
 import android.provider.Settings
-import android.text.TextUtils
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.util.ObjectsCompat
 import com.fz.common.utils.fromHtml
 import com.peihua.touchmonitor.R
 import kotlin.contracts.ExperimentalContracts
@@ -50,7 +45,7 @@ fun Context.isGrantedPermission(vararg permissions: String): Boolean {
 
 @OptIn(ExperimentalContracts::class)
 fun Context.isGrantedStoragePermission(): Boolean {
-    if (isR) {
+    if (isAtLeastR) {
         return Environment.isExternalStorageManager()
     }
     return isGrantedPermission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)

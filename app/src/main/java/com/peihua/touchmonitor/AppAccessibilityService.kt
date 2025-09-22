@@ -22,8 +22,8 @@ import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.isOreo
-import com.peihua.touchmonitor.utils.isS
+import com.peihua.touchmonitor.utils.isAtLeastO
+import com.peihua.touchmonitor.utils.isAtLeastS
 import com.peihua.touchmonitor.utils.isUpsideDownCake
 import com.peihua.touchmonitor.utils.wLog
 import com.peihua8858.permissions.core.checkPermission
@@ -75,7 +75,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
         if (checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
             var channelName = getString(R.string.app_name)
             val notificationManager = NotificationManagerCompat.from(this)
-            channelName = if (isOreo) {
+            channelName = if (isAtLeastO) {
                 val notificationChannels = notificationManager.notificationChannelsCompat
                 if (notificationChannels.isEmpty()) {
                     val notificationChannel = NotificationChannel(channelName, channelName, NotificationManager.IMPORTANCE_DEFAULT)
@@ -86,7 +86,7 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
             val intent = Intent(this, AccessibilityBootReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 this, 0,
-                intent, if (isS) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                intent, if (isAtLeastS) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 else PendingIntent.FLAG_UPDATE_CURRENT
             );
             val notification = NotificationCompat.Builder(this, channelName)

@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,48 +21,65 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.model.MediaHeader
-import com.peihua.touchmonitor.ui.AppRouter
-import com.peihua.touchmonitor.ui.components.MultiStateScreen
-import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.ui.components.ActionDropMenu
+import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
+import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.forEach
+import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.utils.openWithFile
-import com.peihua.touchmonitor.viewmodel.AudioViewModel
+import com.peihua.touchmonitor.viewmodel.MediaModel
+import com.peihua.touchmonitor.viewmodel.MediaUiAction
+import com.peihua.touchmonitor.viewmodel.MediaViewModel
+import com.peihua.touchmonitor.viewmodel.QueryType
+import com.peihua.touchmonitor.viewmodel.SortType
 
 @Composable
-fun AudioScreen(modifier: Modifier, viewModel: AudioViewModel = viewModel()) {
-    val result = viewModel.pictureState.value
-    val sortType = 1
-    //请求数据
-    val refresh = {
-        viewModel.requestAudio(sortType)
-    }
-    MultiStateScreen(modifier, R.string.text_audio, result, refresh) {
+fun AudioScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
+    viewModel.mediaType = QueryType.QUERY_TYPE_AUDIO
+    val uiAction = viewModel.userAction
+    val uiState = viewModel.mUiState
+    val menus = SortType.createSortList(LocalContext.current)
+    val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
+    MultiStatePagingScreen(modifier, R.string.text_audio, result, actions = {
+        ActionDropMenu(
+            modifier = Modifier, models = menus, {
+                it.value == uiState.value.sortType
+            },
+            iconRes = R.drawable.ic_sort
+        ) {
+            uiAction.invoke(MediaUiAction.Sort(it.value))
+            result.refresh()
+        }
+    }) {
         AudioScreenContent(result = it)
     }
 }
 
 @Composable
-fun AudioScreenContent(modifier: Modifier = Modifier, result: MutableList<MediaHeader>) {
+fun AudioScreenContent(modifier: Modifier = Modifier, result: LazyPagingItems<MediaModel>) {
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(dp8),
     ) {
-        for (item in result) {
-            item {
+        items(result) { item ->
+            if (item is MediaModel.Header) {
+                val header = item.mediaHeader
                 Text(
                     modifier = Modifier,
-                    text = item.title
+                    text = header.title
                 )
-            }
-            items(item.mediaList) { photo ->
+            } else if (item is MediaModel.Item) {
+                val audio = item.mediaData
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            context.openWithFile(photo.filePath)
+                            context.openWithFile(audio.filePath)
 //                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
                         }
                         .padding(vertical = dp8),
@@ -78,11 +95,11 @@ fun AudioScreenContent(modifier: Modifier = Modifier, result: MutableList<MediaH
                     Column(verticalArrangement = Arrangement.Center) {
                         Text(
                             modifier = Modifier,
-                            text = photo.fileName
+                            text = audio.fileName
                         )
                         Text(
                             modifier = Modifier,
-                            text = photo.fileSize ?: ""
+                            text = audio.fileSize ?: ""
                         )
                     }
                 }

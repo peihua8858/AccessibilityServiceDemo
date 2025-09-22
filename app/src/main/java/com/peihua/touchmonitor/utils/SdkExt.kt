@@ -12,25 +12,28 @@ inline val isTiramisu: Boolean
 /**
  * [Build.VERSION.SDK_INT]>= Android 9
  */
-inline val isOreo: Boolean
+inline val isAtLeastO: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
-inline val isS: Boolean
+inline val isAtLeastS: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+inline val isAtLeastSv2: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2
+
 /**
  * [Build.VERSION.SDK_INT]>= Android 9
  */
-inline val isPie: Boolean
+inline val isAtLeastP: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
 inline val isUpsideDownCake: Boolean
     get() = Build.VERSION.SDK_INT >= 34
-inline val isQ: Boolean
+inline val isAtLeastQ: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
 /**
  * [Build.VERSION.SDK_INT]>= Android 11
  */
-inline val isR: Boolean
+inline val isAtLeastR: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 inline val isM: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
