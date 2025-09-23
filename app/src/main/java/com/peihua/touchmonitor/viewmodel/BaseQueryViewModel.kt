@@ -251,7 +251,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
         convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
     ): ArrayList<MediaHeader> {
         val titleArray = arrayListOf<String>()
-        val result = queryCursor(queryType, offset, limit, sortType) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
+        val result = queryCursor(queryType, offset, limit) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
             var media = MediaData(
                 dateValue = dateTime,
                 fileName = fileName,

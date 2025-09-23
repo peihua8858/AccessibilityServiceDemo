@@ -1,8 +1,8 @@
 package com.peihua.touchmonitor.viewmodel
 
 import android.app.Application
-import android.database.Cursor
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Size
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
@@ -13,13 +13,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.insertSeparators
-import androidx.paging.map
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.paging3.PagingSourceImpl
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.formatFileSize
 import com.peihua.touchmonitor.utils.getLong
 import com.peihua.touchmonitor.utils.getVideoThumbnailFromMediaMetadataRetriever
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +38,7 @@ import kotlinx.coroutines.launch
 open class MediaViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle,
-) : BaseQueryViewModel<MediaData>(application) {
+) : BaseMediaViewModel(application) {
     var mediaType: Int = QUERY_TYPE_IMAGE
     private val gridViewPagingConfig = PagingConfig(
         pageSize = 20,
@@ -82,7 +79,6 @@ open class MediaViewModel(
             )
         pagingDataFlow =
             searchAction.flatMapLatest {
-                titleArray.clear()
                 requestVideos(it.sortType)
             }
                 .flowOn(Dispatchers.IO)
@@ -108,47 +104,17 @@ open class MediaViewModel(
         }.flow
     }
 
-    private val titleArray = arrayListOf<String>()
     fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<MediaModel> {
         dLog { "sortType:$sortType" }
         val data = ArrayList<MediaModel>()
         val result = queryCursor(mediaType, page, loadSize, sortType = sortType) { cursor, media ->
-            media
-        }
-        result.forEach {
-            if (!titleArray.contains(it.dateFormat)) {
-                titleArray.add(it.dateFormat)
-                data.add(MediaModel.Header(MediaHeader(it.dateFormat)))
-            }
-            data.add(MediaModel.Item(it))
-        }
-        return data
-    }
-
-    fun queryCursor(
-        queryType: Int,
-        offset: Int = 1,
-        limit: Int = Int.MAX_VALUE,
-        @SortType sortType: Int,
-        convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
-    ): ArrayList<MediaData> {
-        val result = queryCursor2(queryType, offset, limit) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
-            var media = MediaData(
-                dateValue = dateTime,
-                fileName = fileName,
-                filePath = path,
-                size = fileSize,
-                fileSize = fileSize.formatFileSize(),
-                dateFormat = formatTime
-            )
-            media = convert(cursor, media)
             when (mediaType) {
                 QUERY_TYPE_IMAGE, QUERY_TYPE_ZIP -> {
                     //无需其他字段
                 }
 
                 else -> {
-                    val duration = cursor.getLong("duration")
+                    val duration = cursor.getLong(MediaStore.MediaColumns.DURATION)
                     media.duration = getDurationString(duration)
                     if (mediaType == QUERY_TYPE_VIDEO) {
                         val fileUri = media.filePath.toUri()
@@ -159,52 +125,15 @@ open class MediaViewModel(
                     }
                 }
             }
-            result.add(media)
+            media
         }
-        result.sortList(sortType)
-        return result
-    }
-
-    protected fun ArrayList<MediaData>.sortList(@SortType sortType: Int): ArrayList<MediaData> {
-        dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
-        val comparator = when (sortType) {
-            SortType.SORT_TYPE_NAME_ASC -> {
-                // 按文件名升序
-                Comparator { o1, o2 -> o1.fileName.compareTo(o2.fileName, true) }
-            }
-
-            SortType.SORT_TYPE_NAME_DESC -> {
-                // 按文件名降序
-                Comparator { o1, o2 -> o2.fileName.compareTo(o1.fileName, true) }
-            }
-
-            SortType.SORT_TYPE_SIZE_ASC -> {
-                // 按文件大小升序
-                Comparator { o1, o2 -> o1.size.compareTo(o2.size) }
-            }
-
-            SortType.SORT_TYPE_SIZE_DESC -> {
-                // 按文件大小降序
-                Comparator { o1, o2 -> o2.size.compareTo(o1.size) }
-            }
-
-            SortType.SORT_TYPE_DATE_ASC -> {
-                // 按文件日期升序
-                Comparator { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
-            }
-
-            SortType.SORT_TYPE_DATE_DESC -> {
-                // 按文件日期降序
-                Comparator { o1, o2 -> o2.dateValue.compareTo(o1.dateValue) }
-            }
-
-            else -> {
-                // 按文件日期升序
-                Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
+        result.forEach {
+            data.add(MediaModel.Header(MediaHeader(it.title)))
+            it.mediaList.forEach {
+                data.add(MediaModel.Item(it))
             }
         }
-        this.sortWith(comparator = comparator)
-        return this
+        return data
     }
 
     companion object {
