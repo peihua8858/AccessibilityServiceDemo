@@ -116,10 +116,10 @@ class VideoViewModel(
         }.flow
     }
 
-    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<VideoModel> {
+    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int):  Pair<Int,MutableList<VideoModel>> {
         dLog { "sortType:$sortType" }
         val data = arrayListOf<VideoModel>()
-        val result = queryCursor(QUERY_TYPE_VIDEO, page, loadSize, sortType = sortType) { cursor, mediaData ->
+        val (size,result) = queryCursor(QUERY_TYPE_VIDEO, page, loadSize, sortType = sortType) { cursor, mediaData ->
             val duration = cursor.getLong("duration")
             mediaData.duration = getDurationString(duration)
             val fileUri = mediaData.filePath.toUri()
@@ -136,7 +136,7 @@ class VideoViewModel(
                 data.add(VideoModel.Video(mediaData))
             }
         }
-        return data
+        return size to data
     }
 
 }

@@ -154,10 +154,6 @@ fun <T : Any> MultiStatePagingScreen(
     hostState: SnackbarHostState = remember { snackbarHostState },
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
-    val isRefreshing = result.loadState.refresh is LoadState.Loading
-    val refreshing =
-        rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
-
     Toolbar(
         modifier = modifier,
         title = title,
@@ -166,46 +162,59 @@ fun <T : Any> MultiStatePagingScreen(
         navigationIcon = navigationIcon,
         hostState = hostState
     ) {
-        PullToRefresh(
-            state = refreshing,
-            onRefresh = {
-                isUserRefresh.value = true
-                result.refresh()
-            },
-            modifier = modifier
-                .fillMaxSize()
-                .padding(dimensionResource(id = R.dimen.dp_16))
-        ) {
-            val loadState: CombinedLoadStates = result.loadState
-            when (loadState.refresh) {
-                is LoadState.Loading -> {
-                    if (result.itemCount == 0) {
-                        LoadingViewFillMaxSize()
-                    }
-                    content(result)
-                    return@PullToRefresh
-                }
+        MultiStatePagingScreen(modifier, result, isUserRefresh, content)
+    }
+}
 
-                is LoadState.Error -> {
-                    isUserRefresh.value = false
-                    if (result.itemCount == 0) {
-                        ErrorView(retry = result::retry)
-                    } else {
-                        ShowToast(R.string.text_request_fail)
-                    }
+@Composable
+fun <T : Any> MultiStatePagingScreen(
+    modifier: Modifier,
+    result: LazyPagingItems<T>,
+    isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
+    content: @Composable (LazyPagingItems<T>) -> Unit,
+) {
+    val isRefreshing = result.loadState.refresh is LoadState.Loading
+    val refreshing =
+        rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
+    PullToRefresh(
+        state = refreshing,
+        onRefresh = {
+            isUserRefresh.value = true
+            result.refresh()
+        },
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.dp_16))
+    ) {
+        val loadState: CombinedLoadStates = result.loadState
+        when (loadState.refresh) {
+            is LoadState.Loading -> {
+                if (result.itemCount == 0) {
+                    LoadingViewFillMaxSize()
                 }
-
-                else -> {
-                    isUserRefresh.value = false
-                }
-            }
-            dLog { ">>>>>result:${result}" }
-            if (result.itemCount == 0) {
-                dLog { ">>>>>result:${result.itemCount}" }
-                EmptyView(modifier, retry = result::retry)
-            } else {
                 content(result)
+                return@PullToRefresh
             }
+
+            is LoadState.Error -> {
+                isUserRefresh.value = false
+                if (result.itemCount == 0) {
+                    ErrorView(retry = result::retry)
+                } else {
+                    ShowToast(R.string.text_request_fail)
+                }
+            }
+
+            else -> {
+                isUserRefresh.value = false
+            }
+        }
+        dLog { ">>>>>result:${result}" }
+        if (result.itemCount == 0) {
+            dLog { ">>>>>result:${result.itemCount}" }
+            EmptyView(modifier, retry = result::refresh)
+        } else {
+            content(result)
         }
     }
 }

@@ -19,7 +19,7 @@ class PagingSourceImpl<T : Any>(
             page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1) // 返回刷新会使用的键
         }
     },
-    private val loadData: (Int, Int, Bundle) -> List<T>
+    private val loadData: (Int, Int, Bundle) -> Pair<Int,List<T>>
 ) : PagingSource<Int, T>() {
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
         return refreshKey(state)
@@ -30,16 +30,16 @@ class PagingSourceImpl<T : Any>(
             val currentPage = params.key ?: 1
             val loadSize = params.loadSize
             val maxSize = config.maxSize
-            val response = loadData(currentPage, loadSize, bundle)
+            val (size,response) = loadData(currentPage, loadSize, bundle)
             val curTotalSize = currentPage * loadSize
-            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()|| response.size < loadSize) {
+            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()|| size < loadSize) {
                 null
             } else {
                 currentPage + 1
             }
             LogCat.d(
                 "PagingSourceImpl",
-                " >>>currentPage = $currentPage, loadSize = $loadSize,nextKey = $nextKey,maxSize = $maxSize"
+                " >>>size:${size},currentPage = $currentPage, loadSize = $loadSize,nextKey = $nextKey,maxSize = $maxSize"
             )
             return@withContext LoadResult.Page(
                 data = response,

@@ -10,7 +10,8 @@ class PictureViewModel(application: Application) : BaseMediaViewModel(applicatio
     val pictureState = mutableStateOf<ResultData<MutableList<MediaHeader>>>(ResultData.Initialize())
     fun requestImages(@SortType sortType: Int = SortType.SORT_TYPE_DATE_ASC) {
         request(pictureState) {
-            queryCursor(QUERY_TYPE_IMAGE, sortType=sortType)
+            val (size,result) = queryCursor(QUERY_TYPE_IMAGE, sortType=sortType)
+            result
         }
     }
 }

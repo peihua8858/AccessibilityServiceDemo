@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +38,7 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
+import com.peihua.touchmonitor.ui.screen.function.document.AllDocumentScreen
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
@@ -55,31 +57,19 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
         navigateUp = {
             popBackStack()
         }) {
+        val tabs: MutableList<Pair<String, @Composable (PagerState, Int) -> Unit>> =
+            mutableListOf(
+                userApplication to { s, i -> UserAppScreen(Modifier) },
+                systemApplication to { s, i -> SystemAppScreen(Modifier) },
+                apk to { s, i -> ApkScreenContent(Modifier) },
+            )
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Top
         ) {
-            TabPager(
-                modifier = modifier,
-                tabs = listOf(userApplication, systemApplication, apk)
-            ) { modifier, state, index ->
-                when (index) {
-                    0 -> {
-                        UserAppScreen(modifier)
-                    }
-
-                    1 -> {
-                        SystemAppScreen(modifier)
-                    }
-
-                    2 -> {
-                        ApkScreenContent(modifier)
-                    }
-                }
-
-            }
+            TabPager(modifier = modifier, tabs = tabs)
         }
     }
 }

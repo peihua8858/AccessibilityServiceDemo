@@ -40,10 +40,11 @@ open class MediaViewModel(
     private val savedStateHandle: SavedStateHandle,
 ) : BaseMediaViewModel(application) {
     var mediaType: Int = QUERY_TYPE_IMAGE
+    var showDate: Boolean = true
     private val gridViewPagingConfig = PagingConfig(
         pageSize = 20,
         initialLoadSize = 20,  // 可根据需要调整
-        maxSize = 100, // 可选，最大加载数据量
+//        maxSize = 100, // 可选，最大加载数据量
         enablePlaceholders = false // 根据需要设置
     )
 
@@ -104,10 +105,10 @@ open class MediaViewModel(
         }.flow
     }
 
-    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): MutableList<MediaModel> {
+    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): Pair<Int, MutableList<MediaModel>> {
         dLog { "sortType:$sortType" }
         val data = ArrayList<MediaModel>()
-        val result = queryCursor(mediaType, page, loadSize, sortType = sortType) { cursor, media ->
+        val (size, result) = queryCursor(mediaType, page, loadSize, sortType = sortType) { cursor, media ->
             when (mediaType) {
                 QUERY_TYPE_IMAGE, QUERY_TYPE_ZIP -> {
                     //无需其他字段
@@ -128,12 +129,14 @@ open class MediaViewModel(
             media
         }
         result.forEach {
-            data.add(MediaModel.Header(MediaHeader(it.title)))
+            if (showDate) {
+                data.add(MediaModel.Header(MediaHeader(it.title)))
+            }
             it.mediaList.forEach {
                 data.add(MediaModel.Item(it))
             }
         }
-        return data
+        return size to data
     }
 
     companion object {

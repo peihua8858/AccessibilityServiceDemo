@@ -14,11 +14,12 @@ class AudioViewModel(application: Application) : BaseMediaViewModel(application)
         get() = arrayOf(*super.columns, MediaStore.Video.Media.DURATION)
     fun requestAudio(@SortType sortType: Int = SortType.SORT_TYPE_DATE_ASC) {
         request(pictureState) {
-            queryCursor(QUERY_TYPE_AUDIO,sortType= sortType) { cursor, mediaData ->
+          val (size,result) = queryCursor(QUERY_TYPE_AUDIO,sortType= sortType) { cursor, mediaData ->
                 val duration = cursor.getLong(MediaStore.Video.Media.DURATION)
                 mediaData.duration = getDurationString(duration)
                 mediaData
             }
+            result
         }
     }
 

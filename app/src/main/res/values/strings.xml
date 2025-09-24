@@ -174,5 +174,10 @@
     <string name="text_sort_type_name_desc">按文件名降序</string>
     <string name="text_sort_type_size_asc">按文件大小升序</string>
     <string name="text_sort_type_size_desc">按文件大小降序</string>
+    <string name="text_all">全部</string>
+    <string name="text">文本</string>
+    <string name="text_pdf">PDF</string>
+    <string name="text_xml">XML</string>
+
 
 </resources>
