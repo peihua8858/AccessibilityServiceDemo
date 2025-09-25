@@ -5,5 +5,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun PptDocumentScreen(modifier: Modifier) {
-    AllDocumentScreen(modifier, arrayOf(".ppt"))
+//    AllDocumentScreen(modifier, arrayOf(".ppt"))
 }

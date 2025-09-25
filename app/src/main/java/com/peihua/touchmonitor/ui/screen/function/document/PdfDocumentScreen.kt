@@ -5,5 +5,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun PdfDocumentScreen(modifier: Modifier) {
-    AllDocumentScreen(modifier, arrayOf(".pdf"))
+//    AllDocumentScreen(modifier, arrayOf(".pdf"))
 }

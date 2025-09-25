@@ -5,5 +5,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun XmlDocumentScreen(modifier: Modifier) {
-    AllDocumentScreen(modifier, arrayOf(".xml"))
+//    AllDocumentScreen(modifier, arrayOf(".xml"))
 }

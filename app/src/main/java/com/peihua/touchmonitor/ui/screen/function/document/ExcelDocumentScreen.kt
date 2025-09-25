@@ -5,5 +5,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun ExcelDocumentScreen(modifier: Modifier) {
-    AllDocumentScreen(modifier, arrayOf(".xls", ".xlsx", ".xld", ".xlc"))
+//    AllDocumentScreen(modifier, arrayOf(".xls", ".xlsx", ".xld", ".xlc"))
 }

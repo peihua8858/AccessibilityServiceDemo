@@ -40,12 +40,8 @@ import com.peihua.touchmonitor.viewmodel.QueryType
 @Composable
 fun AllDocumentScreen(
     modifier: Modifier,
-    types: Array<String> = arrayOf(),
     viewModel: DocumentViewModel = viewModel()
 ) {
-    if (types.isNonEmpty()) {
-        viewModel.types = types
-    }
     viewModel.mediaType = QueryType.QUERY_TYPE_DOCUMENT
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
     val isUserRefresh = remember { mutableStateOf(false) }

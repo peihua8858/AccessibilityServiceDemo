@@ -5,5 +5,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun  WordDocumentScreen(modifier: Modifier){
-    AllDocumentScreen(modifier, arrayOf(".doc", ".docx"))
+//    AllDocumentScreen(modifier, arrayOf(".doc", ".docx"))
 }

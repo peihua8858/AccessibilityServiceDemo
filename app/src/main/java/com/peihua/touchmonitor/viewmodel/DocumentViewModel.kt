@@ -8,7 +8,7 @@ import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.getString
 import java.io.File
 
-class DocumentViewModel(
+open class DocumentViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
 ) : MediaViewModel(application, savedStateHandle) {
@@ -51,4 +51,35 @@ class DocumentViewModel(
             dLog { "extension:$extension" }
             types.contains(".$extension")
         }
+}
+
+class PdfViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".pdf")
+    }
+}
+class WordViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".doc", ".docx")
+    }
+}
+class ExcelViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".xls", ".xlsx", ".xld", ".xlc")
+    }
+}
+class PptViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".ppt")
+    }
+}
+class TextViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".text/x-asm", ".txt", ".tex", ".text")
+    }
+}
+class XmlViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+    init {
+        types = arrayOf(".xml")
+    }
 }

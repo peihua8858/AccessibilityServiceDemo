@@ -1,14 +1,21 @@
 package com.peihua.touchmonitor.ui.screen.function.document
 
-import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.viewmodel.ExcelViewModel
+import com.peihua.touchmonitor.viewmodel.PdfViewModel
+import com.peihua.touchmonitor.viewmodel.PptViewModel
+import com.peihua.touchmonitor.viewmodel.TextViewModel
+import com.peihua.touchmonitor.viewmodel.WordViewModel
+import com.peihua.touchmonitor.viewmodel.XmlViewModel
+import kotlin.jvm.java
 
 @Composable
 fun DocumentScreen(modifier: Modifier) {
@@ -23,12 +30,12 @@ fun DocumentScreen(modifier: Modifier) {
         val tabs: MutableList<Pair<String, @Composable (PagerState, Int) -> Unit>> =
             mutableListOf(
                 textAll to { s, i -> AllDocumentScreen(Modifier) },
-                "PDF" to { s, i -> AllDocumentScreen(Modifier,arrayOf(".pdf")) },
-                "Word" to { s, i -> AllDocumentScreen(Modifier,arrayOf(".doc", ".docx")) },
-                "Excel" to { s, i -> AllDocumentScreen(Modifier,arrayOf(".xls", ".xlsx", ".xld", ".xlc")) },
-                "PPT" to { s, i -> AllDocumentScreen(Modifier,arrayOf(".ppt")) },
-                text to { s, i -> AllDocumentScreen(Modifier,arrayOf(".text/x-asm", ".txt", ".tex", ".text")) },
-                "Xml" to { s, i -> AllDocumentScreen(Modifier,arrayOf(".xml")) },
+                "PDF" to { s, i -> AllDocumentScreen(Modifier, viewModel(PdfViewModel::class.java)) },
+                "Word" to { s, i -> AllDocumentScreen(Modifier, viewModel(WordViewModel::class.java)) },
+                "Excel" to { s, i -> AllDocumentScreen(Modifier, viewModel(ExcelViewModel::class.java)) },
+                "PPT" to { s, i -> AllDocumentScreen(Modifier, viewModel(PptViewModel::class.java)) },
+                text to { s, i -> AllDocumentScreen(Modifier, viewModel(TextViewModel::class.java)) },
+                "Xml" to { s, i -> AllDocumentScreen(Modifier, viewModel(XmlViewModel::class.java)) },
             )
         TabPager(
             modifier = modifier,

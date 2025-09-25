@@ -1,14 +1,13 @@
 package com.peihua.touchmonitor.utils
 
-import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +25,25 @@ sealed class ResultData<T> {
     class Starting<T> : ResultData<T>()
     data class Success<T>(val data: T) : ResultData<T>()
     data class Failure<T>(val error: Throwable) : ResultData<T>()
+
+    inline val isSuccess: Boolean
+        get() = this is Success
+    inline val isError: Boolean
+        get() = this is Failure
+    val result: T
+        get() {
+            if (this is Success) {
+                return data
+            }
+            throw IllegalStateException("ResultData is not Success")
+        }
+    val failure: Throwable
+        get() {
+            if (this is Failure) {
+                return error
+            }
+            throw IllegalStateException("ResultData is not Failure")
+        }
 }
 
 private const val TAG = "ResultData"
@@ -91,6 +109,26 @@ fun <T> ViewModel.request(
     }
 }
 
+/**
+ * [ViewModel]在IO线程中开启协程扩展
+ */
+fun <T> ViewModel.request(
+    viewState: MutableLiveData<ResultData<T>>,
+    request: suspend CoroutineScope.() -> T,
+) {
+    viewModelScope.launch(Dispatchers.Main) {
+        viewState.value = ResultData.Starting()
+        try {
+            val response = withContext(Dispatchers.IO) {
+                request()
+            }
+            viewState.value = ResultData.Success(response)
+        } catch (e: Throwable) {
+            LogCat.d(TAG, e.stackTraceToString())
+            viewState.value = ResultData.Failure(e)
+        }
+    }
+}
 
 /**
  * [ViewModel]在IO线程中开启协程扩展
@@ -127,9 +165,11 @@ fun <T> ViewModel.request(
         }
     }
 }
+
 fun AndroidViewModel.getString(id: Int): String {
     return application.getString(id)
 }
+
 fun AndroidViewModel.getString(id: Int, vararg args: Any): String {
     return application.getString(id, *args)
 }
