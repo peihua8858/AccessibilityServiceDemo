@@ -13,31 +13,9 @@ open class DocumentViewModel(
     savedStateHandle: SavedStateHandle,
 ) : MediaViewModel(application, savedStateHandle) {
     var types: Array<String> = arrayOf(
-        ".pdf",
-        ".xml",
-        ".java",
-        ".php",
-        ".html",
-        ".htm",
-        ".text/x-asm",
-        ".pl",
-        ".xls",
-        ".xlsx",
-        ".xld",
-        ".xlc",
-        ".ppt",
-        ".pptx",
-        ".ppsx",
-        ".pptm",
-        ".doc",
-        ".docx",
-        ".msg",
-        ".odt",
-        ".txt",
-        ".tex",
-        ".text",
-        ".wpd",
-        ".wps"
+        ".pdf", ".xml", ".java", ".php", ".html", ".htm", ".text/x-asm", ".pl", ".xls", ".xlsx",
+        ".xld", ".xlc", ".ppt", ".pptx", ".ppsx", ".pptm", ".doc", ".docx", ".msg", ".odt", ".txt",
+        ".tex", ".text", ".wpd", ".wps"
     )
 
     init {
@@ -53,32 +31,37 @@ open class DocumentViewModel(
         }
 }
 
-class PdfViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+class PdfViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
         types = arrayOf(".pdf")
     }
 }
-class WordViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+
+class WordViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
         types = arrayOf(".doc", ".docx")
     }
 }
-class ExcelViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+
+class ExcelViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
         types = arrayOf(".xls", ".xlsx", ".xld", ".xlc")
     }
 }
-class PptViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+
+class PptViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
-        types = arrayOf(".ppt")
+        types = arrayOf(".ppt",".pptx", ".ppsx", ".pptm")
     }
 }
-class TextViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+
+class TextViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
         types = arrayOf(".text/x-asm", ".txt", ".tex", ".text")
     }
 }
-class XmlViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle){
+
+class XmlViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {
     init {
         types = arrayOf(".xml")
     }

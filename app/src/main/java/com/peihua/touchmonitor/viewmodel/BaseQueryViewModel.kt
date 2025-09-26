@@ -107,7 +107,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
                 else MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             }
 
-            QUERY_TYPE_ZIP -> MediaStore.Files.getContentUri("external")
+            QUERY_TYPE_ZIP, QUERY_TYPE_DOCUMENT -> MediaStore.Files.getContentUri("external")
             else -> MediaStore.Files.getContentUri("external")
         }
         return queryCursor(uri, offset, limit, orderBy, convert = convert)
@@ -123,7 +123,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         val result = arrayListOf<T>()
         val orderBy = orderBy.ifEmpty { ORDER_BY }
         val cursor = if (isAtLeastQ) contentResolver.query(uri, columns, queryArgsBundle(orderBy, offset, limit), null)
-        else contentResolver.query(uri, columns, selection, selectionArgs, "$orderBy LIMIT $limit offset ${(offset - 1)*limit}")
+        else contentResolver.query(uri, columns, selection, selectionArgs, "$orderBy LIMIT $limit offset ${(offset - 1) * limit}")
         dLog { ">>>>>cursor.count:${cursor?.count}" }
         cursor?.use {
             while (it.moveToNext()) {
@@ -162,7 +162,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
             queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, orderBy)
             if (isAtLeastR) {
                 if (limit > 0 && offset >= 0) {
-                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_LIMIT, "$limit offset ${(offset - 1)*limit}")
+                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_LIMIT, "$limit offset ${(offset - 1) * limit}")
                 }
             }
         }
@@ -249,9 +249,9 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
         limit: Int = Int.MAX_VALUE,
         @SortType sortType: Int,
         convert: (Cursor, MediaData) -> MediaData = { cursor, media -> media },
-    ): Pair<Int,ArrayList<MediaHeader>> {
+    ): Pair<Int, ArrayList<MediaHeader>> {
         val titleArray = arrayListOf<String>()
-        var mediaDataSize =0
+        var mediaDataSize = 0
         val result = queryCursor(queryType, offset, limit) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
             var media = MediaData(
                 dateValue = dateTime,
@@ -277,6 +277,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
         }
         return mediaDataSize to result.sortList(sortType)
     }
+
     protected fun ArrayList<MediaHeader>.sortList(@SortType sortType: Int): ArrayList<MediaHeader> {
         dLog { ">>>>>sortType:$sortType,sortList:${this.size}" }
         val comparator = when (sortType) {
@@ -315,7 +316,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
                 Comparator<MediaData> { o1, o2 -> o1.dateValue.compareTo(o2.dateValue) }
             }
         }
-        for((index,item) in this.withIndex()) {
+        for ((index, item) in this.withIndex()) {
             item.mediaList.sortWith(comparator = comparator)
         }
         return this
