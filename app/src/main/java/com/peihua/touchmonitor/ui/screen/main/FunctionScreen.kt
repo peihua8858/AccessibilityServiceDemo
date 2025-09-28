@@ -2,7 +2,6 @@ package com.peihua.touchmonitor.ui.screen.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -33,6 +32,7 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ExtendedListTileNoBorder
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.Toolbar
+import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.Colors

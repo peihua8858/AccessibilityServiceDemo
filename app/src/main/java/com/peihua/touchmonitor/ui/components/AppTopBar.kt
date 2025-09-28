@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
@@ -37,6 +39,7 @@ import com.peihua.touchmonitor.utils.dimensionSpResource
 fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
+    elevation: Dp = dimensionResource(id = R.dimen.dp_1),
     navigateUp: () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -45,13 +48,14 @@ fun Toolbar(
     hostState: SnackbarHostState = remember { snackbarHostState },
     content: @Composable () -> Unit = {},
 ) {
-    Toolbar(modifier, title, navigationIcon, actions, hostState, content)
+    Toolbar(modifier, title,elevation, navigationIcon, actions, hostState, content)
 }
 
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
+    elevation: Dp = 0.dp,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
@@ -61,6 +65,7 @@ fun Toolbar(
         modifier = modifier,
         topBar = {
             AppTopBar(
+                elevation = elevation,
                 title = title,
                 navigationIcon = navigationIcon,
                 actions = actions
@@ -81,7 +86,9 @@ val snackbarHostState = SnackbarHostState()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier, title: String,
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    title: String,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
 ) {
@@ -103,7 +110,7 @@ fun AppTopBar(
         },
         navigationIcon = navigationIcon,
         actions = actions,
-        modifier = modifier,
+        modifier = modifier.surface(0.dp, elevation = elevation),
         colors = colors
     )
 }

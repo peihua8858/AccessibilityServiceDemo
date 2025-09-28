@@ -1,7 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -15,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +31,11 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
 import com.peihua.touchmonitor.ui.components.CardViewItem
 import com.peihua.touchmonitor.ui.components.Toolbar
+import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
 import com.peihua.touchmonitor.utils.checkStorgePermission
+import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -187,6 +189,11 @@ private fun HomeCard(
                 )
             }
         }, title = {
-
+            Text(
+                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
+                fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                text = title
+            )
         })
+
 }

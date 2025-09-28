@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.settings
 
+import android.graphics.RectF
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
@@ -50,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -62,12 +65,14 @@ import com.peihua.touchmonitor.model.ThemeModel
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.CheckboxListTile
 import com.peihua.touchmonitor.ui.components.Toolbar
+import com.peihua.touchmonitor.ui.components.surface
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.ui.theme.ThemeMode
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
+import com.peihua.touchmonitor.utils.isAtLeastS
 import com.peihua.touchmonitor.viewmodel.SystemSettingsViewModel
 
 
@@ -101,7 +106,7 @@ fun SettingsScreen(
     val isThemeExpanded = remember { mutableStateOf(false) }
     val isLanguageExpanded = remember { mutableStateOf(false) }
     val themeModels = ThemeMode.entries.mapIndexed { index, mode -> ThemeModel(theme = mode) }
-    val composeable = rememberCompositionContext()
+    val radius = dimensionResource(id = R.dimen.dp_10)
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.settings),
@@ -117,7 +122,19 @@ fun SettingsScreen(
         ) {
             ExposedDropdownMenuBox(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .surface(
+                        radius, radius,
+                        0.dp,
+                        0.dp,
+                        elevation = dimensionResource(id = R.dimen.dp_1)
+                    )
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        top = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8),
+                        bottom = dimensionResource(id = R.dimen.dp_8)
+                    ),
                 expanded = isLanguageExpanded.value,
                 onExpandedChange = { isLanguageExpanded.value = it },
             ) {
@@ -171,10 +188,17 @@ fun SettingsScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_8)))
+//            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_8)))
             ExposedDropdownMenuBox(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .surface(0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        top = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8),
+                        bottom = dimensionResource(id = R.dimen.dp_8)
+                    ),
                 expanded = isThemeExpanded.value,
                 onExpandedChange = { isThemeExpanded.value = it },
             ) {
@@ -262,12 +286,12 @@ fun SettingsScreen(
                     }
                 }
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (isAtLeastS) {
                 SettingsCheckBox(
-                    modifier = Modifier
-                        .padding(top = dimensionResource(id = R.dimen.dp_16)),
+                    modifier = Modifier,
                     title = stringResource(R.string.text_dynamic_color),
                     selected = systemSettings.value.theme.dynamicColor,
+                    showTopLine = false,
                     showBottomLine = false,
                     onCheckedChange = {
                         val theme = systemSettings.value.theme.copy(dynamicColor = it)
@@ -281,6 +305,8 @@ fun SettingsScreen(
             SettingsItemView(
                 modifier = Modifier,
                 title = stringResource(R.string.text_export_path),
+                showTopLine = !isAtLeastS,
+                showBottomLine = false,
                 value = systemSettings.value.exportPath,
             )
             SettingsItemView(
@@ -288,7 +314,7 @@ fun SettingsScreen(
                 showTopLine = false,
                 title = stringResource(R.string.text_about),
                 value = "",
-            ){
+            ) {
                 navigateTo(AppRouter.AboutScreen.route)
             }
         }
@@ -304,17 +330,25 @@ private fun SettingsCheckBox(
     showBottomLine: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit),
 ) {
+    val radius = dimensionResource(id = R.dimen.dp_10)
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .surface(
+                if (showTopLine) radius else 0.dp,
+                if (showTopLine) radius else 0.dp,
+                if (showBottomLine) radius else 0.dp,
+                if (showBottomLine) radius else 0.dp,
+                elevation = dimensionResource(id = R.dimen.dp_1)
+            )
             .clickable {
                 onCheckedChange(!selected)
             },
         verticalArrangement = Arrangement.Center
     ) {
-        if (showTopLine) {
-            HorizontalDivider()
-        }
+//        if (showTopLine) {
+//            HorizontalDivider()
+//        }
         CheckboxListTile(
             modifier = Modifier
                 .fillMaxWidth()
@@ -329,9 +363,9 @@ private fun SettingsCheckBox(
                 ScaleText(text = title)
             }
         )
-        if (showBottomLine) {
-            HorizontalDivider()
-        }
+//        if (showBottomLine) {
+//            HorizontalDivider()
+//        }
     }
 }
 
@@ -345,15 +379,23 @@ private fun SettingsItemView(
     showBottomLine: Boolean = true,
     onclick: () -> Unit = {},
 ) {
+    val radius = dimensionResource(id = R.dimen.dp_10)
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .surface(
+                if (showTopLine) radius else 0.dp,
+                if (showTopLine) radius else 0.dp,
+                if (showBottomLine) radius else 0.dp,
+                if (showBottomLine) radius else 0.dp,
+                elevation = dimensionResource(id = R.dimen.dp_1)
+            )
             .clickable(onClick = onclick),
         verticalArrangement = Arrangement.Center
     ) {
-        if (showTopLine) {
-            HorizontalDivider()
-        }
+//        if (showTopLine) {
+//            HorizontalDivider()
+//        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -400,8 +442,8 @@ private fun SettingsItemView(
                 contentDescription = null
             )
         }
-        if (showBottomLine) {
-            HorizontalDivider()
-        }
+//        if (showBottomLine) {
+//            HorizontalDivider()
+//        }
     }
 }
