@@ -1,6 +1,5 @@
 package com.peihua.touchmonitor.ui.screen.main
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,56 +12,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
 import com.peihua.touchmonitor.ui.components.CardViewItem
 import com.peihua.touchmonitor.ui.components.Toolbar
-import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
 import com.peihua.touchmonitor.utils.checkStorgePermission
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
-    val content = StringBuilder()
-    configuration.orientation
-    configuration.screenLayout
-    content.append("屏幕宽度（单位：dp）：${configuration.screenWidthDp},")
-        .append("\n")
-        .append("屏幕高度（单位：dp）：${configuration.screenHeightDp}")
-        .append("\n")
-        .append("屏幕的总体方向：${if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) "横向" else "纵向"}")
-        .append("\n")
-        .append("最小屏幕宽度（单位：dp）：${configuration.smallestScreenWidthDp}")
-        .append("\n")
-        .append("像素密度DPI：${configuration.densityDpi}")
-        .append("\n")
-        .append("像素密度：${density.density}")
-        .append("\n")
-        .append("字体缩放系数：${density.fontScale}")
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_home)
@@ -144,12 +121,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 iconBgColors = listOf(AppColor.color_e30b5a)
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
-            val textStyle = LocalTextStyle.current
-            dLog { "000textColor:" + textStyle.color }
-            ScaleText(
-                text = content.toString(),
-                fontSize = dimensionSpResource(id = R.dimen.sp_12),
-            )
         }
     }
 }
@@ -169,7 +140,9 @@ private fun HomeHorList(
                 Spacer(Modifier.weight(1f))
             } else {
                 HomeCard(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .weight(1f),
                     title = item.first,
                     painter = painters[index],
                     iconBgColor = iconBgColors[index]
@@ -197,10 +170,7 @@ private fun HomeCard(
 ) {
     CardViewItem(
         modifier = modifier
-            .padding(
-                start = dimensionResource(id = R.dimen.dp_8),
-                end = dimensionResource(id = R.dimen.dp_8)
-            )
+            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
             .clickable(onClick = onClick),
         icon = {
             Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
@@ -217,11 +187,6 @@ private fun HomeCard(
                 )
             }
         }, title = {
-            Text(
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                fontSize = dimensionSpResource(id = R.dimen.sp_12),
-                text = title
-            )
-        })
 
+        })
 }

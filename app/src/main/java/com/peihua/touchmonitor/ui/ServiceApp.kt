@@ -47,6 +47,7 @@ import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
 import com.peihua.touchmonitor.ui.screen.function.video.VideoPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
 import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
+import com.peihua.touchmonitor.ui.screen.settings.AboutScreen
 import com.peihua.touchmonitor.ui.screen.settings.SettingsScreen
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
@@ -308,6 +309,9 @@ fun AppNavHost(
                 dLog { "AppDetailScreen>>>>>>>title:$title,path:$path" }
                 StorageScreen(modifier, title, path)
             }
+        }
+        composable(route = AppRouter.AboutScreen.route) {
+            AboutScreen(modifier)
         }
 
     }

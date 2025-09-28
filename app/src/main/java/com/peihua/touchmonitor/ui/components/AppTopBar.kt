@@ -37,6 +37,21 @@ import com.peihua.touchmonitor.utils.dimensionSpResource
 fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
+    navigateUp: () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {
+        NavigationIcon(navigateUp = navigateUp)
+    },
+    actions: @Composable RowScope.() -> Unit = {},
+    hostState: SnackbarHostState = remember { snackbarHostState },
+    content: @Composable () -> Unit = {},
+) {
+    Toolbar(modifier, title, navigationIcon, actions, hostState, content)
+}
+
+@Composable
+fun Toolbar(
+    modifier: Modifier = Modifier,
+    title: String,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
@@ -62,37 +77,6 @@ fun Toolbar(
 }
 
 val snackbarHostState = SnackbarHostState()
-
-@Composable
-fun Toolbar(
-    modifier: Modifier = Modifier,
-    title: String,
-    navigateUp: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-        NavigationIcon(navigateUp = navigateUp)
-    },
-    actions: @Composable RowScope.() -> Unit = {},
-    hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable () -> Unit = {},
-) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            AppTopBar(
-                title = title,
-                navigationIcon = navigationIcon,
-                actions = actions
-            )
-        }, snackbarHost = { SnackbarHost(hostState) }) {
-        Box(
-            Modifier
-                .padding(it)
-                .fillMaxSize()
-        ) {
-            content()
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

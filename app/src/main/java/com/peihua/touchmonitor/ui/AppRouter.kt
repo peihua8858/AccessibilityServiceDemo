@@ -54,6 +54,8 @@ sealed class AppRouter(
      */
     data object SettingsScreen : AppRouter("settings")
 
+    data object AboutScreen : AppRouter("about")
+
     /**
      * 图片列表页面
      */

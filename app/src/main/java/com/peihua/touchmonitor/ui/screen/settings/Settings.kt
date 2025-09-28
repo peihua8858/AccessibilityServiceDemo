@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,9 +30,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +51,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,9 +59,11 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.LanguageModel
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.model.ThemeModel
+import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.CheckboxListTile
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
+import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.ui.theme.ThemeMode
@@ -95,21 +101,23 @@ fun SettingsScreen(
     val isThemeExpanded = remember { mutableStateOf(false) }
     val isLanguageExpanded = remember { mutableStateOf(false) }
     val themeModels = ThemeMode.entries.mapIndexed { index, mode -> ThemeModel(theme = mode) }
-
+    val composeable = rememberCompositionContext()
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.settings),
         navigateUp = {
             popBackStack()
         }) {
-        Column(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16))) {
+        Column(
+            modifier = Modifier.padding(
+                top = dimensionResource(id = R.dimen.dp_16),
+                start = dimensionResource(id = R.dimen.dp_16),
+                end = dimensionResource(id = R.dimen.dp_16)
+            )
+        ) {
             ExposedDropdownMenuBox(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
-                    ),
+                    .fillMaxWidth(),
                 expanded = isLanguageExpanded.value,
                 onExpandedChange = { isLanguageExpanded.value = it },
             ) {
@@ -166,11 +174,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_8)))
             ExposedDropdownMenuBox(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(id = R.dimen.dp_16),
-                        end = dimensionResource(id = R.dimen.dp_16)
-                    ),
+                    .fillMaxWidth(),
                 expanded = isThemeExpanded.value,
                 onExpandedChange = { isThemeExpanded.value = it },
             ) {
@@ -279,6 +283,14 @@ fun SettingsScreen(
                 title = stringResource(R.string.text_export_path),
                 value = systemSettings.value.exportPath,
             )
+            SettingsItemView(
+                modifier = Modifier,
+                showTopLine = false,
+                title = stringResource(R.string.text_about),
+                value = "",
+            ){
+                navigateTo(AppRouter.AboutScreen.route)
+            }
         }
     }
 }
@@ -306,7 +318,10 @@ private fun SettingsCheckBox(
         CheckboxListTile(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.dp_16)),
+                .padding(
+                    top = dimensionResource(id = R.dimen.dp_16),
+                    bottom = dimensionResource(id = R.dimen.dp_16)
+                ),
             indication = null,
             checked = selected,
             onCheckedChange = onCheckedChange,
@@ -342,7 +357,12 @@ private fun SettingsItemView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.dp_16)),
+                .padding(
+                    start = dimensionResource(id = R.dimen.dp_8),
+                    top = dimensionResource(id = R.dimen.dp_16),
+                    end = dimensionResource(id = R.dimen.dp_8),
+                    bottom = dimensionResource(id = R.dimen.dp_16)
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ScaleText(
