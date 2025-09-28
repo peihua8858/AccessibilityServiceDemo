@@ -30,18 +30,15 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.AppRouter
-import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
+import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
-import com.peihua.touchmonitor.ui.screen.function.document.AllDocumentScreen
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
-import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
@@ -84,29 +81,8 @@ private fun UserAppScreen(
     val refresh = {
         viewModel.requestUserAppList()
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dp_16))
-    ) {
-
-        when (result) {
-            is ResultData.Success -> {
-                AppListScreenContent(Modifier, result.data)
-            }
-
-            is ResultData.Failure -> {
-                ErrorView(retry = refresh)
-            }
-
-            is ResultData.Initialize -> {
-                refresh()
-            }
-
-            is ResultData.Starting -> {
-                LoadingViewFillMaxSize()
-            }
-        }
+    MultiStateScreen(modifier = modifier, result, refresh) {
+        AppListScreenContent(Modifier, it)
     }
 }
 
@@ -120,29 +96,8 @@ fun SystemAppScreen(
     val refresh = {
         viewModel.requestSystemAppList()
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dp_16))
-    ) {
-
-        when (result) {
-            is ResultData.Success -> {
-                AppListScreenContent(Modifier, result.data)
-            }
-
-            is ResultData.Failure -> {
-                ErrorView(retry = refresh)
-            }
-
-            is ResultData.Initialize -> {
-                refresh()
-            }
-
-            is ResultData.Starting -> {
-                LoadingViewFillMaxSize()
-            }
-        }
+    MultiStateScreen(modifier = modifier, result, refresh) {
+        AppListScreenContent(Modifier, it)
     }
 }
 

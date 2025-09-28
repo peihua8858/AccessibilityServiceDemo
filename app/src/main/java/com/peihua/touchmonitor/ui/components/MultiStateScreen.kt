@@ -80,34 +80,44 @@ fun <T> MultiStateScreen(
         navigationIcon = navigationIcon,
         hostState = hostState,
     ) {
-        Column(
-            modifier
-                .fillMaxSize()
-                .padding(dimensionResource(id = R.dimen.dp_16))
-        ) {
-            when (result) {
-                is ResultData.Success -> {
-                    val data = result.data
-                    dLog { ">>>>>data:${data}" }
-                    if (data is List<*> && data.isEmpty()) {
-                        dLog { ">>>>>data:${data.size}" }
-                        EmptyView(modifier, retry = refresh)
-                    } else {
-                        content(data)
-                    }
-                }
+        MultiStateScreen(modifier, result, refresh, content)
+    }
+}
 
-                is ResultData.Failure -> {
-                    ErrorView(retry = refresh)
+@Composable
+fun <T> MultiStateScreen(
+    modifier: Modifier,
+    result: ResultData<T>,
+    refresh: () -> Unit,
+    content: @Composable (T) -> Unit,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.dp_16))
+    ) {
+        when (result) {
+            is ResultData.Success -> {
+                val data = result.data
+                dLog { ">>>>>data:${data}" }
+                if (data is List<*> && data.isEmpty()) {
+                    dLog { ">>>>>data:${data.size}" }
+                    EmptyView(modifier, retry = refresh)
+                } else {
+                    content(data)
                 }
+            }
 
-                is ResultData.Initialize -> {
-                    refresh()
-                }
+            is ResultData.Failure -> {
+                ErrorView(retry = refresh)
+            }
 
-                is ResultData.Starting -> {
-                    LoadingViewFillMaxSize()
-                }
+            is ResultData.Initialize -> {
+                refresh()
+            }
+
+            is ResultData.Starting -> {
+                LoadingViewFillMaxSize()
             }
         }
     }

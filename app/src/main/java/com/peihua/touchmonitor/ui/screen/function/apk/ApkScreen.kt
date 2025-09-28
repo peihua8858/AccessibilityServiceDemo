@@ -4,9 +4,7 @@ import android.text.format.Formatter
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,15 +27,12 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
-import com.peihua.touchmonitor.ui.components.EmptyView
-import com.peihua.touchmonitor.ui.components.ErrorView
-import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
+import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
-import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.installApk
 import com.peihua.touchmonitor.utils.items
@@ -52,7 +47,7 @@ fun ApkScreen(modifier: Modifier = Modifier) {
         navigateUp = {
             popBackStack()
         }) {
-        ApkScreenContent()
+        ApkScreenContent(Modifier)
     }
 }
 
@@ -63,32 +58,8 @@ fun ApkScreenContent(modifier: Modifier = Modifier, viewModel: ApkViewModel = vi
     val refresh = {
         viewModel.getApkList()
     }
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dp_16))
-    ) {
-        when (result) {
-            is ResultData.Success -> {
-                if (result.data.isNotEmpty()) {
-                    ApkListScreenContent(Modifier, result.data)
-                } else {
-                    EmptyView(modifier, retry = refresh)
-                }
-            }
-
-            is ResultData.Failure -> {
-                ErrorView(retry = refresh)
-            }
-
-            is ResultData.Initialize -> {
-                refresh()
-            }
-
-            is ResultData.Starting -> {
-                LoadingViewFillMaxSize()
-            }
-        }
+    MultiStateScreen(modifier = modifier, result, refresh) {
+        ApkListScreenContent(Modifier, it)
     }
 }
 
