@@ -28,7 +28,7 @@ fun <T> TabView(
     val colorScheme= MaterialTheme.colorScheme
     Tab(
         modifier = modifier
-            .heightIn(min = dimensionResource(id = R.dimen.dp_48))
+            .heightIn(min = dimensionResource(id = R.dimen.dp_32))
             .background(Color.Transparent),
         selected = isSelected,
         selectedContentColor = colorScheme.primary,

@@ -48,9 +48,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
                         .size(100.dp)
                         .align(Alignment.Center)
                         .surface(
-                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
-                            backgroundColor = Color.White,
-                            border = null,
+                            radius = dimensionResource(id = R.dimen.dp_8),
                             elevation = dimensionResource(id = R.dimen.dp_3)
                         )
                 )

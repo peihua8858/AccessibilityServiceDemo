@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -51,6 +52,7 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_app_manager),
+        elevation = 0.dp,
         navigateUp = {
             popBackStack()
         }) {

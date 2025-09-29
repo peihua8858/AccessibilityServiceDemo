@@ -98,6 +98,8 @@ dependencies {
 //    annotationProcessor libs.androidx.room.compiler
     implementation(libs.androidx.room.paging)
     implementation libs.androidx.media3.ui
+    implementation libs.androidx.compose.adaptive
+//    implementation libs.androidx.compose.material3.adaptive
 //    implementation libs.androidbrowserhelper
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose.android)

@@ -126,7 +126,7 @@ fun NavigationIcon(
 ) {
     NavigationIcon2(
         modifier
-            .size(dimensionResource(id = R.dimen.dp_24))
+            .size(dimensionResource(id = R.dimen.dp_32))
             .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))),
         imageVector, navigateUp = navigateUp
     )

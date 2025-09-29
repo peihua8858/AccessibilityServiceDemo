@@ -33,7 +33,7 @@ fun Modifier.surface(
     topEnd: Dp = 0.dp,
     bottomEnd: Dp = 0.dp,
     bottomStart: Dp = 0.dp,
-    elevation: Dp,
+    elevation: Dp = 0.dp,
     backgroundColor: Color = Color.White,
     border: BorderStroke? = null,
 ) = surface(
@@ -46,7 +46,7 @@ fun Modifier.surface(
  */
 fun Modifier.surface(
     radius: Dp = 0.dp,
-    elevation: Dp,
+    elevation: Dp = 0.dp,
     backgroundColor: Color = Color.White,
     border: BorderStroke? = null,
 ) = surface(
@@ -59,7 +59,7 @@ fun Modifier.surface(
  */
 fun Modifier.surface(
     radius: CornerSize = CornerSize(0.dp),
-    elevation: Dp,
+    elevation: Dp = 0.dp,
     backgroundColor: Color = Color.White,
     border: BorderStroke? = null,
 ) = surface(
@@ -74,7 +74,7 @@ fun Modifier.surface(
     shape: Shape = RoundedCornerShape(8.dp),
     backgroundColor: Color = Color.White,
     border: BorderStroke? = null,
-    elevation: Dp = 3.dp,
+    elevation: Dp = 0.dp,
 ) = this
     .shadow(elevation, shape, clip = false)
     .then(if (border != null) Modifier.border(border, shape) else Modifier)

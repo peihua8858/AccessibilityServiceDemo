@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.fz.common.array.isNonEmpty
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
