@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui.screen.function.audio
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -52,9 +54,12 @@ fun AudioScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
     val menus = SortType.createSortList(LocalContext.current)
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
     val isUserRefresh = remember { mutableStateOf(false) }
-    MultiStatePagingScreen(modifier, R.string.text_audio, result,isUserRefresh, actions = {
+    MultiStatePagingScreen(modifier, R.string.text_audio, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier, models = menus, {
+            modifier = Modifier
+                .padding(end = dimensionResource(id = R.dimen.dp_16)),
+            models = menus,
+            selected = {
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort

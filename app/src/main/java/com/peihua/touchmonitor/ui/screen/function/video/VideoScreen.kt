@@ -64,7 +64,7 @@ fun VideoScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
     val isUserRefresh = remember { mutableStateOf(false) }
     MultiStatePagingScreen(modifier, R.string.text_videos, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier, models = menus, {
+            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus,selected = {
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort

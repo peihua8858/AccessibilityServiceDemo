@@ -48,9 +48,9 @@ fun ZipScreen(modifier: Modifier, viewModel: ZipViewModel = viewModel()) {
     val menus = SortType.createSortList(LocalContext.current)
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
     val isUserRefresh = remember { mutableStateOf(false) }
-    MultiStatePagingScreen(modifier, R.string.text_compression, result,isUserRefresh, actions = {
+    MultiStatePagingScreen(modifier, R.string.text_compression, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier, models = menus, {
+            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus, selected ={
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort

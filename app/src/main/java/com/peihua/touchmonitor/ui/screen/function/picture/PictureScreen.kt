@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -47,9 +48,9 @@ fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
     val menus = SortType.createSortList(LocalContext.current)
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
     val isUserRefresh = remember { mutableStateOf(false) }
-    MultiStatePagingScreen(modifier, R.string.text_images, result,isUserRefresh, actions = {
+    MultiStatePagingScreen(modifier, R.string.text_images, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier, models = menus, {
+            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus, selected ={
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
@@ -64,9 +65,11 @@ fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
 }
 
 @Composable
-fun PictureScreenContent(modifier: Modifier = Modifier,
-                         state: LazyGridState = rememberLazyGridState(),
-                         result: LazyPagingItems<MediaModel>) {
+fun PictureScreenContent(
+    modifier: Modifier = Modifier,
+    state: LazyGridState = rememberLazyGridState(),
+    result: LazyPagingItems<MediaModel>,
+) {
     val dp16 = dimensionResource(R.dimen.dp_16)
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
@@ -89,7 +92,7 @@ fun PictureScreenContent(modifier: Modifier = Modifier,
                         text = header.title
                     )
                 }
-            }else if (item is MediaModel.Item) {
+            } else if (item is MediaModel.Item) {
                 val mediaData = item.mediaData
                 item {
                     AsyncImage(

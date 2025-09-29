@@ -73,7 +73,7 @@ fun <T> MultiStateScreen(
     content: @Composable (T) -> Unit,
 ) {
     Toolbar(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         title = title,
         actions = actions,
         navigateUp = navigateUp,
@@ -165,7 +165,7 @@ fun <T : Any> MultiStatePagingScreen(
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     Toolbar(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         title = title,
         actions = actions,
         navigateUp = navigateUp,

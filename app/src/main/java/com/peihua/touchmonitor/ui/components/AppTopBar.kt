@@ -81,7 +81,7 @@ fun Toolbar(
     }
 }
 
-val snackbarHostState = SnackbarHostState()
+internal val snackbarHostState = SnackbarHostState()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

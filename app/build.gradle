@@ -99,6 +99,9 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation libs.androidx.media3.ui
     implementation libs.androidx.compose.adaptive
+    implementation libs.androidx.compose.adaptive.layout
+    implementation libs.androidx.compose.adaptive.navigation
+    implementation libs.androidx.compose.adaptive.navigation.suite
 //    implementation libs.androidx.compose.material3.adaptive
 //    implementation libs.androidbrowserhelper
     ksp(libs.androidx.room.compiler)
