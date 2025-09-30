@@ -48,7 +48,22 @@ fun Toolbar(
     hostState: SnackbarHostState = remember { snackbarHostState },
     content: @Composable () -> Unit = {},
 ) {
-    Toolbar(modifier, title,elevation, navigationIcon, actions, hostState, content)
+    Toolbar(modifier, title, elevation, navigationIcon, actions, hostState, content)
+}
+@Composable
+fun Toolbar(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    elevation: Dp = dimensionResource(id = R.dimen.dp_1),
+    navigateUp: () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {
+        NavigationIcon(navigateUp = navigateUp)
+    },
+    actions: @Composable RowScope.() -> Unit = {},
+    hostState: SnackbarHostState = remember { snackbarHostState },
+    content: @Composable () -> Unit = {},
+) {
+    Toolbar(modifier, title, elevation, navigationIcon, actions, hostState, content)
 }
 
 @Composable
@@ -80,7 +95,35 @@ fun Toolbar(
         }
     }
 }
-
+@Composable
+fun Toolbar(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    elevation: Dp = 0.dp,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+    hostState: SnackbarHostState = remember { snackbarHostState },
+    content: @Composable () -> Unit = {},
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AppTopBar(
+                elevation = elevation,
+                title = title,
+                navigationIcon = navigationIcon,
+                actions = actions
+            )
+        }, snackbarHost = { SnackbarHost(hostState) }) {
+        Box(
+            Modifier
+                .padding(it)
+                .fillMaxSize()
+        ) {
+            content()
+        }
+    }
+}
 internal val snackbarHostState = SnackbarHostState()
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,21 +136,33 @@ fun AppTopBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val typography = MaterialTheme.typography
+    AppTopBar(modifier, elevation, {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            ScaleText(
+                style = typography.titleMedium,
+                text = title,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
+                    .align(Alignment.Center),
+                fontSize = dimensionSpResource(id = R.dimen.sp_18),
+            )
+        }
+    }, navigationIcon, actions)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTopBar(
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    title: @Composable () -> Unit,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+) {
     val colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors()
     TopAppBar(
-        title = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                ScaleText(
-                    style = typography.titleMedium,
-                    text = title,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
-                        .align(Alignment.Center),
-                    fontSize = dimensionSpResource(id = R.dimen.sp_18),
-                )
-            }
-        },
+        title = title,
         navigationIcon = navigationIcon,
         actions = actions,
         modifier = modifier.surface(0.dp, elevation = elevation),

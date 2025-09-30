@@ -35,7 +35,6 @@ fun StorageScreen(
     viewModel: StorageViewModel = viewModel()
 ) {
     val result = viewModel.storageState.value
-    val sortType = 1
     //请求数据
     val refresh = {
         viewModel.request(path)
@@ -58,7 +57,6 @@ fun StorageScreenContent(
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
-        Row { }
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(dp8),

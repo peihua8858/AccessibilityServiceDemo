@@ -14,11 +14,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.peihua.touchmonitor.model.MediaData
-import com.peihua.touchmonitor.model.MediaHeader
 import com.peihua.touchmonitor.paging3.PagingSourceImpl
 import com.peihua.touchmonitor.utils.dLog
+import com.peihua.touchmonitor.utils.formatFileSize
 import com.peihua.touchmonitor.utils.getLong
+import com.peihua.touchmonitor.utils.getString
 import com.peihua.touchmonitor.utils.getVideoThumbnailFromMediaMetadataRetriever
+import com.peihua.touchmonitor.utils.mimeTypeFromFilePath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,51 +37,51 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-open class MediaViewModel(
-    application: Application,
-    private val savedStateHandle: SavedStateHandle,
-) : BaseMediaViewModel(application) {
-    var mediaType: Int = QUERY_TYPE_IMAGE
-    var showDate: Boolean = true
+class SearchViewModel(application: Application, private val savedStateHandle: SavedStateHandle) : BaseQueryViewModel<MediaData>(application) {
+    val pagingDataFlow: Flow<PagingData<MediaData>>
+    val mUiState: StateFlow<SearchUiState>
+    val userAction: (SearchUiAction) -> Unit
     private val gridViewPagingConfig = PagingConfig(
         pageSize = 20,
         initialLoadSize = 20,  // 可根据需要调整
 //        maxSize = 100, // 可选，最大加载数据量
         enablePlaceholders = false // 根据需要设置
     )
-
-    val mUiState: StateFlow<MediaUiState>
-    val userAction: (MediaUiAction) -> Unit
-    val pagingDataFlow: Flow<PagingData<MediaModel>>
+    private var mSelection: String = ""
+    private var mSelectionArgs: Array<String> = arrayOf()
+    override val selection: String?
+        get() = mSelection
+    override val selectionArgs: Array<String>?
+        get() = mSelectionArgs
 
     init {
-        val initialSortType = savedStateHandle[LAST_SORT_TYPE] ?: 3
-        dLog { "initialSortType:$initialSortType" }
-        savedStateHandle[LAST_SORT_TYPE] = initialSortType
-        val actionStateFlow = MutableSharedFlow<MediaUiAction>()
+        val initialQuery = savedStateHandle[LAST_QUERY] ?: ""
+        dLog { "initialQuery:$initialQuery" }
+        savedStateHandle[LAST_QUERY] = initialQuery
+        val actionStateFlow = MutableSharedFlow<SearchUiAction>()
         val searchAction = actionStateFlow
-            .filterIsInstance<MediaUiAction.Sort>()
+            .filterIsInstance<SearchUiAction.Search>()
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
-            .onStart { emit(MediaUiAction.Sort(sortType = initialSortType)) }
+            .onStart { emit(SearchUiAction.Search(query = initialQuery)) }
         val scrollAction = actionStateFlow
-            .filterIsInstance<MediaUiAction.Scroll>()
+            .filterIsInstance<SearchUiAction.Scroll>()
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000), 1)
-            .onStart { emit(MediaUiAction.Scroll(sortType = initialSortType)) }
+            .onStart { emit(SearchUiAction.Scroll(query = initialQuery)) }
         mUiState = combine(searchAction, scrollAction, ::Pair)
             .flowOn(Dispatchers.IO)
-            .map { (sort, scroll) ->
-                dLog { "sort.sortType:${sort.sortType},scroll.sortType:${scroll.sortType}" }
-                MediaUiState(sortType = sort.sortType, currentSortType = scroll.sortType)
+            .map { (search, scroll) ->
+                dLog { "search.query:${search.query},scroll.query:${scroll.query}" }
+                SearchUiState(query = search.query, currentQuery = scroll.query)
             }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-                MediaUiState(sortType = initialSortType, currentSortType = initialSortType)
+                SearchUiState(query = initialQuery, currentQuery = initialQuery)
             )
         pagingDataFlow = searchAction.flatMapLatest {
-            requestVideos(it.sortType)
+            requestSearch(it.query)
         }
             .flowOn(Dispatchers.IO)
             .cachedIn(viewModelScope)
@@ -88,35 +90,48 @@ open class MediaViewModel(
         }
     }
 
-
     @OptIn(ExperimentalPagingApi::class)
-    fun requestVideos(sortType: Int): Flow<PagingData<MediaModel>> {
+    fun requestSearch(keywords: String): Flow<PagingData<MediaData>> {
         val bundle = Bundle()
-        bundle.putInt("SORT_TYPE", sortType)
-        dLog { "sortType:$sortType" }
+        bundle.putString("keywords", keywords)
+        dLog { "keywords:$keywords" }
         return Pager(gridViewPagingConfig, initialKey = 1) {
             PagingSourceImpl(
                 gridViewPagingConfig, bundle,
                 refreshKey = { null }) { page, pageSize, bundle ->
-                val result = requestGridPagingData(page, pageSize, bundle.getInt("SORT_TYPE", 5))
+                val result = requestGridPagingData(page, pageSize, bundle.getString("keywords", ""))
                 result
             }
         }.flow
     }
 
-    fun requestGridPagingData(page: Int, loadSize: Int, sortType: Int): Pair<Int, MutableList<MediaModel>> {
-        dLog { "sortType:$sortType" }
-        val data = ArrayList<MediaModel>()
-        val (size, result) = queryCursor(mediaType, page, loadSize, sortType = sortType) { cursor, media ->
-            when (mediaType) {
-                QUERY_TYPE_IMAGE, QUERY_TYPE_ZIP -> {
-                    //无需其他字段
-                }
-
-                else -> {
+    fun requestGridPagingData(page: Int, loadSize: Int, keywords: String): Pair<Int, MutableList<MediaData>> {
+        if (keywords.isEmpty()) {
+            return 0 to ArrayList()
+        }
+        dLog { "keywords:$keywords" }
+        mSelection = MediaStore.MediaColumns.DISPLAY_NAME + " like ? or " + MediaStore.MediaColumns.DATA + " like ?"
+        mSelectionArgs = arrayOf("%$keywords%", "%$keywords%")
+        val result = queryCursor(QUERY_TYPE_SEARCH, page, loadSize) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
+            var mimeType = cursor.getString(MediaStore.MediaColumns.MIME_TYPE)
+            if (mimeType.isEmpty()) {
+                mimeType = path.mimeTypeFromFilePath ?: ""
+            }
+            val media = MediaData(
+                dateValue = dateTime,
+                fileName = fileName,
+                filePath = path,
+                size = fileSize,
+                fileSize = fileSize.formatFileSize(),
+                mimeType = cursor.getString(MediaStore.MediaColumns.MIME_TYPE),
+                dateFormat = formatTime
+            )
+            when (mimeType) {
+                //视频
+                "video/*", "audio/*" -> {
                     val duration = cursor.getLong(MediaStore.MediaColumns.DURATION)
                     media.duration = getDurationString(duration)
-                    if (mediaType == QUERY_TYPE_VIDEO) {
+                    if (mimeType == "video/*") {
                         val fileUri = media.filePath.toUri()
                         dLog { "getVideoThumbnail>>>fileUri: $fileUri" }
                         val bitmap = application.getVideoThumbnailFromMediaMetadataRetriever(fileUri, Size(640, 480))
@@ -124,36 +139,27 @@ open class MediaViewModel(
                         media.thumbnailsBitmap = bitmap
                     }
                 }
+
+                else -> {
+
+                }
             }
             media
         }
-        result.forEach {
-            if (showDate) {
-                data.add(MediaModel.Header(MediaHeader(it.title)))
-            }
-            it.mediaList.forEach {
-                data.add(MediaModel.Item(it))
-            }
-        }
-        return size to data
+        return result.size to result
     }
 
     companion object {
-        private const val LAST_SORT_TYPE: String = "last_sort_type"
+        private const val LAST_QUERY: String = "last_query"
     }
 }
 
-sealed class MediaUiAction {
-    data class Sort(val sortType: Int) : MediaUiAction()
-    data class Scroll(val sortType: Int) : MediaUiAction()
+sealed class SearchUiAction {
+    data class Search(val query: String) : SearchUiAction()
+    data class Scroll(val query: String) : SearchUiAction()
 }
 
-data class MediaUiState(
-    val sortType: Int,
-    val currentSortType: Int,
+data class SearchUiState(
+    val query: String,
+    val currentQuery: String,
 )
-
-sealed class MediaModel {
-    data class Item(val mediaData: MediaData) : MediaModel()
-    data class Header(val mediaHeader: MediaHeader) : MediaModel()
-}

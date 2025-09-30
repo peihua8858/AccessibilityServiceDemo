@@ -30,6 +30,7 @@ object QueryType {
     const val QUERY_TYPE_VIDEO = 3
     const val QUERY_TYPE_DOCUMENT = 4
     const val QUERY_TYPE_ZIP = 5
+    const val QUERY_TYPE_SEARCH = 6
 }
 
 abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewModel(application) {
@@ -39,8 +40,9 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         const val QUERY_TYPE_VIDEO = QueryType.QUERY_TYPE_VIDEO
         const val QUERY_TYPE_DOCUMENT = QueryType.QUERY_TYPE_DOCUMENT
         const val QUERY_TYPE_ZIP = QueryType.QUERY_TYPE_ZIP
+        const val QUERY_TYPE_SEARCH = QueryType.QUERY_TYPE_SEARCH
         const val COLUMN_COUNT = "count"
-        val ORDER_BY = MediaStore.MediaColumns.DATE_MODIFIED + " DESC"
+        const val ORDER_BY = MediaStore.MediaColumns.DATE_MODIFIED + " DESC"
 
         /**
          * A list of which columns to return. Passing null will return all columns, which is inefficient.
@@ -89,7 +91,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         offset: Int = 1,
         limit: Int = Int.MAX_VALUE,
         orderBy: String = ORDER_BY,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> T?,
     ): ArrayList<T> {
         val uri = when (queryType) {
             QUERY_TYPE_IMAGE -> {
@@ -107,7 +109,11 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
                 else MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             }
 
-            QUERY_TYPE_ZIP, QUERY_TYPE_DOCUMENT -> MediaStore.Files.getContentUri("external")
+            QUERY_TYPE_ZIP,
+            QUERY_TYPE_DOCUMENT,
+            QUERY_TYPE_SEARCH,
+                -> MediaStore.Files.getContentUri("external")
+
             else -> MediaStore.Files.getContentUri("external")
         }
         return queryCursor(uri, offset, limit, orderBy, convert = convert)
@@ -118,7 +124,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         offset: Int = 1,
         limit: Int = Int.MAX_VALUE,
         orderBy: String = ORDER_BY,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> T?,
     ): ArrayList<T> {
         val result = arrayListOf<T>()
         val orderBy = orderBy.ifEmpty { ORDER_BY }
@@ -135,7 +141,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
                     val formatTime = (dateModified * 1000).formatPictureDate()
                     dLog { ">>>>>formatTime:$formatTime" }
                     dLog { ">>>>>path:$path,\nfileName:$fileName,\nfileSize:$fileSize,\ndateModified:$dateModified" }
-                    convert(it, result, path, fileName, formatTime, dateModified, fileSize)
+                    convert(it, result, path, fileName, formatTime, dateModified, fileSize)?.let { r -> result.add(r) }
                 }
             }
         }
@@ -143,11 +149,11 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         return result
     }
 
-    val selection: String?
+    open val selection: String?
         get() {
             return null
         }
-    val selectionArgs: Array<String>?
+    open val selectionArgs: Array<String>?
         get() = null
 
     fun queryArgsBundle(orderBy: String, offset: Int, limit: Int): Bundle {
@@ -214,7 +220,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         offset: Int = 1,
         limit: Int = Int.MAX_VALUE,
         @SortType sortType: Int,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> T?,
     ): ArrayList<T> {
         val orderBy = createOrderBy(sortType)
         return queryCursor(queryType, offset, limit, orderBy, convert)
@@ -236,7 +242,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         queryType: Int,
         offset: Int = 1,
         limit: Int = Int.MAX_VALUE,
-        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> Unit,
+        convert: (Cursor, ArrayList<T>, String, String, String, Long, Long) -> T?,
     ): ArrayList<T> {
         return queryCursor(queryType, offset, limit, ORDER_BY, convert)
     }
@@ -274,6 +280,7 @@ open class BaseMediaViewModel(application: Application) : BaseQueryViewModel<Med
                 titleArray.add(formatTime)
                 result.add(photoHeader)
             }
+            null
         }
         return mediaDataSize to result.sortList(sortType)
     }

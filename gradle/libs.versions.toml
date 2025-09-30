@@ -69,6 +69,7 @@ media3Ui = "1.8.0"
 material3Adaptive = "1.0.0-alpha06"
 adaptive = "1.1.0"
 adaptiveNavgationSuite = "1.4.0"
+material3Version = "1.4.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -173,6 +174,7 @@ androidx-compose-adaptive-layout = { group = "androidx.compose.material3.adaptiv
 androidx-compose-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "adaptive" }
 #androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0
 androidx-compose-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite-android", version.ref = "adaptiveNavgationSuite" }
+material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
