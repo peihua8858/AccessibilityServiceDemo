@@ -2,13 +2,18 @@ package com.peihua.touchmonitor.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +30,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.ServiceApplication
@@ -50,6 +56,7 @@ import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
 import com.peihua.touchmonitor.ui.screen.settings.AboutScreen
 import com.peihua.touchmonitor.ui.screen.settings.SettingsScreen
 import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
+import com.peihua.touchmonitor.ui.screen.share.ShareScreen
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
@@ -199,6 +206,7 @@ fun AppNavHost(
     defaultPage: AppRouter,
 ) {
     NavHost(
+        modifier = modifier,
         navController = navController, startDestination = defaultPage.route,
         enterTransition = {
             slideIn(tween(400, easing = LinearOutSlowInEasing)) { fullSize ->
@@ -206,7 +214,7 @@ fun AppNavHost(
             }
         },
         exitTransition = {
-            fadeOut(animationSpec = tween(400))
+            fadeOut(animationSpec =   tween(400))
         },
         popEnterTransition = {
             fadeIn(animationSpec = tween(400))
@@ -313,6 +321,10 @@ fun AppNavHost(
         composable(route = AppRouter.AboutScreen.route) {
             AboutScreen(modifier)
         }
-
+        dialog(route = AppRouter.ShareScreen.route) {
+            val filePath = it.savedStateHandle.get<String>("filePath") ?: ""
+            dLog { "PhotoPreviewScreen>>>>>>>filePath:$filePath" }
+            ShareScreen(modifier.background(Color.Transparent),filePath)
+        }
     }
 }

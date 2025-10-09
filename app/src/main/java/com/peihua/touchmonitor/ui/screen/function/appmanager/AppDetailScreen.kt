@@ -26,6 +26,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +42,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
+import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.IconText
 import com.peihua.touchmonitor.ui.components.LoadingRoundView
@@ -48,6 +50,7 @@ import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.TitleValueView
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
+import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
@@ -58,6 +61,7 @@ import com.peihua.touchmonitor.utils.shareCertainFiles
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppDetailScreen(
@@ -331,6 +335,7 @@ fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Un
     // 状态管理
     val progress = remember { mutableFloatStateOf(0f) }
     val showDialog = remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val worker = ExtortWorker(context, item) {
         onStart { /* 可以在这里处理开始状态，比如设置标志或更新 UI */ }
@@ -342,7 +347,10 @@ fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Un
             dLog { "exportApp, save file to $e successful" }
             showDialog.value = false // 隐藏 loading
             if (isShare) {
-                context.shareCertainFiles(file)
+                scope.launch {
+                    navigateTo2(AppRouter.ShareScreen.route, ("filePath" to file.path))
+                }
+//                context.shareCertainFiles(file)
             }
         }
         onProgress { w, total, current ->

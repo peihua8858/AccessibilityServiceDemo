@@ -123,4 +123,5 @@ sealed class AppRouter(
         const val TYPE_ROOT = 1
 
     }
+    data object ShareScreen : AppRouter("share")
 }

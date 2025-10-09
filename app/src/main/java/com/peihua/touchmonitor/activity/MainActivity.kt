@@ -1,21 +1,15 @@
 package com.peihua.touchmonitor.activity
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.AtomicInt
 import com.peihua.touchmonitor.ui.ServiceApp
 import kotlinx.coroutines.delay
 
@@ -26,7 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        window.navigationBarColor = Color.BLACK
+        window.navigationBarColor = android.graphics.Color.BLACK
         // Keep the splash screen visible for this Activity.
         splashScreen.setKeepOnScreenCondition { keepOnScreenCondition.get() }
         var isReady = false
@@ -40,9 +34,5 @@ class MainActivity : ComponentActivity() {
             }
             ServiceApp(Modifier)
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 }

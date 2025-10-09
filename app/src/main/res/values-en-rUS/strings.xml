@@ -150,4 +150,21 @@
 
     <string name="text_stop_running">It has stopped running</string>
     <string name="text_running">Running</string>
+
+    <string name="cptr_pull_to_refresh">Pull down to refresh</string>
+    <string name="cptr_release_to_refresh">Release refresh</string>
+    <string name="cptr_refreshing">Refreshing…</string>
+    <string name="cptr_pull_to_load">pull-up loading</string>
+    <string name="cptr_release_to_load">Release to load more</string>
+    <string name="cptr_loading">Loading…</string>
+    <string name="text_sort_type_date_asc">Sort by file date in ascending order</string>
+    <string name="text_sort_type_date_desc">Sort descending by file date</string>
+    <string name="text_sort_type_name_asc">Sort ascending by file name</string>
+    <string name="text_sort_type_name_desc">Sort descending by file name</string>
+    <string name="text_sort_type_size_asc">Sort ascending by file size</string>
+    <string name="text_sort_type_size_desc">Sort descending by file size</string>
+    <string name="text_all">All</string>
+    <string name="text">Text</string>
+    <string name="text_share_file">Share "%1$s" to</string>
+    <string name="text_more">More</string>
 </resources>

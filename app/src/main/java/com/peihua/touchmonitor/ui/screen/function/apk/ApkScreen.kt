@@ -27,9 +27,12 @@ import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
+import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
+import com.peihua.touchmonitor.ui.navigateTo
+import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.ContextExt.isLandscape
@@ -81,7 +84,8 @@ private fun ApkListScreenContent(
                     .combinedClickable(onClick = {
                         context.installApk(item.path)
                     }, onLongClick = {
-                        context.shareCertainFiles(item.path)
+//                        context.shareCertainFiles(item.path)
+                        navigateTo2(AppRouter.ShareScreen.route, ("filePath" to item.path))
                     }), item, iconSize
             )
         }

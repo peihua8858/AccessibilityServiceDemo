@@ -3,10 +3,16 @@
 
 package com.peihua.touchmonitor.utils
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
 import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
@@ -22,7 +28,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.coroutines.resume
 import kotlin.math.max
-import kotlin.text.substringBeforeLast
+
 
 suspend fun InputStream?.writeToFile(
     file: File?,
