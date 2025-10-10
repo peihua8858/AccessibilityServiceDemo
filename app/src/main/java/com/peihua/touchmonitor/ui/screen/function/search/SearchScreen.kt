@@ -87,7 +87,7 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
                 state = searchState,
                 modifier = Modifier
 //                    .padding(top = dimensionResource(R.dimen.dp_8), bottom = dimensionResource(R.dimen.dp_8))
-                    .height(dimensionResource(id = R.dimen.dp_40))
+//                    .height(dimensionResource(id = R.dimen.dp_40))
                     .fillMaxWidth(),
                 inputField = {
                     SearchBarDefaults.InputField(

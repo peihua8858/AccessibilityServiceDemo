@@ -1,5 +1,6 @@
 package com.peihua.touchmonitor.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
+import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
@@ -166,7 +168,7 @@ fun AppTopBar(
         title = title,
         navigationIcon = navigationIcon,
         actions = actions,
-        modifier = modifier.height(dimensionResource(id = R.dimen.dp_56)).surface(0.dp, elevation = elevation),
+        modifier = modifier.surface(0.dp, elevation = elevation),
         colors = colors
     )
 }
