@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -81,6 +82,7 @@ object SearchBarDefaults {
         onExpandedChange: (Boolean) -> Unit,
         modifier: Modifier = Modifier,
         enabled: Boolean = true,
+        textStyle: TextStyle = LocalTextStyle.current,
         placeholder: @Composable (() -> Unit)? = null,
         leadingIcon: @Composable (() -> Unit)? = null,
         trailingIcon: @Composable (() -> Unit)? = null,
@@ -116,7 +118,7 @@ object SearchBarDefaults {
              }*/,
             enabled = enabled,
             singleLine = true,
-            textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor)),
+            textStyle = textStyle.merge(TextStyle(color = textColor)),
             cursorBrush = SolidColor(colors.cursorColor),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
@@ -130,6 +132,7 @@ object SearchBarDefaults {
                         singleLine = true,
                         visualTransformation = VisualTransformation.None,
                         interactionSource = interactionSource,
+                        contentPadding= PaddingValues(0.dp),
                         placeholder = placeholder,
                         leadingIcon =
                             leadingIcon?.let { leading ->
@@ -141,7 +144,6 @@ object SearchBarDefaults {
                             },
                         shape = RoundedCornerShape(25),
                         colors = colors,
-                        contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(),
                         container = {
                             val containerColor =
                                 animateColorAsState(

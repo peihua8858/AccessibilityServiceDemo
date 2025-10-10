@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -165,7 +166,7 @@ fun AppTopBar(
         title = title,
         navigationIcon = navigationIcon,
         actions = actions,
-        modifier = modifier.surface(0.dp, elevation = elevation),
+        modifier = modifier.height(dimensionResource(id = R.dimen.dp_56)).surface(0.dp, elevation = elevation),
         colors = colors
     )
 }

@@ -17,10 +17,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -37,6 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,6 +54,9 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.search.SearchBarDefaults
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
+import com.peihua.touchmonitor.ui.theme.labelLargeNormal
+import com.peihua.touchmonitor.ui.theme.labelMediumNormal
+import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.items
@@ -78,10 +85,15 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
         title = {
             TopSearchBar(
                 state = searchState,
+                modifier = Modifier
+//                    .padding(top = dimensionResource(R.dimen.dp_8), bottom = dimensionResource(R.dimen.dp_8))
+                    .height(dimensionResource(id = R.dimen.dp_40))
+                    .fillMaxWidth(),
                 inputField = {
                     SearchBarDefaults.InputField(
                         query = input.value, modifier = Modifier
                             .fillMaxWidth(),
+                        textStyle = MaterialTheme.typography.labelLargeNormal,
                         onQueryChange = {
                             input.value = it
                         },
@@ -114,9 +126,7 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
 
                         }, expanded = true
                     )
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+                })
         },
         navigateUp = { popBackStack() },
     ) {

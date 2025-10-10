@@ -72,7 +72,7 @@ fun Typography(scale: Float = 1f): Typography {
         ),
         bodySmall = typography.bodySmall.copy(
             fontSize = dimensionSpResource(R.dimen.sp_12) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
+            lineHeight = dimensionSpResource(id = R.dimen.sp_0_1),
             letterSpacing = dimensionSpResource(id = R.dimen.sp_0_4)
         ),
         labelLarge = typography.labelLarge.copy(
@@ -93,14 +93,14 @@ fun Typography(scale: Float = 1f): Typography {
     )
 }
 
-@get:Composable
+//@get:Composable
 val Typography.labelSmallNormal: TextStyle
     get() = labelSmall.copy(fontWeight = FontWeight.Normal)
 
-@get:Composable
+//@get:Composable
 val Typography.labelMediumNormal: TextStyle
     get() = labelMedium.copy(fontWeight = FontWeight.Normal)
-@get:Composable
+//@get:Composable
 val Typography.labelLargeNormal: TextStyle
     get() = labelLarge.copy(fontWeight = FontWeight.Normal)
 
