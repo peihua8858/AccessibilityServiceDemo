@@ -2,6 +2,7 @@ package com.peihua.touchmonitor.ui.screen.function.zip
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,9 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
+import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.forEach
@@ -88,10 +91,13 @@ fun ZipScreenContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
+                        .combinedClickable(onClick = {
                             context.openWithFile(mediaData.filePath)
-//                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
-                        }
+                        }, onLongClick = {
+                            if (mediaData.isFile) {
+                                navigateTo2(AppRouter.ShareScreen.route, ("filePath" to mediaData.filePath))
+                            }
+                        })
                         .padding(vertical = dp8),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

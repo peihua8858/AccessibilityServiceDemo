@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -43,6 +44,7 @@ fun <T> MultiStateScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (T) -> Unit,
 ) {
     MultiStateScreen(
@@ -54,6 +56,7 @@ fun <T> MultiStateScreen(
         navigationIcon = navigationIcon,
         actions = actions,
         hostState = hostState,
+        header = header,
         content = content
     )
 }
@@ -70,6 +73,7 @@ fun <T> MultiStateScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (T) -> Unit,
 ) {
     Toolbar(
@@ -80,7 +84,7 @@ fun <T> MultiStateScreen(
         navigationIcon = navigationIcon,
         hostState = hostState,
     ) {
-        MultiStateScreen(modifier, result, refresh, content)
+        MultiStateScreen(modifier = modifier, result = result, refresh = refresh, header = header, content = content)
     }
 }
 
@@ -89,35 +93,46 @@ fun <T> MultiStateScreen(
     modifier: Modifier,
     result: ResultData<T>,
     refresh: () -> Unit,
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (T) -> Unit,
 ) {
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dp_16))
-    ) {
-        when (result) {
-            is ResultData.Success -> {
-                val data = result.data
-                dLog { ">>>>>data:${data}" }
-                if (data is List<*> && data.isEmpty()) {
-                    dLog { ">>>>>data:${data.size}" }
-                    EmptyView(modifier, retry = refresh)
-                } else {
-                    content(data)
+    val dp16 = dimensionResource(R.dimen.dp_16)
+    Column {
+        if (header != null) {
+            header()
+        }
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(
+                    start = dp16,
+                    top = if (header == null) dp16 else 0.dp,
+                    end = dp16, bottom = dp16
+                )
+        ) {
+            when (result) {
+                is ResultData.Success -> {
+                    val data = result.data
+                    dLog { ">>>>>data:${data}" }
+                    if (data is List<*> && data.isEmpty()) {
+                        dLog { ">>>>>data:${data.size}" }
+                        EmptyView(modifier, retry = refresh)
+                    } else {
+                        content(data)
+                    }
                 }
-            }
 
-            is ResultData.Failure -> {
-                ErrorView(retry = refresh)
-            }
+                is ResultData.Failure -> {
+                    ErrorView(retry = refresh)
+                }
 
-            is ResultData.Initialize -> {
-                refresh()
-            }
+                is ResultData.Initialize -> {
+                    refresh()
+                }
 
-            is ResultData.Starting -> {
-                LoadingViewFillMaxSize()
+                is ResultData.Starting -> {
+                    LoadingViewFillMaxSize()
+                }
             }
         }
     }
@@ -135,6 +150,7 @@ fun <T : Any> MultiStatePagingScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     MultiStatePagingScreen(
@@ -146,6 +162,7 @@ fun <T : Any> MultiStatePagingScreen(
         navigationIcon = navigationIcon,
         actions = actions,
         hostState = hostState,
+        header = header,
         content = content
     )
 }
@@ -162,6 +179,7 @@ fun <T : Any> MultiStatePagingScreen(
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     Toolbar(
@@ -172,7 +190,7 @@ fun <T : Any> MultiStatePagingScreen(
         navigationIcon = navigationIcon,
         hostState = hostState
     ) {
-        MultiStatePagingScreen(modifier, result, isUserRefresh, content)
+        MultiStatePagingScreen(modifier = modifier, result = result, isUserRefresh = isUserRefresh, header = header, content = content)
     }
 }
 
@@ -181,50 +199,64 @@ fun <T : Any> MultiStatePagingScreen(
     modifier: Modifier,
     result: LazyPagingItems<T>,
     isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
+    header: (@Composable () -> Unit)? = null,
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     val isRefreshing = result.loadState.refresh is LoadState.Loading
     val refreshing =
         rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
-    PullToRefresh(
-        state = refreshing,
-        onRefresh = {
-            isUserRefresh.value = true
-            result.refresh()
-        },
+    val dp16 = dimensionResource(R.dimen.dp_16)
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
-        val loadState: CombinedLoadStates = result.loadState
-        when (loadState.refresh) {
-            is LoadState.Loading -> {
-                if (result.itemCount == 0) {
-                    LoadingViewFillMaxSize()
-                }
-                content(result)
-                return@PullToRefresh
-            }
-
-            is LoadState.Error -> {
-                isUserRefresh.value = false
-                if (result.itemCount == 0) {
-                    ErrorView(retry = result::retry)
-                } else {
-                    ShowToast(R.string.text_request_fail)
-                }
-            }
-
-            else -> {
-                isUserRefresh.value = false
-            }
+        if (header != null) {
+            header()
         }
-        dLog { ">>>>>result:${result}" }
-        if (result.itemCount == 0) {
-            dLog { ">>>>>result:${result.itemCount}" }
-            EmptyView(modifier, retry = result::refresh)
-        } else {
-            content(result)
+        PullToRefresh(
+            state = refreshing,
+            onRefresh = {
+                isUserRefresh.value = true
+                result.refresh()
+            },
+            modifier = modifier
+                .fillMaxSize()
+                .padding(
+                    start = dp16,
+                    top = if (header == null) dp16 else 0.dp,
+                    end = dp16, bottom = dp16
+                )
+        ) {
+            val loadState: CombinedLoadStates = result.loadState
+            when (loadState.refresh) {
+                is LoadState.Loading -> {
+                    if (result.itemCount == 0) {
+                        LoadingViewFillMaxSize()
+                    }
+                    content(result)
+                    return@PullToRefresh
+                }
+
+                is LoadState.Error -> {
+                    isUserRefresh.value = false
+                    if (result.itemCount == 0) {
+                        ErrorView(retry = result::retry)
+                    } else {
+                        ShowToast(R.string.text_request_fail)
+                    }
+                }
+
+                else -> {
+                    isUserRefresh.value = false
+                }
+            }
+            dLog { ">>>>>result:${result}" }
+            if (result.itemCount == 0) {
+                dLog { ">>>>>result:${result.itemCount}" }
+                EmptyView(modifier, retry = result::refresh)
+            } else {
+                content(result)
+            }
         }
     }
 }

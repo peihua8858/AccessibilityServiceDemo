@@ -2,9 +2,9 @@ package com.peihua.touchmonitor.ui.screen.share
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +28,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.LogCat
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.fileProvider
 import com.peihua.touchmonitor.utils.isLandscape
@@ -42,8 +43,9 @@ private class ShareModel(val name: String, val icon: Drawable, val packageName: 
 fun ShareScreen(modifier: Modifier, filePath: String) {
     val context = LocalContext.current
     val mimeType = filePath.mimeTypeFromFilePath
+    dLog { "ShareScreen mimeType:$mimeType, file:${filePath}" }
     val sharingIntent = Intent(Intent.ACTION_SEND)
-    sharingIntent.setType(mimeType)
+    sharingIntent.setType(mimeType ?: "*/*")
     val pm = context.packageManager
     val activityList = pm.queryIntentActivities(sharingIntent, 0)
     val shareDatas = arrayListOf<ShareModel>()
@@ -69,6 +71,8 @@ fun ShareScreen(modifier: Modifier, filePath: String) {
             LazyVerticalGrid(
                 modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16)),
                 columns = GridCells.Fixed(if (context.isLandscape) 6 else 3),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dp_16)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dp_16))
             ) {
                 itemsIndexed(shareDatas) { index, item ->
                     ShareItem(index, item) {

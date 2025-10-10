@@ -1,6 +1,8 @@
 package com.peihua.touchmonitor.viewmodel
 
 import android.app.Application
+import android.os.Environment
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import com.fz.common.array.isNonEmpty
@@ -13,7 +15,23 @@ import java.io.File
 
 class StorageViewModel(application: Application) : AndroidViewModel(application) {
     val storageState = mutableStateOf<ResultData<MutableList<MediaData>>>(ResultData.Initialize())
-    fun request(filePath: String) {
+    private val homeDir = Environment.getExternalStorageDirectory().absolutePath
+    val folderState = mutableStateListOf<Pair<String, String>>()
+    fun request(filePath: String, directory: String) {
+        if (folderState.isEmpty() || filePath == homeDir) {
+            folderState.clear()
+            folderState.add("Home" to filePath)
+        }
+        if (!folderState.contains(directory to filePath)) {
+            folderState.add(directory to filePath)
+        } else {
+            val cIndex = folderState.indexOf(directory to filePath)
+            var index = folderState.size - 1
+            while (index > cIndex) {
+                folderState.removeAt(index)
+                index--
+            }
+        }
         request(storageState) {
             val result = arrayListOf<MediaData>()
             val file = File(filePath)
@@ -27,8 +45,9 @@ class StorageViewModel(application: Application) : AndroidViewModel(application)
                                 filePath = item.absolutePath,
                                 fileSize = item.formatSize(),
                                 dateValue = item.lastModified(),
-                                dateFormat=item.lastModified().formatToDate("yyyy-MM-dd HH:mm:ss"),
-                                isDirectory = item.isDirectory
+                                dateFormat = item.lastModified().formatToDate("yyyy-MM-dd HH:mm:ss"),
+                                isDirectory = item.isDirectory,
+                                isFile = item.isFile
                             )
                         )
                     }
