@@ -87,14 +87,22 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
                         },
                         leadingIcon = {
                             Icon(
-                                modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
+                                modifier = Modifier
+                                    .size(dimensionResource(id = R.dimen.dp_24))
+                                    .clickable {
+                                        search(input.value)
+                                    },
                                 painter = painterResource(id = R.drawable.ic_search_24),
                                 contentDescription = ""
                             )
                         },
                         trailingIcon = {
                             Icon(
-                                modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
+                                modifier = Modifier
+                                    .size(dimensionResource(id = R.dimen.dp_24))
+                                    .clickable {
+                                        input.value = ""
+                                    },
                                 painter = painterResource(id = R.drawable.ic_clear_24),
                                 contentDescription = ""
                             )
@@ -102,9 +110,10 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
                         onSearch = {
                             input.value = it
                             search(it)
-                        },onExpandedChange ={
+                        }, onExpandedChange = {
 
-                        },expanded = true)
+                        }, expanded = true
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             )

@@ -47,10 +47,10 @@ fun StorageScreen(
     val headerResult = viewModel.folderState
     //请求数据
     val refresh = {
-        viewModel.request(path, path.subSequence(path.lastIndexOf("/") + 1, path.length).toString())
+        viewModel.request(path)
     }
     val changeFolder = { nextPath: String ->
-        viewModel.request(nextPath, nextPath.subSequence(nextPath.lastIndexOf("/") + 1, nextPath.length).toString())
+        viewModel.request(nextPath)
     }
     MultiStateScreen(
         modifier, title, result, refresh,

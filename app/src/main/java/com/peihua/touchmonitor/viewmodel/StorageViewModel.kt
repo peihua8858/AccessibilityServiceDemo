@@ -17,6 +17,11 @@ class StorageViewModel(application: Application) : AndroidViewModel(application)
     val storageState = mutableStateOf<ResultData<MutableList<MediaData>>>(ResultData.Initialize())
     private val homeDir = Environment.getExternalStorageDirectory().absolutePath
     val folderState = mutableStateListOf<Pair<String, String>>()
+    fun request(filePath: String) {
+        val directory = filePath.subSequence(filePath.lastIndexOf("/") + 1, filePath.length).toString()
+        request(filePath, directory)
+    }
+
     fun request(filePath: String, directory: String) {
         if (folderState.isEmpty() || filePath == homeDir) {
             folderState.clear()
