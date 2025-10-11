@@ -1,13 +1,19 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/ic_launcher_background" />
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/dp_16" />
+            <solid android:color="#3C7FEC" />
+        </shape>
+    </item>
     <item
-        android:bottom="@dimen/dp_20"
-        android:left="@dimen/dp_20"
-        android:right="@dimen/dp_20"
-        android:top="@dimen/dp_20">
+        android:start="@dimen/dp_80"
+        android:end="@dimen/dp_80"
+        android:top="@dimen/dp_80"
+        android:bottom="@dimen/dp_80"
+        android:gravity="center">
         <vector
-            android:width="@dimen/dp_120"
-            android:height="@dimen/dp_120"
+            android:width="@dimen/dp_96"
+            android:height="@dimen/dp_96"
             android:viewportWidth="1024"
             android:viewportHeight="1024">
 

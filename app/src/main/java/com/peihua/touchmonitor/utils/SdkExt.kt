@@ -19,6 +19,8 @@ inline val isAtLeastS: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 inline val isAtLeastSv2: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2
+inline val isAtLeastT: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
 /**
  * [Build.VERSION.SDK_INT]>= Android 9
@@ -38,4 +40,6 @@ inline val isAtLeastR: Boolean
 inline val isM: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 inline val isN: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+inline val isNougat: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
