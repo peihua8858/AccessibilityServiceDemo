@@ -35,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -43,6 +42,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.IconText
 import com.peihua.touchmonitor.ui.components.LoadingRoundView
@@ -348,7 +348,7 @@ fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Un
             showDialog.value = false // 隐藏 loading
             if (isShare) {
                 scope.launch {
-                    navigateTo2(AppRouter.ShareScreen.route, ("filePath" to file.path))
+                    navigateTo2(Dialog.ShareDialog.route, ("filePath" to file.path))
                 }
 //                context.shareCertainFiles(file)
             }
@@ -370,7 +370,7 @@ fun ExportApp(item: AppInfoModel, isShare: Boolean = false, onComplete: () -> Un
 
     // 显示 loading 弹窗
     if (showDialog.value) {
-        Dialog(onDismissRequest = {
+        androidx.compose.ui.window.Dialog(onDismissRequest = {
             showDialog.value = false // 用户取消时的处理
             worker.cancel() // 取消 worker
             callback.remove()

@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
@@ -117,7 +118,7 @@ fun StorageScreenContent(
                             }
                         }, onLongClick = {
                             if (photo.isFile) {
-                                navigateTo2(AppRouter.ShareScreen.route, ("filePath" to photo.filePath))
+                                navigateTo2(Dialog.ShareDialog.route, ("filePath" to photo.filePath))
                             }
                         })
                         .padding(vertical = dp8),

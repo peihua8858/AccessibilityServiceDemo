@@ -28,6 +28,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -85,7 +86,7 @@ private fun ApkListScreenContent(
                         context.installApk(item.path)
                     }, onLongClick = {
 //                        context.shareCertainFiles(item.path)
-                        navigateTo2(AppRouter.ShareScreen.route, ("filePath" to item.path))
+                        navigateTo2(Dialog.ShareDialog.route, ("filePath" to item.path))
                     }), item, iconSize
             )
         }

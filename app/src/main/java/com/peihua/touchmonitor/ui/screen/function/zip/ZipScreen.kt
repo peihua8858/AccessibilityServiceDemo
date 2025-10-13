@@ -30,6 +30,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
@@ -95,7 +96,7 @@ fun ZipScreenContent(
                             context.openWithFile(mediaData.filePath)
                         }, onLongClick = {
                             if (mediaData.isFile) {
-                                navigateTo2(AppRouter.ShareScreen.route, ("filePath" to mediaData.filePath))
+                                navigateTo2(Dialog.ShareDialog.route, ("filePath" to mediaData.filePath))
                             }
                         })
                         .padding(vertical = dp8),

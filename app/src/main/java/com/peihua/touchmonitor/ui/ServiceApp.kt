@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
@@ -33,11 +34,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
+import com.peihua.touchmonitor.ui.screen.MessageDialog
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
@@ -45,6 +48,9 @@ import com.peihua.touchmonitor.ui.screen.function.audio.AudioPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.audio.AudioScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
 import com.peihua.touchmonitor.ui.screen.function.collect.CollectScreen
+import com.peihua.touchmonitor.ui.screen.function.devices.DeviceInfoScreen
+import com.peihua.touchmonitor.ui.screen.function.devices.ScreenDeadPixelsScreen
+import com.peihua.touchmonitor.ui.screen.function.devices.ScreenTimeScreen
 import com.peihua.touchmonitor.ui.screen.function.document.DocumentScreen
 import com.peihua.touchmonitor.ui.screen.function.download.DownloadScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
@@ -89,14 +95,15 @@ fun navigateTo(route: String, params: Pair<String, String>) {
     appRouter.navigate(route.replace("{${params.first}}", params.second))
 }
 
-fun navigateTo2(route: String, params: Pair<String, String>) {
+fun navigateTo2(route: String,vararg params: Pair<String, Any>) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(route)
     appRouter.currentBackStackEntry?.savedStateHandle?.apply {
-        this[params.first] = params.second
+        params.forEach {
+            this[it.first] = it.second
+        }
     }
 }
-
 fun navigateTo(directions: NavDirections, navigatorExtras: Navigator.Extras) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(directions, navigatorExtras)
@@ -214,7 +221,7 @@ fun AppNavHost(
             }
         },
         exitTransition = {
-            fadeOut(animationSpec =   tween(400))
+            fadeOut(animationSpec = tween(400))
         },
         popEnterTransition = {
             fadeIn(animationSpec = tween(400))
@@ -321,10 +328,26 @@ fun AppNavHost(
         composable(route = AppRouter.AboutScreen.route) {
             AboutScreen(modifier)
         }
-        dialog(route = AppRouter.ShareScreen.route) {
-            val filePath = it.savedStateHandle.get<String>("filePath") ?: ""
-            dLog { "PhotoPreviewScreen>>>>>>>filePath:$filePath" }
-            ShareScreen(modifier.background(Color.Transparent),filePath)
+        composable(route = AppRouter.ScreenDeadPixelsScreen.route) {
+            ScreenDeadPixelsScreen(modifier)
+        }
+        composable(route = AppRouter.ScreenTimeScreen.route) {
+            ScreenTimeScreen(modifier)
+        }
+        dialog(route = Dialog.ShareDialog.route) {
+            val filePath = it.savedStateHandle.get<String>(Dialog.ShareDialog.KEY_FILE_PATH) ?: ""
+            dLog { "ShareScreen>>>>>>>filePath:$filePath" }
+            ShareScreen(modifier.background(Color.Transparent), filePath)
+        }
+        dialog(route = Dialog.DeviceInfoScreen.route) {
+            DeviceInfoScreen(modifier.background(Color.Transparent))
+        }
+        dialog(route = Dialog.MessageDialog.route) {
+            val title = it.savedStateHandle.get<String>(Dialog.MessageDialog.KEY_TITLE) ?: ""
+            val content = it.savedStateHandle.get<String>(Dialog.MessageDialog.KEY_MESSAGE) ?: ""
+            val onPositive = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_POSITIVE) 
+            val onNegative = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_NEGATIVE)
+            MessageDialog(modifier.background(Color.Transparent), title, content, onPositive, onNegative)
         }
     }
 }

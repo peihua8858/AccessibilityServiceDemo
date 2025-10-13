@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LaunchedEffect(null) {
-                delay(3000)
+                delay(300)
                 keepOnScreenCondition.compareAndSet(true, false)
             }
             ServiceApp(Modifier)

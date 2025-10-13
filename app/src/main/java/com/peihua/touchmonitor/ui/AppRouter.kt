@@ -123,5 +123,24 @@ sealed class AppRouter(
         const val TYPE_ROOT = 1
 
     }
-    data object ShareScreen : AppRouter("share")
+    data object ScreenDeadPixelsScreen : AppRouter("screenDeadPixels")
+
+    data object ScreenTimeScreen : AppRouter("screenTime")
+
+}
+
+/**
+ * 弹窗
+ */
+sealed class Dialog(route: String) : AppRouter(route) {
+    data object ShareDialog : Dialog("shareDialog"){
+        const val KEY_FILE_PATH = "filePath"
+    }
+    data object DeviceInfoScreen : Dialog("deviceInfo")
+    data object MessageDialog : Dialog("messageDialog"){
+        const val KEY_TITLE = "title"
+        const val KEY_MESSAGE = "message"
+        const val KEY_ON_POSITIVE = "onPositive"
+        const val KEY_ON_NEGATIVE = "onNegative"
+    }
 }

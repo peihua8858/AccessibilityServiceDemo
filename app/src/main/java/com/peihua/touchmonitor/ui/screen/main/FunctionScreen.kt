@@ -23,12 +23,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.ExtendedListTileNoBorder
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.Toolbar
@@ -81,7 +83,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         stringResource(R.string.text_angle_meter) to null,
                         stringResource(R.string.text_simple_paint) to null,
                         stringResource(R.string.text_led_subtitle) to null,
-                        stringResource(R.string.text_time_screen) to null,
+                        stringResource(R.string.text_time_screen) to AppRouter.ScreenTimeScreen,
                         stringResource(R.string.text_daily_60_seconds_early_report) to null,
                     ),
                     textColor = textColor,
@@ -109,8 +111,8 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier,
                     items = listOf(
                         stringResource(R.string.text_app_kit) to AppRouter.AppManagerScreen,
-                        stringResource(R.string.text_check_screen_bad_point) to null,
-                        stringResource(R.string.text_see_device_info) to null,
+                        stringResource(R.string.text_check_screen_bad_point) to AppRouter.ScreenDeadPixelsScreen,
+                        stringResource(R.string.text_see_device_info) to Dialog.DeviceInfoScreen,
                         stringResource(R.string.text_desktop_video_wallpaper) to null,
                         stringResource(R.string.text_system_font_size_adjustment) to null,
                     ),
@@ -237,6 +239,7 @@ private fun FlowRowList(
     overflow: FlowRowOverflow = FlowRowOverflow.Visible,
     onItemClick: (Pair<String, AppRouter?>, Int) -> Boolean = { _, _ -> false },
 ) {
+    val context = LocalContext.current
     FlowRow(
         modifier = modifier.padding(
             start = dimensionResource(id = R.dimen.dp_8),
