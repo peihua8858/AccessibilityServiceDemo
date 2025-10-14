@@ -167,4 +167,5 @@
     <string name="text">Text</string>
     <string name="text_share_file">Share "%1$s" to</string>
     <string name="text_more">More</string>
+    <string name="text_foreground_service_permission_tips">Please authorize the front-end service permission. If not granted, the service may be stopped by the system at any time.</string>
 </resources>

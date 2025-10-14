@@ -180,6 +180,7 @@
     <string name="text_xml" translatable="false">XML</string>
     <string name="text_share_file">将“%1$s”分享到</string>
     <string name="text_more">更多</string>
+    <string name="text_foreground_service_permission_tips">请授权前台服务权限，如果不授予，服务可能随时被系统停止</string>
 
 
 </resources>

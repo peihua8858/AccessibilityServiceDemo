@@ -280,8 +280,10 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
         if (isUpsideDownCake) {
-            if (checkPermission(android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC)) {
-                startForeground(0x195288, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            dLog { "startForeground isUpsideDownCake:true" }
+            if (checkPermission(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK)) {
+                dLog { "startForeground ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK" }
+                startForeground(0x195288, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
             }
         } else {
             startForeground(0x195288, notification)

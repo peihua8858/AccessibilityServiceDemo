@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui.screen.function.autoScroller.settings
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -44,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
@@ -192,12 +194,16 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     Icon(
                         imageVector = Icons.Default.Info,
                         tint = colorScheme.error,
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.dp_10)),
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.dp_18)),
                         contentDescription = null
                     )
                     ScaleText(
                         text = stringResource(R.string.sliding_speed_tips),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_8),
+                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                        textAlign = TextAlign.Start,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(),
                         color = colorScheme.error
                     )
                 }

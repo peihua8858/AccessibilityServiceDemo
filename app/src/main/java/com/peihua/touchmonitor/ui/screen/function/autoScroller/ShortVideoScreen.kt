@@ -1,9 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.function.autoScroller
 
-import android.app.Fragment
-import android.content.Context
 import android.content.Intent
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.fz.common.utils.showToast
@@ -59,7 +55,6 @@ import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.isUpsideDownCake
 import com.peihua.touchmonitor.utils.startAccessibilitySettings
-import com.peihua.touchmonitor.utils.writeLogFile
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import com.peihua8858.permissions.core.requestPermission
 import kotlinx.coroutines.launch
@@ -316,15 +311,15 @@ private fun ShortVideoScreenContent(
             onClick = {
                 saveDb(selectedOption.value, false)
                 if (isUpsideDownCake) {
-                    (context as ComponentActivity).requestPermission(android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC) {
+                    (context as ComponentActivity).requestPermission(android.Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) {
                         onDenied {
                             dLog { "MainScreen>>>>>>>onDenied" }
-                            context.showToast("请授权前台服务权限，如果不授予，可能无法使用刷屏器功能")
+                            context.showToast(R.string.text_foreground_service_permission_tips)
                             context.startAccessibilitySettings()
                         }
                         onShowRationale {
                             dLog { "MainScreen>>>>>>>onShowRationale" }
-                            context.showToast("请授权前台服务权限，如果不授予，可能无法使用刷屏器功能")
+                            context.showToast(R.string.text_foreground_service_permission_tips)
                             context.startAccessibilitySettings()
                         }
                         onGranted {
