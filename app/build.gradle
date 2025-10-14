@@ -18,8 +18,8 @@ android {
         applicationId "com.peihua.toutchmonitor"
         minSdk 24
         targetSdk 35
-        versionCode 10
-        versionName "1.0.3-alpha7"
+        versionCode 11
+        versionName "1.0.3-alpha8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

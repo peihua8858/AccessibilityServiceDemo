@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -35,6 +37,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
@@ -78,7 +81,9 @@ fun NavigationBarItem(
     onClick: () -> Unit,
     colors: NavigationBarItemColors = NavigationBarItemDefaults.colors(),
 ) {
+    dLog { "NavigationBarItem navigationSuiteType: $navigationSuiteType" }
     when (navigationSuiteType) {
+        NavigationSuiteType.NavigationBar,
         NavigationSuiteType.ShortNavigationBarCompact,
         NavigationSuiteType.ShortNavigationBarMedium,
             -> {
@@ -92,7 +97,7 @@ fun NavigationBarItem(
             ) {
                 Icon(
                     modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dp_24)),
+                        .size(dimensionResource(id = R.dimen.dp_20)),
                     painter = painter,
                     tint = if (selected) colors.selectedIconColor else colors.unselectedIconColor,
                     contentDescription = title
@@ -106,7 +111,35 @@ fun NavigationBarItem(
             }
         }
 
-        NavigationSuiteType.WideNavigationRailCollapsed -> {
+        NavigationSuiteType.WideNavigationRailExpanded,
+        NavigationSuiteType.NavigationDrawer,-> {
+            val dp56 = dimensionResource(id = R.dimen.dp_24)
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(id = R.dimen.dp_36))
+                    .clickable(onClick = onClick),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(dp56),
+                    painter = painter,
+                    tint = if (selected) colors.selectedIconColor else colors.unselectedIconColor,
+                    contentDescription = title
+                )
+                Text(
+                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dp_8)),
+                    text = title,
+                    fontSize = dimensionSpResource(id = R.dimen.sp_16),
+                    color = if (selected) colors.selectedTextColor else colors.unselectedTextColor,
+                )
+            }
+        }
+
+        NavigationSuiteType.WideNavigationRailCollapsed,
+        NavigationSuiteType.NavigationRail,/*最小宽度80dp*/ -> {//240dp~360dp
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -114,7 +147,7 @@ fun NavigationBarItem(
                     .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
-                val dp24 = dimensionResource(id = R.dimen.dp_24)
+                val dp24 = dimensionResource(id = R.dimen.dp_20)
                 if (this.maxWidth < 56.dp) {
                     Icon(
                         modifier = Modifier

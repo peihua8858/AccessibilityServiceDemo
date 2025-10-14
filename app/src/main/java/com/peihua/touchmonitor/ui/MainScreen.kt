@@ -38,12 +38,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowSizeClass
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.NavigationBarItem
 import com.peihua.touchmonitor.ui.screen.main.AccountScreen
 import com.peihua.touchmonitor.ui.screen.main.CollectScreen
 import com.peihua.touchmonitor.ui.screen.main.FunctionScreen
 import com.peihua.touchmonitor.ui.screen.main.HomeScreen
+import com.peihua.touchmonitor.utils.dLog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,13 +86,24 @@ fun MainScreen(modifier: Modifier = Modifier) {
             navController.removeOnDestinationChangedListener(listener)
         }
     }
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val customNavSuiteType = with(adaptiveInfo) {
+        dLog { "windowSizeClass: $windowSizeClass, windowPosture: $windowPosture" }
+        if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)) {
+            NavigationSuiteType.WideNavigationRailExpanded
+        } else if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+            NavigationSuiteType.NavigationBar
+        } else {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        }
+    }
     NavigationSuiteScaffold(
         modifier = modifier,
-//        navigationSuiteType = NavigationSuiteType.ShortNavigationBarCompact,
-            //NavigationSuiteScaffoldDefaults.navigationSuiteType(currentWindowAdaptiveInfo()),
+        navigationSuiteType = customNavSuiteType,
         navigationSuiteColors = NavigationSuiteDefaults.colors(),
         navigationItems = {
             NavigationBarItem(
+                navigationSuiteType = customNavSuiteType,
                 selected = selectItem.intValue == 0,
                 onClick = {
                     if (selectItem.intValue == 0) {
@@ -108,6 +121,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 colors = navigationBarItemColors
             )
             NavigationBarItem(
+                navigationSuiteType = customNavSuiteType,
                 selected = selectItem.intValue == 1, onClick = {
                     if (selectItem.intValue == 1) {
                         return@NavigationBarItem
@@ -124,6 +138,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 colors = navigationBarItemColors
             )
             NavigationBarItem(
+                navigationSuiteType = customNavSuiteType,
                 selected = selectItem.intValue == 2, onClick = {
                     if (selectItem.intValue == 2) {
                         return@NavigationBarItem
@@ -140,6 +155,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 colors = navigationBarItemColors
             )
             NavigationBarItem(
+                navigationSuiteType = customNavSuiteType,
                 selected = selectItem.intValue == 3, onClick = {
                     if (selectItem.intValue == 3) {
                         return@NavigationBarItem
