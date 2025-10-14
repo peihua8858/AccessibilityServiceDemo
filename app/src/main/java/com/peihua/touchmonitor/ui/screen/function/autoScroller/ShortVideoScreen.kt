@@ -296,7 +296,8 @@ private fun ShortVideoScreenContent(
                 }) {
                 dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
                 selectedOption.value.provider.contentView(
-                    Modifier.padding(dimensionResource(id = R.dimen.dp_8)),
+                    Modifier
+                        .padding( dimensionResource(id = R.dimen.dp_8)),
                     selectedOption.value
                 ) {
                     saveDb(it, false)

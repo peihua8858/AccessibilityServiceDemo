@@ -127,7 +127,8 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     Column(modifier.verticalScroll(rememberScrollState())) {
         ExposedDropdownMenuBox(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(top = dimensionResource(id = R.dimen.dp_8)),
             expanded = isExpanded.value,
             onExpandedChange = { isExpanded.value = it },
         ) {
@@ -213,7 +214,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_8)))
-        DelayTimesFlowRow(timeState = delayTimes, changeValues = saveDelayTimesClick)
+        DelayTimesFlowRow(modifier = Modifier, timeState = delayTimes, changeValues = saveDelayTimesClick)
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
@@ -335,10 +336,8 @@ private fun DelayTimesFlowRow(
 ) {
     val colorScheme = MaterialTheme.colorScheme
     dLog { ">>>55555>delayTimes:${timeState.toList()}" }
-    Column(modifier = modifier) {
-        ScaleText(
-            stringResource(R.string.delay_time),
-        )
+    Column(modifier = modifier.fillMaxWidth()) {
+        ScaleText(stringResource(R.string.delay_time))
         FlowRow(
             modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_4)),
             maxItemsInEachRow = 4
