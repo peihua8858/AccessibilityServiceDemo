@@ -2,22 +2,11 @@ package com.peihua.touchmonitor.ui.screen.function.autoScroller.settings
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -25,13 +14,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,60 +26,33 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.DrawResult
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntRect
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupPositionProvider
-import com.fz.common.text.isInteger
-import com.fz.common.text.isNumber
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
-import com.peihua.touchmonitor.utils.roundToPx
-import kotlinx.coroutines.delay
+import com.peihua.touchmonitor.utils.rememberStateSet
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String)
 
@@ -126,13 +84,8 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     val isRandomReverse = remember { mutableStateOf(settings.isRandomReverse) }
     isRandomReverse.value = settings.isRandomReverse
     val isSoundMute = remember { mutableStateOf(settings.isSoundMute) }
-    val delayTimes = remember { mutableStateListOf<Int>() }
-    delayTimes.clear()
-    settings.delayTimes.forEach {
-        delayTimes.add(it)
-    }
-    dLog { "settings.delayTimes:${settings.delayTimes}" }
-    dLog { ">>>55555>delayTimes:${delayTimes}" }
+    val delayTimes = rememberStateSet(settings.delayTimes)
+    dLog { "settings.delayTimes:${settings.delayTimes.toList()}" }
     val saveDoubleClick = { it: Boolean ->
         doubleSaver.value = it
         model.settings = settings.copy(isDoubleSaver = it)
@@ -159,15 +112,10 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         model.settings = settings.copy(isRandomReverse = it)
         modelChange(model)
     }
-    val saveDelayTimesClick = { index: Int ->
-        if (delayTimes.contains(index)) {
-            delayTimes.remove(index)
-        } else {
-            delayTimes.add(index)
-        }
-        model.settings = settings.copy(delayTimes = delayTimes)
+    val saveDelayTimesClick = { result: List<Int> ->
+        model.settings = settings.copy(delayTimes = result.toMutableList())
         modelChange(model)
-        settingsState.value = settings.copy(delayTimes = delayTimes)
+        settingsState.value = settings.copy(delayTimes = result.toMutableList())
     }
     val saveSoundMute = { it: Boolean ->
         isSoundMute.value = it
@@ -259,54 +207,8 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_8)))
-        Column {
-            ScaleText(
-                stringResource(R.string.delay_time),
-            )
-            FlowRow(
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_4)),
-                maxItemsInEachRow = 4
-            ) {
-                key(delayTimes) {
-                    for (index in 1..32) {
-                        val isSelected = delayTimes.contains(index)
-                        val borderColor = if (isSelected) colorScheme.primary else colorScheme.inverseSurface
-                        val backgroundColor = if (isSelected) colorScheme.secondaryContainer else Color.Transparent
-                        val textColor = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.inverseSurface
-                        ScaleText(
-                            text = index.toString(),
-                            color = textColor,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(
-                                    bottom = if (30 - index > 4) dimensionResource(id = R.dimen.dp_16) else 0.dp,
-                                    start = dimensionResource(id = R.dimen.dp_8),
-                                    end = dimensionResource(id = R.dimen.dp_8)
-                                )
-                                .border(
-                                    dimensionResource(id = R.dimen.dp_1),
-                                    borderColor,
-                                    RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
-                                )
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-                                .background(shape = RectangleShape, color = backgroundColor)
-                                .clickable {
-                                    saveDelayTimesClick(index)
-                                }
-                                .padding(
-                                    start = dimensionResource(id = R.dimen.dp_16),
-                                    top = dimensionResource(id = R.dimen.dp_8),
-                                    end = dimensionResource(id = R.dimen.dp_16),
-                                    bottom = dimensionResource(id = R.dimen.dp_8)
-                                )
-                                .weight(1f)
-                        )
-                    }
-
-                }
-            }
-        }
-//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+        DelayTimesFlowRow(timeState = delayTimes, changeValues = saveDelayTimesClick)
+        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -419,3 +321,64 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     }
 }
 
+@Composable
+private fun DelayTimesFlowRow(
+    modifier: Modifier = Modifier,
+    timeState: MutableSet<Int> = rememberStateSet(),
+    changeValues: (List<Int>) -> Unit = {},
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    dLog { ">>>55555>delayTimes:${timeState.toList()}" }
+    Column(modifier = modifier) {
+        ScaleText(
+            stringResource(R.string.delay_time),
+        )
+        FlowRow(
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_4)),
+            maxItemsInEachRow = 4
+        ) {
+            key(timeState) {
+                for (index in 1..32) {
+                    val isSelected = timeState.contains(index)
+                    val borderColor = if (isSelected) colorScheme.primary else colorScheme.inverseSurface
+                    val backgroundColor = if (isSelected) colorScheme.secondaryContainer else Color.Transparent
+                    val textColor = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.inverseSurface
+                    ScaleText(
+                        text = index.toString(),
+                        color = textColor,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(
+                                bottom = if (30 - index > 4) dimensionResource(id = R.dimen.dp_16) else 0.dp,
+                                start = dimensionResource(id = R.dimen.dp_8),
+                                end = dimensionResource(id = R.dimen.dp_8)
+                            )
+                            .border(
+                                dimensionResource(id = R.dimen.dp_1),
+                                borderColor,
+                                RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                            )
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                            .background(shape = RectangleShape, color = backgroundColor)
+                            .clickable {
+                                if (timeState.contains(index)) {
+                                    timeState.remove(index)
+                                } else {
+                                    timeState.add(index)
+                                }
+                                changeValues(timeState.toList())
+                            }
+                            .padding(
+                                start = dimensionResource(id = R.dimen.dp_16),
+                                top = dimensionResource(id = R.dimen.dp_8),
+                                end = dimensionResource(id = R.dimen.dp_16),
+                                bottom = dimensionResource(id = R.dimen.dp_8)
+                            )
+                            .weight(1f)
+                    )
+                }
+
+            }
+        }
+    }
+}
