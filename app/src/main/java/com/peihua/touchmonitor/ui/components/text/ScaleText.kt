@@ -94,7 +94,8 @@ fun AutoLineHeightScaleText(
         else -> fontSize
     }
     val finalFontSize = fontSize * textScale
-    val finalStyle = style.copy(lineHeight = finalFontSize * 1.5f)
+    val finalLineHeight = if (lineHeight.isUnspecified) finalFontSize * 1.5f else lineHeight
+    val finalStyle = style.copy(lineHeight = finalLineHeight)
     Text(
         text = text,
         modifier = modifier,
@@ -106,7 +107,7 @@ fun AutoLineHeightScaleText(
         letterSpacing = letterSpacing,
         textDecoration = textDecoration,
         textAlign = textAlign,
-        lineHeight = lineHeight,
+        lineHeight = finalLineHeight,
         overflow = overflow,
         softWrap = softWrap,
         maxLines = maxLines,

@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -19,6 +21,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.formatToDate
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @Composable
 fun ScreenTimeScreen(modifier: Modifier = Modifier) {
@@ -56,9 +59,11 @@ fun ScreenTimeScreen(modifier: Modifier = Modifier) {
             style = TextStyle(color = Color.White, fontSize = dateFontSize),
             text = date
         )
+        drawIntoCanvas {
+        }
     }
     LaunchedEffect(key1 = null) {
-        while (true) {
+        while (isActive) {
             delay(1000)
             times.longValue = System.currentTimeMillis()
         }

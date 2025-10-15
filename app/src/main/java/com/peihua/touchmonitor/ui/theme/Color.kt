@@ -247,3 +247,5 @@ val onGreyDarkHighContrast = Color(0xFF000000)
 val greyContainerDarkHighContrast = Color(0xFFC3C2C2)
 val onGreyContainerDarkHighContrast = Color(0xFF0A0B0C)
 
+val color_ff5187f4 = Color(0xFF5187F4)
+

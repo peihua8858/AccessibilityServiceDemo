@@ -126,7 +126,14 @@ sealed class AppRouter(
     data object ScreenDeadPixelsScreen : AppRouter("screenDeadPixels")
 
     data object ScreenTimeScreen : AppRouter("screenTime")
-
+    data object QrCodeGeneratorScreen : AppRouter("qrCodeGenerator")
+    data object PhotoWatermarkScreen : AppRouter("photoWatermark")
+    data object VideoToGifScreen : AppRouter("videoToGif")
+    data object GifImageDecompositionScreen : AppRouter("gifImageDecomposition")
+    data object ImagePixelizationScreen : AppRouter("imagePixelization")
+    data object PhotoToSketchScreen : AppRouter("photoToSketch")
+    data object PhotoToBlackAndWhiteScreen : AppRouter("photoToBlackAndWhite")
+    data object DayNewsScreen : AppRouter("dayNews")
 }
 
 /**

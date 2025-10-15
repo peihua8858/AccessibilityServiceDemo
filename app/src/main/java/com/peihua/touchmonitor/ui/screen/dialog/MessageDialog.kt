@@ -1,4 +1,4 @@
-package com.peihua.touchmonitor.ui.screen
+package com.peihua.touchmonitor.ui.screen.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

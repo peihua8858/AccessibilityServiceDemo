@@ -101,6 +101,20 @@
     <string name="text_see_device_info">查看设备信息</string>
     <!--    桌面视频壁纸-->
     <string name="text_desktop_video_wallpaper">桌面视频壁纸</string>
+    <!--  二维码生成  -->
+    <string name="text_qr_code_generator">二维码生成</string>
+    <!--  图片水印  -->
+    <string name="text_photo_watermark">图片水印</string>
+<!--    视频转gif-->
+    <string name="text_video_to_gif">视频转Gif</string>
+<!--    Gif 图片分解-->
+    <string name="text_gif_image_decomposition">Gif 图片分解</string>
+    <!--    图片像素化-->
+    <string name="text_image_pixelization">图片像素化</string>
+<!--  图片转素描图  -->
+    <string name="text_photo_to_sketch">图片转素描图</string>
+<!--   图片转黑白 -->
+    <string name="text_photo_to_black_and_white">图片转黑白</string>
     <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
     <string name="text_photo_tools">图片工具</string>
@@ -181,6 +195,9 @@
     <string name="text_share_file">将“%1$s”分享到</string>
     <string name="text_more">更多</string>
     <string name="text_foreground_service_permission_tips">请授权前台服务权限，如果不授予，服务可能随时被系统停止</string>
+
+    <!-- 60秒读懂世界 Understand the world in 60 seconds a day-->
+    <string name="understand_the_world_60_seconds">每天60秒读懂世界</string>
 
 
 </resources>

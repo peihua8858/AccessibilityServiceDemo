@@ -84,7 +84,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         stringResource(R.string.text_simple_paint) to null,
                         stringResource(R.string.text_led_subtitle) to null,
                         stringResource(R.string.text_time_screen) to AppRouter.ScreenTimeScreen,
-                        stringResource(R.string.text_daily_60_seconds_early_report) to null,
+                        stringResource(R.string.text_daily_60_seconds_early_report) to AppRouter.DayNewsScreen,
                     ),
                     textColor = textColor,
                     backgroundColor = textBgColor
@@ -113,8 +113,8 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         stringResource(R.string.text_app_kit) to AppRouter.AppManagerScreen,
                         stringResource(R.string.text_check_screen_bad_point) to AppRouter.ScreenDeadPixelsScreen,
                         stringResource(R.string.text_see_device_info) to Dialog.DeviceInfoScreen,
-                        stringResource(R.string.text_desktop_video_wallpaper) to null,
-                        stringResource(R.string.text_system_font_size_adjustment) to null,
+//                        stringResource(R.string.text_desktop_video_wallpaper) to null,
+//                        stringResource(R.string.text_system_font_size_adjustment) to null,
                     ),
                     textColor = textColor,
                     backgroundColor = textBgColor
@@ -140,9 +140,13 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_app_kit) to null,
-                        stringResource(R.string.text_check_screen_bad_point) to null,
-                        stringResource(R.string.text_see_device_info) to null,
+                        stringResource(R.string.text_qr_code_generator) to AppRouter.QrCodeGeneratorScreen,
+                        stringResource(R.string.text_photo_watermark) to AppRouter.PhotoWatermarkScreen,
+                        stringResource(R.string.text_video_to_gif) to AppRouter.VideoToGifScreen,
+                        stringResource(R.string.text_gif_image_decomposition) to AppRouter.GifImageDecompositionScreen,
+                        stringResource(R.string.text_image_pixelization) to AppRouter.ImagePixelizationScreen,
+                        stringResource(R.string.text_photo_to_sketch) to AppRouter.PhotoToSketchScreen,
+                        stringResource(R.string.text_photo_to_black_and_white) to AppRouter.PhotoToBlackAndWhiteScreen,
                     ),
                     textColor = textColor,
                     backgroundColor = textBgColor

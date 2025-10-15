@@ -8,6 +8,7 @@ import android.os.LocaleList
 import com.peihua.touchmonitor.model.LanguageModel
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.writeCrashLogFile
+import qrgenerator.AppContext
 
 class ServiceApplication : Application() {
     companion object {
@@ -49,5 +50,6 @@ class ServiceApplication : Application() {
             e.printStackTrace()
             oldDefaultExceptionHandler?.uncaughtException(t, e)
         }
+        AppContext.apply { set(applicationContext) }
     }
 }

@@ -12,12 +12,12 @@ plugins {
 
 android {
     namespace 'com.peihua.touchmonitor'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.peihua.toutchmonitor"
         minSdk 24
-        targetSdk 35
+        targetSdk 36
         versionCode 11
         versionName "1.0.3-alpha8"
 
@@ -70,9 +70,21 @@ android {
             }
     }
 }
-
+//configurations.all {
+//    resolutionStrategy.eachDependency {
+//        def serdeVer = "1.8.0" // should be >= 1.8.0
+//        when(requested.module.toString()) {
+//            // json serialiazaton
+//            "org.jetbrains.kotlinx:kotlinx-serialization-json" -> useVersion(serdeVer)
+//            "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm" -> useVersion(serdeVer)
+//            "org.jetbrains.kotlinx:kotlinx-serialization-core" -> useVersion(serdeVer)
+//            "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm" -> useVersion(serdeVer)
+//            "org.jetbrains.kotlinx:kotlinx-serialization-bom" -> useVersion(serdeVer)
+//        }
+//    }
+//}
 dependencies {
-    implementation files('libs/GsonAdapter-1.0.4.aar')
+    implementation files('libs/GsonAdapter-1.0.5.aar')
     implementation(libs.androidx.compose.navigation)
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
@@ -87,10 +99,10 @@ dependencies {
 //    implementation libs.androidx.material
 
     implementation(libs.coil3.coil.compose)
+    implementation(libs.coil3.coil.okhttp)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.datastore.core.okio)
-    implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.gson)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.room.runtime)
@@ -110,6 +122,12 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 //    implementation(libs.tink)
     implementation(libs.tink.android)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation("network.chaintech:qr-kit:3.1.3")
+
 //    implementation("androidx.room:room-runtime:2.7.2")
 //    implementation("androidx.room:room-ktx:2.7.2")
 //    implementation("androidx.room:room-paging:2.7.2")

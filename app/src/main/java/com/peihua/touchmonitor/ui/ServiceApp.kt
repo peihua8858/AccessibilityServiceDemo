@@ -2,12 +2,8 @@ package com.peihua.touchmonitor.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -20,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
@@ -34,13 +29,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
-import com.peihua.touchmonitor.ui.screen.MessageDialog
+import com.peihua.touchmonitor.ui.screen.dialog.MessageDialog
+import com.peihua.touchmonitor.ui.screen.function.DayNewsScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
@@ -53,6 +48,13 @@ import com.peihua.touchmonitor.ui.screen.function.devices.ScreenDeadPixelsScreen
 import com.peihua.touchmonitor.ui.screen.function.devices.ScreenTimeScreen
 import com.peihua.touchmonitor.ui.screen.function.document.DocumentScreen
 import com.peihua.touchmonitor.ui.screen.function.download.DownloadScreen
+import com.peihua.touchmonitor.ui.screen.function.images.GifImageDecompositionScreen
+import com.peihua.touchmonitor.ui.screen.function.images.ImagePixelizationScreen
+import com.peihua.touchmonitor.ui.screen.function.images.PhotoToBlackAndWhiteScreen
+import com.peihua.touchmonitor.ui.screen.function.images.PhotoToSketchScreen
+import com.peihua.touchmonitor.ui.screen.function.images.PhotoWatermarkScreen
+import com.peihua.touchmonitor.ui.screen.function.images.QrCodeGeneratorScreen
+import com.peihua.touchmonitor.ui.screen.function.images.VideoToGifScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
@@ -333,6 +335,30 @@ fun AppNavHost(
         }
         composable(route = AppRouter.ScreenTimeScreen.route) {
             ScreenTimeScreen(modifier)
+        }
+        composable(route = AppRouter.QrCodeGeneratorScreen.route) {
+            QrCodeGeneratorScreen(modifier)
+        }
+        composable(route = AppRouter.PhotoWatermarkScreen.route) {
+            PhotoWatermarkScreen(modifier)
+        }
+        composable(route = AppRouter.VideoToGifScreen.route) {
+            VideoToGifScreen(modifier)
+        }
+        composable(route = AppRouter.GifImageDecompositionScreen.route) {
+            GifImageDecompositionScreen(modifier)
+        }
+        composable(route = AppRouter.ImagePixelizationScreen.route) {
+            ImagePixelizationScreen(modifier)
+        }
+        composable(route = AppRouter.PhotoToSketchScreen.route) {
+            PhotoToSketchScreen(modifier)
+        }
+        composable(route = AppRouter.PhotoToBlackAndWhiteScreen.route) {
+            PhotoToBlackAndWhiteScreen(modifier)
+        }
+        composable(route = AppRouter.DayNewsScreen.route) {
+            DayNewsScreen(modifier)
         }
         dialog(route = Dialog.ShareDialog.route) {
             val filePath = it.savedStateHandle.get<String>(Dialog.ShareDialog.KEY_FILE_PATH) ?: ""
