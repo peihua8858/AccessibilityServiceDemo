@@ -140,14 +140,26 @@ sealed class AppRouter(
  * 弹窗
  */
 sealed class Dialog(route: String) : AppRouter(route) {
+    companion object{
+        const val TITLE = "title"
+        const val ON_POSITIVE = "onPositive"
+        const val ON_NEUTRAL = "onNeutral"
+        const val ON_NEGATIVE = "onNegative"
+    }
     data object ShareDialog : Dialog("shareDialog"){
         const val KEY_FILE_PATH = "filePath"
     }
     data object DeviceInfoScreen : Dialog("deviceInfo")
     data object MessageDialog : Dialog("messageDialog"){
-        const val KEY_TITLE = "title"
+        const val KEY_TITLE = Companion.TITLE
         const val KEY_MESSAGE = "message"
-        const val KEY_ON_POSITIVE = "onPositive"
-        const val KEY_ON_NEGATIVE = "onNegative"
+        const val KEY_ON_POSITIVE =  Companion.ON_POSITIVE
+        const val KEY_ON_NEGATIVE = Companion.ON_NEGATIVE
+    }
+    data object ColorPickerDialog : Dialog("colorPickerDialog"){
+        const val TITLE = Companion.TITLE
+        const val DEFAULT_COLOR = "defaultColor"
+        const val ON_POSITIVE = Companion.ON_POSITIVE
+        const val ON_NEGATIVE = Companion.ON_NEGATIVE
     }
 }

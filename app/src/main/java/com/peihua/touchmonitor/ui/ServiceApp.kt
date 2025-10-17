@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toLong
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
@@ -28,12 +30,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import com.fz.common.utils.toLong
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
+import com.peihua.touchmonitor.ui.screen.dialog.ColorPickerDialog
 import com.peihua.touchmonitor.ui.screen.dialog.MessageDialog
 import com.peihua.touchmonitor.ui.screen.function.DayNewsScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
@@ -68,6 +72,8 @@ import com.peihua.touchmonitor.ui.screen.share.ShareScreen
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
 import com.peihua.touchmonitor.utils.dLog
+import io.mhssn.colorpicker.ext.toHex
+import kotlin.text.toLong
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var appRouter: NavHostController
@@ -97,7 +103,7 @@ fun navigateTo(route: String, params: Pair<String, String>) {
     appRouter.navigate(route.replace("{${params.first}}", params.second))
 }
 
-fun navigateTo2(route: String,vararg params: Pair<String, Any>) {
+fun navigateTo2(route: String, vararg params: Pair<String, Any>) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(route)
     appRouter.currentBackStackEntry?.savedStateHandle?.apply {
@@ -106,6 +112,7 @@ fun navigateTo2(route: String,vararg params: Pair<String, Any>) {
         }
     }
 }
+
 fun navigateTo(directions: NavDirections, navigatorExtras: Navigator.Extras) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(directions, navigatorExtras)
@@ -371,9 +378,20 @@ fun AppNavHost(
         dialog(route = Dialog.MessageDialog.route) {
             val title = it.savedStateHandle.get<String>(Dialog.MessageDialog.KEY_TITLE) ?: ""
             val content = it.savedStateHandle.get<String>(Dialog.MessageDialog.KEY_MESSAGE) ?: ""
-            val onPositive = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_POSITIVE) 
+            val onPositive = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_POSITIVE)
             val onNegative = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_NEGATIVE)
             MessageDialog(modifier.background(Color.Transparent), title, content, onPositive, onNegative)
+        }
+        dialog(route = Dialog.ColorPickerDialog.route) {
+            val titleRes: Any? = it.savedStateHandle.get<Any>(Dialog.TITLE)
+            val title = titleRes as? String ?: stringResource(id = titleRes as Int)
+            val defaultColor = it.savedStateHandle.get<String>(Dialog.ColorPickerDialog.DEFAULT_COLOR)?:"FFFFFFFF"
+            val onPositive = it.savedStateHandle.get<Pair<Any, (Color) -> Unit>>(Dialog.ON_POSITIVE)
+            val onNegative = it.savedStateHandle.get<Pair<Any, () -> Unit>>(Dialog.ON_NEGATIVE)
+            ColorPickerDialog(
+                modifier.background(Color.Transparent), title, Color(defaultColor.toLong(16)),
+                onPositive, onNegative
+            )
         }
     }
 }

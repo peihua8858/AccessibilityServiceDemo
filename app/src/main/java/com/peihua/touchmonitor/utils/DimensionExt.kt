@@ -25,6 +25,12 @@ val <T : Number> T.toSp: TextUnit
         return (pxValue / density.density).dLog { "toSp>r$pxValue/${density.density}=$this" }.sp
     }
 
-fun Dp.roundToPx():Int {
-    return (this.value).roundToInt()
+@Composable
+fun Dp.roundToPx(): Int {
+    return with(LocalDensity.current) { toPx().roundToInt() }
+}
+
+@Composable
+fun Dp.toPx(): Float {
+    return with(LocalDensity.current) { toPx() }
 }
