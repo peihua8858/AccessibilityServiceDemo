@@ -2,6 +2,8 @@ package com.peihua.touchmonitor.ui.screen.function.images
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,27 +18,29 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
+import coil3.compose.AsyncImagePainter
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
 import com.github.alexzhirkevich.customqrgenerator.vector.QrVectorOptions
@@ -52,17 +55,13 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.CustomSlider
-import com.peihua.touchmonitor.ui.components.SliderWithBubble
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.clickable
-import com.peihua.touchmonitor.ui.components.text.MultilineHintTextField
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.dLog
-import com.smarttoolfactory.slider.LabelPosition
-import com.smarttoolfactory.slider.MaterialSliderDefaults
-import com.smarttoolfactory.slider.SliderWithLabel
+import com.peihua.touchmonitor.utils.decodePathOptionsFile
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrFrameShape
@@ -86,17 +85,27 @@ import qrgenerator.qrkitpainter.QrKitShapes
 import qrgenerator.qrkitpainter.createRoundCorners
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import qrgenerator.qrkitpainter.solidBrush
-import kotlin.math.roundToInt
-import kotlin.to
 
 
 @Composable
 fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
-    val data = remember { mutableStateOf("") }
+    val resource  = LocalResources.current
+    val qrData = remember { mutableStateOf("") }
     val logoPath = remember { mutableStateOf("") }
-    val foregroundColor = remember { mutableStateOf(Color.Blue) }
+    val logoDrawable = remember { mutableStateOf<Drawable?>(null) }
+    val foregroundColor = remember { mutableStateOf(Color.Black) }
     val backgroundColor = remember { mutableStateOf(Color.White) }
     val qrCodeImgSize = remember { mutableStateOf(128f) }
+    val showQrCode = remember { mutableStateOf(false) }
+   val  logPainter = rememberDrawablePainter(logoDrawable.value)
+    LaunchedEffect(logoPath.value) {
+        if (logoPath.value.isNotEmpty()) {
+            logoDrawable.value = logoPath.value.decodePathOptionsFile(128, 128)?.toDrawable(resource)
+        }
+    }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        logoPath.value = it.toString()
+    }
     Toolbar(modifier = modifier, title = stringResource(id = R.string.text_qr_code_generator)) {
         Column(
             modifier = Modifier
@@ -106,12 +115,12 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
         ) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = data.value,
+                value = qrData.value,
                 label = {
                     Text(text = "请输入二维码内容")
                 },
                 onValueChange = {
-                    data.value = it
+                    qrData.value = it
                 })
             ConstraintLayout(
                 modifier = Modifier
@@ -142,7 +151,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     })
                 TextButton(
                     onClick = {
-
+                        launcher.launch("image/*")
                     },
                     modifier = Modifier.constrainAs(button) {
                         top.linkTo(parent.top)
@@ -242,113 +251,103 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                         }
                 )
             }
-            ConstraintLayout(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color.Blue)
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                val (image, label) = createRefs()
                 Text(
                     text = "二维码尺寸", modifier = Modifier
                         .padding(dimensionResource(id = R.dimen.dp_8))
-                        .constrainAs(label) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                        })
-//                CustomSlider(
-//                    modifier = Modifier
-//                        .padding(dimensionResource(id = R.dimen.dp_8))
-//                        .constrainAs(image) {
-//                            top.linkTo(parent.top)
-//                            start.linkTo(label.end, margin = 16.dp)
-//                            bottom.linkTo(parent.bottom)
-//                            horizontalChainWeight = 1f
-//                            end.linkTo(parent.end)
-//                        },
-//                    value = qrCodeImgSize.value,
-//                    thumbText = { it.toInt().toString() },
-//                    valueRange = 96f..960f
-//                ) {
-//                    qrCodeImgSize.value = it
-//                }
-                val colors = SliderDefaults.colors()
-                SliderWithLabel(
+                )
+                CustomSlider(
                     modifier = Modifier
-                        .background(Color.Red)
-                        .width(200.dp)
-                        .constrainAs(image) {
-                            top.linkTo(parent.top)
-//                            start.linkTo(label.end, margin = 16.dp)
-                            bottom.linkTo(parent.bottom)
-                            end.linkTo(parent.end)
-                        },
+                        .padding(dimensionResource(id = R.dimen.dp_8)),
                     value = qrCodeImgSize.value,
-                    onValueChange = {
-                        qrCodeImgSize.value = it
-                    },
-                    thumbRadius = 10.dp,
-                    trackHeight = 10.dp,
-                    valueRange = 96f..960f,
-                    colors = MaterialSliderDefaults.materialColors(),
-                    labelPosition = LabelPosition.Bottom,
-                    label = {
-                        Text(
-                            text = "${qrCodeImgSize.value.roundToInt()}",
+                    thumbText = { it.toInt().toString() },
+                    valueRange = 96f..960f
+                ) {
+                    qrCodeImgSize.value = it
+                }
+            }
+            Button(onClick = {
+                showQrCode.value = true
+            }) {
+                Text(text = "生成")
+            }
+            if (showQrCode.value) {
+                androidx.compose.ui.window.Dialog(onDismissRequest = {
+                    showQrCode.value = false
+                }) {
+                    Column {
+                        QroseQrCodeGenerator(
                             modifier = Modifier
-                                .shadow(1.dp, shape = CircleShape)
-                                .background(colors.thumbColor, shape = CircleShape)
-                                .padding(5.dp),
-                            color = Color.White
+                                .padding(top = 20.dp)
+                                .size(200.dp)
+                                .background(backgroundColor.value),
+                            data = qrData.value,
+                            options = {
+                                colors {
+                                    dark = QrBrush.solid(foregroundColor.value)
+                                    light = QrBrush.solid(backgroundColor.value)
+                                    ball = QrBrush.solid(foregroundColor.value)
+                                    frame = QrBrush.solid(foregroundColor.value)
+                                }
+                                logo {
+                                    painter = logPainter
+                                    size = qrCodeImgSize.value
+                                }
+                            }
                         )
                     }
-                )
-            }
-            QrCodeGenerator(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .size(200.dp)
-                    .background(Color.Green),
-                data = QrData.Text("1234567890"),
-                colors = QrVectorColors(
-                    dark = QrVectorColor.Solid(android.graphics.Color.RED),
-                    light = QrVectorColor.Solid(android.graphics.Color.GREEN),
-                    ball = QrVectorColor.Solid(android.graphics.Color.RED),
-                    frame = QrVectorColor.Solid(android.graphics.Color.RED),
-                )
-            )
-            QroseQrCodeGenerator(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .size(200.dp)
-                    .background(Color.Green),
-                data = "1234567890",
-                options = {
-                    colors {
-                        dark = QrBrush.solid(Color.Red)
-                        light = QrBrush.solid(Color.Green)
-                        ball = QrBrush.solid(Color.Red)
-                        frame = QrBrush.solid(Color.Red)
-                    }
                 }
-            )
+            }
 
-            QrKtCodeGenerator(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .size(200.dp)
-                    .background(Color.Green),
-                data = "1234567890",
-                colors = QrKitColors(
-                    darkBrush = QrKitBrush.solidBrush(color = Color.Red),
-                    lightBrush = QrKitBrush.solidBrush(color = Color.Green),
-                    ballBrush = QrKitBrush.solidBrush(color = Color.Red),
-                    frameBrush = QrKitBrush.solidBrush(color = Color.Red),
-                )
-            )
+//            QrCodeGenerator(
+//                modifier = Modifier
+//                    .padding(top = 20.dp)
+//                    .size(200.dp)
+//                    .background(Color.Green),
+//                data = QrData.Text("1234567890"),
+//                colors = QrVectorColors(
+//                    dark = QrVectorColor.Solid(android.graphics.Color.RED),
+//                    light = QrVectorColor.Solid(android.graphics.Color.GREEN),
+//                    ball = QrVectorColor.Solid(android.graphics.Color.RED),
+//                    frame = QrVectorColor.Solid(android.graphics.Color.RED),
+//                )
+//            )
+//            QroseQrCodeGenerator(
+//                modifier = Modifier
+//                    .padding(top = 20.dp)
+//                    .size(200.dp)
+//                    .background(Color.Green),
+//                data = "1234567890",
+//                options = {
+//                    colors {
+//                        dark = QrBrush.solid(Color.Red)
+//                        light = QrBrush.solid(Color.Green)
+//                        ball = QrBrush.solid(Color.Red)
+//                        frame = QrBrush.solid(Color.Red)
+//                    }
+//                }
+//            )
+//
+//            QrKtCodeGenerator(
+//                modifier = Modifier
+//                    .padding(top = 20.dp)
+//                    .size(200.dp)
+//                    .background(Color.Green),
+//                data = "1234567890",
+//                colors = QrKitColors(
+//                    darkBrush = QrKitBrush.solidBrush(color = Color.Red),
+//                    lightBrush = QrKitBrush.solidBrush(color = Color.Green),
+//                    ballBrush = QrKitBrush.solidBrush(color = Color.Red),
+//                    frameBrush = QrKitBrush.solidBrush(color = Color.Red),
+//                )
+//            )
         }
 
     }
