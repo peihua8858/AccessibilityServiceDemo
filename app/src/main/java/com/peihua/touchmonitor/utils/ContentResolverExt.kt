@@ -42,7 +42,14 @@ val String.fileProvider: Uri
     get() {
         return File(this).fileProvider
     }
-
+/**
+ * 传入的file须为主存储下的文件，且对file有完整的读写权限
+ */
+val Uri.fileProvider: Uri
+    get() {
+        val context = ServiceApplication.application
+       return  this.buildUpon().authority("${context.packageName}.fileProvider").build()
+    }
 /**
  * 根据uri获取文件
  * @author dingpeihua
@@ -174,15 +181,15 @@ fun ContentResolver.getFileFromContentUri(contentUri: Uri?): File? {
                 val columnNames = cursor.columnNames
                 cursor.moveToFirst()
                 dLog { " getRealPathFromURI>>>>>>cursor.columnNames:${columnNames.contentToString()}" }
-                val columnIndex = cursor.getColumnIndex(column[0])
-                val filePath = cursor.getString(columnIndex)
+//                val columnIndex = cursor.getString(column[0])
+                val filePath = cursor.getString(column[0])
                 if (filePath.isNonEmpty()) {
                     val file = File(filePath)
                     if (file.exists()) {
                         return file
                     }
                 }
-                dLog { "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:$columnIndex" }
+                dLog { "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:${cursor.getColumnIndex(column[0])}" }
                 null
             } catch (e: Throwable) {
                 e.printStackTrace()

@@ -164,7 +164,7 @@ fun Context.startStorageSettingsActivity() {
                 startActivity(intent)
             }
         }
-    } else if (isN) {
+    } else if (isAtLeastN) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         intent.setData(("package:$packageName").toUri())
         startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS))

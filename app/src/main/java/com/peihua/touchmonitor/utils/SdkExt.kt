@@ -37,9 +37,7 @@ inline val isAtLeastQ: Boolean
  */
 inline val isAtLeastR: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-inline val isM: Boolean
+inline val isAtLeastM: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-inline val isN: Boolean
-    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-inline val isNougat: Boolean
+inline val isAtLeastN: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N

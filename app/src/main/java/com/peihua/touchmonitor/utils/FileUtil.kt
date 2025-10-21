@@ -14,6 +14,9 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
+import com.fz.common.file.isFile
+import com.fz.common.utils.getRealPathFromURI
+import com.peihua.touchmonitor.ServiceApplication
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.FileInputStream
@@ -28,6 +31,10 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.coroutines.resume
 import kotlin.math.max
+import androidx.core.net.toUri
+import com.fz.common.file.cacheFile
+import com.fz.common.file.copy
+import com.fz.common.file.createFileName
 
 
 suspend fun InputStream?.writeToFile(
@@ -215,14 +222,39 @@ fun format(speed: Float): String {
     return String.format(Locale.ENGLISH, "%.2f", speed)
 }
 
+fun String.createFile(extension: String): File {
+    val fileCache = createFileName(extension)
+    val parentPath = ServiceApplication.application.cacheFile("files")
+    return File(parentPath, fileCache)
+}
+
+fun Uri.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
+//    val contentResolver = ServiceApplication.application.contentResolver
+    val file = ServiceApplication.application.getFileFromUri(this)
+//    val fileUri = file?.fileProvider ?: return null
+    dLog { "decodePathOptionsFile, fileUri: $this" }
+    return file?.decodePathOptionsFile(screenWidth, screenHeight)
+}
+
+val String.isContentUri get() = this.startsWith("content://")
 fun String.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
+    if (this.isFile()) {
+        return this.fileProvider.decodePathOptionsFile(screenWidth, screenHeight)
+    }
+    if (this.isContentUri) {
+        return this.toUri().decodePathOptionsFile(screenWidth, screenHeight)
+    }
+    return null
+}
+
+fun File.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
     try {
         val mScreenWidth = screenWidth
         val mScreenHeight = screenHeight
-        val file = File(this)
         val o = BitmapFactory.Options()
         o.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(FileInputStream(file), null, o)
+        BitmapFactory.decodeStream(FileInputStream(this), null, o)
+        dLog { "decodePathOptionsFile, o: $o" }
         val width_tmp = o.outWidth
         val height_tmp = o.outHeight
         var scale = 1
@@ -234,17 +266,19 @@ fun String.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
             val fit = max(widthFit, heightFit)
             scale = (fit + 0.5).toInt()
         }
+        dLog { "decodePathOptionsFile, scale: $scale,width_tmp:$width_tmp,height_tmp:$height_tmp" }
         var bitmap: Bitmap? = null
         if (scale == 1) {
-            bitmap = BitmapFactory.decodeStream(FileInputStream(file))
+            bitmap = BitmapFactory.decodeStream(FileInputStream(this))
         } else {
             val o2 = BitmapFactory.Options()
             o2.inSampleSize = scale
-            bitmap = BitmapFactory.decodeStream(FileInputStream(file), null, o2)
+            bitmap = BitmapFactory.decodeStream(FileInputStream(this), null, o2)
         }
         if (bitmap != null) {
             eLog { "scale = " + scale + " bitmap.size = " + (bitmap.getRowBytes() * bitmap.getHeight()) }
         }
+        dLog { "decodePathOptionsFile, bitmap: $bitmap" }
         return bitmap
     } catch (e: Throwable) {
         eLog { "fileNotFoundException, e: $e" }

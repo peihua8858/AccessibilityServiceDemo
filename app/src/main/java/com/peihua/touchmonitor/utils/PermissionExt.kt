@@ -27,7 +27,7 @@ fun Context.checkPermissions(vararg permission: String): Boolean {
 
 @OptIn(ExperimentalStdlibApi::class)
 fun Context.isGrantedPermission(permission: String): Boolean {
-    if (permission.isEmpty() || !isM) {
+    if (permission.isEmpty() || !isAtLeastM) {
         return true
     }
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
@@ -36,7 +36,7 @@ fun Context.isGrantedPermission(permission: String): Boolean {
 @OptIn(ExperimentalContracts::class)
 fun Context.isGrantedPermission(vararg permissions: String): Boolean {
     contract { returns() }
-    if (permissions.isEmpty() || !isM) {
+    if (permissions.isEmpty() || !isAtLeastM) {
         return true
     }
     return permissions.all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED }
@@ -52,7 +52,7 @@ fun Context.isGrantedStoragePermission(): Boolean {
 }
 
 fun isGrantedWindowPermission(context: Context?): Boolean {
-    if (isM) {
+    if (isAtLeastM) {
         return Settings.canDrawOverlays(context)
     }
     return true
