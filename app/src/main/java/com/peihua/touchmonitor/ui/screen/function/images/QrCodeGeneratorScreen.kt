@@ -351,7 +351,9 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     showQrCode.value = false
                 }) {
                     val painter = rememberDrawablePainter(logoDrawable.value)
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier
+                        .background(Color.White)
+                        .padding(16.dp)) {
                         QrKtCodeGenerator(
                             modifier = Modifier
                                 .padding(top = 20.dp)
