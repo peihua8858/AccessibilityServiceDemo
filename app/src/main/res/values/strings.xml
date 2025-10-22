@@ -198,6 +198,20 @@
 
     <!-- 60秒读懂世界 Understand the world in 60 seconds a day-->
     <string name="understand_the_world_60_seconds">每天60秒读懂世界</string>
+    <string name="text_save">保存</string>
+    <string name="text_save_success">保存成功</string>
+    <string name="text_save_fail">保存失败</string>
+    <string name="text_generate">生成</string>
+    <string name="text_qr_content_empty">请输入二维码内容</string>
+    <string name="text_qr_content">二维码内容</string>
+    <string name="text_qr_content_hint">请输入二维码内容</string>
+    <string name="text_qr_code">二维码</string>
+    <string name="text_qr_code_size">二维码尺寸</string>
+    <string name="text_qr_code_log_hint">请选择二维码的Logo图片</string>
+    <string name="text_qr_code_log">二维码Logo</string>
+    <string name="text_chose">选择</string>
+    <string name="text_qr_code_foreground_color">前景色</string>
+    <string name="text_qr_code_background_color">背景色</string>
 
 
 </resources>

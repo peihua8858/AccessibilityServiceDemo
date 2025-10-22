@@ -35,6 +35,7 @@ import androidx.core.net.toUri
 import com.fz.common.file.cacheFile
 import com.fz.common.file.copy
 import com.fz.common.file.createFileName
+import java.text.SimpleDateFormat
 
 
 suspend fun InputStream?.writeToFile(
@@ -224,6 +225,22 @@ fun format(speed: Float): String {
 
 fun String.createFile(extension: String): File {
     val fileCache = createFileName(extension)
+    val parentPath = ServiceApplication.application.cacheFile("files")
+    return File(parentPath, fileCache)
+}
+private val sf = SimpleDateFormat("yyyy-MM-dd")
+
+/**
+ * 根据时间戳创建文件名
+ *
+ * @return
+ */
+fun String.createFolderFileName(): String {
+    val millis = System.currentTimeMillis()
+    return this + sf.format(millis)
+}
+fun String.createFolderFile(): File {
+    val fileCache = createFolderFileName()
     val parentPath = ServiceApplication.application.cacheFile("files")
     return File(parentPath, fileCache)
 }

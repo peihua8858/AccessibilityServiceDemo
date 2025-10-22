@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,13 +20,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.godaddy.android.colorpicker.ClassicColorPicker
 import com.godaddy.android.colorpicker.HsvColor
-import com.godaddy.android.colorpicker.harmony.ColorHarmonyMode
-import com.godaddy.android.colorpicker.harmony.HarmonyColorPicker
 import com.godaddy.android.colorpicker.rememberColorSaveable
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.rememberState
 import io.mhssn.colorpicker.ext.toHex
 
 /**
@@ -39,6 +35,7 @@ fun ColorPickerDialog(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
     defaultColor: Color = Color.White,
+    onDismissRequest: () -> Unit,
     onPositive: Pair<Any, (Color) -> Unit>? = R.string.text_ok to { popBackStack() },
     onNegative: Pair<Any, () -> Unit>? = R.string.text_cancel to { popBackStack() },
 ) {
@@ -47,6 +44,7 @@ fun ColorPickerDialog(
     val colorState = remember { mutableStateOf(defaultColor) }
     ColorPickerDialog(
         modifier, stringResource(id = title), defaultColor,
+        onDismissRequest = onDismissRequest,
         onPositive = positive.first to {
             positive.second(colorState.value)
         }, onNegative = negative.first to negative.second
@@ -62,13 +60,16 @@ fun ColorPickerDialog(
     modifier: Modifier = Modifier,
     title: String,
     defaultColor: Color = Color.White,
-    onPositive: Pair<Any, (Color) -> Unit>? = stringResource(id = R.string.text_ok) to { popBackStack() },
-    onNegative: Pair<Any, () -> Unit>? = stringResource(id = R.string.text_cancel) to { popBackStack() },
+    onDismissRequest: () -> Unit,
+    onPositive: Pair<Any, (Color) -> Unit>? = stringResource(id = R.string.text_ok) to { onDismissRequest() },
+    onNegative: Pair<Any, () -> Unit>? = stringResource(id = R.string.text_cancel) to { onDismissRequest() },
 ) {
-    val positive: Pair<Any, (Color) -> Unit> = onPositive ?: (stringResource(id = R.string.text_ok) to { popBackStack() })
+    val positive: Pair<Any, (Color) -> Unit> = onPositive ?: (stringResource(id = R.string.text_ok) to { onDismissRequest() })
     val colorState = rememberColorSaveable(HsvColor.from(defaultColor))
     val colorInput = remember { mutableStateOf(defaultColor.toHex()) }
-    BaseDialog(modifier, title, {
+    BaseDialogScreen(modifier, title, onPositive = positive.first to {
+        positive.second(colorState.value.toColor())
+    }, onDismissRequest = onDismissRequest, onNegative = onNegative) {
         Column(
             modifier = Modifier
                 .padding(dimensionResource(id = R.dimen.dp_16))
@@ -103,7 +104,5 @@ fun ColorPickerDialog(
             )
         }
 
-    }, onPositive = positive.first to {
-        positive.second(colorState.value.toColor())
-    }, onNegative = onNegative)
+    }
 }

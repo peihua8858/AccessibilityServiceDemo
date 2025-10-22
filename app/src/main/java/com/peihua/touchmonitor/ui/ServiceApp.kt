@@ -380,16 +380,21 @@ fun AppNavHost(
             val content = it.savedStateHandle.get<String>(Dialog.MessageDialog.KEY_MESSAGE) ?: ""
             val onPositive = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_POSITIVE)
             val onNegative = it.savedStateHandle.get<Pair<String, () -> Unit>>(Dialog.MessageDialog.KEY_ON_NEGATIVE)
-            MessageDialog(modifier.background(Color.Transparent), title, content, onPositive, onNegative)
+            MessageDialog(
+                modifier.background(Color.Transparent), title, content,
+                onDismissRequest = { popBackStack() },
+                onPositive, onNegative
+            )
         }
         dialog(route = Dialog.ColorPickerDialog.route) {
             val titleRes: Any? = it.savedStateHandle.get<Any>(Dialog.TITLE)
             val title = titleRes as? String ?: stringResource(id = titleRes as Int)
-            val defaultColor = it.savedStateHandle.get<String>(Dialog.ColorPickerDialog.DEFAULT_COLOR)?:"FFFFFFFF"
+            val defaultColor = it.savedStateHandle.get<String>(Dialog.ColorPickerDialog.DEFAULT_COLOR) ?: "FFFFFFFF"
             val onPositive = it.savedStateHandle.get<Pair<Any, (Color) -> Unit>>(Dialog.ON_POSITIVE)
             val onNegative = it.savedStateHandle.get<Pair<Any, () -> Unit>>(Dialog.ON_NEGATIVE)
             ColorPickerDialog(
                 modifier.background(Color.Transparent), title, Color(defaultColor.toLong(16)),
+                onDismissRequest = { popBackStack() },
                 onPositive, onNegative
             )
         }

@@ -133,6 +133,8 @@ dependencies {
     implementation 'io.mhssn:colorpicker:1.0.0'
     implementation 'com.github.peihua8858.composeColorPicker:compose-color-picker-android:1.0.0'
     implementation 'com.github.SmartToolFactory:Compose-Colorful-Sliders:1.2.2'
+    //将视图保存成图片
+    implementation "dev.shreyaspatil:capturable:3.0.1"
 //    implementation 'com.godaddy.android.colorpicker:compose-color-picker:0.7.0'
 //    implementation("androidx.room:room-runtime:2.7.2")
 //    implementation("androidx.room:room-ktx:2.7.2")

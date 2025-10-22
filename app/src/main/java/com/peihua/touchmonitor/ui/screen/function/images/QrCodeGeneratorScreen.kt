@@ -4,7 +4,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,12 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -42,6 +44,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.scale
+import com.fz.common.file.createFileName
+import com.fz.common.utils.saveBitmapToGallery
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
 import com.github.alexzhirkevich.customqrgenerator.vector.QrVectorOptions
@@ -55,12 +60,9 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.selector.result.PhotoCropVisualMediaRequestBuilder
 import com.peihua.selector.result.PhotoVisualMediaRequest
-import com.peihua.selector.result.SystemPhotoCropVisualMediaRequestBuilder
 import com.peihua.selector.result.contract.PhotoCropVisualMedia
 import com.peihua.selector.result.contract.PhotoVisualMedia
-import com.peihua.selector.result.contract.SytemPhotoCropVisualMedia
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.drawable.toCircleDrawable
 import com.peihua.touchmonitor.drawable.toRoundDrawable
 import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.CustomSlider
@@ -68,22 +70,21 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.screen.dialog.BaseDialog
+import com.peihua.touchmonitor.ui.screen.dialog.ProgressDialog
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.createFile
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.decodePathOptionsFile
 import com.peihua.touchmonitor.utils.ifEmptyOrBlank
-import com.peihua.touchmonitor.utils.insertUri
 import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
-import com.peihua.touchmonitor.utils.saveFileByUri
 import com.peihua.touchmonitor.utils.showToast
-import com.peihua.touchmonitor.utils.takePersistableUriPermission
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrFrameShape
-import io.github.alexzhirkevich.qrose.options.QrLogoPadding
-import io.github.alexzhirkevich.qrose.options.QrLogoShape
 import io.github.alexzhirkevich.qrose.options.QrOptions
 import io.github.alexzhirkevich.qrose.options.QrPixelShape
 import io.github.alexzhirkevich.qrose.options.brush
@@ -93,6 +94,8 @@ import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.mhssn.colorpicker.ext.toHex
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import qrgenerator.qrkitpainter.QrKitBallShape
 import qrgenerator.qrkitpainter.QrKitBrush
 import qrgenerator.qrkitpainter.QrKitColors
@@ -103,17 +106,15 @@ import qrgenerator.qrkitpainter.QrKitLogoPadding
 import qrgenerator.qrkitpainter.QrKitOptionsBuilder
 import qrgenerator.qrkitpainter.QrKitPixelShape
 import qrgenerator.qrkitpainter.QrKitShapes
-import qrgenerator.qrkitpainter.createCircle
 import qrgenerator.qrkitpainter.createRoundCorners
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import qrgenerator.qrkitpainter.solidBrush
-import kotlin.math.sin
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val resource = LocalResources.current
     val qrData = rememberSaveable("")
     val logoPath = rememberSaveable(Uri.EMPTY)
     val logoDrawable = remember { mutableStateOf<Drawable?>(null) }
@@ -121,10 +122,12 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     val backgroundColor = rememberColorSaveable(Color.White)
     val qrCodeImgSize = rememberSaveable(128f)
     val showQrCode = rememberSaveable(false)
+    val saveQrCode = rememberSaveable(false)
+    val scope = rememberCoroutineScope()
     LaunchedEffect(logoPath.value) {
         dLog { "logoPath:${logoPath.value}" }
         if (logoPath.value != Uri.EMPTY) {
-            val drawable =logoPath.value.decodePathOptionsFile(100, 100)?.toRoundDrawable(20f)
+            val drawable = logoPath.value.decodePathOptionsFile(100, 100)?.toRoundDrawable(20f)
             logoDrawable.value = drawable
         }
         dLog { "logoPath:${logoDrawable.value}" }
@@ -134,17 +137,6 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     }
     val launcher = rememberLauncherForActivityResult(PhotoVisualMedia()) {
         if (it != null) {
-//            val inputUri = context.saveFileByUri(it) ?: return@rememberLauncherForActivityResult
-//            val outputUri = context.insertUri() ?: return@rememberLauncherForActivityResult
-//            corpLauncher.launch(
-//                SystemPhotoCropVisualMediaRequestBuilder(inputUri, outputUri)
-//                    .setAspectX(1f)
-//                    .setAspectY(1f)
-//                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
-//                    .setOutputX(120f)
-//                    .setOutputY(120f)
-//                    .build()
-//            )
             val outputFile = "IMG_".createFile("jpg")
             val outputUri = Uri.fromFile(outputFile)
             corpLauncher.launch(
@@ -174,7 +166,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth(),
                 value = qrData.value,
                 label = {
-                    Text(text = "请输入二维码内容")
+                    Text(text = stringResource(id = R.string.text_qr_content_hint))
                 },
                 onValueChange = {
                     qrData.value = it
@@ -188,7 +180,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
             ) {
                 val (button, label, hint) = createRefs()
                 Text(
-                    text = "Logo图片",
+                    text = stringResource(id = R.string.text_qr_code_log),
                     modifier = Modifier.constrainAs(label) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
@@ -197,7 +189,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                         end.linkTo(button.start, margin = 16.dp)
                     })
                 Text(
-                    text = logoPath.value.path.ifEmptyOrBlank { "请选择二维码的Logo图片" },
+                    text = logoPath.value.path.ifEmptyOrBlank { context.getString(R.string.text_qr_code_log_hint) },
                     style = MaterialTheme.typography.bodySmall.copy(color = Colors.Grey[700]),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
@@ -217,7 +209,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                         end.linkTo(parent.end)
                         bottom.linkTo(parent.bottom)
                     }) {
-                    Text(text = "选择")
+                    Text(text = stringResource(id = R.string.text_chose))
                 }
             }
             ConstraintLayout(
@@ -236,7 +228,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                         }
                         navigateTo2(
                             Dialog.ColorPickerDialog.route,
-                            Dialog.TITLE to "前景色",
+                            Dialog.TITLE to R.string.text_qr_code_foreground_color,
                             Dialog.ColorPickerDialog.DEFAULT_COLOR to foregroundColor.value.toHex(),
                             Dialog.ON_POSITIVE to (R.string.text_ok to { color: Color ->
                                 foregroundColor.value = color
@@ -246,7 +238,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     }) {
                 val (image, label) = createRefs()
                 Text(
-                    text = "前景色", modifier = Modifier
+                    text = stringResource(id = R.string.text_qr_code_foreground_color), modifier = Modifier
                         .padding(dimensionResource(id = R.dimen.dp_8))
                         .constrainAs(label) {
                             top.linkTo(parent.top)
@@ -278,7 +270,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .clickable {
                         navigateTo2(
                             Dialog.ColorPickerDialog.route,
-                            Dialog.TITLE to "背景色",
+                            Dialog.TITLE to R.string.text_qr_code_background_color,
                             Dialog.ColorPickerDialog.DEFAULT_COLOR to backgroundColor.value.toHex(),
                             Dialog.ON_POSITIVE to (R.string.text_ok to { color: Color ->
                                 backgroundColor.value = color
@@ -288,7 +280,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     }) {
                 val (image, label) = createRefs()
                 Text(
-                    text = "背景色", Modifier
+                    text = stringResource(id = R.string.text_qr_code_background_color), Modifier
                         .padding(dimensionResource(id = R.dimen.dp_8))
                         .constrainAs(label) {
                             top.linkTo(parent.top)
@@ -320,7 +312,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "二维码尺寸", modifier = Modifier
+                    text = stringResource(R.string.text_qr_code_size), modifier = Modifier
                         .padding(dimensionResource(id = R.dimen.dp_8))
                 )
                 CustomSlider(
@@ -339,63 +331,68 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth(),
                 onClick = {
                     if (qrData.value.isEmpty()) {
-                        showToast("请输入二维码内容")
+                        showToast(R.string.text_qr_content_empty)
                         return@Button
                     }
                     showQrCode.value = true
                 }) {
-                Text(text = "生成")
+                Text(text = stringResource(id = R.string.text_generate))
             }
             if (showQrCode.value) {
-                androidx.compose.ui.window.Dialog(onDismissRequest = {
-                    showQrCode.value = false
-                }) {
-                    val painter = rememberDrawablePainter(logoDrawable.value)
-                    Column(modifier = Modifier
-                        .background(Color.White)
-                        .padding(16.dp)) {
-                        QrKtCodeGenerator(
-                            modifier = Modifier
-                                .padding(top = 20.dp)
-                                .size(200.dp)
-                                .background(backgroundColor.value),
-                            data = qrData.value,
-                            options = {
-                                colors = QrKitColors(
-                                    darkBrush = QrKitBrush.solidBrush(foregroundColor.value),
-                                    lightBrush = QrKitBrush.solidBrush(backgroundColor.value),
-                                    ballBrush = QrKitBrush.solidBrush(foregroundColor.value),
-                                    frameBrush = QrKitBrush.solidBrush(foregroundColor.value),
-                                )
-                                logo = QrKitLogo(painter = painter,
+                val painter = rememberDrawablePainter(logoDrawable.value)
+                val controller = rememberCaptureController()
+                BaseDialog(
+                    onDismissRequest = {
+                        showQrCode.value = false
+                    }, onPositive = stringResource(R.string.text_save) to {
+                        scope.launch {
+                            saveQrCode.value = true
+                            val bitmapAsync = controller.captureAsync()
+                            try {
+                                val bitmap = bitmapAsync.await()
+                                val outFileName = "QR_".createFileName("jpg")
+                                val contentResolver= context.contentResolver
+                                val newBitmap = bitmap.asAndroidBitmap().scale(qrCodeImgSize.value.toInt(),qrCodeImgSize.value.toInt())
+                                contentResolver.saveBitmapToGallery(newBitmap,outFileName,"")
+                            } catch (error: Throwable) {
+                                error.printStackTrace()
+                            }
+                            delay(5000)
+                            saveQrCode.value = false
+                            showQrCode.value = false
+                        }
+                    },
+                    title = "二维码"
+                ) {
+                    QrKtCodeGenerator(
+                        modifier = Modifier
+                            .capturable(controller)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 20.dp, bottom = 20.dp)
+                            .size(200.dp)
+                            .background(backgroundColor.value),
+                        data = qrData.value,
+                        options = {
+                            colors = QrKitColors(
+                                darkBrush = QrKitBrush.solidBrush(foregroundColor.value),
+                                lightBrush = QrKitBrush.solidBrush(backgroundColor.value),
+                                ballBrush = QrKitBrush.solidBrush(foregroundColor.value),
+                                frameBrush = QrKitBrush.solidBrush(foregroundColor.value),
+                            )
+                            if (logoDrawable.value != null) {
+                                logo = QrKitLogo(
+                                    painter = painter,
                                     padding = QrKitLogoPadding.Natural(.1f),
                                     shape = QrKitLogoKitShape.createRoundCorners(.125f),
-                                    )
+                                )
                             }
-                        )
-                        QroseQrCodeGenerator(
-                            modifier = Modifier
-                                .padding(top = 20.dp)
-                                .size(200.dp)
-                                .background(backgroundColor.value),
-                            data = qrData.value,
-                            options = {
-                                colors {
-                                    dark = QrBrush.solid(foregroundColor.value)
-                                    light = QrBrush.solid(backgroundColor.value)
-                                    ball = QrBrush.solid(foregroundColor.value)
-                                    frame = QrBrush.solid(foregroundColor.value)
-                                }
-                                logo {
-                                    this.painter = painter
-                                    this.padding = QrLogoPadding.Natural(0.1f)
-                                    this.shape = QrLogoShape.roundCorners(.125f)
-//                                    size = .125f
-                                }
-                            }
-                        )
-                    }
+                        }
+                    )
                 }
+
+            }
+            if (saveQrCode.value) {
+                ProgressDialog()
             }
         }
 
