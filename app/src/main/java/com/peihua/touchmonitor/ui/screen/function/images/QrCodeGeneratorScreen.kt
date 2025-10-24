@@ -73,6 +73,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.BaseDialog
 import com.peihua.touchmonitor.ui.screen.dialog.ProgressDialog
 import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.utils.adjustBitmapOrientation
 import com.peihua.touchmonitor.utils.createFile
 import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.decodePathOptionsFile
@@ -127,7 +128,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     LaunchedEffect(logoPath.value) {
         dLog { "logoPath:${logoPath.value}" }
         if (logoPath.value != Uri.EMPTY) {
-            val drawable = logoPath.value.decodePathOptionsFile(100, 100)?.toRoundDrawable(20f)
+            val drawable = logoPath.value.adjustBitmapOrientation()?.scale (100, 100)?.toRoundDrawable(20f)
             logoDrawable.value = drawable
         }
         dLog { "logoPath:${logoDrawable.value}" }

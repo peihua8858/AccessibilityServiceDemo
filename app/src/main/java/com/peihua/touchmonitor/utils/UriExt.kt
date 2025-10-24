@@ -3,14 +3,17 @@ package com.peihua.touchmonitor.utils
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import com.fz.common.file.copyToFile
+import com.fz.common.file.writeBitmapToFile
 import com.peihua.selector.result.SystemPhotoCropVisualMediaRequestBuilder
 import com.peihua.touchmonitor.ServiceApplication
+import java.io.File
 
 
 val Uri?.mimeTypeFromFilePath: String?
@@ -62,3 +65,21 @@ fun Context.insertUri(values: ContentValues = ContentValues()): Uri? {
     )
 }
 
+
+fun Uri.decodePathOptionsFile(screenWidth: Int, screenHeight: Int): Bitmap? {
+//    val contentResolver = ServiceApplication.application.contentResolver
+    val file = ServiceApplication.application.getFileFromUri(this)
+//    val file = ServiceApplication.application..openInputStream(this)
+//    val fileUri = file?.fileProvider ?: return null
+    dLog { "decodePathOptionsFile, fileUri: $this" }
+    if (file == null) {
+        return null
+    }
+    return file.decodeFileToBitmap(screenWidth,screenHeight)
+}
+
+fun Uri.adjustBitmapOrientation(): Bitmap? {
+    val file = ServiceApplication.application.getFileFromUri(this)
+    return file?.adjustBitmapOrientation()
+
+}

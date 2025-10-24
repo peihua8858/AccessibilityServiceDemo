@@ -92,6 +92,20 @@
     <string name="text_check_screen_bad_point">Screen Bad Point Detection</string>
     <string name="text_see_device_info">View Device Information</string>
     <string name="text_desktop_video_wallpaper">Desktop Video Wallpaper</string>
+    <!--  二维码生成  -->
+    <string name="text_qr_code_generator">QR code generation</string>
+    <!--  图片水印  -->
+    <string name="text_photo_watermark">Picture watermark</string>
+    <!--    视频转gif-->
+    <string name="text_video_to_gif">Convert video to Gif</string>
+    <!--    Gif 图片分解-->
+    <string name="text_gif_image_decomposition">Gif image breakdown</string>
+    <!--    图片像素化-->
+    <string name="text_image_pixelization">Picture pixelation</string>
+    <!--  图片转素描图  -->
+    <string name="text_photo_to_sketch">Picture to sketch</string>
+    <!--   图片转黑白 -->
+    <string name="text_photo_to_black_and_white">Convert picture to black and white</string>
     <string name="text_system_font_size_adjustment">Adjust System Font Size</string>
     <string name="text_photo_tools">Photo Tools</string>
     <string name="text_run">Running</string>
@@ -168,4 +182,19 @@
     <string name="text_share_file">Share "%1$s" to</string>
     <string name="text_more">More</string>
     <string name="text_foreground_service_permission_tips">Please authorize the front-end service permission. If not granted, the service may be stopped by the system at any time.</string>
+    <string name="understand_the_world_60_seconds">Understand the world in 60 seconds a day</string>
+    <string name="text_save">Save</string>
+    <string name="text_save_success">Saved successfully</string>
+    <string name="text_save_fail">Save failed</string>
+    <string name="text_generate">Generate</string>
+    <string name="text_qr_content_empty">Please enter the QR code content</string>
+    <string name="text_qr_content">QR code content</string>
+    <string name="text_qr_content_hint">Please enter the QR code content</string>
+    <string name="text_qr_code">QR code</string>
+    <string name="text_qr_code_size">QR code size</string>
+    <string name="text_qr_code_log_hint">Please select the logo image of the QR code</string>
+    <string name="text_qr_code_log">QR code logo</string>
+    <string name="text_chose">Choose</string>
+    <string name="text_qr_code_foreground_color">Foreground color</string>
+    <string name="text_qr_code_background_color">Background Color</string>
 </resources>

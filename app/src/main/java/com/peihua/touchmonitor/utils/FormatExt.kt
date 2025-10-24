@@ -80,3 +80,8 @@ fun Long.formatPictureDate(): String {
     }
     return PICTURE_FORMAT_DATE.format(this)
 }
+
+
+fun format(speed: Float): String {
+    return String.format(Locale.ENGLISH, "%.2f", speed)
+}

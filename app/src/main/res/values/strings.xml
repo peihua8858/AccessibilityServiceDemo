@@ -105,15 +105,15 @@
     <string name="text_qr_code_generator">二维码生成</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">图片水印</string>
-<!--    视频转gif-->
+    <!--    视频转gif-->
     <string name="text_video_to_gif">视频转Gif</string>
-<!--    Gif 图片分解-->
+    <!--    Gif 图片分解-->
     <string name="text_gif_image_decomposition">Gif 图片分解</string>
     <!--    图片像素化-->
     <string name="text_image_pixelization">图片像素化</string>
-<!--  图片转素描图  -->
+    <!--  图片转素描图  -->
     <string name="text_photo_to_sketch">图片转素描图</string>
-<!--   图片转黑白 -->
+    <!--   图片转黑白 -->
     <string name="text_photo_to_black_and_white">图片转黑白</string>
     <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
@@ -212,6 +212,10 @@
     <string name="text_chose">选择</string>
     <string name="text_qr_code_foreground_color">前景色</string>
     <string name="text_qr_code_background_color">背景色</string>
+    <!--  选择图片  -->
+    <string name="text_select_photo">选择图片</string>
+    <!--    保存图片-->
+    <string name="text_save_photo">保存图片</string>
 
 
 </resources>
