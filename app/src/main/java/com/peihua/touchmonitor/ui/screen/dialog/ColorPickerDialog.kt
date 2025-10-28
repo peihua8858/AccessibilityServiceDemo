@@ -24,7 +24,7 @@ import com.godaddy.android.colorpicker.rememberColorSaveable
 import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
-import io.mhssn.colorpicker.ext.toHex
+import com.peihua.touchmonitor.utils.toHex
 
 /**
  * 颜色选择器

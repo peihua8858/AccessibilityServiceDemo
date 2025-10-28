@@ -31,30 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.scale
-import com.github.alexzhirkevich.customqrgenerator.QrData
-import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
-import com.github.alexzhirkevich.customqrgenerator.vector.QrVectorOptions
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorBackground
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorBallShape
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColor
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColors
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorFrameShape
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorPixelShape
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.compose.file.createFileName
 import com.peihua.compose.utils.adjustBitmapOrientation
@@ -82,17 +68,6 @@ import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.showToast
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
-import io.github.alexzhirkevich.qrose.options.QrBallShape
-import io.github.alexzhirkevich.qrose.options.QrBrush
-import io.github.alexzhirkevich.qrose.options.QrFrameShape
-import io.github.alexzhirkevich.qrose.options.QrOptions
-import io.github.alexzhirkevich.qrose.options.QrPixelShape
-import io.github.alexzhirkevich.qrose.options.brush
-import io.github.alexzhirkevich.qrose.options.circle
-import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
-import io.github.alexzhirkevich.qrose.options.roundCorners
-import io.github.alexzhirkevich.qrose.options.solid
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.mhssn.colorpicker.ext.toHex
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -403,44 +378,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
 
 public inline fun Color.toDrawable(): ColorDrawable = ColorDrawable(toArgb())
 
-@Composable
-fun QroseQrCodeGenerator(
-    modifier: Modifier,
-    data: String,
-    options: QrOptionsBuilderScope.() -> Unit = {
-//        colors {
-//            dark = QrBrush.solid(Color.Red)
-//            light = QrBrush.solid(Color.Green)
-//            frame = QrBrush.solid(Color.Red)
-//            ball = QrBrush.solid(Color.Red)
-//        }
-        colors {
-            dark = QrBrush.brush {
-                Brush.linearGradient(
-                    0f to Color.Red,
-                    1f to Color.Blue,
-                    end = Offset(it, it)
-                )
-            }
-            ball = QrBrush.solid(Color.Red)
-            light = QrBrush.solid(Color.Green)
-            frame = QrBrush.solid(Color.Black)
-        }
-        shapes {
-            ball = QrBallShape.circle()
-            darkPixel = QrPixelShape.roundCorners()
-            frame = QrFrameShape.roundCorners(.25f)
-        }
-    },
-) {
-    val qrOptions = QrOptions(options)
-    val painter = rememberQrCodePainter(data = data, options = qrOptions)
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = modifier
-    )
-}
+
 
 @Composable
 fun QrKtCodeGenerator(
@@ -503,63 +441,101 @@ fun QrKtCodeGenerator(
         modifier = modifier
     )
 }
-
-@Composable
-fun QrCodeGenerator(
-    modifier: Modifier = Modifier,
-    data: QrData,
-    colors: QrVectorColors = QrVectorColors(),
-    shapes: QrVectorShapes = QrVectorShapes(),
-    background: QrVectorBackground = QrVectorBackground(),
-) {
-    QrCodeGenerator(
-        modifier = modifier,
-        data = data,
-        options = {
-            setColors(colors)
-            setShapes(shapes)
-            setBackground(background)
-        }
-    )
-}
-
-@Composable
-fun QrCodeGenerator(
-    modifier: Modifier = Modifier,
-    data: QrData,
-    options: QrVectorOptions.Builder.() -> Unit = {
-        setPadding(0.1f)
-        setBackground(
-            QrVectorBackground(
-                drawable = android.graphics.Color.GREEN.toDrawable(),
-            )
-        )
-        setColors(
-            QrVectorColors(
-                dark = QrVectorColor
-                    .Solid(android.graphics.Color.RED),
-                light = QrVectorColor.Solid(android.graphics.Color.TRANSPARENT),
-                ball = QrVectorColor.Solid(android.graphics.Color.RED),
-                frame = QrVectorColor.Solid(android.graphics.Color.RED),
-            )
-        )
-        setShapes(
-            QrVectorShapes(
-                darkPixel = QrVectorPixelShape
-                    .RoundCorners(.5f),
-                ball = QrVectorBallShape
-                    .RoundCorners(.25f),
-                frame = QrVectorFrameShape
-                    .RoundCorners(.25f),
-            )
-        )
-    },
-) {
-    val options = QrVectorOptions.Builder().apply(options).build()
-    val drawable: Drawable = QrCodeDrawable(data, options)
-    Image(
-        painter = rememberDrawablePainter(drawable = drawable),
-        contentDescription = null,
-        modifier = modifier
-    )
-}
+//
+//@Composable
+//fun QrCodeGenerator(
+//    modifier: Modifier = Modifier,
+//    data: QrData,
+//    colors: QrVectorColors = QrVectorColors(),
+//    shapes: QrVectorShapes = QrVectorShapes(),
+//    background: QrVectorBackground = QrVectorBackground(),
+//) {
+//    QrCodeGenerator(
+//        modifier = modifier,
+//        data = data,
+//        options = {
+//            setColors(colors)
+//            setShapes(shapes)
+//            setBackground(background)
+//        }
+//    )
+//}
+//
+//@Composable
+//fun QrCodeGenerator(
+//    modifier: Modifier = Modifier,
+//    data: QrData,
+//    options: QrVectorOptions.Builder.() -> Unit = {
+//        setPadding(0.1f)
+//        setBackground(
+//            QrVectorBackground(
+//                drawable = android.graphics.Color.GREEN.toDrawable(),
+//            )
+//        )
+//        setColors(
+//            QrVectorColors(
+//                dark = QrVectorColor
+//                    .Solid(android.graphics.Color.RED),
+//                light = QrVectorColor.Solid(android.graphics.Color.TRANSPARENT),
+//                ball = QrVectorColor.Solid(android.graphics.Color.RED),
+//                frame = QrVectorColor.Solid(android.graphics.Color.RED),
+//            )
+//        )
+//        setShapes(
+//            QrVectorShapes(
+//                darkPixel = QrVectorPixelShape
+//                    .RoundCorners(.5f),
+//                ball = QrVectorBallShape
+//                    .RoundCorners(.25f),
+//                frame = QrVectorFrameShape
+//                    .RoundCorners(.25f),
+//            )
+//        )
+//    },
+//) {
+//    val options = QrVectorOptions.Builder().apply(options).build()
+//    val drawable: Drawable = QrCodeDrawable(data, options)
+//    Image(
+//        painter = rememberDrawablePainter(drawable = drawable),
+//        contentDescription = null,
+//        modifier = modifier
+//    )
+//}
+//@Composable
+//fun QroseQrCodeGenerator(
+//    modifier: Modifier,
+//    data: String,
+//    options: QrOptionsBuilderScope.() -> Unit = {
+////        colors {
+////            dark = QrBrush.solid(Color.Red)
+////            light = QrBrush.solid(Color.Green)
+////            frame = QrBrush.solid(Color.Red)
+////            ball = QrBrush.solid(Color.Red)
+////        }
+//        colors {
+//            dark = QrBrush.brush {
+//                Brush.linearGradient(
+//                    0f to Color.Red,
+//                    1f to Color.Blue,
+//                    end = Offset(it, it)
+//                )
+//            }
+//            ball = QrBrush.solid(Color.Red)
+//            light = QrBrush.solid(Color.Green)
+//            frame = QrBrush.solid(Color.Black)
+//        }
+//        shapes {
+//            ball = QrBallShape.circle()
+//            darkPixel = QrPixelShape.roundCorners()
+//            frame = QrFrameShape.roundCorners(.25f)
+//        }
+//    },
+//) {
+//    val qrOptions = QrOptions(options)
+//    val painter = rememberQrCodePainter(data = data, options = qrOptions)
+//    Image(
+//        painter = painter,
+//        contentDescription = null,
+//        modifier = modifier
+//    )
+//}
