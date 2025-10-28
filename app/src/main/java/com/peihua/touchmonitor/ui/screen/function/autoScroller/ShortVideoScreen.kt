@@ -33,8 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.fz.common.utils.showToast
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.showToast
+import com.peihua.compose.utils.startAccessibilitySettings
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.activity.AutoScrollScreenActivity
 import com.peihua.touchmonitor.activity.HomeScreenActivity
@@ -52,9 +54,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.stackEntry
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.isUpsideDownCake
-import com.peihua.touchmonitor.utils.startAccessibilitySettings
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import com.peihua8858.permissions.core.requestPermission
 import kotlinx.coroutines.launch

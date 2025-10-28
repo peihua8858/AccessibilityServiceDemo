@@ -13,10 +13,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.peihua.compose.paging3.PagingSourceImpl
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
-import com.peihua.touchmonitor.paging3.PagingSourceImpl
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.getLong
 import com.peihua.touchmonitor.utils.getVideoThumbnailFromMediaMetadataRetriever
 import kotlinx.coroutines.Dispatchers

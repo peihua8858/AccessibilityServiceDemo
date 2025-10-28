@@ -4,7 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.core.content.PermissionChecker
 import androidx.documentfile.provider.DocumentFile
-import com.fz.common.file.getFileSize
+import com.peihua.compose.file.getFileSize
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.utils.WorkScope

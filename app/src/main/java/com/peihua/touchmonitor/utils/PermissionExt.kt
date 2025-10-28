@@ -7,7 +7,8 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import android.provider.Settings
 import androidx.core.content.ContextCompat
-import com.fz.common.utils.fromHtml
+import com.peihua.compose.utils.fromHtml
+import com.peihua.compose.utils.startStorageSettingsActivity
 import com.peihua.touchmonitor.R
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

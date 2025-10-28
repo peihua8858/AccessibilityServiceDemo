@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.ShowToast
-import com.peihua.touchmonitor.utils.dLog
 
 @Composable
 fun <T> MultiStateScreen(

@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.fz.common.text.isNonEmpty
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.isNonEmpty
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.WorkScope
-import com.peihua.touchmonitor.utils.dLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel

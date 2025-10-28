@@ -24,6 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.ui.components.ErrorView
@@ -31,7 +32,6 @@ import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.ContextExt.isLandscape
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.ApplicationsViewModel
@@ -87,7 +87,7 @@ private fun AppScreenContent(
     saveToDb: (AppInfo) -> Unit,
 ) {
     val context = LocalContext.current
-    val isLandscape = context.isLandscape()
+    val isLandscape = context.isLandscape
     val iconSize =
         if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
     LazyVerticalGrid(

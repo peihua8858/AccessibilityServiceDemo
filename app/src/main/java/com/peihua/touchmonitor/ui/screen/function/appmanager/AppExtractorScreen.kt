@@ -28,6 +28,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.AppRouter
@@ -39,8 +41,6 @@ import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
-import com.peihua.touchmonitor.utils.ContextExt.isLandscape
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 
@@ -109,7 +109,7 @@ private fun AppListScreenContent(
     models: List<AppInfoModel>,
 ) {
     val context = LocalContext.current
-    val isLandscape = context.isLandscape()
+    val isLandscape = context.isLandscape
     val iconSize =
         if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
     LazyColumn(modifier = modifier) {

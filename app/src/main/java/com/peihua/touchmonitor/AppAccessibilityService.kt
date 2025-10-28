@@ -17,15 +17,15 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.wLog
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.isAtLeastO
 import com.peihua.touchmonitor.utils.isAtLeastS
 import com.peihua.touchmonitor.utils.isUpsideDownCake
-import com.peihua.touchmonitor.utils.wLog
 import com.peihua8858.permissions.core.checkPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

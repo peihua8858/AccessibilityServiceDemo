@@ -20,6 +20,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import com.peihua.compose.utils.dLog
 
 fun Any?.isWorkThread(): Boolean {
     return Looper.myLooper() !== Looper.getMainLooper()

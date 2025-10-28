@@ -8,7 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import com.fz.common.text.isNonEmpty
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.isNonEmpty
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.data.db.AppDatabase
 import com.peihua.touchmonitor.data.db.Factory
@@ -21,7 +22,6 @@ import com.peihua.touchmonitor.ui.History
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.getString
 import com.peihua.touchmonitor.utils.request
 import kotlinx.coroutines.Dispatchers

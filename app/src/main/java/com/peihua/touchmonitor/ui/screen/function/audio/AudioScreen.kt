@@ -1,7 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.function.audio
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,18 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -31,15 +26,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.utils.items
-import com.peihua.touchmonitor.utils.openWithFile
 import com.peihua.touchmonitor.viewmodel.MediaModel
 import com.peihua.touchmonitor.viewmodel.MediaUiAction
 import com.peihua.touchmonitor.viewmodel.MediaViewModel

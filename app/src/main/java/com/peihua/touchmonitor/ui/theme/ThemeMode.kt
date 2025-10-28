@@ -9,12 +9,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dLog
 import java.lang.reflect.Type
 
 

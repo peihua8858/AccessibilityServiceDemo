@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fz.common.utils.toFloat
+import com.peihua.compose.utils.dLog
 import kotlin.math.roundToInt
 
 
@@ -19,7 +19,7 @@ val <T : Number> T.toDp: Dp
         return (pxValue / density.density).dLog { "toDp>$pxValue/${density.density}=${this}" }.dp
     }
 
-fun <T> T.toDp(density: Density): Dp {
+fun <T: Number> T.toDp(density: Density): Dp {
     val pxValue = toFloat()
     return with(density) {
         (pxValue / this.density).dLog { "toDp>r$pxValue/${density.density}=$this" }.dp
@@ -32,7 +32,7 @@ val <T : Number> T.toSp: TextUnit
         return toSp(LocalDensity.current)
     }
 
-fun <T> T.toSp(density: Density): TextUnit {
+fun <T: Number> T.toSp(density: Density): TextUnit {
     val pxValue = toFloat()
     return with(density) {
         (pxValue / this.density).dLog { "toSp>r$pxValue/${density.density}=$this" }.sp

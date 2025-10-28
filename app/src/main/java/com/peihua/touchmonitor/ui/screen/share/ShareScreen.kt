@@ -22,18 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import com.fz.common.file.fetchFileName
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.peihua.compose.file.fetchFileName
+import com.peihua.compose.file.mimeTypeFromFilePath
+import com.peihua.compose.utils.LogCat
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.isLandscape
+import com.peihua.compose.utils.shareCertainFiles
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.LogCat
-import com.peihua.touchmonitor.utils.dLog
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.fileProvider
-import com.peihua.touchmonitor.utils.isLandscape
-import com.peihua.touchmonitor.utils.mimeTypeFromFilePath
-import com.peihua.touchmonitor.utils.shareCertainFiles
 import java.io.File
 
 private class ShareModel(val name: String, val icon: Drawable, val packageName: String)

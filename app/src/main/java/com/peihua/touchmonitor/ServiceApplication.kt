@@ -5,9 +5,9 @@ import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.writeCrashLogFile
 import com.peihua.touchmonitor.model.LanguageModel
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.writeCrashLogFile
 
 class ServiceApplication : Application() {
     companion object {

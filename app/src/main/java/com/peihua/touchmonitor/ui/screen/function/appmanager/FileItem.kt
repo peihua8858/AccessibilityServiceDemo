@@ -6,7 +6,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
-import com.fz.common.utils.getFileFromContentUri
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getFieldFromContentUri

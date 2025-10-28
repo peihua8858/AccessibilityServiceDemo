@@ -30,8 +30,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import com.fz.common.utils.toLong
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.applications.AppScreen
@@ -71,8 +71,6 @@ import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.screen.share.ShareScreen
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
-import com.peihua.touchmonitor.utils.dLog
-import io.mhssn.colorpicker.ext.toHex
 import kotlin.text.toLong
 
 @SuppressLint("StaticFieldLeak")

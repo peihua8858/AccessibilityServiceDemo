@@ -1,15 +1,14 @@
 package com.peihua.touchmonitor.utils
 
-import com.fz.common.utils.checkContext
-import com.fz.common.utils.clipboardManager
-import com.fz.common.utils.eLog
-
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.fz.common.text.isNonEmpty
+import com.peihua.compose.utils.checkContext
+import com.peihua.compose.utils.clipboardManager
+import com.peihua.compose.utils.eLog
+import com.peihua.compose.utils.isNonEmpty
 
 fun CharSequence?.copyTextToClipboard(context: Context): Boolean {
     if (this == null) {

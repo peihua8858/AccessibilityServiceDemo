@@ -13,7 +13,8 @@ import android.provider.MediaStore
 import android.util.Size
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import com.fz.common.text.isNonEmpty
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.isNonEmpty
 import com.peihua.touchmonitor.ServiceApplication
 import java.io.File
 import kotlin.math.max

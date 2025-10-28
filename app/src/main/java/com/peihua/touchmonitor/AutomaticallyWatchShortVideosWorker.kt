@@ -4,13 +4,11 @@ import android.accessibilityservice.AccessibilityService.GestureResultCallback
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
 import android.util.DisplayMetrics
-import android.view.accessibility.AccessibilityNodeInfo
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.screenHeight
+import com.peihua.compose.utils.screenWidth
 import com.peihua.touchmonitor.ui.Settings
-import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.screenHeight
-import com.peihua.touchmonitor.utils.screenWidth
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

@@ -4,7 +4,6 @@ package com.peihua.touchmonitor.ui.screen.function.images
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,39 +25,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
-import com.fz.common.file.cacheFile
-import com.fz.common.file.createFileName
-import com.fz.common.file.writeBitmapToFile
-import com.fz.common.utils.saveBitmapToGallery
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.selector.result.PhotoCropVisualMediaRequestBuilder
+import com.peihua.compose.file.cacheFile
+import com.peihua.compose.file.createFileName
+import com.peihua.compose.file.writeBitmapToFile
+import com.peihua.compose.utils.adjustBitmapOrientation
+import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.decodePathOptionsFile
+import com.peihua.compose.utils.saveBitmapToGallery
+import com.peihua.compose.utils.toBlackAndWhite
 import com.peihua.selector.result.PhotoVisualMediaRequest
-import com.peihua.selector.result.contract.PhotoCropVisualMedia
 import com.peihua.selector.result.contract.PhotoVisualMedia
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.drawable.toRoundDrawable
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.adjustBitmapOrientation
-import com.peihua.touchmonitor.utils.createFile
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.decodePathOptionsFile
-import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
-import com.peihua.touchmonitor.utils.toBlackAndWhite
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.Async
 
 @Composable
 fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {

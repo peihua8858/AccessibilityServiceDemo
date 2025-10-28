@@ -7,19 +7,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.text.TextUtils
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
-import com.fz.common.file.getFileSize
+import com.peihua.compose.file.getFileSize
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
-import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.request
-import com.peihua.touchmonitor.utils.showToast
 
 class AppExtractorViewModel(application: Application) : AndroidViewModel(application) {
     private val receiverApp = object : BroadcastReceiver() {

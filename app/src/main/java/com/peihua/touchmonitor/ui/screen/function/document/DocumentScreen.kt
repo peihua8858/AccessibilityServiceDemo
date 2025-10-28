@@ -8,18 +8,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.isLandscape
 import com.peihua.touchmonitor.viewmodel.ExcelViewModel
 import com.peihua.touchmonitor.viewmodel.PdfViewModel
 import com.peihua.touchmonitor.viewmodel.PptViewModel
 import com.peihua.touchmonitor.viewmodel.TextViewModel
 import com.peihua.touchmonitor.viewmodel.WordViewModel
 import com.peihua.touchmonitor.viewmodel.XmlViewModel
-import kotlin.jvm.java
 
 @Composable
 fun DocumentScreen(modifier: Modifier) {

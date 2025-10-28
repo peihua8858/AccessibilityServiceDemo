@@ -15,6 +15,8 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.os.ParcelUuid
+import com.peihua.compose.file.mimeTypeFromFilePath
+import com.peihua.compose.utils.LogCat
 import com.peihua.touchmonitor.ServiceApplication
 import java.io.File
 import java.lang.reflect.InvocationTargetException

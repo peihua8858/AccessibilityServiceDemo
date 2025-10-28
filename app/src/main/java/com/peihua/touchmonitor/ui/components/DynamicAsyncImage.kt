@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.theme.LocalTintTheme
-import com.peihua.touchmonitor.utils.dLog
 
 /**
  * A wrapper around [AsyncImage] which determines the colorFilter based on the theme
@@ -37,6 +37,7 @@ fun DynamicAsyncImage(
     placeholder: Painter = painterResource(id = R.drawable.c_placeholder_default),
 ) {
     val iconTint = LocalTintTheme.current.iconTint
+    dLog { "iconTint:$iconTint" }
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
     val isLocalInspection = LocalInspectionMode.current

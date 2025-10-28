@@ -39,9 +39,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
-import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.IconText
@@ -56,8 +56,6 @@ import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.copyToClipBoard
-import com.peihua.touchmonitor.utils.dLog
-import com.peihua.touchmonitor.utils.shareCertainFiles
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
 import kotlinx.coroutines.cancel

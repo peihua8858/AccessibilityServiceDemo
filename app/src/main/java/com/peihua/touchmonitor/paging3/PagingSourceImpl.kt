@@ -4,8 +4,7 @@ import android.os.Bundle
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.peihua.touchmonitor.utils.LogCat
-import com.peihua.touchmonitor.utils.dLog
+import com.peihua.compose.utils.LogCat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
