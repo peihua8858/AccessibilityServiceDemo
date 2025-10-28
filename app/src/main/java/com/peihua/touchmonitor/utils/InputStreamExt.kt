@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
+import com.peihua.selector.crop.util.BitmapLoadUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.FileOutputStream
@@ -53,6 +54,16 @@ fun InputStream.decodeStreamToBitmap(screenWidth: Int, screenHeight: Int): Bitma
     return null
 }
 
+fun InputStream.adjustBitmapOrientation(decodeBitmap: Bitmap): Bitmap? {
+    return try {
+        val matrix = orientationMatrix
+        dLog { "adjustBitmapOrientation, adjust degree " + matrix + "to 0." }
+        BitmapLoadUtils.transformBitmap(decodeBitmap, matrix)
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        decodeBitmap
+    }
+}
 
 val InputStream.orientationMatrix: Matrix
     get() {

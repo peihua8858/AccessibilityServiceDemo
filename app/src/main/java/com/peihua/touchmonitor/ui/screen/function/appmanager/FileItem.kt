@@ -10,6 +10,7 @@ import com.fz.common.utils.getFileFromContentUri
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getFieldFromContentUri
+import com.peihua.touchmonitor.utils.getFileFromContentUri
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream

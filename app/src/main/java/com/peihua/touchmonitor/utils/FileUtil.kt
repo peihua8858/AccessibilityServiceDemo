@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.webkit.MimeTypeMap
 import androidx.exifinterface.media.ExifInterface
+import com.peihua.selector.crop.util.BitmapLoadUtils
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.FileInputStream
@@ -153,22 +154,24 @@ fun File.decodeFileToBitmap(screenWidth: Int, screenHeight: Int): Bitmap? {
 
 fun File.adjustBitmapOrientation(): Bitmap? {
     return try {
-        var exifInterface: ExifInterface? = null
         var bitmap = BitmapFactory.decodeStream(FileInputStream(this))
-        try {
-            exifInterface = ExifInterface(this)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-        val matrix = orientationMatrix
-        dLog { "adjustBitmapOrientation, adjust degree " + matrix + "to 0." }
-        Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true)
+        adjustBitmapOrientation(bitmap)
     } catch (e: Throwable) {
         e.printStackTrace()
         null
     }
 }
 
+fun File.adjustBitmapOrientation(decodeBitmap: Bitmap): Bitmap? {
+    return try {
+        val matrix = orientationMatrix
+        dLog { "adjustBitmapOrientation, adjust degree " + matrix + "to 0." }
+        BitmapLoadUtils.transformBitmap(decodeBitmap, matrix)
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        null
+    }
+}
 val File.orientationMatrix: Matrix
     get() {
         val matrix = Matrix()

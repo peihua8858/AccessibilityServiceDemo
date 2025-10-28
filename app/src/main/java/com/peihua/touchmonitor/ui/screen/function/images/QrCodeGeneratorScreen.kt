@@ -60,6 +60,7 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.selector.result.PhotoCropVisualMediaRequestBuilder
 import com.peihua.selector.result.PhotoVisualMediaRequest
+import com.peihua.selector.result.PhotoVisualMediaRequestBuilder
 import com.peihua.selector.result.contract.PhotoCropVisualMedia
 import com.peihua.selector.result.contract.PhotoVisualMedia
 import com.peihua.touchmonitor.R
@@ -203,7 +204,9 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     })
                 TextButton(
                     onClick = {
-                        launcher.launch(PhotoVisualMediaRequest(PhotoVisualMedia.ImageOnly))
+                        launcher.launch(PhotoVisualMediaRequestBuilder(PhotoVisualMedia.ImageOnly)
+//                            .setForceCustomUi(true)
+                            .build())
                     },
                     modifier = Modifier.constrainAs(button) {
                         top.linkTo(parent.top)
