@@ -43,48 +43,53 @@ class AppExtractorViewModel(application: Application) : AndroidViewModel(applica
         mutableStateOf(ResultData.Initialize())
     val sysApplications: MutableState<ResultData<List<AppInfoModel>>> =
         mutableStateOf(ResultData.Initialize())
+
     fun requestUserAppList() {
         request(userApplications) {
-            val packageManager = application.packageManager
-            val appList = mutableListOf<AppInfoModel>()
-            packageManager.getInstalledPackages(0).forEach {
-                val applicationInfo =it.applicationInfo?:return@forEach
-                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
-                if (!isSystemApp) {
-                    val appInfo = AppInfoModel(
-                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
-                        packageName = it.packageName,
-                        icon = it.applicationInfo?.loadIcon(packageManager),
-                        packInfo = it,
-                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
-                    )
-                    appList.add(appInfo)
-                }
-            }
-            appList
+            queryApplication(application.packageManager, AppType.USER)
+//            val packageManager = application.packageManager
+//            val appList = mutableListOf<AppInfoModel>()
+//            packageManager.getInstalledPackages(0).forEach {
+//                val applicationInfo = it.applicationInfo ?: return@forEach
+//                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+//                if (!isSystemApp) {
+//                    val appInfo = AppInfoModel(
+//                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
+//                        packageName = it.packageName,
+//                        icon = it.applicationInfo?.loadIcon(packageManager),
+//                        packInfo = it,
+//                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
+//                    )
+//                    appList.add(appInfo)
+//                }
+//            }
+//            appList
         }
     }
-    fun requestSystemAppList(){
+
+    fun requestSystemAppList() {
         request(sysApplications) {
-            val packageManager = application.packageManager
-            val appList = mutableListOf<AppInfoModel>()
-            packageManager.getInstalledPackages(0).forEach {
-                val applicationInfo =it.applicationInfo?:return@forEach
-                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
-                if (isSystemApp) {
-                    val appInfo = AppInfoModel(
-                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
-                        packageName = it.packageName,
-                        icon = it.applicationInfo?.loadIcon(packageManager),
-                        packInfo = it,
-                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
-                    )
-                    appList.add(appInfo)
-                }
-            }
-            appList
+            queryApplication(application.packageManager, AppType.SYSTEM)
+//            val packageManager = application.packageManager
+//            val appList = mutableListOf<AppInfoModel>()
+//            packageManager.getInstalledPackages(0).forEach {
+//                val applicationInfo = it.applicationInfo ?: return@forEach
+//                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+//                if (isSystemApp) {
+//                    val appInfo = AppInfoModel(
+//                        name = it.applicationInfo?.loadLabel(packageManager).toString(),
+//                        packageName = it.packageName,
+//                        icon = it.applicationInfo?.loadIcon(packageManager),
+//                        packInfo = it,
+//                        fileSize = it.applicationInfo?.sourceDir.getFileSize()
+//                    )
+//                    appList.add(appInfo)
+//                }
+//            }
+//            appList
         }
     }
+
     fun refreshAllAppList() {
         requestSystemAppList()
         requestUserAppList()
@@ -93,6 +98,45 @@ class AppExtractorViewModel(application: Application) : AndroidViewModel(applica
     override fun onCleared() {
         super.onCleared()
         application.unregisterReceiver(receiverApp)
+    }
+    companion object {
+
+        fun queryApplication(
+            packageManager: PackageManager,
+            type: AppType = AppType.ALL,
+        ): MutableList<AppInfoModel> {
+            val packageManager = packageManager
+            val appList = mutableListOf<AppInfoModel>()
+            packageManager.getInstalledPackages(0).forEach {
+                val applicationInfo = it.applicationInfo ?: return@forEach
+                val isSystemApp = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                val appInfo = AppInfoModel(
+                    name = it.applicationInfo?.loadLabel(packageManager).toString(),
+                    packageName = it.packageName,
+                    icon = it.applicationInfo?.loadIcon(packageManager),
+                    packInfo = it,
+                    fileSize = it.applicationInfo?.sourceDir.getFileSize()
+                )
+                when (type) {
+                    AppType.SYSTEM -> {
+                        if (isSystemApp) {
+                            appList.add(appInfo)
+                        }
+                    }
+
+                    AppType.USER -> {
+                        if (!isSystemApp) {
+                            appList.add(appInfo)
+                        }
+                    }
+
+                    AppType.ALL -> {
+                        appList.add(appInfo)
+                    }
+                }
+            }
+            return appList
+        }
     }
 }
 
@@ -146,4 +190,10 @@ class AppDetailViewModel(application: Application) : AndroidViewModel(applicatio
         val intent = packageManager.getLaunchIntentForPackage(packageName)
         return intent?.component?.className ?: application.getString(R.string.word_none)
     }
+
+
+}
+
+enum class AppType {
+    ALL, USER, SYSTEM
 }

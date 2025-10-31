@@ -1,9 +1,11 @@
 package com.peihua.touchmonitor.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -104,6 +106,46 @@ inline fun Modifier.clickable(
         }
     }
 }
+
+/**
+ * 防止重复点击(有的人可能会手抖连点两次,造成奇怪的bug)
+ */
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+@Composable
+fun Modifier.combinedClickable(
+    time: Int = 500,
+    enabled: Boolean = true,
+    onClickLabel: String? = null,
+    role: Role? = null,
+    onLongClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    onDoubleClick: (() -> Unit)? = null,
+    hapticFeedbackEnabled: Boolean = true,
+    onClick: () -> Unit,
+): Modifier {
+    var lastClickTime by remember { mutableLongStateOf(value = 0L) }//使用remember函数记录上次点击的时间
+    val invokeClick = { click: () -> Unit ->
+        val currentTimeMillis = System.currentTimeMillis()
+        if (currentTimeMillis - time >= lastClickTime) {//判断点击间隔,如果在间隔内则不回调
+            click()
+            lastClickTime = currentTimeMillis
+        }
+    }
+    return combinedClickable(
+        enabled = enabled,
+        onClickLabel = onClickLabel,
+        onLongClickLabel = onLongClickLabel,
+        role = role,
+        hapticFeedbackEnabled = hapticFeedbackEnabled,
+        onLongClick = {
+            invokeClick(onLongClick ?: {})
+        }, onDoubleClick = {
+            invokeClick(onDoubleClick ?: {})
+        }) {
+        invokeClick(onClick)
+    }
+}
+
 
 internal fun Modifier.defaultErrorSemantics(
     isError: Boolean,

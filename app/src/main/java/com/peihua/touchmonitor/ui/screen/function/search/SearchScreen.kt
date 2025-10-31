@@ -1,7 +1,6 @@
 package com.peihua.touchmonitor.ui.screen.function.search
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,10 +14,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopSearchBar
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,13 +30,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.model.MediaData
+import com.peihua.touchmonitor.model.SearchModel
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.components.Toolbar
-import com.peihua.touchmonitor.ui.components.search.SearchBarDefaults
+import com.peihua.touchmonitor.ui.components.clickable
+import com.peihua.touchmonitor.ui.components.search.TopSearchBar
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
@@ -47,19 +46,38 @@ import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.SearchUiAction
 import com.peihua.touchmonitor.viewmodel.SearchViewModel
 
+enum class SearchType {
+    ALL,
+    IMAGE,
+    AUDIO,
+    VIDEO,
+    DOCUMENT,
+    APK,
+    APPLICATION
+}
+
 @Composable
-fun SearchScreen(modifier: Modifier, viewModel: SearchViewModel = viewModel()) {
+fun SearchScreen(
+    modifier: Modifier,
+    searchType: SearchType = SearchType.ALL,
+    viewModel: SearchViewModel = viewModel(),
+) {
     val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
     val action = viewModel.userAction
     val uiState = viewModel.mUiState
     SearchScreenContent(modifier, uiState.collectAsState().value.query, result) {
-        action(SearchUiAction.Search(it))
+        action(SearchUiAction.Search(it, searchType))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyPagingItems<MediaData>, search: (String) -> Unit) {
+private fun SearchScreenContent(
+    modifier: Modifier,
+    keywords: String = "",
+    result: LazyPagingItems<SearchModel>,
+    search: (String) -> Unit,
+) {
     //请求数据
     val input = remember { mutableStateOf(keywords) }
     val searchState = rememberSearchBarState()
@@ -67,49 +85,18 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
         modifier = Modifier.fillMaxSize(),
         title = {
             TopSearchBar(
-                state = searchState,
-                modifier = Modifier
-//                    .padding(top = dimensionResource(R.dimen.dp_8), bottom = dimensionResource(R.dimen.dp_8))
-//                    .height(dimensionResource(id = R.dimen.dp_40))
-                    .fillMaxWidth(),
-                inputField = {
-                    SearchBarDefaults.InputField(
-                        query = input.value, modifier = Modifier
-                            .fillMaxWidth(),
-                        textStyle = MaterialTheme.typography.labelLargeNormal,
-                        onQueryChange = {
-                            input.value = it
-                        },
-                        leadingIcon = {
-                            Icon(
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dp_24))
-                                    .clickable {
-                                        search(input.value)
-                                    },
-                                painter = painterResource(id = R.drawable.ic_search_24),
-                                contentDescription = ""
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dp_24))
-                                    .clickable {
-                                        input.value = ""
-                                    },
-                                painter = painterResource(id = R.drawable.ic_clear_24),
-                                contentDescription = ""
-                            )
-                        },
-                        onSearch = {
-                            input.value = it
-                            search(it)
-                        }, onExpandedChange = {
+                state = searchState, modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.labelLargeNormal,
+                onQueryChange = {
+                    input.value = it
+                    search(it)
+                },
+                onSearch = {
+                    input.value = it
+                    search(it)
+                },
+            )
 
-                        }, expanded = true
-                    )
-                })
         },
         navigateUp = { popBackStack() },
     ) {
@@ -123,7 +110,7 @@ fun SearchScreenContent(modifier: Modifier, keywords: String = "", result: LazyP
 fun SearchScreenContent(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    result: LazyPagingItems<MediaData>,
+    result: LazyPagingItems<SearchModel>,
 ) {
     val dp8 = dimensionResource(R.dimen.dp_8)
     val context = LocalContext.current
@@ -133,12 +120,12 @@ fun SearchScreenContent(
         contentPadding = PaddingValues(dp8),
     ) {
         items(result) { item ->
-            val audio = item ?: return@items
+            val model = item ?: return@items
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        context.openWithFile(audio.filePath)
+                        context.openWithFile(model.filePath)
 //                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
                     }
                     .padding(vertical = dp8),
@@ -146,19 +133,24 @@ fun SearchScreenContent(
             ) {
                 Image(
                     modifier = Modifier
+                        .padding(end = dp8)
                         .size(dimensionResource(id = R.dimen.dp_32)),
-                    painter = painterResource(R.drawable.ic_audio_file_24),
+                    painter = if (model.icon == null) painterResource(R.drawable.ic_audio_file_24)
+                    else rememberDrawablePainter(model.icon),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
                 )
-                Column(verticalArrangement = Arrangement.Center) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
                     Text(
                         modifier = Modifier,
-                        text = audio.fileName
+                        text = model.displayName
                     )
                     Text(
                         modifier = Modifier,
-                        text = audio.fileSize ?: ""
+                        text = model.fileSize
                     )
                 }
             }

@@ -1,53 +1,43 @@
-package com.peihua.touchmonitor.ui.components.search
+package com.peihua.touchmonitor.ui.components.text
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults.inputFieldColors
 import androidx.compose.material3.SearchBarDefaults.inputFieldShape
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.peihua.touchmonitor.ui.components.text.TextFieldDefaults.containerColor
-import com.peihua.touchmonitor.ui.components.text.TextFieldDefaults.textColor
-import com.peihua.touchmonitor.ui.components.text.TextFieldDefaults.textFieldBackground
 import kotlinx.coroutines.delay
 
-object SearchBarDefaults {
-
-    internal val SearchBarVerticalPadding: Dp = 8.dp
-
-    // Search bar has 16dp padding between icons and start/end, while by default text field has 12dp.
-    private val SearchBarIconOffsetX: Dp = 4.dp
-
+object TextFieldDefaults {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun InputField(
@@ -112,11 +102,11 @@ object SearchBarDefaults {
                         placeholder = placeholder,
                         leadingIcon =
                             leadingIcon?.let { leading ->
-                                { Box(Modifier.offset(x = SearchBarIconOffsetX)) { leading() } }
+                                { Box(Modifier) { leading() } }
                             },
                         trailingIcon =
                             trailingIcon?.let { trailing ->
-                                { Box(Modifier.offset(x = -SearchBarIconOffsetX)) { trailing() } }
+                                { Box(Modifier) { trailing() } }
                             },
                         shape = RoundedCornerShape(25),
                         colors = colors,
@@ -149,18 +139,30 @@ object SearchBarDefaults {
             }
         }
     }
+    @Stable
+    internal fun TextFieldColors.containerColor(enabled: Boolean, isError: Boolean, focused: Boolean): Color =
+        when {
+            !enabled -> disabledContainerColor
+            isError -> errorContainerColor
+            focused -> focusedContainerColor
+            else -> unfocusedContainerColor
+        }
 
-    @Composable
-    fun TrailingIcon(modifier: Modifier = Modifier) {
-        Icon(Icons.Filled.Search, null, modifier)
-    }
-
-    @Composable
-    fun SearchBarDefaults.placeholderTextStyle(): TextStyle {
-        return MaterialTheme.typography.bodyLarge.copy(
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-
+    internal fun Modifier.textFieldBackground(color: ColorProducer, shape: Shape): Modifier =
+        this.drawWithCache {
+            val outline = shape.createOutline(size, layoutDirection, this)
+            onDrawBehind { drawOutline(outline, color = color()) }
+        }
+    @Stable
+    internal fun TextFieldColors.textColor(
+        enabled: Boolean,
+        isError: Boolean,
+        focused: Boolean,
+    ): Color =
+        when {
+            !enabled -> disabledTextColor
+            isError -> errorTextColor
+            focused -> focusedTextColor
+            else -> unfocusedTextColor
+        }
 }

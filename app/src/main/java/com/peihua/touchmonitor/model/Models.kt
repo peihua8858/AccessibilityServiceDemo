@@ -56,7 +56,7 @@ data class ApkModel(
         get() = packInfo?.versionName ?: ""
 }
 
-data class SystemSettings (
+data class SystemSettings(
     val theme: ThemeModel = ThemeModel(),
     val language: LanguageModel = LanguageModel.default,
     val exportPath: String = Constants.EXTERNAL_EXPORT_PATH,
@@ -91,3 +91,12 @@ data class LanguageModel(
         val default: LanguageModel = LanguageModel("", "system")
     }
 }
+
+data class SearchModel(
+    val displayName: String,
+    val filePath: String,
+    val packageName: String,
+    val icon: Drawable?,
+    val fileSize: String = "",
+    val isApplication: Boolean = false,
+)

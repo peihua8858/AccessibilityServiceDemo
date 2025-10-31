@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.peihua.touchmonitor.ui.Dialog
 
 sealed class AppRouter(
     val route: String,

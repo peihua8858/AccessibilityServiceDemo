@@ -12,11 +12,7 @@ open class DocumentViewModel(
     application: Application,
     savedStateHandle: SavedStateHandle,
 ) : MediaViewModel(application, savedStateHandle) {
-    var types: Array<String> = arrayOf(
-        ".pdf", ".xml", ".java", ".php", ".html", ".htm", ".text/x-asm", ".pl", ".xls", ".xlsx",
-        ".xld", ".xlc", ".ppt", ".pptx", ".ppsx", ".pptm", ".doc", ".docx", ".msg", ".odt", ".txt",
-        ".tex", ".text", ".wpd", ".wps"
-    )
+    var types: Array<String> = documentTypes
 
     init {
         showDate = false
@@ -29,6 +25,13 @@ open class DocumentViewModel(
             dLog { "extension:$extension" }
             types.contains(".$extension")
         }
+    companion object{
+        val documentTypes = arrayOf(
+            ".pdf", ".xml", ".java", ".php", ".html", ".htm", ".text/x-asm", ".pl", ".xls", ".xlsx",
+            ".xld", ".xlc", ".ppt", ".pptx", ".ppsx", ".pptm", ".doc", ".docx", ".msg", ".odt", ".txt",
+            ".tex", ".text", ".wpd", ".wps"
+        )
+    }
 }
 
 class PdfViewModel(application: Application, savedStateHandle: SavedStateHandle) : DocumentViewModel(application, savedStateHandle) {

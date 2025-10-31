@@ -3,7 +3,6 @@ package com.peihua.touchmonitor.ui.screen.function.appmanager
 import android.text.format.Formatter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -36,39 +37,58 @@ import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.TabPager
 import com.peihua.touchmonitor.ui.components.Toolbar
+import com.peihua.touchmonitor.ui.components.clickable
+import com.peihua.touchmonitor.ui.components.search.SearchBarDefaults
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
+import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
+import com.peihua.touchmonitor.ui.screen.function.search.SearchType
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
     val userApplication = stringResource(id = R.string.text_user_application)
     val systemApplication = stringResource(id = R.string.text_system_application)
     val apk = stringResource(id = R.string.text_install_package)
+    val tabs: MutableList<Pair<String, @Composable (PagerState, Int) -> Unit>> =
+        mutableListOf(
+            userApplication to { s, index -> UserAppScreen(Modifier) },
+            systemApplication to { s, index -> SystemAppScreen(Modifier) },
+            apk to { s, index -> ApkScreenContent(Modifier) },
+        )
+    val pagerState = rememberPagerState { tabs.size }
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.text_app_manager),
         elevation = 0.dp,
         navigateUp = {
             popBackStack()
-        }) {
-        val tabs: MutableList<Pair<String, @Composable (PagerState, Int) -> Unit>> =
-            mutableListOf(
-                userApplication to { s, i -> UserAppScreen(Modifier) },
-                systemApplication to { s, i -> SystemAppScreen(Modifier) },
-                apk to { s, i -> ApkScreenContent(Modifier) },
-            )
+        },
+        actions = {
+            SearchBarDefaults.TrailingIcon(
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dp_24))
+                    .clickable {
+                        when(pagerState.currentPage){
+                            0 -> navigateTo2(AppRouter.SearchScreen.route, "searchType" to SearchType.APPLICATION)
+                            1 -> navigateTo2(AppRouter.SearchScreen.route, "searchType" to SearchType.APPLICATION)
+                            2 -> navigateTo2(AppRouter.SearchScreen.route, "searchType" to SearchType.APK)
+                        }
+                    })
+        }
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Top
         ) {
-            TabPager(modifier = modifier, tabs = tabs)
+            TabPager(modifier = modifier, pagerState = pagerState, tabs = tabs)
         }
     }
 }

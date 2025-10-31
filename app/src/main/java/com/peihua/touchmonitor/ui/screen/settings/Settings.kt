@@ -1,62 +1,35 @@
 package com.peihua.touchmonitor.ui.screen.settings
 
-import android.graphics.RectF
-import android.os.Build
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.LanguageModel
@@ -64,6 +37,8 @@ import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.model.ThemeModel
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.CheckboxListTile
+import com.peihua.touchmonitor.ui.components.DropdownMenuBox
+import com.peihua.touchmonitor.ui.components.DropdownMenuBoxDefaults
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.surface
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -103,10 +78,13 @@ fun SettingsScreen(
         }
     }
     val colorScheme = MaterialTheme.colorScheme
-    val isThemeExpanded = remember { mutableStateOf(false) }
-    val isLanguageExpanded = remember { mutableStateOf(false) }
     val themeModels = ThemeMode.entries.mapIndexed { index, mode -> ThemeModel(theme = mode) }
     val radius = dimensionResource(id = R.dimen.dp_10)
+    val menuItemColors = DropdownMenuBoxDefaults.itemColors().copy(
+        textColor = colorScheme.onSurfaceVariant,
+        selectedTextColor = colorScheme.onSecondaryContainer,
+        selectedBackgroundColor = colorScheme.secondaryContainer,
+    )
     Toolbar(
         modifier = modifier,
         title = stringResource(id = R.string.settings),
@@ -120,172 +98,116 @@ fun SettingsScreen(
                 end = dimensionResource(id = R.dimen.dp_16)
             )
         ) {
-            ExposedDropdownMenuBox(
+            DropdownMenuBox(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .surface(
-                        radius, radius,
-                        0.dp,
-                        0.dp,
-                        elevation = dimensionResource(id = R.dimen.dp_1)
-                    )
+                    .surface(radius, radius, 0.dp, 0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
                     .padding(
                         start = dimensionResource(id = R.dimen.dp_8),
                         top = dimensionResource(id = R.dimen.dp_8),
                         end = dimensionResource(id = R.dimen.dp_8),
                         bottom = dimensionResource(id = R.dimen.dp_8)
                     ),
-                expanded = isLanguageExpanded.value,
-                onExpandedChange = { isLanguageExpanded.value = it },
-            ) {
-                OutlinedTextField(
-                    value = systemSettings.value.language.name,
-                    onValueChange = {
-                    },
-                    label = {
-                        Row {
-                            Icon(
-                                painterResource(R.drawable.ic_language_32),
-                                "",
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dp_16))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
-                            )
-                            ScaleText(stringResource(R.string.txt_language))
-                        }
-                    },
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                )
-                ExposedDropdownMenu(
-                    expanded = isLanguageExpanded.value,
-                    onDismissRequest = { isLanguageExpanded.value = false },
-                ) {
-                    for ((index, item) in languages.withIndex()) {
-                        val selected = systemSettings.value.language.langCode == item.langCode
-                        DropdownMenuItem(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(if (selected) colorScheme.secondaryContainer else Color.Transparent),
-                            text = {
-                                ScaleText(
-                                    text = languageNames[index],
-                                    color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelMedium
-                                )
-                            },
-                            onClick = {
-                                isLanguageExpanded.value = !isLanguageExpanded.value
-                                systemSettings.value = systemSettings.value.copy(language = item)
-                                SystemSettingsStore.updateSystemSettings(
-                                    systemSettings.value
-                                )
-                            },
-                        )
-                    }
-                }
-            }
-//            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_8)))
-            ExposedDropdownMenuBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .surface(0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
-                    .padding(
-                        start = dimensionResource(id = R.dimen.dp_8),
-                        top = dimensionResource(id = R.dimen.dp_8),
-                        end = dimensionResource(id = R.dimen.dp_8),
-                        bottom = dimensionResource(id = R.dimen.dp_8)
-                    ),
-                expanded = isThemeExpanded.value,
-                onExpandedChange = { isThemeExpanded.value = it },
-            ) {
-                OutlinedTextField(
-                    value = stringResource(systemSettings.value.theme.nameIds),
-                    onValueChange = {
-                    },
-                    leadingIcon = {
+                data = languages.toMutableList(),
+                value = systemSettings.value.language.name,
+                label = {
+                    Row {
                         Icon(
-                            systemSettings.value.theme.image,
+                            painterResource(R.drawable.ic_language_32),
                             "",
                             modifier = Modifier
                                 .size(dimensionResource(id = R.dimen.dp_16))
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
                         )
-                    },
-                    label = {
-                        Row {
-                            Image(
-                                painterResource(R.drawable.ic_theme_32),
-                                "",
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dp_16))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                        ScaleText(stringResource(R.string.txt_language))
+                    }
+                },
+                defaultSelectedItem = systemSettings.value.language,
+                itemColors = menuItemColors,
+                itemText = { isSelected, item ->
+                    ScaleText(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        text = item.name,
+                        color = menuItemColors.textColor(isSelected),
+                    )
+                },
+                onItemClick = {
+                    systemSettings.value = systemSettings.value.copy(language = it)
+                    SystemSettingsStore.updateSystemSettings(
+                        systemSettings.value
+                    )
+                },
+            )
+            DropdownMenuBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .surface(radius, radius, 0.dp, 0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
+                    .padding(
+                        start = dimensionResource(id = R.dimen.dp_8),
+                        top = dimensionResource(id = R.dimen.dp_8),
+                        end = dimensionResource(id = R.dimen.dp_8),
+                        bottom = dimensionResource(id = R.dimen.dp_8)
+                    ),
+                data = themeModels.toMutableList(),
+                value = stringResource(systemSettings.value.theme.nameIds),
+                label = {
+                    Row {
+                        Icon(
+                            painterResource(R.drawable.ic_language_32),
+                            "",
+                            modifier = Modifier
+                                .size(dimensionResource(id = R.dimen.dp_16))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                        )
+                        ScaleText(stringResource(R.string.txt_language))
+                    }
+                },
+                defaultSelectedItem = systemSettings.value.theme,
+                itemColors = menuItemColors,
+                itemText = { isSelected, item ->
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = dimensionResource(id = R.dimen.dp_4),
+                                bottom = dimensionResource(id = R.dimen.dp_4)
                             )
-                            ScaleText(stringResource(R.string.theme))
-                        }
-                    },
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                )
-                ExposedDropdownMenu(
-                    expanded = isThemeExpanded.value,
-                    onDismissRequest = { isThemeExpanded.value = false },
-                ) {
-                    themeModels.forEach { item ->
-                        DropdownMenuItem(
-                            text = {
-                                ConstraintLayout(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = dimensionResource(id = R.dimen.dp_4),
-                                            bottom = dimensionResource(id = R.dimen.dp_4)
-                                        )
-                                ) {
-                                    val (icon, title) = createRefs()
-                                    Icon(
-                                        item.theme.image, "",
-                                        modifier = Modifier
-                                            .constrainAs(icon) {
-                                                start.linkTo(parent.start)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                            }
-                                            .size(dimensionResource(id = R.dimen.dp_16))
-                                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
-                                    )
-
-                                    ScaleText(
-                                        modifier = Modifier
-                                            .constrainAs(title) {
-                                                start.linkTo(icon.end)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                            }
-                                            .padding(start = dimensionResource(id = R.dimen.dp_8)),
-                                        text = stringResource(item.theme.nameIds),
-                                        style = DefaultTextStyle,
-                                        color = if (systemSettings.value.theme.model == item.theme) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-                                    )
+                    ) {
+                        val (icon, title) = createRefs()
+                        Icon(
+                            item.theme.image, "",
+                            modifier = Modifier
+                                .constrainAs(icon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
                                 }
+                                .size(dimensionResource(id = R.dimen.dp_16))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                        )
 
-                            },
-                            onClick = {
-                                isThemeExpanded.value = false
-                                systemSettings.value = systemSettings.value.copy(theme = item)
-                                SystemSettingsStore.updateSystemSettings(
-                                    systemSettings.value
-                                )
-                            },
+                        ScaleText(
+                            modifier = Modifier
+                                .constrainAs(title) {
+                                    start.linkTo(icon.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                }
+                                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                            text = stringResource(item.theme.nameIds),
+                            style = DefaultTextStyle,
+                            color = if (systemSettings.value.theme.model == item.theme) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
                         )
                     }
-                }
-            }
+                },
+                onItemClick = {
+                    systemSettings.value = systemSettings.value.copy(theme = it)
+                    SystemSettingsStore.updateSystemSettings(
+                        systemSettings.value
+                    )
+                },
+            )
             if (isAtLeastS) {
                 SettingsCheckBox(
                     modifier = Modifier,

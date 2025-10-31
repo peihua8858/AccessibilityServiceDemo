@@ -29,6 +29,8 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -49,13 +51,19 @@ import androidx.compose.ui.unit.dp
 import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
+import com.peihua.touchmonitor.ui.components.DropdownMenuBox
+import com.peihua.touchmonitor.ui.components.DropdownMenuBoxDefaults
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.rememberStateSet
 import kotlinx.coroutines.launch
 
-private data class OrientationModel(val orientation: Orientation, val displayName: String)
+private data class OrientationModel(val orientation: Orientation, val displayName: String) {
+    override fun toString(): String {
+        return displayName
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -67,7 +75,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
     settingsState.value = settings
     dLog { "settings.packageName:${settings.packageName}" }
     val colorScheme = MaterialTheme.colorScheme
-    val isExpanded = remember { mutableStateOf(false) }
+//    val isExpanded = remember { mutableStateOf(false) }
     val models = arrayOf(
         OrientationModel(Orientation.Vertical, stringResource(R.string.vertical)),
         OrientationModel(Orientation.Horizontal, stringResource(R.string.horizontal))
@@ -123,51 +131,35 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         model.settings = settings.copy(isSoundMute = it)
         modelChange(model)
     }
+    val menuItemColors = DropdownMenuBoxDefaults.itemColors().copy(
+        textColor = colorScheme.onSurfaceVariant,
+        selectedTextColor = colorScheme.onSecondaryContainer,
+        selectedBackgroundColor = colorScheme.secondaryContainer,
+    )
     Column(modifier.verticalScroll(rememberScrollState())) {
-        ExposedDropdownMenuBox(
+        DropdownMenuBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimensionResource(id = R.dimen.dp_8)),
-            expanded = isExpanded.value,
-            onExpandedChange = { isExpanded.value = it },
-        ) {
-            OutlinedTextField(
-                value = selectedOption.value.displayName,
-                onValueChange = {
-                },
-                label = { ScaleText(stringResource(R.string.scroll_orientation)) },
-                readOnly = true,
-                textStyle = MaterialTheme.typography.labelMediumNormal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-            )
-            ExposedDropdownMenu(
-                expanded = isExpanded.value,
-                onDismissRequest = { isExpanded.value = false },
-            ) {
-                models.forEach { item ->
-                    val selected = selectedOption.value == item
-                    DropdownMenuItem(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(if (selected) colorScheme.secondaryContainer else Color.Transparent),
-                        text = {
-                            ScaleText(
-                                text = item.displayName,
-                                color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-                            )
-                        },
-                        onClick = {
-                            selectedOption.value = item
-                            isExpanded.value = !isExpanded.value
-                            model.settings = settings.copy(orientation = item.orientation)
-                            modelChange(model)
-                        },
-                    )
-                }
-            }
-        }
+            data = models.toMutableList(),
+            value = selectedOption.value.displayName,
+            label = stringResource(R.string.scroll_orientation),
+            defaultSelectedItem = selectedOption.value,
+            itemColors = menuItemColors,
+            itemText = { isSelected, item ->
+                ScaleText(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    text = item.displayName,
+                    color = menuItemColors.textColor(isSelected),
+                )
+            },
+            onItemClick = {
+                selectedOption.value = it
+                model.settings = settings.copy(orientation = it.orientation)
+                modelChange(model)
+            },
+        )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
         OutlinedTextField(
             value = slidingSpeed.value,
@@ -213,7 +205,11 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_8)))
-        DelayTimesFlowRow(modifier = Modifier, timeState = delayTimes, changeValues = saveDelayTimesClick)
+        DelayTimesFlowRow(
+            modifier = Modifier,
+            timeState = delayTimes,
+            changeValues = saveDelayTimesClick
+        )
         Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
         Row(
             modifier = Modifier
@@ -344,9 +340,12 @@ private fun DelayTimesFlowRow(
             key(timeState) {
                 for (index in 1..32) {
                     val isSelected = timeState.contains(index)
-                    val borderColor = if (isSelected) colorScheme.primary else colorScheme.inverseSurface
-                    val backgroundColor = if (isSelected) colorScheme.secondaryContainer else Color.Transparent
-                    val textColor = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.inverseSurface
+                    val borderColor =
+                        if (isSelected) colorScheme.primary else colorScheme.inverseSurface
+                    val backgroundColor =
+                        if (isSelected) colorScheme.secondaryContainer else Color.Transparent
+                    val textColor =
+                        if (isSelected) colorScheme.onSecondaryContainer else colorScheme.inverseSurface
                     ScaleText(
                         text = index.toString(),
                         color = textColor,

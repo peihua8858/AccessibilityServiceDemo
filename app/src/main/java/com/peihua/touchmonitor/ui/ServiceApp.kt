@@ -62,6 +62,7 @@ import com.peihua.touchmonitor.ui.screen.function.images.VideoToGifScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
+import com.peihua.touchmonitor.ui.screen.function.search.SearchType
 import com.peihua.touchmonitor.ui.screen.function.video.VideoPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
 import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
@@ -292,7 +293,9 @@ fun AppNavHost(
             DocumentScreen(modifier)
         }
         composable(route = AppRouter.SearchScreen.route) {
-            SearchScreen(modifier)
+            val searchType = it.savedStateHandle.get<SearchType>("searchType") ?: SearchType.ALL
+            dLog { "SearchScreen>>>>>>>searchType:$searchType" }
+            SearchScreen(modifier,searchType)
         }
         composable(route = AppRouter.ZipScreen.route) {
             ZipScreen(modifier)

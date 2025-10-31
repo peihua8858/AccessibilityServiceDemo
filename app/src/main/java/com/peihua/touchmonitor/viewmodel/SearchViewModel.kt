@@ -1,14 +1,15 @@
 package com.peihua.touchmonitor.viewmodel
 
 import android.app.Application
+import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.format.Formatter
 import android.util.Size
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -17,6 +18,8 @@ import com.peihua.compose.file.mimeTypeFromFilePath
 import com.peihua.compose.paging3.PagingSourceImpl
 import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.model.MediaData
+import com.peihua.touchmonitor.model.SearchModel
+import com.peihua.touchmonitor.ui.screen.function.search.SearchType
 import com.peihua.touchmonitor.utils.formatFileSize
 import com.peihua.touchmonitor.utils.getLong
 import com.peihua.touchmonitor.utils.getString
@@ -36,9 +39,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import androidx.core.graphics.drawable.toDrawable
 
-class SearchViewModel(application: Application, private val savedStateHandle: SavedStateHandle) : BaseQueryViewModel<MediaData>(application) {
-    val pagingDataFlow: Flow<PagingData<MediaData>>
+class SearchViewModel(application: Application, private val savedStateHandle: SavedStateHandle) :
+    BaseQueryViewModel<MediaData>(application) {
+    val pagingDataFlow: Flow<PagingData<SearchModel>>
     val mUiState: StateFlow<SearchUiState>
     val userAction: (SearchUiAction) -> Unit
     private val gridViewPagingConfig = PagingConfig(
@@ -47,12 +53,20 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
 //        maxSize = 100, // 可选，最大加载数据量
         enablePlaceholders = false // 根据需要设置
     )
+    private var mFilter: ArrayList<String> = arrayListOf()
     private var mSelection: String = ""
     private var mSelectionArgs: Array<String> = arrayOf()
     override val selection: String?
         get() = mSelection
     override val selectionArgs: Array<String>?
         get() = mSelectionArgs
+    override val filter: (Cursor) -> Boolean
+        get() = {
+            val path = it.getString(MediaStore.MediaColumns.DATA)
+            val extension = File(path).extension
+            dLog { "extension:$extension" }
+            mFilter.contains(".$extension") || mFilter.isEmpty()
+        }
 
     init {
         val initialQuery = savedStateHandle[LAST_QUERY] ?: ""
@@ -81,38 +95,116 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
                 SearchUiState(query = initialQuery, currentQuery = initialQuery)
             )
         pagingDataFlow = searchAction.flatMapLatest {
-            requestSearch(it.query)
+            requestSearch(it.query, it.searchType)
         }
             .flowOn(Dispatchers.IO)
             .cachedIn(viewModelScope)
-        userAction = {
-            viewModelScope.launch { actionStateFlow.emit(it) }
+        userAction = { query ->
+            viewModelScope.launch { actionStateFlow.emit(query) }
         }
     }
 
-    @OptIn(ExperimentalPagingApi::class)
-    fun requestSearch(keywords: String): Flow<PagingData<MediaData>> {
+    fun requestSearch(query: String, searchType: SearchType): Flow<PagingData<SearchModel>> {
         val bundle = Bundle()
-        bundle.putString("keywords", keywords)
-        dLog { "keywords:$keywords" }
+        bundle.putString("keywords", query)
+        dLog { "keywords:$query" }
         return Pager(gridViewPagingConfig, initialKey = 1) {
             PagingSourceImpl(
                 gridViewPagingConfig, bundle,
                 refreshKey = { null }) { page, pageSize, bundle ->
-                val result = requestGridPagingData(page, pageSize, bundle.getString("keywords", ""))
+                val result = requestGridPagingData(
+                    searchType,
+                    page,
+                    pageSize,
+                    bundle.getString("keywords", "")
+                )
                 result
             }
         }.flow
     }
 
-    fun requestGridPagingData(page: Int, loadSize: Int, keywords: String): Pair<Int, MutableList<MediaData>> {
-        if (keywords.isEmpty()) {
-            return 0 to ArrayList()
+//    @OptIn(ExperimentalPagingApi::class)
+//    fun requestSearch(keywords: String): Flow<PagingData<MediaData>> {
+//        val bundle = Bundle()
+//        bundle.putString("keywords", keywords)
+//        dLog { "keywords:$keywords" }
+//        return Pager(gridViewPagingConfig, initialKey = 1) {
+//            PagingSourceImpl(
+//                gridViewPagingConfig, bundle,
+//                refreshKey = { null }) { page, pageSize, bundle ->
+//                val result = requestGridPagingData(page, pageSize, bundle.getString("keywords", ""))
+//                result
+//            }
+//        }.flow
+//    }
+
+    fun requestGridPagingData(
+        searchType: SearchType = SearchType.ALL,
+        page: Int,
+        loadSize: Int,
+        keywords: String,
+    ): Pair<Int, MutableList<SearchModel>> {
+        dLog { "keywords:${keywords.trim()}" }
+        if (keywords.isNotEmpty() && keywords.isNotBlank()) {
+            mSelection =
+                MediaStore.MediaColumns.DISPLAY_NAME + " like ? or " + MediaStore.MediaColumns.DATA + " like ? "
+            mSelectionArgs = arrayOf("%${keywords.trim()}%", "%${keywords.trim()}%")
         }
-        dLog { "keywords:$keywords" }
-        mSelection = MediaStore.MediaColumns.DISPLAY_NAME + " like ? or " + MediaStore.MediaColumns.DATA + " like ?"
-        mSelectionArgs = arrayOf("%$keywords%", "%$keywords%")
-        val result = queryCursor(QUERY_TYPE_SEARCH, page, loadSize) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
+        mFilter.clear()
+        val queryType = when (searchType) {
+            SearchType.ALL -> QUERY_TYPE_SEARCH
+            SearchType.IMAGE -> QUERY_TYPE_IMAGE
+            SearchType.VIDEO -> QUERY_TYPE_VIDEO
+            SearchType.AUDIO -> QUERY_TYPE_AUDIO
+            SearchType.DOCUMENT -> {
+                mFilter.addAll(DocumentViewModel.documentTypes)
+                QUERY_TYPE_DOCUMENT
+            }
+
+            SearchType.APK -> {
+                mFilter.add(".apk")
+                mFilter.add(".xapk")
+                mFilter.add(".apk.1")
+                QUERY_TYPE_APK
+            }
+
+            SearchType.APPLICATION -> QUERY_TYPE_SEARCH
+        }
+        val result = arrayListOf<SearchModel>()
+        if (page == 1 && (searchType == SearchType.ALL || searchType == SearchType.APPLICATION)) {
+            result.addAll(queryApplication(keywords))
+        }
+        if (searchType != SearchType.APPLICATION) {
+            result.addAll(queryMediaData(queryType, page, loadSize))
+        }
+        return result.size to result
+    }
+
+    private fun queryApplication(keywords: String): MutableList<SearchModel> {
+        return AppExtractorViewModel.queryApplication(application.packageManager, AppType.ALL)
+            .filter {
+                it.packageName.contains(keywords) || it.name.contains(keywords) || it.path.contains(
+                    keywords
+                ) || keywords.isEmpty()
+            }
+            .map {
+                SearchModel(
+                    it.name, it.packageName, it.path, it.icon,
+                    fileSize = Formatter.formatFileSize(application, it.fileSize)
+                )
+            }.toMutableList()
+    }
+
+    private fun queryMediaData(
+        queryType: Int,
+        page: Int,
+        loadSize: Int,
+    ): MutableList<SearchModel> {
+        return queryCursor(
+            queryType,
+            page,
+            loadSize
+        ) { cursor, result, path, fileName, formatTime, dateTime, fileSize ->
             var mimeType = cursor.getString(MediaStore.MediaColumns.MIME_TYPE)
             if (mimeType.isEmpty()) {
                 mimeType = path.mimeTypeFromFilePath ?: ""
@@ -134,7 +226,10 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
                     if (mimeType == "video/*") {
                         val fileUri = media.filePath.toUri()
                         dLog { "getVideoThumbnail>>>fileUri: $fileUri" }
-                        val bitmap = application.getVideoThumbnailFromMediaMetadataRetriever(fileUri, Size(640, 480))
+                        val bitmap = application.getVideoThumbnailFromMediaMetadataRetriever(
+                            fileUri,
+                            Size(640, 480)
+                        )
                         dLog { "getVideoThumbnail: $bitmap" }
                         media.thumbnailsBitmap = bitmap
                     }
@@ -145,8 +240,15 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
                 }
             }
             media
-        }
-        return result.size to result
+        }.map {
+            SearchModel(
+                it.fileName,
+                it.filePath,
+                "",
+                fileSize = it.fileSize ?: "",
+                icon = it.thumbnailsBitmap?.toDrawable(application.resources)
+            )
+        }.toMutableList()
     }
 
     companion object {
@@ -155,8 +257,11 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
 }
 
 sealed class SearchUiAction {
-    data class Search(val query: String) : SearchUiAction()
-    data class Scroll(val query: String) : SearchUiAction()
+    data class Search(val query: String, val searchType: SearchType = SearchType.ALL) :
+        SearchUiAction()
+
+    data class Scroll(val query: String, val searchType: SearchType = SearchType.ALL) :
+        SearchUiAction()
 }
 
 data class SearchUiState(

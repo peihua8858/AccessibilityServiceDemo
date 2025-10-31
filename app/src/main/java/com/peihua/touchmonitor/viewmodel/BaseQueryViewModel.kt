@@ -31,6 +31,7 @@ object QueryType {
     const val QUERY_TYPE_DOCUMENT = 4
     const val QUERY_TYPE_ZIP = 5
     const val QUERY_TYPE_SEARCH = 6
+    const val QUERY_TYPE_APK = 7
 }
 
 abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewModel(application) {
@@ -41,6 +42,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
         const val QUERY_TYPE_DOCUMENT = QueryType.QUERY_TYPE_DOCUMENT
         const val QUERY_TYPE_ZIP = QueryType.QUERY_TYPE_ZIP
         const val QUERY_TYPE_SEARCH = QueryType.QUERY_TYPE_SEARCH
+        const val QUERY_TYPE_APK = QueryType.QUERY_TYPE_APK
         const val COLUMN_COUNT = "count"
         const val ORDER_BY = MediaStore.MediaColumns.DATE_MODIFIED + " DESC"
 
@@ -109,6 +111,7 @@ abstract class BaseQueryViewModel<T>(application: Application) : AndroidViewMode
                 else MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             }
 
+            QUERY_TYPE_APK,
             QUERY_TYPE_ZIP,
             QUERY_TYPE_DOCUMENT,
             QUERY_TYPE_SEARCH,
