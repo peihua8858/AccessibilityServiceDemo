@@ -100,7 +100,7 @@ private fun SearchScreenContent(
         },
         navigateUp = { popBackStack() },
     ) {
-        MultiStatePagingScreen(modifier, result) {
+        MultiStatePagingScreen(modifier, result, emptyContent = {}) {
             SearchScreenContent(modifier, result = it)
         }
     }

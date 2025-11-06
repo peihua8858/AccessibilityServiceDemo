@@ -145,11 +145,12 @@ class SearchViewModel(application: Application, private val savedStateHandle: Sa
         keywords: String,
     ): Pair<Int, MutableList<SearchModel>> {
         dLog { "keywords:${keywords.trim()}" }
-        if (keywords.isNotEmpty() && keywords.isNotBlank()) {
-            mSelection =
-                MediaStore.MediaColumns.DISPLAY_NAME + " like ? or " + MediaStore.MediaColumns.DATA + " like ? "
-            mSelectionArgs = arrayOf("%${keywords.trim()}%", "%${keywords.trim()}%")
+        if (keywords.isEmpty() || keywords.isBlank()) {
+           return 0 to arrayListOf()
         }
+        mSelection =
+            MediaStore.MediaColumns.DISPLAY_NAME + " like ? or " + MediaStore.MediaColumns.DATA + " like ? "
+        mSelectionArgs = arrayOf("%${keywords.trim()}%", "%${keywords.trim()}%")
         mFilter.clear()
         val queryType = when (searchType) {
             SearchType.ALL -> QUERY_TYPE_SEARCH

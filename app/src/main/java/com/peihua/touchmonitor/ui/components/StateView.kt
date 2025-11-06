@@ -1,6 +1,7 @@
 package com.peihua.touchmonitor.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -60,14 +63,11 @@ fun ErrorView(
             content()
             Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
             //text 下划线
-            Button(
+            RoundTextButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { retry() }) {
-                ScaleText(
-                    text = stringResource(id = R.string.text_retry),
-                    style = typography.titleMedium,
-                )
-            }
+                onClick = { retry() },
+                text = stringResource(id = R.string.text_retry),
+            )
         }
     }
 }
@@ -138,21 +138,25 @@ fun EmptyView(
                 contentHeight.intValue = it.height
             }) {
         Column(
-            modifier = Modifier.padding(top = topPx.toDp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = topPx.toDp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             content()
             Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
             //text 下划线
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { retry() }) {
-                ScaleText(
-                    text = stringResource(id = R.string.text_retry),
-                    style = typography.titleMedium,
-                )
-            }
+            RoundTextButton(
+                modifier = Modifier
+                    .border(
+                        dimensionResource(id = R.dimen.dp_1),
+                        MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .width(width = dimensionResource(id = R.dimen.dp_128)),
+                text = stringResource(id = R.string.text_retry),
+                onClick = { retry() })
         }
     }
 }

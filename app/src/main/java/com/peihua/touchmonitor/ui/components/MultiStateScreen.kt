@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -45,6 +47,9 @@ fun <T> MultiStateScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = refresh)
+    },
     content: @Composable (T) -> Unit,
 ) {
     MultiStateScreen(
@@ -57,6 +62,7 @@ fun <T> MultiStateScreen(
         actions = actions,
         hostState = hostState,
         header = header,
+        emptyContent = emptyContent,
         content = content
     )
 }
@@ -74,6 +80,9 @@ fun <T> MultiStateScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = refresh)
+    },
     content: @Composable (T) -> Unit,
 ) {
     Toolbar(
@@ -84,7 +93,14 @@ fun <T> MultiStateScreen(
         navigationIcon = navigationIcon,
         hostState = hostState,
     ) {
-        MultiStateScreen(modifier = modifier, result = result, refresh = refresh, header = header, content = content)
+        MultiStateScreen(
+            modifier = modifier,
+            result = result,
+            refresh = refresh,
+            header = header,
+            emptyContent = emptyContent,
+            content = content
+        )
     }
 }
 
@@ -94,6 +110,9 @@ fun <T> MultiStateScreen(
     result: ResultData<T>,
     refresh: () -> Unit,
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = refresh)
+    },
     content: @Composable (T) -> Unit,
 ) {
     val dp16 = dimensionResource(R.dimen.dp_16)
@@ -151,6 +170,9 @@ fun <T : Any> MultiStatePagingScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
+    },
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     MultiStatePagingScreen(
@@ -163,6 +185,7 @@ fun <T : Any> MultiStatePagingScreen(
         actions = actions,
         hostState = hostState,
         header = header,
+        emptyContent = emptyContent,
         content = content
     )
 }
@@ -180,6 +203,9 @@ fun <T : Any> MultiStatePagingScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
+    },
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     Toolbar(
@@ -190,7 +216,14 @@ fun <T : Any> MultiStatePagingScreen(
         navigationIcon = navigationIcon,
         hostState = hostState
     ) {
-        MultiStatePagingScreen(modifier = modifier, result = result, isUserRefresh = isUserRefresh, header = header, content = content)
+        MultiStatePagingScreen(
+            modifier = modifier,
+            result = result,
+            isUserRefresh = isUserRefresh,
+            header = header,
+            emptyContent = emptyContent,
+            content = content
+        )
     }
 }
 
@@ -200,6 +233,9 @@ fun <T : Any> MultiStatePagingScreen(
     result: LazyPagingItems<T>,
     isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
     header: (@Composable () -> Unit)? = null,
+    emptyContent: @Composable () -> Unit = {
+        EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
+    },
     content: @Composable (LazyPagingItems<T>) -> Unit,
 ) {
     val isRefreshing = result.loadState.refresh is LoadState.Loading
@@ -253,7 +289,7 @@ fun <T : Any> MultiStatePagingScreen(
             dLog { ">>>>>result:${result}" }
             if (result.itemCount == 0) {
                 dLog { ">>>>>result:${result.itemCount}" }
-                EmptyView(modifier, retry = result::refresh)
+                emptyContent()
             } else {
                 content(result)
             }
