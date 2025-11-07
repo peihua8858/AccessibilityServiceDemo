@@ -49,6 +49,9 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.rememberSaveable
 import kotlinx.coroutines.launch
 
+/**
+ * 图片转黑白
+ */
 @Composable
 fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
     val colorScheme = MaterialTheme.colorScheme
