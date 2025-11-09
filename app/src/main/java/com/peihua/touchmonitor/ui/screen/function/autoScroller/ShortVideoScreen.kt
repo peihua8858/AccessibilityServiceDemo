@@ -43,6 +43,7 @@ import com.peihua.touchmonitor.activity.HomeScreenActivity
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.AppProvider
 import com.peihua.touchmonitor.ui.AppRouter
+import com.peihua.touchmonitor.ui.components.DropdownMenuBox
 import com.peihua.touchmonitor.ui.components.ErrorView
 import com.peihua.touchmonitor.ui.components.ExtendedListTile
 import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
@@ -155,110 +156,88 @@ private fun ShortVideoScreenContent(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             //选择的应用
-            ExposedDropdownMenuBox(
+            DropdownMenuBox(
                 modifier = Modifier.fillMaxWidth(),
-                expanded = isExpanded.value,
-                onExpandedChange = { isExpanded.value = it },
-            ) {
-                OutlinedTextField(
-                    value = selectedOption.value.displayName,
-                    onValueChange = {
-                    },
-                    leadingIcon = {
-                        val icon = selectedOption.value.icon
-                        if (icon != null) {
-                            Image(
-                                painter = rememberDrawablePainter(icon),
-                                "",
-                                modifier = Modifier
-                                    .size(dimensionResource(id = R.dimen.dp_16))
-                                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
-                            )
-                        }
-                    },
-                    label = { ScaleText(stringResource(R.string.app_provider)) },
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                )
-                ExposedDropdownMenu(
-                    expanded = isExpanded.value,
-                    onDismissRequest = { isExpanded.value = false },
-                ) {
-                    models.forEach { item ->
-                        val selected = selectedOption.value == item
-                        DropdownMenuItem(
+                data = models.toMutableList(),
+                label = { ScaleText(stringResource(R.string.app_provider)) },
+                readOnly = true,
+                value = selectedOption.value.displayName,
+                leadingIcon = {
+                    val icon = selectedOption.value.icon
+                    if (icon != null) {
+                        Image(
+                            painter = rememberDrawablePainter(icon),
+                            "",
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(if (selected) colorScheme.secondaryContainer else Color.Transparent),
-                            text = {
-                                ConstraintLayout(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = dimensionResource(id = R.dimen.dp_4),
-                                            bottom = dimensionResource(id = R.dimen.dp_4)
-                                        )
-                                ) {
-                                    val drawable = item.icon
-                                    val (icon, title, desc) = createRefs()
-                                    Image(
-                                        if (drawable == null)
-                                            rememberAsyncImagePainter(R.mipmap.ic_launcher)
-                                        else rememberDrawablePainter(drawable), "",
-                                        modifier = Modifier
-                                            .constrainAs(icon) {
-                                                start.linkTo(parent.start)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                            }
-                                            .size(dimensionResource(id = R.dimen.dp_24))
-                                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
-                                    )
-
-                                    ScaleText(
-                                        modifier = Modifier
-                                            .constrainAs(title) {
-                                                start.linkTo(icon.end)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                            }
-                                            .padding(start = dimensionResource(id = R.dimen.dp_8)),
-                                        text = item.displayName,
-                                        style = DefaultTextStyle,
-                                        color = if (selected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-                                    )
-                                    if (item.isHistory) {
-                                        ScaleText(
-                                            modifier = Modifier.constrainAs(desc) {
-                                                end.linkTo(parent.end)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                            },
-                                            text = stringResource(R.string.use_history),
-                                            style = DefaultTextStyle,
-                                            color = colorScheme.error,
-                                        )
-                                    }
-                                }
-                            },
-                            onClick = {
-                                if (item.provider == AppProvider.Other) {
-                                    isExpanded.value = !isExpanded.value
-                                    scope.launch {
-                                        navigateTo(AppRouter.Applications.route)
-                                    }
-                                } else {
-                                    isExpanded.value = !isExpanded.value
-                                    selectedOption.value = item
-                                    saveDb(item, true)
-                                }
-                            },
+                                .size(dimensionResource(id = R.dimen.dp_16))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
                         )
                     }
+                },
+                itemText = { isSelected, item ->
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = dimensionResource(id = R.dimen.dp_4),
+                                bottom = dimensionResource(id = R.dimen.dp_4)
+                            )
+                    ) {
+                        val drawable = item.icon
+                        val (icon, title, desc) = createRefs()
+                        Image(
+                            if (drawable == null)
+                                rememberAsyncImagePainter(R.mipmap.ic_launcher)
+                            else rememberDrawablePainter(drawable), "",
+                            modifier = Modifier
+                                .constrainAs(icon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                }
+                                .size(dimensionResource(id = R.dimen.dp_24))
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                        )
+
+                        ScaleText(
+                            modifier = Modifier
+                                .constrainAs(title) {
+                                    start.linkTo(icon.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                }
+                                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                            text = item.displayName,
+                            style = DefaultTextStyle,
+                            color = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
+                        )
+                        if (item.isHistory) {
+                            ScaleText(
+                                modifier = Modifier.constrainAs(desc) {
+                                    end.linkTo(parent.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                                text = stringResource(R.string.use_history),
+                                style = DefaultTextStyle,
+                                color = colorScheme.error,
+                            )
+                        }
+                    }
+                }
+            ) { item ->
+                if (item.provider == AppProvider.Other) {
+                    isExpanded.value = !isExpanded.value
+                    scope.launch {
+                        navigateTo(AppRouter.Applications.route)
+                    }
+                } else {
+                    isExpanded.value = !isExpanded.value
+                    selectedOption.value = item
+                    saveDb(item, true)
                 }
             }
+
             ExtendedListTile(
                 modifier = Modifier
                     .padding(top = dimensionResource(id = R.dimen.dp_16))
@@ -297,7 +276,7 @@ private fun ShortVideoScreenContent(
                 dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
                 selectedOption.value.provider.contentView(
                     Modifier
-                        .padding( dimensionResource(id = R.dimen.dp_8)),
+                        .padding(dimensionResource(id = R.dimen.dp_8)),
                     selectedOption.value
                 ) {
                     saveDb(it, false)

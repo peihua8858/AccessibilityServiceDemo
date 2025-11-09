@@ -72,7 +72,6 @@ fun MainAppExtractorScreen(modifier: Modifier = Modifier) {
         actions = {
             SearchBarDefaults.TrailingIcon(
                 modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dp_24))
                     .clickable {
                         when(pagerState.currentPage){
                             0 -> navigateTo2(AppRouter.SearchScreen.route, "searchType" to SearchType.APPLICATION)

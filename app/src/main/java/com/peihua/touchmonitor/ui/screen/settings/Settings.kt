@@ -154,13 +154,13 @@ fun SettingsScreen(
                 label = {
                     Row {
                         Icon(
-                            painterResource(R.drawable.ic_language_32),
+                            painterResource(R.drawable.ic_theme_32),
                             "",
                             modifier = Modifier
                                 .size(dimensionResource(id = R.dimen.dp_16))
                                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
                         )
-                        ScaleText(stringResource(R.string.txt_language))
+                        ScaleText(stringResource(R.string.theme))
                     }
                 },
                 defaultSelectedItem = systemSettings.value.theme,

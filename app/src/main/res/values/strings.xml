@@ -217,5 +217,5 @@
     <!--    保存图片-->
     <string name="text_save_photo">保存图片</string>
 
-
+    <string name="app_exit_tips">点击两次退出应用程序</string>
 </resources>
