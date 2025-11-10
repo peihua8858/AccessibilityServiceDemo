@@ -1,13 +1,11 @@
 package com.peihua.touchmonitor.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -35,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
-import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
@@ -43,13 +41,13 @@ fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
     elevation: Dp = dimensionResource(id = R.dimen.dp_1),
-    navigateUp: () -> Unit = {},
+    navigateUp: () -> Unit = { popBackStack() },
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     Toolbar(modifier, title, elevation, navigationIcon, actions, hostState, content)
 }
@@ -58,13 +56,13 @@ fun Toolbar(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     elevation: Dp = dimensionResource(id = R.dimen.dp_1),
-    navigateUp: () -> Unit = {},
+    navigateUp: () -> Unit = {popBackStack()},
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
     },
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     Toolbar(modifier, title, elevation, navigationIcon, actions, hostState, content)
 }
@@ -74,10 +72,10 @@ fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
     elevation: Dp = 0.dp,
-    navigationIcon: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit ={},
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -106,7 +104,7 @@ fun Toolbar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,

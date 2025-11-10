@@ -1,8 +1,16 @@
 package com.peihua.touchmonitor.utils
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableDoubleState
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -47,6 +55,26 @@ fun <T> rememberStateList(data: List<T>): SnapshotStateList<T> {
 @Composable
 fun <T> rememberState(value: T): MutableState<T> {
     return remember { mutableStateOf(value) }
+}
+
+@Composable
+fun rememberFloatState(value: Float): MutableFloatState {
+    return remember { mutableFloatStateOf(value) }
+}
+
+@Composable
+fun rememberIntState(value: Int): MutableIntState {
+    return remember { mutableIntStateOf(value) }
+}
+
+@Composable
+fun rememberLongState(value: Long): MutableLongState {
+    return remember { mutableLongStateOf(value) }
+}
+
+@Composable
+fun rememberDoubleState(value: Double): MutableDoubleState {
+    return remember { mutableDoubleStateOf(value) }
 }
 
 @Composable

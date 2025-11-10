@@ -165,5 +165,6 @@ dependencies {
     implementation "androidx.documentfile:documentfile:1.1.0"
     // https://mvnrepository.com/artifact/androidx.media3/media3-exoplayer
     implementation("androidx.media3:media3-exoplayer:1.8.0")
+    implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
 }
 

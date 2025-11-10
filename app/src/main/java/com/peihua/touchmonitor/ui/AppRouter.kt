@@ -163,4 +163,5 @@ sealed class Dialog(route: String) : AppRouter(route) {
         const val ON_POSITIVE = Companion.ON_POSITIVE
         const val ON_NEGATIVE = Companion.ON_NEGATIVE
     }
+    data object ProgressDialog : Dialog("progressDialog")
 }

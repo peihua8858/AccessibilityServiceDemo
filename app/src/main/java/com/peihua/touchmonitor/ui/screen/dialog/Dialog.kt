@@ -22,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,6 +38,8 @@ import com.peihua.compose.utils.isNonEmpty
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.utils.rememberFloatState
+import com.peihua.touchmonitor.utils.rememberState
 
 @Composable
 fun BaseDialog(
@@ -47,7 +51,15 @@ fun BaseDialog(
     onNegative: Pair<Any, () -> Unit>? = stringResource(id = R.string.text_cancel) to { onDismissRequest() },
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    BaseDialog(modifier, stringResource(id = title), onDismissRequest, onPositive, onNeutral, onNegative, content)
+    BaseDialog(
+        modifier,
+        stringResource(id = title),
+        onDismissRequest,
+        onPositive,
+        onNeutral,
+        onNegative,
+        content
+    )
 }
 
 @Composable
@@ -79,7 +91,8 @@ fun BaseDialogScreen(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val positive = onPositive ?: (stringResource(id = R.string.text_ok) to { onDismissRequest() })
-    val negative = onNegative ?: (stringResource(id = R.string.text_cancel) to { onDismissRequest() })
+    val negative =
+        onNegative ?: (stringResource(id = R.string.text_cancel) to { onDismissRequest() })
     val colorScheme = MaterialTheme.colorScheme
     Column(
         modifier = modifier
@@ -124,7 +137,11 @@ fun BaseDialogScreen(
                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
                 onClick = negative.second
             ) {
-                Text(text = (negative.first as? String ?: stringResource(negative.first as? Int ?: R.string.text_cancel)))
+                Text(
+                    text = (negative.first as? String ?: stringResource(
+                        negative.first as? Int ?: R.string.text_cancel
+                    ))
+                )
             }
             if (onNeutral != null) {
                 VerticalDivider(modifier = Modifier.fillMaxHeight())
@@ -135,7 +152,10 @@ fun BaseDialogScreen(
                     shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
                     onClick = onNeutral.second
                 ) {
-                    Text(text = (onNeutral.first as? String ?: stringResource(onNeutral.first as Int)))
+                    Text(
+                        text = (onNeutral.first as? String
+                            ?: stringResource(onNeutral.first as Int))
+                    )
                 }
             }
             VerticalDivider(modifier = Modifier.fillMaxHeight())
@@ -146,7 +166,11 @@ fun BaseDialogScreen(
                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
                 onClick = positive.second
             ) {
-                Text(text = (positive.first as? String ?: stringResource(positive.first as? Int ?: R.string.text_ok)))
+                Text(
+                    text = (positive.first as? String ?: stringResource(
+                        positive.first as? Int ?: R.string.text_ok
+                    ))
+                )
             }
         }
     }
@@ -179,7 +203,14 @@ fun MessageDialog(
     onPositive: Pair<String, () -> Unit>? = stringResource(id = R.string.text_ok) to { onDismissRequest() },
     onNegative: Pair<String, () -> Unit>? = stringResource(id = R.string.text_cancel) to { onDismissRequest() },
 ) {
-    MessageDialog(modifier, stringResource(id = title), stringResource(id = content), onDismissRequest, onPositive, onNegative)
+    MessageDialog(
+        modifier,
+        stringResource(id = title),
+        stringResource(id = content),
+        onDismissRequest,
+        onPositive,
+        onNegative
+    )
 }
 
 @Composable
@@ -190,7 +221,12 @@ fun LoadingDialog(modifier: Modifier = Modifier, title: String) {
 }
 
 @Composable
-fun ProgressDialog(modifier: Modifier = Modifier, title: String = "", progress: Float = -1f, onDismiss: () -> Unit = {}) {
+fun ProgressDialog(
+    modifier: Modifier = Modifier,
+    title: String = "",
+    progress: Float = -1f,
+    onDismiss: () -> Unit = {},
+) {
     Dialog(onDismissRequest = {
         onDismiss()
     }) {
@@ -217,4 +253,46 @@ fun ProgressDialog(modifier: Modifier = Modifier, title: String = "", progress: 
             }
         }
     }
+}
+
+@Composable
+fun ProgressDialogScreen(
+    modifier: Modifier = Modifier,
+    title: String = "",
+    progress: Float = -1f,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .background(Color.White)
+            .padding(dimensionResource(id = R.dimen.dp_16))
+    ) {
+        if (title.isNonEmpty()) {
+            ScaleText(text = title)
+        }
+        if (progress < 0f) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.dp_32))
+                    .align(Alignment.CenterHorizontally)
+            )
+        } else {
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+fun rememberShowProgressDialog(
+    title: String = "",
+    progress: MutableFloatState = rememberFloatState(-1f),
+): MutableState<Boolean> {
+    val state = rememberState(false)
+    if (state.value) {
+        ProgressDialog(title = title, progress = progress.floatValue)
+    }
+    return state
 }

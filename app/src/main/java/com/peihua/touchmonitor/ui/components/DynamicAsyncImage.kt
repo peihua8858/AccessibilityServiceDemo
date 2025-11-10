@@ -1,11 +1,15 @@
 package com.peihua.touchmonitor.ui.components
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,15 +18,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ErrorResult
 import com.peihua.compose.utils.dLog
+import com.peihua.compose.utils.rememberState
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.theme.LocalTintTheme
 
@@ -58,10 +68,11 @@ fun DynamicAsyncImage(
             dLog { "onState: $state" }
             when (state) {
                 is AsyncImagePainter.State.Success -> isLoading = false
-                is AsyncImagePainter.State.Error ->{
+                is AsyncImagePainter.State.Error -> {
                     isError = true
                     state.result.throwable.printStackTrace()
                 }
+
                 is AsyncImagePainter.State.Loading -> isLoading = true
                 is AsyncImagePainter.State.Empty -> isLoading = false
             }

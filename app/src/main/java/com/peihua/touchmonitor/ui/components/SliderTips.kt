@@ -166,7 +166,7 @@ fun CustomSlider(
                 )
             },
         )
-        val curValue = (sliderValue - valueRange.start).toInt()
+        val curValue = sliderValue - valueRange.start
         val startPosition = ((curValue.toFloat() / range) * 100f).roundToInt()
         val offsetX = (startPosition * ((sliderWidth - 20.dp.toPx()) / 100f) - bubbleOffset).toDp
         dLog { "startPosition:$startPosition,curValue:$curValue,range:$range,offsetX:$offsetX,sliderWidth:$sliderWidth,sliderValue${sliderValue},valueRange.start:${valueRange.start}" }

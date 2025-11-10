@@ -39,6 +39,7 @@ import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.dialog.ColorPickerDialog
 import com.peihua.touchmonitor.ui.screen.dialog.MessageDialog
+import com.peihua.touchmonitor.ui.screen.dialog.ProgressDialogScreen
 import com.peihua.touchmonitor.ui.screen.function.DayNewsScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
@@ -398,6 +399,10 @@ fun AppNavHost(
                 onDismissRequest = { popBackStack() },
                 onPositive, onNegative
             )
+        }
+        dialog(route= Dialog.ProgressDialog.route) {
+            val title = it.savedStateHandle.get<String>(Dialog.TITLE) ?: ""
+            ProgressDialogScreen(modifier.background(Color.Transparent),title)
         }
     }
 }
