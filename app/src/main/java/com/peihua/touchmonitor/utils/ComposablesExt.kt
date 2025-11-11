@@ -6,7 +6,6 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,7 +20,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateSet
 import androidx.compose.ui.graphics.Color
-import kotlin.reflect.KProperty
 
 @Composable
 fun <T> rememberStateSet(): SnapshotStateSet<T> {
@@ -45,11 +43,27 @@ fun <T> rememberStateList(): SnapshotStateList<T> {
 
 @Composable
 fun <T> rememberStateList(data: List<T>): SnapshotStateList<T> {
-    val delayTimes = remember { mutableStateListOf<T>() }
+    val result = remember { mutableStateListOf<T>() }
     if (data.isNotEmpty()) {
-        delayTimes.addAll(data)
+        result.addAll(data)
     }
-    return delayTimes
+    return result
+}
+
+@Composable
+fun <T> rememberSaveableList(): SnapshotStateList<T> {
+    return rememberSaveableList(arrayListOf())
+}
+
+@Composable
+fun <T> rememberSaveableList(
+    data: List<T>,
+): SnapshotStateList<T> {
+    val result = rememberSaveable { mutableStateListOf<T>() }
+    if (result.isNotEmpty()) {
+        result.addAll(data)
+    }
+    return result
 }
 
 @Composable

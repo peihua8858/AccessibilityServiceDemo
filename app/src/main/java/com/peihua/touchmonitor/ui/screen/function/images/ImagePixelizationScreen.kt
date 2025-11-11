@@ -44,10 +44,10 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
 import com.peihua.touchmonitor.utils.rememberFloatState
+import com.peihua.touchmonitor.utils.rememberSaveable
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImagePixelationFilter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -57,9 +57,9 @@ import kotlin.math.roundToInt
 @Composable
 fun ImagePixelizationScreen(modifier: Modifier = Modifier) {
     var isLoading = rememberState(false)
-    val selectedUri = rememberState<Uri>(Uri.EMPTY)
+    val selectedUri = rememberSaveable<Uri>(Uri.EMPTY)
     val showLoadingDialog = rememberShowProgressDialog()
-    val sketchBitmapDrawable = rememberState<BitmapDrawable?>(null)
+    val sketchBitmapDrawable = rememberSaveable<BitmapDrawable?>(null)
     val pixelState = rememberFloatState(12f)
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -163,7 +163,6 @@ fun ImagePixelizationScreen(modifier: Modifier = Modifier) {
                             val outFileName = "pixel_".createFileName("jpg")
                             contentResolver.saveBitmapToGallery(it.bitmap, outFileName, "")
                         }
-                        delay(3000)
                         showLoadingDialog.value = false
                     }
                 }) {

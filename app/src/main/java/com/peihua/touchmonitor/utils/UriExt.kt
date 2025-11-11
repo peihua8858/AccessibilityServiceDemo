@@ -1,3 +1,8 @@
+import android.net.Uri
+import com.peihua.touchmonitor.ServiceApplication
+import com.peihua.touchmonitor.utils.fileProvider
+import java.io.InputStream
+
 //package com.peihua.touchmonitor.utils
 //
 //import android.content.ContentValues
@@ -79,3 +84,7 @@
 //    return file?.adjustBitmapOrientation()
 //
 //}
+
+fun Uri.openInputStream(): InputStream? {
+    return ServiceApplication.application.contentResolver.openInputStream(this)
+}

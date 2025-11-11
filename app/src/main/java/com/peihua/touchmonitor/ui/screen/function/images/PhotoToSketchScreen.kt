@@ -39,6 +39,7 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
+import com.peihua.touchmonitor.utils.rememberSaveable
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSketchFilter
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,7 @@ import kotlinx.coroutines.launch
 fun PhotoToSketchScreen(modifier: Modifier = Modifier) {
     var isLoading = rememberState(false)
     val showLoadingDialog = rememberShowProgressDialog()
-    val sketchBitmapDrawable = rememberState<BitmapDrawable?>(null)
+    val sketchBitmapDrawable = rememberSaveable<BitmapDrawable?>(null)
     val context = LocalContext.current
     val resources = LocalResources.current
     val scope = rememberCoroutineScope { Dispatchers.IO }

@@ -1,13 +1,17 @@
 package com.peihua.touchmonitor.utils
 
 import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.Matrix
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.os.CancellationSignal
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Size
@@ -17,6 +21,8 @@ import com.peihua.compose.utils.dLog
 import com.peihua.compose.utils.isNonEmpty
 import com.peihua.touchmonitor.ServiceApplication
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -43,14 +49,16 @@ val String.fileProvider: Uri
     get() {
         return File(this).fileProvider
     }
+
 /**
  * 传入的file须为主存储下的文件，且对file有完整的读写权限
  */
 val Uri.fileProvider: Uri
     get() {
         val context = ServiceApplication.application
-       return  this.buildUpon().authority("${context.packageName}.fileProvider").build()
+        return this.buildUpon().authority("${context.packageName}.fileProvider").build()
     }
+
 /**
  * 根据uri获取文件
  * @author dingpeihua
@@ -190,7 +198,13 @@ fun ContentResolver.getFileFromContentUri(contentUri: Uri?): File? {
                         return file
                     }
                 }
-                dLog { "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:${cursor.getColumnIndex(column[0])}" }
+                dLog {
+                    "getFileFromContentUri>>>>>>filePath :$filePath,columnIndex:${
+                        cursor.getColumnIndex(
+                            column[0]
+                        )
+                    }"
+                }
                 null
             } catch (e: Throwable) {
                 e.printStackTrace()
@@ -260,10 +274,12 @@ fun Context.getVideoThumbnailFromMediaMetadataRetriever(uri: Uri?, size: Size): 
                 return ImageDecoder.decodeBitmap(ImageDecoder.createSource(it));
             }
         }
-        val width = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-            ?.toFloat() ?: size.width.toFloat()
-        val height = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-            ?.toFloat() ?: size.height.toFloat()
+        val width =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+                ?.toFloat() ?: size.width.toFloat()
+        val height =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+                ?.toFloat() ?: size.height.toFloat()
         val widthRatio = size.width.toFloat() / width
         val heightRatio = size.height.toFloat() / height
         val ratio = max(widthRatio, heightRatio)
@@ -287,11 +303,11 @@ fun Context.getVideoThumbnailFromMediaMetadataRetriever(uri: Uri?, size: Size): 
         try {
             return if (isAtLeastQ) {
                 contentResolver.loadThumbnail(uri, size, null)
-            }else{
-                decodeResizedBitmap(uri,size)
+            } else {
+                decodeResizedBitmap(uri, size)
             }
         } catch (e: Throwable) {
-          e.printStackTrace()
+            e.printStackTrace()
             return null
         }
     }
@@ -321,4 +337,97 @@ private fun Context?.decodeResizedBitmap(uri: Uri, size: Size): Bitmap? {
     val bitmap = BitmapFactory.decodeStream(decodeStream, null, options)
     decodeStream?.close()
     return bitmap
+}
+
+
+/**
+ * 保存图片[source]到系统相册
+ * @param source 图片对象
+ * @param title 文件显示名称
+ * @param description 文件描述
+ */
+fun ContentResolver.saveBitmapToGallery(
+    uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+    folderName: String,
+    source: Bitmap,
+    title: String,
+    description: String,
+): Uri? {
+    val values = ContentValues()
+    values.put(MediaStore.Images.Media.TITLE, title)
+    values.put(MediaStore.Images.Media.DISPLAY_NAME, title)
+    values.put(MediaStore.Images.Media.DESCRIPTION, description)
+    values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+    values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$folderName")
+    // Add the date meta data to ensure the image is added at the front of the gallery
+    values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+    values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+    try {
+        return insert(uri, values)?.let {
+            openOutputStream(it)?.use {
+                source.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            }
+            val id = ContentUris.parseId(it)
+            // Wait until MINI_KIND thumbnail is generated.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                loadThumbnail(it, Size(50, 50), CancellationSignal())
+            } else {
+                val miniThumb =
+                    MediaStore.Images.Thumbnails.getThumbnail(
+                        this,
+                        id,
+                        MediaStore.Images.Thumbnails.MINI_KIND,
+                        null
+                    )
+                // This is for backward compatibility.
+                storeThumbnail(miniThumb, id, 50f, 50f, MediaStore.Images.Thumbnails.MICRO_KIND)
+            }
+            // Everything went well above, publish it!
+            values.clear()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+            }
+            update(it, values, null, null);
+            return it
+        }
+    } catch (e: java.lang.Exception) {
+        return null
+    }
+}
+
+private fun ContentResolver.storeThumbnail(
+    source: Bitmap,
+    id: Long,
+    width: Float,
+    height: Float,
+    kind: Int,
+): Bitmap? {
+    // create the matrix to scale it
+    val matrix = Matrix()
+    val scaleX = width / source.width
+    val scaleY = height / source.height
+    matrix.setScale(scaleX, scaleY)
+    val thumb = Bitmap.createBitmap(
+        source, 0, 0,
+        source.width,
+        source.height, matrix,
+        true
+    )
+    val values = ContentValues(4)
+    values.put(MediaStore.Images.Thumbnails.KIND, kind)
+    values.put(MediaStore.Images.Thumbnails.IMAGE_ID, id.toInt())
+    values.put(MediaStore.Images.Thumbnails.HEIGHT, thumb.height)
+    values.put(MediaStore.Images.Thumbnails.WIDTH, thumb.width)
+    return insert(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, values)?.let {
+        try {
+            val thumbOut = openOutputStream(it)?.use {
+                thumb.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            }
+            thumb
+        } catch (ex: FileNotFoundException) {
+            null
+        } catch (ex: IOException) {
+            null
+        }
+    }
 }

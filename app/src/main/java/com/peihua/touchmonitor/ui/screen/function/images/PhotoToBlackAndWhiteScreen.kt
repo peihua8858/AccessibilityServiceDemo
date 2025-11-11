@@ -58,8 +58,7 @@ fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val logoPath = rememberSaveable(Uri.EMPTY)
-    val logoDrawable = remember { mutableStateOf<Drawable?>(null) }
-    val painter = rememberDrawablePainter(logoDrawable.value)
+    val logoDrawable = rememberSaveable<Drawable?>(null)
     val scope = rememberCoroutineScope()
     LaunchedEffect(logoPath.value) {
         dLog { "logoPath:${logoPath.value}" }
@@ -137,7 +136,10 @@ fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
                             try {
                                 val outFileName = "QR_".createFileName("jpg")
                                 val contentResolver = context.contentResolver
-                                val bitmap = logoPath.value.decodePathOptionsFile(Int.MAX_VALUE,Int.MAX_VALUE)?:return@launch
+                                val bitmap = logoPath.value.decodePathOptionsFile(
+                                    Int.MAX_VALUE,
+                                    Int.MAX_VALUE
+                                ) ?: return@launch
                                 contentResolver.saveBitmapToGallery(bitmap, outFileName, "")
                             } catch (error: Throwable) {
                                 error.printStackTrace()

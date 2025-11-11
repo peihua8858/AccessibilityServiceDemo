@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -269,6 +270,25 @@ fun <T : Any> LazyStaggeredGridState.LaunchedLoadMore(items: LazyPagingItems<T>)
 
 inline fun <T> LazyGridScope.items(
     items: List<T>,
+    noinline key: ((item: T) -> Any)? = null,
+    noinline span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    noinline contentType: (item: T) -> Any? = { null },
+    crossinline itemContent: @Composable LazyGridItemScope.(index: Int, item: T) -> Unit,
+) {
+    items(
+        count = items.size,
+        key = if (key != null) { index: Int -> key(items[index]) } else null,
+        span = if (span != null) {
+            { span(items[it]) }
+        } else null,
+        contentType = { index: Int -> contentType(items[index]) }
+    ) {
+        itemContent(it, items[it])
+    }
+}
+
+inline fun <T : Any> LazyGridScope.items(
+    items: SnapshotStateList<T>,
     noinline key: ((item: T) -> Any)? = null,
     noinline span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     noinline contentType: (item: T) -> Any? = { null },

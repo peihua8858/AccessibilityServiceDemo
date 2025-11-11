@@ -100,6 +100,7 @@ dependencies {
 
     implementation(libs.coil3.coil.compose)
     implementation(libs.coil3.coil.okhttp)
+    implementation("io.coil-kt.coil3:coil-gif:3.3.0")
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.datastore.core.okio)
@@ -166,5 +167,7 @@ dependencies {
     // https://mvnrepository.com/artifact/androidx.media3/media3-exoplayer
     implementation("androidx.media3:media3-exoplayer:1.8.0")
     implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
+    implementation "com.github.bumptech.glide:compose:1.0.0-beta08"
 }
 
