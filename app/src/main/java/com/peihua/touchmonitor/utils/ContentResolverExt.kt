@@ -358,7 +358,9 @@ fun ContentResolver.saveBitmapToGallery(
     values.put(MediaStore.Images.Media.DISPLAY_NAME, title)
     values.put(MediaStore.Images.Media.DESCRIPTION, description)
     values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-    values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$folderName")
+    if (folderName.isNonEmpty()) {
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$folderName")
+    }
     // Add the date meta data to ensure the image is added at the front of the gallery
     values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
     values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
