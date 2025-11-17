@@ -135,6 +135,9 @@ sealed class AppRouter(
     data object PhotoToSketchScreen : AppRouter("photoToSketch")
     data object PhotoToBlackAndWhiteScreen : AppRouter("photoToBlackAndWhite")
     data object DayNewsScreen : AppRouter("dayNews")
+    data object M3u8Downloader: AppRouter("m3u8Downloader"){
+        const val TYPE = "type"
+    }
 }
 
 /**

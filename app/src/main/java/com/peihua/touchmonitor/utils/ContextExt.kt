@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.AssetManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -131,6 +132,10 @@ fun Context.installApk(uri: Uri, mediaType: String?) {
         e.printStackTrace()
     }
 }
+val Context.assetsManager : AssetManager
+    get() {
+        return assets
+    }
 //
 //fun Context.installLocalApk(uri: Uri?) {
 //    val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)

@@ -64,6 +64,7 @@ import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchType
+import com.peihua.touchmonitor.ui.screen.function.video.M3u8Downloader
 import com.peihua.touchmonitor.ui.screen.function.video.VideoPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.video.VideoScreen
 import com.peihua.touchmonitor.ui.screen.function.zip.ZipScreen
@@ -77,6 +78,9 @@ import kotlin.text.toLong
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var appRouter: NavHostController
+fun navigateTo(route: AppRouter) {
+    navigateTo(route.route)
+}
 
 fun navigateTo(route: String) {
     assert(::appRouter.isInitialized)
@@ -101,6 +105,10 @@ fun navigateTo(route: String, builder: NavOptionsBuilder.() -> Unit) {
 fun navigateTo(route: String, params: Pair<String, String>) {
     assert(::appRouter.isInitialized)
     appRouter.navigate(route.replace("{${params.first}}", params.second))
+}
+
+fun navigateTo2(route: AppRouter, vararg params: Pair<String, Any>) {
+    navigateTo2(route.route, *params)
 }
 
 fun navigateTo2(route: String, vararg params: Pair<String, Any>) {
@@ -296,7 +304,7 @@ fun AppNavHost(
         composable(route = AppRouter.SearchScreen.route) {
             val searchType = it.savedStateHandle.get<SearchType>("searchType") ?: SearchType.ALL
             dLog { "SearchScreen>>>>>>>searchType:$searchType" }
-            SearchScreen(modifier,searchType)
+            SearchScreen(modifier, searchType)
         }
         composable(route = AppRouter.ZipScreen.route) {
             ZipScreen(modifier)
@@ -369,6 +377,11 @@ fun AppNavHost(
         composable(route = AppRouter.DayNewsScreen.route) {
             DayNewsScreen(modifier)
         }
+        composable(route = AppRouter.M3u8Downloader.route) {
+            val type = it.savedStateHandle.get<Int>(AppRouter.M3u8Downloader.TYPE) ?: 0
+            dLog { "M3u8Downloader>>>>>>>type:$type" }
+            M3u8Downloader(modifier, type)
+        }
         dialog(route = Dialog.ShareDialog.route) {
             val filePath = it.savedStateHandle.get<String>(Dialog.ShareDialog.KEY_FILE_PATH) ?: ""
             dLog { "ShareScreen>>>>>>>filePath:$filePath" }
@@ -400,9 +413,9 @@ fun AppNavHost(
                 onPositive, onNegative
             )
         }
-        dialog(route= Dialog.ProgressDialog.route) {
+        dialog(route = Dialog.ProgressDialog.route) {
             val title = it.savedStateHandle.get<String>(Dialog.TITLE) ?: ""
-            ProgressDialogScreen(modifier.background(Color.Transparent),title)
+            ProgressDialogScreen(modifier.background(Color.Transparent), title)
         }
     }
 }

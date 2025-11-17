@@ -118,6 +118,8 @@
     <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
     <string name="text_photo_tools">图片工具</string>
+    <string name="text_video_tools">视频工具</string>
+    <string name="text_m3u8_downloder">m3u8 下载</string>
     <string name="text_run">运行</string>
     <string name="text_export">导出</string>
     <string name="text_share">分享</string>
