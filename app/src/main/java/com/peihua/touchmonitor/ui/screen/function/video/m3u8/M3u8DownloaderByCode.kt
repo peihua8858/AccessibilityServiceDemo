@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
@@ -19,8 +22,11 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.compose.utils.rememberState
 import com.peihua.touchmonitor.ui.theme.Colors
 
@@ -67,10 +73,14 @@ fun M3u8DownloaderByCode(modifier: Modifier = Modifier) {
                     VerticalDivider()
                     headers.forEachIndexed { index, item ->
                         Text(
-                            text = item, modifier = modifier
-                                .fillMaxHeight()
+                            text = item,
+                            modifier = modifier
+                                .wrapContentHeight()
                                 .weight(1f),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+                            overflow = TextOverflow.Ellipsis
                         )
                         VerticalDivider()
                     }
@@ -93,42 +103,69 @@ private fun DataItem(modifier: Modifier = Modifier, model: DataModel) {
     ) {
         VerticalDivider()
         Text(
-            text = model.id, modifier = modifier
-                .fillMaxHeight()
-                .weight(1f), textAlign = TextAlign.Center
+            text = model.id,
+            modifier = modifier
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Text(
-            text = model.fileName, modifier = modifier
-                .fillMaxHeight()
-                .weight(1f), textAlign = TextAlign.Center
+            text = model.fileName,
+            modifier = modifier
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Text(
-            text = model.createTime, modifier = modifier
-                .fillMaxHeight()
-                .weight(1f), textAlign = TextAlign.Center
+            text = model.createTime,
+            modifier = modifier
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Text(
-            text = model.url, modifier = modifier
-                .fillMaxHeight()
-                .weight(1f), textAlign = TextAlign.Center
+            text = model.url,
+            modifier = modifier
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Text(
             text = model.progress,
             modifier = modifier
-                .fillMaxHeight()
-                .weight(1f), textAlign = TextAlign.Center
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Text(
             text = model.rate,
             modifier = modifier
-                .fillMaxHeight()
+                .wrapContentHeight()
                 .weight(1f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+            overflow = TextOverflow.Ellipsis
         )
         VerticalDivider()
         Row(
@@ -138,11 +175,17 @@ private fun DataItem(modifier: Modifier = Modifier, model: DataModel) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(onClick = {}) {
-                Text(text = "暂停")
+            TextButton(onClick = {},modifier = Modifier.weight(1f).wrapContentHeight()) {
+                Text(
+                    text = "暂停",
+                    autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+                )
             }
-            TextButton(onClick = {}) {
-                Text(text = "删除")
+            TextButton(onClick = {},modifier = Modifier.weight(1f).wrapContentHeight()) {
+                Text(
+                    text = "删除",
+                    autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
+                )
             }
 
         }

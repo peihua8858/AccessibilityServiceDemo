@@ -103,6 +103,10 @@
     <string name="text_desktop_video_wallpaper">桌面视频壁纸</string>
     <!--  二维码生成  -->
     <string name="text_qr_code_generator">二维码生成</string>
+    <!--  九宫格切图  -->
+    <string name="text_nine_grid_cut">九宫格切图</string>
+    <!--  九宫格图片合成  -->
+    <string name="text_nine_grid_picture_composite">九宫格图片合成</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">图片水印</string>
     <!--    视频转gif-->
@@ -119,7 +123,7 @@
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
     <string name="text_photo_tools">图片工具</string>
     <string name="text_video_tools">视频工具</string>
-    <string name="text_m3u8_downloder">m3u8 下载</string>
+    <string name="text_m3u8_downloader">m3u8 下载</string>
     <string name="text_run">运行</string>
     <string name="text_export">导出</string>
     <string name="text_share">分享</string>

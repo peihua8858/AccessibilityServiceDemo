@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -145,6 +144,8 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier,
                     items = listOf(
                         stringResource(R.string.text_qr_code_generator) to { navigateTo(AppRouter.QrCodeGeneratorScreen) },
+                        stringResource(R.string.text_nine_grid_cut) to { navigateTo(AppRouter.NineGridCutImageScreen) },
+                        stringResource(R.string.text_nine_grid_picture_composite) to { navigateTo(AppRouter.NineGridCutImageScreen) },
                         stringResource(R.string.text_photo_watermark) to { navigateTo(AppRouter.PhotoWatermarkScreen) },
                         stringResource(R.string.text_video_to_gif) to { navigateTo(AppRouter.VideoToGifScreen) },
                         stringResource(R.string.text_gif_image_decomposition) to { navigateTo(AppRouter.GifImageDecompositionScreen) },
@@ -176,8 +177,8 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_m3u8_downloder) to { navigateTo(AppRouter.M3u8Downloader) },
-                        stringResource(R.string.text_m3u8_downloder) + "2" to {
+                        stringResource(R.string.text_m3u8_downloader) to { navigateTo(AppRouter.M3u8Downloader) },
+                        stringResource(R.string.text_m3u8_downloader) + "2" to {
                             navigateTo2(AppRouter.M3u8Downloader, AppRouter.M3u8Downloader.TYPE to 1)
                         },
                     ),
