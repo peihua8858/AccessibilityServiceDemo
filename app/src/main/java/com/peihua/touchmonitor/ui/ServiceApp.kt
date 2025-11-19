@@ -34,6 +34,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
+import com.peihua.touchmonitor.ui.screen.function.images.NineGridCutImageScreen
+import com.peihua.touchmonitor.ui.screen.function.images.NineGridPictureCompositeScreen
 import com.peihua.touchmonitor.ui.applications.AppScreen
 import com.peihua.touchmonitor.ui.logcat.LogDetailScreen
 import com.peihua.touchmonitor.ui.logcat.LogScreen
@@ -381,6 +383,12 @@ fun AppNavHost(
             val type = it.savedStateHandle.get<Int>(AppRouter.M3u8Downloader.TYPE) ?: 0
             dLog { "M3u8Downloader>>>>>>>type:$type" }
             M3u8Downloader(modifier, type)
+        }
+        composable(route = AppRouter.NineGridCutImageScreen.route) {
+            NineGridCutImageScreen(modifier)
+        }
+        composable(route = AppRouter.NineGridPictureCompositeScreen.route) {
+            NineGridPictureCompositeScreen(modifier)
         }
         dialog(route = Dialog.ShareDialog.route) {
             val filePath = it.savedStateHandle.get<String>(Dialog.ShareDialog.KEY_FILE_PATH) ?: ""

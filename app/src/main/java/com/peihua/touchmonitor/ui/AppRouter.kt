@@ -138,6 +138,8 @@ sealed class AppRouter(
     data object M3u8Downloader: AppRouter("m3u8Downloader"){
         const val TYPE = "type"
     }
+    data object NineGridCutImageScreen: AppRouter("mineGridCutImage")
+    data object NineGridPictureCompositeScreen: AppRouter("nineGridPictureComposite")
 }
 
 /**

@@ -103,6 +103,10 @@
     <string name="text_desktop_video_wallpaper">桌面视频壁纸</string>
     <!--  二维码生成  -->
     <string name="text_qr_code_generator">二维码生成</string>
+    <!--  九宫格切图  -->
+    <string name="text_nine_grid_cut">九宫格切图</string>
+    <!--  九宫格图片合成  -->
+    <string name="text_nine_grid_picture_composite">九宫格图片合成</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">图片水印</string>
     <!--    视频转gif-->

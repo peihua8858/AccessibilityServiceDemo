@@ -145,6 +145,8 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier,
                     items = listOf(
                         stringResource(R.string.text_qr_code_generator) to { navigateTo(AppRouter.QrCodeGeneratorScreen) },
+                        stringResource(R.string.text_nine_grid_cut) to { navigateTo(AppRouter.NineGridCutImageScreen) },
+                        stringResource(R.string.text_nine_grid_picture_composite) to { navigateTo(AppRouter.NineGridCutImageScreen) },
                         stringResource(R.string.text_photo_watermark) to { navigateTo(AppRouter.PhotoWatermarkScreen) },
                         stringResource(R.string.text_video_to_gif) to { navigateTo(AppRouter.VideoToGifScreen) },
                         stringResource(R.string.text_gif_image_decomposition) to { navigateTo(AppRouter.GifImageDecompositionScreen) },
