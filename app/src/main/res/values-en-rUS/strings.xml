@@ -94,6 +94,10 @@
     <string name="text_desktop_video_wallpaper">Desktop Video Wallpaper</string>
     <!--  二维码生成  -->
     <string name="text_qr_code_generator">QR code generation</string>
+    <!--  九宫格切图  -->
+    <string name="text_nine_grid_cut">Nine palace grid cut diagram</string>
+    <!--  九宫格图片合成  -->
+    <string name="text_nine_grid_picture_composite">Nine-square grid picture synthesis</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">Picture watermark</string>
     <!--    视频转gif-->
@@ -108,6 +112,8 @@
     <string name="text_photo_to_black_and_white">Convert picture to black and white</string>
     <string name="text_system_font_size_adjustment">Adjust System Font Size</string>
     <string name="text_photo_tools">Photo Tools</string>
+    <string name="text_video_tools">Video tools</string>
+    <string name="text_m3u8_downloader">m3u8 download</string>
     <string name="text_run">Running</string>
     <string name="text_export">Export</string>
     <string name="text_share">Share</string>
@@ -197,4 +203,13 @@
     <string name="text_chose">Choose</string>
     <string name="text_qr_code_foreground_color">Foreground color</string>
     <string name="text_qr_code_background_color">Background Color</string>
+
+    <!--  选择图片  -->
+    <string name="text_select_photo">Select picture</string>
+    <!--    保存图片-->
+    <string name="text_save_photo">Save image</string>
+
+    <string name="app_exit_tips">Double tap to exit the app</string>
+    <string name="text_pixel_size">Pixel block size</string>
+    <string name="text_decompose_gif">Explode GIF</string>
 </resources>
