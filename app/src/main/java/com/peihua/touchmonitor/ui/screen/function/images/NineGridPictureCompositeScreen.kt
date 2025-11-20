@@ -99,14 +99,16 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
         }
     }
     val selectPhotoLauncher = rememberLauncherForActivityResult(PhotoMultipleVisualMedia()) {
-        val outputFile = "IMG_".createFolderFile()
-        val outputUri = Uri.fromFile(outputFile)
-        cropImageLauncher.launch(
-            PhotoCropVisualMediaRequestBuilder(it.toArrayList(), outputUri)
-                .withAspectRatio(1f, 1f)
-                .withMaxResultSize(1024, 1024)
-                .build()
-        )
+        if (it.isNotEmpty()) {
+            val outputFile = "IMG_".createFolderFile()
+            val outputUri = Uri.fromFile(outputFile)
+            cropImageLauncher.launch(
+                PhotoCropVisualMediaRequestBuilder(it.toArrayList(), outputUri)
+                    .withAspectRatio(1f, 1f)
+                    .withMaxResultSize(1024, 1024)
+                    .build()
+            )
+        }
     }
     val state = rememberReorderableLazyGridState(onMove = { from, to ->
         drawables.apply {
@@ -175,6 +177,7 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                         PhotoVisualMediaRequestBuilder(PhotoVisualMedia.ImageOnly)
                             .setMaxItemCount(bitmapSlicer.columns * bitmapSlicer.rows)
                             .setSelectedUris(selectedUris.toArrayList())
+                            .setForceCustomUi(true)
                             .build()
                     )
                 }) {
