@@ -1,19 +1,25 @@
 package com.peihua.touchmonitor.bitmap
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import androidx.annotation.WorkerThread
+import com.peihua.compose.utils.dLog
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import androidx.core.graphics.createBitmap
 
 abstract class BitmapSlicer {
 
     val widthRate: Int
+        get() {
+            return (columns * 667) + ((columns - 1) * 24)
+        }
     val heightRate: Int
-
-    init {
-        this.widthRate = (columns * 667) + ((columns - 1) * 24)
-        this.heightRate = (rows * 667) + ((rows - 1) * 24)
-    }
+        get() {
+            return (rows * 667) + ((rows - 1) * 24)
+        }
 
     abstract val columns: Int
 
@@ -24,18 +30,19 @@ abstract class BitmapSlicer {
         return suspendCancellableCoroutine { continuation ->
             val width = bitmap.getWidth()
             val height = bitmap.getHeight()
-            val i2 = (width * 667) / widthRate
-            val i4 = (height * 667) / heightRate
+            val imgWidth = (width * 667) / widthRate
+            val imgHeight = (height * 667) / heightRate
             val i5 = (width * 24) / widthRate
             val i6 = (height * 24) / heightRate
             val arrayList = ArrayList<Bitmap>()
-            for (i7 in 0..<rows) {
-                for (i8 in 0..<columns) {
+            dLog { "imgWidth:$imgWidth,imgHeight:$imgHeight,width:$width,height:$height,i5:$i5,i6:$i6,widthRate:$widthRate,heightRate:$heightRate" }
+            for (row in 0..<rows) {
+                for (column in 0..<columns) {
                     arrayList.add(
                         Bitmap.createBitmap(
                             bitmap,
-                            (i2 + i5) * i8, (i4 + i6) * i7,
-                            i2, i4
+                            (imgWidth + i5) * column, (imgHeight + i6) * row,
+                            imgWidth, imgHeight
                         )
                     )
                 }
@@ -43,6 +50,28 @@ abstract class BitmapSlicer {
             continuation.resume(arrayList)
         }
 
+    }
+
+    @WorkerThread
+    suspend fun mergeBitmaps(bitmaps: List<Bitmap?>, width: Int, height: Int): Bitmap {
+        val bitmaps = bitmaps.filterNotNull()
+        return suspendCancellableCoroutine { continuation ->
+            val imgWidth = (width * 667) / widthRate
+            val imgHeight = (height * 667) / heightRate
+            val i5 = (width * 24) / widthRate
+            val i6 = (height * 24) / heightRate
+            dLog { "imgWidth:$imgWidth,imgHeight:$imgHeight,width:$width,height:$height,i5:$i5,i6:$i6,widthRate:$widthRate,heightRate:$heightRate" }
+            val bitmap = createBitmap(width, height)
+            val canvas = Canvas(bitmap)
+            for (row in 0..<rows) {
+                for (column in 0..<columns) {
+                    val inBitmap = bitmaps[row * columns]
+                    val rect = Rect((imgWidth + i5) * column, (imgHeight + i6) * row, imgWidth, imgHeight)
+                    canvas.drawBitmap(inBitmap, null, rect, null)
+                }
+            }
+            continuation.resume(bitmap)
+        }
     }
 }
 
