@@ -34,9 +34,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.showToast
-import com.peihua.compose.utils.startAccessibilitySettings
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.activity.AutoScrollScreenActivity
 import com.peihua.touchmonitor.activity.HomeScreenActivity
@@ -56,8 +53,11 @@ import com.peihua.touchmonitor.ui.stackEntry
 import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.isUpsideDownCake
+import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.SettingsViewModel
 import com.peihua8858.permissions.core.requestPermission
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.startAccessibilitySettings
 import kotlinx.coroutines.launch
 
 
@@ -294,12 +294,12 @@ private fun ShortVideoScreenContent(
                     (context as ComponentActivity).requestPermission(android.Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) {
                         onDenied {
                             dLog { "MainScreen>>>>>>>onDenied" }
-                            context.showToast(R.string.text_foreground_service_permission_tips)
+                            showToast(R.string.text_foreground_service_permission_tips)
                             context.startAccessibilitySettings()
                         }
                         onShowRationale {
                             dLog { "MainScreen>>>>>>>onShowRationale" }
-                            context.showToast(R.string.text_foreground_service_permission_tips)
+                            showToast(R.string.text_foreground_service_permission_tips)
                             context.startAccessibilitySettings()
                         }
                         onGranted {

@@ -7,10 +7,7 @@ import android.util.Log
 import androidx.core.content.PermissionChecker
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.peihua.compose.file.cRC32
-import com.peihua.compose.file.writeToFile
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.ifNullOrEmpty
+import com.peihua.selector.util.writeToFile
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.Constants
@@ -21,8 +18,11 @@ import com.peihua.touchmonitor.utils.externalStoragePath
 import com.peihua.touchmonitor.utils.findDocumentFile
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getExportPathDocumentFile
+import com.peihua.touchmonitor.utils.ifNullOrEmpty
 import com.peihua.touchmonitor.utils.isGrantedStoragePermission
 import com.peihua.touchmonitor.utils.outputStreamForDocumentFile
+import com.peihua8858.tools.file.cRC32
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

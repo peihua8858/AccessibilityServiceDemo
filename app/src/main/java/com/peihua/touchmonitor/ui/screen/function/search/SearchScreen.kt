@@ -31,7 +31,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.SearchModel
 import com.peihua.touchmonitor.ui.components.LoadMoreView
@@ -45,6 +44,7 @@ import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.SearchUiAction
 import com.peihua.touchmonitor.viewmodel.SearchViewModel
+import com.peihua8858.tools.utils.openWithFile
 
 enum class SearchType {
     ALL,

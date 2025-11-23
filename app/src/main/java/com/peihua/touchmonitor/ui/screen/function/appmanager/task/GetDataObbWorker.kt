@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import androidx.core.content.PermissionChecker
 import androidx.documentfile.provider.DocumentFile
-import com.peihua.compose.file.getFileSize
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.utils.WorkScope
@@ -14,6 +13,7 @@ import com.peihua.touchmonitor.utils.getDocumentFile
 import com.peihua.touchmonitor.utils.getDocumentFileBySegments
 import com.peihua.touchmonitor.utils.getDocumentFileOf
 import com.peihua.touchmonitor.utils.getFileSize
+import com.peihua8858.tools.file.getFileSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

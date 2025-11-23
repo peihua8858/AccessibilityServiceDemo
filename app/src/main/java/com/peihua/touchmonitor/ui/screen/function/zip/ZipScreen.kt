@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
@@ -39,6 +38,7 @@ import com.peihua.touchmonitor.viewmodel.MediaModel
 import com.peihua.touchmonitor.viewmodel.MediaUiAction
 import com.peihua.touchmonitor.viewmodel.SortType
 import com.peihua.touchmonitor.viewmodel.ZipViewModel
+import com.peihua8858.tools.utils.openWithFile
 
 @Composable
 fun ZipScreen(modifier: Modifier, viewModel: ZipViewModel = viewModel()) {

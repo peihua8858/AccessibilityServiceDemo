@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
@@ -35,6 +34,7 @@ import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.DocumentViewModel
 import com.peihua.touchmonitor.viewmodel.MediaModel
 import com.peihua.touchmonitor.viewmodel.QueryType
+import com.peihua8858.tools.utils.openWithFile
 
 @Composable
 fun AllDocumentScreen(

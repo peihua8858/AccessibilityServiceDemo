@@ -22,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,14 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.rememberState
 import com.peihua.selector.result.PhotoVisualMediaRequest
 import com.peihua.selector.result.contract.PhotoVisualMedia
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.gif.GifSplitter
-import com.peihua.touchmonitor.ui.components.CustomSliderTips
-import com.peihua.touchmonitor.ui.components.SliderDefaults
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
@@ -48,15 +43,14 @@ import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
 import com.peihua.touchmonitor.utils.getFileFromContentUri
 import com.peihua.touchmonitor.utils.isLandscape
 import com.peihua.touchmonitor.utils.items
-import com.peihua.touchmonitor.utils.rememberFloatState
 import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.rememberSaveableList
-import com.peihua.touchmonitor.utils.rememberStateList
+import com.peihua.touchmonitor.utils.rememberState
 import com.peihua.touchmonitor.utils.saveBitmapToGallery
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import openInputStream
-import kotlin.math.roundToInt
 
 /**
  * gif图片分解

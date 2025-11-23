@@ -5,10 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.annotation.WorkerThread
-import com.peihua.compose.utils.dLog
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import androidx.core.graphics.createBitmap
+import com.peihua8858.tools.utils.dLog
 
 abstract class BitmapSlicer {
 

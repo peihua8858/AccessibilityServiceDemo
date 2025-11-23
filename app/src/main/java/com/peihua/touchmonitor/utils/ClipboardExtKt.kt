@@ -5,10 +5,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.peihua.compose.utils.checkContext
-import com.peihua.compose.utils.clipboardManager
-import com.peihua.compose.utils.eLog
-import com.peihua.compose.utils.isNonEmpty
+import com.peihua.touchmonitor.ServiceApplication
+import com.peihua8858.tools.utils.clipboardManager
+import com.peihua8858.tools.utils.eLog
+import com.peihua8858.tools.utils.isNonEmpty
 
 fun CharSequence?.copyTextToClipboard(context: Context): Boolean {
     if (this == null) {
@@ -71,7 +71,7 @@ fun Context?.copyToClipBoard(lazyContent: () -> CharSequence) {
  */
 fun Context?.copyToClipBoard(lazyContent: () -> CharSequence, callback: ((Boolean) -> Unit)? = null) {
     val content = lazyContent()
-    val context = checkContext(this)
+    val context = ServiceApplication.application
     if (context != null) context.copyToClipBoard(
         content,
         callback

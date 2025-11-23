@@ -2,7 +2,7 @@ package com.peihua.touchmonitor.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.peihua.compose.utils.isLandscape
+import com.peihua8858.tools.utils.isLandscape
 
 @get:Composable
 val isLandscape: Boolean

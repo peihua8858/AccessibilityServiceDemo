@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import com.peihua.compose.utils.LogCat
+import com.peihua8858.tools.log.Logcat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -125,7 +125,7 @@ fun <T> ViewModel.request(
             }
             viewState.value = ResultData.Success(response)
         } catch (e: Throwable) {
-            LogCat.d(TAG, e.stackTraceToString())
+            Logcat.d(TAG, e.stackTraceToString())
             viewState.value = ResultData.Failure(e)
         }
     }

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.peihua.compose.utils.LogCat
+import com.peihua8858.tools.log.Logcat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,7 +14,7 @@ class PagingSourceImpl<T : Any>(
     private val refreshKey: (PagingState<Int, T>) -> Int? = { state ->
         state.anchorPosition?.let { anchorPosition ->
             val page = state.closestPageToPosition(anchorPosition)
-            LogCat.d("PagingSourceImpl", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
+            Logcat.d("PagingSourceImpl", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
             page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1) // 返回刷新会使用的键
         }
     },
@@ -36,7 +36,7 @@ class PagingSourceImpl<T : Any>(
             } else {
                 currentPage + 1
             }
-            LogCat.d(
+            Logcat.d(
                 "PagingSourceImpl",
                 " >>>size:${size},currentPage = $currentPage, loadSize = $loadSize,nextKey = $nextKey,maxSize = $maxSize"
             )

@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.components.DropdownMenuBox
@@ -57,6 +56,7 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.rememberStateSet
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.launch
 
 private data class OrientationModel(val orientation: Orientation, val displayName: String) {

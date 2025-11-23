@@ -30,10 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
-import com.peihua.compose.file.createFileName
-import com.peihua.compose.utils.adjustBitmapOrientation
-import com.peihua.compose.utils.rememberState
-import com.peihua.compose.utils.saveBitmapToGallery
 import com.peihua.selector.result.PhotoVisualMediaRequest
 import com.peihua.selector.result.contract.PhotoVisualMedia
 import com.peihua.touchmonitor.R
@@ -45,6 +41,10 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
 import com.peihua.touchmonitor.utils.rememberFloatState
 import com.peihua.touchmonitor.utils.rememberSaveable
+import com.peihua.touchmonitor.utils.rememberState
+import com.peihua8858.tools.file.createFileName
+import com.peihua8858.tools.utils.adjustBitmapOrientation
+import com.peihua8858.tools.utils.saveBitmapToGallery
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImagePixelationFilter
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +64,7 @@ fun ImagePixelizationScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val scope = rememberCoroutineScope { Dispatchers.IO }
-    val processPhoto ={uri:Uri->
+    val processPhoto = { uri: Uri ->
         isLoading.value = true
         // 开始转素描
         val bitmap = uri.adjustBitmapOrientation()
@@ -161,7 +161,11 @@ fun ImagePixelizationScreen(modifier: Modifier = Modifier) {
                         sketchBitmapDrawable.value?.let {
                             val contentResolver = context.contentResolver
                             val outFileName = "pixel_".createFileName("jpg")
-                            contentResolver.saveBitmapToGallery(it.bitmap, outFileName, "")
+                            contentResolver.saveBitmapToGallery(
+                                source = it.bitmap,
+                                title = outFileName,
+                                description = ""
+                            )
                         }
                         showLoadingDialog.value = false
                     }

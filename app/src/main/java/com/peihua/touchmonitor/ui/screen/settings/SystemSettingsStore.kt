@@ -8,12 +8,12 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.data.DataStore
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.theme.ThemeMode
 import com.peihua.touchmonitor.ui.theme.ThemeModeDeserializer
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.flow.first
 import java.lang.reflect.Type
 

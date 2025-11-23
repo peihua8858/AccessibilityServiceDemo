@@ -39,7 +39,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppInfoModel
 import com.peihua.touchmonitor.ui.Dialog
@@ -58,6 +57,7 @@ import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.copyToClipBoard
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.AppDetailViewModel
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 

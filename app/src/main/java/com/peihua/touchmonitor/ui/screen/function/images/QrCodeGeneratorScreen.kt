@@ -42,11 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.scale
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.file.createFileName
-import com.peihua.compose.utils.adjustBitmapOrientation
-import com.peihua.compose.utils.createFile
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.saveBitmapToGallery
 import com.peihua.selector.result.PhotoCropVisualMediaRequestBuilder
 import com.peihua.selector.result.PhotoVisualMediaRequestBuilder
 import com.peihua.selector.result.contract.PhotoCropVisualMedia
@@ -66,6 +61,11 @@ import com.peihua.touchmonitor.utils.ifEmptyOrBlank
 import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.showToast
+import com.peihua8858.tools.file.createFileName
+import com.peihua8858.tools.utils.adjustBitmapOrientation
+import com.peihua8858.tools.utils.createFile
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.saveBitmapToGallery
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import io.mhssn.colorpicker.ext.toHex
@@ -102,7 +102,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     LaunchedEffect(logoPath.value) {
         dLog { "logoPath:${logoPath.value}" }
         if (logoPath.value != Uri.EMPTY) {
-            val drawable = logoPath.value.adjustBitmapOrientation()?.scale (100, 100)?.toRoundDrawable(20f)
+            val drawable = logoPath.value.adjustBitmapOrientation()?.scale(100, 100)?.toRoundDrawable(20f)
             logoDrawable.value = drawable
         }
         dLog { "logoPath:${logoDrawable.value}" }
@@ -177,9 +177,11 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     })
                 TextButton(
                     onClick = {
-                        launcher.launch(PhotoVisualMediaRequestBuilder(PhotoVisualMedia.ImageOnly)
+                        launcher.launch(
+                            PhotoVisualMediaRequestBuilder(PhotoVisualMedia.ImageOnly)
 //                            .setForceCustomUi(true)
-                            .build())
+                                .build()
+                        )
                     },
                     modifier = Modifier.constrainAs(button) {
                         top.linkTo(parent.top)
@@ -328,9 +330,14 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                             try {
                                 val bitmap = bitmapAsync.await()
                                 val outFileName = "QR_".createFileName("jpg")
-                                val contentResolver= context.contentResolver
-                                val newBitmap = bitmap.asAndroidBitmap().scale(qrCodeImgSize.value.toInt(),qrCodeImgSize.value.toInt())
-                                contentResolver.saveBitmapToGallery(newBitmap,outFileName,"")
+                                val contentResolver = context.contentResolver
+                                val newBitmap = bitmap.asAndroidBitmap()
+                                    .scale(qrCodeImgSize.value.toInt(), qrCodeImgSize.value.toInt())
+                                contentResolver.saveBitmapToGallery(
+                                    source = newBitmap,
+                                    title = outFileName,
+                                    description = ""
+                                )
                             } catch (error: Throwable) {
                                 error.printStackTrace()
                             }
@@ -377,7 +384,6 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
 }
 
 public inline fun Color.toDrawable(): ColorDrawable = ColorDrawable(toArgb())
-
 
 
 @Composable

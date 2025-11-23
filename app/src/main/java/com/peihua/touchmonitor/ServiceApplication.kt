@@ -5,13 +5,16 @@ import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.writeCrashLogFile
+import com.fz.imageloader.glide.ImageGlideFetcher
 import com.peihua.touchmonitor.model.LanguageModel
+import com.peihua8858.tools.log.Logcat
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.writeLog
 
 class ServiceApplication : Application() {
     companion object {
         private var app: ServiceApplication? = null
+
         @JvmStatic
         val application: ServiceApplication
             get() {
@@ -20,7 +23,8 @@ class ServiceApplication : Application() {
                 }
                 return app!!
             }
-         fun updateLanguage(language: LanguageModel) {
+
+        fun updateLanguage(language: LanguageModel) {
             dLog { "changeLanguage: $language" }
             setLocale(application, language.langCode)
         }
@@ -39,13 +43,15 @@ class ServiceApplication : Application() {
             }
         }
     }
+
     private var oldDefaultExceptionHandler: Thread.UncaughtExceptionHandler? = null
     override fun onCreate() {
         super.onCreate()
         app = this
+        com.fz.imageloader.ImageLoader.getInstance().createProcessor(ImageGlideFetcher())
         this.oldDefaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            writeCrashLogFile { e.stackTraceToString() }
+            Logcat.writeLog(this, "", e.stackTraceToString())
             e.printStackTrace()
             oldDefaultExceptionHandler?.uncaughtException(t, e)
         }

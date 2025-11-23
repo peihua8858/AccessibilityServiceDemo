@@ -1,6 +1,6 @@
 package com.peihua.touchmonitor.utils
 
-import com.peihua.compose.utils.eLog
+import com.peihua8858.tools.utils.eLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

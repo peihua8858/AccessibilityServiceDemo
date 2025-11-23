@@ -28,10 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
-import com.peihua.compose.file.createFileName
-import com.peihua.compose.utils.adjustBitmapOrientation
-import com.peihua.compose.utils.rememberState
-import com.peihua.compose.utils.saveBitmapToGallery
 import com.peihua.selector.result.PhotoVisualMediaRequest
 import com.peihua.selector.result.contract.PhotoVisualMedia
 import com.peihua.touchmonitor.R
@@ -40,6 +36,10 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
 import com.peihua.touchmonitor.utils.rememberSaveable
+import com.peihua8858.compose.tools.rememberState
+import com.peihua8858.tools.file.createFileName
+import com.peihua8858.tools.utils.adjustBitmapOrientation
+import com.peihua8858.tools.utils.saveBitmapToGallery
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSketchFilter
 import kotlinx.coroutines.Dispatchers
@@ -125,7 +125,11 @@ fun PhotoToSketchScreen(modifier: Modifier = Modifier) {
                         sketchBitmapDrawable.value?.let {
                             val contentResolver = context.contentResolver
                             val outFileName = "Sketch_".createFileName("jpg")
-                            contentResolver.saveBitmapToGallery(it.bitmap, outFileName, "")
+                            contentResolver.saveBitmapToGallery(
+                                source = it.bitmap,
+                                title = outFileName,
+                                description = ""
+                            )
                         }
                         delay(3000)
                         showLoadingDialog.value = false

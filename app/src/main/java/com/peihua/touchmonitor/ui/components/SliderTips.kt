@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.ui.components.shape.ArrowDownShape
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.utils.toDp
 import com.peihua.touchmonitor.utils.toPx
+import com.peihua8858.tools.utils.dLog
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)

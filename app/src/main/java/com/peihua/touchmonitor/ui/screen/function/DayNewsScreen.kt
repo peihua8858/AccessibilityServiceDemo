@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.DynamicAsyncImage
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
@@ -27,6 +26,7 @@ import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.ui.theme.color_ff5187f4
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.DayNewsViewModel
+import com.peihua8858.tools.utils.dLog
 
 @Composable
 fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = viewModel()) {

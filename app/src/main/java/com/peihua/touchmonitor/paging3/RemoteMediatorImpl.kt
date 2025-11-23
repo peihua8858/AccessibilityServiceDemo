@@ -7,9 +7,9 @@ import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.peihua.compose.utils.LogCat
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.utils.isWorkThread
+import com.peihua8858.tools.log.Logcat
+import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -24,7 +24,7 @@ class RemoteMediatorImpl<T : Any>(
         state: PagingState<Int, T>
     ): MediatorResult {
         if (isWorkThread()) {
-            LogCat.d("RemotePagingSource", " >>>loadType = $loadType")
+            Logcat.d("RemotePagingSource", " >>>loadType = $loadType")
             try {
                 val params = loadParams(loadType, state)
                 val result = pagingSource.load(params = params) as LoadResult.Page<Int, T>
@@ -55,7 +55,7 @@ class RemoteMediatorImpl2<T : Any>(
         state: PagingState<Int, T>
     ): MediatorResult {
         if (isWorkThread()) {
-            LogCat.d("RemotePagingSource", " >>>loadType = $loadType")
+            Logcat.d("RemotePagingSource", " >>>loadType = $loadType")
             try {
                 val result = loadData(loadType, state)
                 val nextKey = result.nextKey

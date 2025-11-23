@@ -15,9 +15,9 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.os.ParcelUuid
-import com.peihua.compose.file.mimeTypeFromFilePath
-import com.peihua.compose.utils.LogCat
 import com.peihua.touchmonitor.ServiceApplication
+import com.peihua8858.tools.file.mimeTypeFromFilePath
+import com.peihua8858.tools.log.Logcat
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -107,9 +107,9 @@ fun ByteArray?.sendBroadcast(callback: AdvertiseCallback.() -> Unit) {
             initBroadcastSetting(),
             initBroadcastPacketData(), broadcastScanData, advertiseCallback
         )
-        LogCat.d(TAG, "begin send ble broadcast.")
+        Logcat.d(TAG, "begin send ble broadcast.")
     } else {
-        LogCat.d(TAG, "the phone chip does not support broadcasting")
+        Logcat.d(TAG, "the phone chip does not support broadcasting")
     }
 }
 
@@ -131,13 +131,13 @@ class AdvertiseCallback : android.bluetooth.le.AdvertiseCallback() {
     }
 
     override infix fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
-        LogCat.d(TAG, "broadcast send successfully$settingsInEffect")
+        Logcat.d(TAG, "broadcast send successfully$settingsInEffect")
         super.onStartSuccess(settingsInEffect)
         onStartSuccess?.invoke(settingsInEffect)
     }
 
     override infix fun onStartFailure(errorCode: Int) {
-        LogCat.d(TAG, "broadcast sending failed：may be sending$errorCode")
+        Logcat.d(TAG, "broadcast sending failed：may be sending$errorCode")
         super.onStartFailure(errorCode)
         onStartFailure?.invoke(errorCode)
     }
@@ -153,7 +153,7 @@ fun Context.sendFileByBt(filePath: String) {
     try {
         val fileAPK = File(filePath)
         if (!fileAPK.exists()) {
-            LogCat.d(TAG, "sendApkByBt: fileAPK not exists")
+            Logcat.d(TAG, "sendApkByBt: fileAPK not exists")
             return
         }
         val uri = fileAPK.fileProvider
@@ -164,9 +164,9 @@ fun Context.sendFileByBt(filePath: String) {
         intent.setPackage("com.android.bluetooth")
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        LogCat.d(TAG, "sendApkByBt: startActivity success  appDir$fileAPK\n uri:$uri")
+        Logcat.d(TAG, "sendApkByBt: startActivity success  appDir$fileAPK\n uri:$uri")
     } catch (e: java.lang.Exception) {
-        LogCat.d(TAG, "sendApkByBt: e $e")
+        Logcat.d(TAG, "sendApkByBt: e $e")
         e.printStackTrace()
     }
 }
@@ -174,7 +174,7 @@ fun Context.sendFileByBt(filePath: String) {
 
 @SuppressLint("MissingPermission")
 fun receiveBroadcastData(callback:ScanCallback.() -> Unit) {
-    LogCat.d(TAG, "begin receive broadcasts")
+    Logcat.d(TAG, "begin receive broadcasts")
     if (isEnabled()) {
         val scanCallback = ScanCallback().apply(callback)
         mBluetoothLeScanner = mBluetoothAdapter?.getBluetoothLeScanner()
@@ -186,13 +186,13 @@ fun receiveBroadcastData(callback:ScanCallback.() -> Unit) {
 
 @SuppressLint("MissingPermission")
 fun unReceiveBroadcastData() {
-    LogCat.d(TAG, "stop receiving broadcasts")
+    Logcat.d(TAG, "stop receiving broadcasts")
     try {
         if (mBluetoothLeScanner != null && isEnabled() && mBluetoothAdapter!!.getState() == BluetoothAdapter.STATE_ON) {
             mBluetoothLeScanner?.stopScan(mScanCallBack)
         }
     } catch (e: Exception) {
-        LogCat.d(TAG, "unReceiveBroadcastData: Exception $e")
+        Logcat.d(TAG, "unReceiveBroadcastData: Exception $e")
         e.printStackTrace()
     }
 }
@@ -210,7 +210,7 @@ class ScanCallback : android.bluetooth.le.ScanCallback() {
     }
     override fun onScanFailed(errorCode: Int) {
         super.onScanFailed(errorCode)
-        LogCat.d(TAG, "scan filed$errorCode")
+        Logcat.d(TAG, "scan filed$errorCode")
         onScanResult?.invoke(errorCode, null)
     }
     override fun onScanResult(callbackType: Int, result: ScanResult?) {
@@ -227,12 +227,12 @@ private val mScanCallBack:  android.bluetooth.le.ScanCallback = object :  androi
         super.onScanResult(callbackType, result)
         val paresResult: String? = onReceiveData(result)
 //        is5GSupported(paresResult)
-        LogCat.d(TAG, "scan was successful$callbackType")
+        Logcat.d(TAG, "scan was successful$callbackType")
     }
 
     override fun onScanFailed(errorCode: Int) {
         super.onScanFailed(errorCode)
-        LogCat.d(TAG, "scan filed$errorCode")
+        Logcat.d(TAG, "scan filed$errorCode")
     }
 }
 
@@ -259,18 +259,18 @@ private val mScanCallBack:  android.bluetooth.le.ScanCallback = object :  androi
 @SuppressLint("MissingPermission")
 fun onReceiveData(result: ScanResult?): String? {
     if (result == null) {
-        LogCat.d(TAG, "result is null")
+        Logcat.d(TAG, "result is null")
         return null
     }
     val record: ScanRecord? = result.scanRecord
     if (null == record) {
-        LogCat.d(TAG, "result.getScanRecord is null")
+        Logcat.d(TAG, "result.getScanRecord is null")
         return null
     }
     var parseResults: String? = null
     val manufacturerSpecificData = record.getManufacturerSpecificData(MANUFACTURER_ID)
     parseResults = byteArr2Str(manufacturerSpecificData)
-    LogCat.d(TAG, "parseResults: $parseResults")
+    Logcat.d(TAG, "parseResults: $parseResults")
     return parseResults
 }
 
@@ -308,7 +308,7 @@ fun byteArr2Str(byteArr: ByteArray?): String? {
     try {
         hexResult = String(baKeyword, charset("UTF-8"))
     } catch (e1: java.lang.Exception) {
-        LogCat.d(TAG, "hexResult error: $e1")
+        Logcat.d(TAG, "hexResult error: $e1")
         e1.printStackTrace()
     }
     return hexResult
@@ -316,18 +316,18 @@ fun byteArr2Str(byteArr: ByteArray?): String? {
 
 @SuppressLint("MissingPermission")
 fun getBonded() {
-    LogCat.d(TAG, "getBonded: ")
+    Logcat.d(TAG, "getBonded: ")
     val bondedDevices = mBluetoothAdapter!!.getBondedDevices()
     //		bondedDevices.iterator().
     for (device in bondedDevices) {
-        LogCat.d(TAG, "Name:" + device.getName() + "   Mac:" + device.getAddress())
+        Logcat.d(TAG, "Name:" + device.getName() + "   Mac:" + device.getAddress())
 
         try {
             //使用反射调用获取设备连接状态方法
             val isConnectedMethod: Method = BluetoothDevice::class.java.getDeclaredMethod("isConnected", null)
             isConnectedMethod.isAccessible = true
             val isConnected = isConnectedMethod.invoke(device, null) as Boolean
-            LogCat.d(TAG, "isConnected：$isConnected")
+            Logcat.d(TAG, "isConnected：$isConnected")
         } catch (e: NoSuchMethodException) {
             e.printStackTrace()
         } catch (e: IllegalAccessException) {

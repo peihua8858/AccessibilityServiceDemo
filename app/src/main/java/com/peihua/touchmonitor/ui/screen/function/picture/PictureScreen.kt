@@ -25,7 +25,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.ActionDropMenu
@@ -39,6 +38,7 @@ import com.peihua.touchmonitor.viewmodel.MediaUiAction
 import com.peihua.touchmonitor.viewmodel.MediaViewModel
 import com.peihua.touchmonitor.viewmodel.QueryType
 import com.peihua.touchmonitor.viewmodel.SortType
+import com.peihua8858.tools.utils.isLandscape
 
 @Composable
 fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {

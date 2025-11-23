@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import androidx.annotation.IntDef
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
-import com.peihua.compose.utils.dLog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.model.MediaHeader
@@ -22,6 +21,7 @@ import com.peihua.touchmonitor.utils.getString
 import com.peihua.touchmonitor.utils.isAtLeastO
 import com.peihua.touchmonitor.utils.isAtLeastQ
 import com.peihua.touchmonitor.utils.isAtLeastR
+import com.peihua8858.tools.utils.dLog
 import java.util.concurrent.TimeUnit
 
 object QueryType {

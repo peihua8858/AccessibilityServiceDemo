@@ -17,18 +17,18 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.peihua.compose.file.deleteFileOrDir
-import com.peihua.compose.file.writeToFile
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.eLog
-import com.peihua.compose.utils.installLocalApk
-import com.peihua.compose.utils.showToast
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.surface
 import com.peihua.touchmonitor.utils.WorkScope
 import com.peihua.touchmonitor.utils.fileProvider
 import com.peihua.touchmonitor.utils.installApk
+import com.peihua.touchmonitor.utils.showToast
+import com.peihua8858.tools.file.deleteFileOrDir
+import com.peihua8858.tools.file.writeToFile
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.eLog
+import com.peihua8858.tools.utils.installLocalApk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -182,7 +182,7 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
         }
         if ("file" == scheme) {
             if (Build.VERSION.SDK_INT >= 30) {
-                return parseDocumentFile(mTreeUri, uri).dLog { "newUri>>>${this?.path}" }
+                return parseDocumentFile(mTreeUri, uri).dLog { "newUri>>>${this}" }
             }
         }
         val externalFilesDir = getExternalFilesDir("")?.absolutePath

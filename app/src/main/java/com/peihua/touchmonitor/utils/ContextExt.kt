@@ -1,31 +1,16 @@
 package com.peihua.touchmonitor.utils
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.content.res.AssetManager
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
-import android.view.View
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import com.peihua.compose.file.mimeTypeFromFilePath
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.mimeTypeFromFilePath
-import com.peihua.compose.utils.writeLogFile
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.activity.FileViewerActivity
-import com.peihua.touchmonitor.ui.screen.function.appmanager.FileItem
+import com.peihua8858.tools.file.mimeTypeFromFilePath
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.mimeTypeFromFilePath
 import java.io.File
-import java.util.Locale
+
 //
 //
 //fun Context.dimenOffset(dip: Int): Int {

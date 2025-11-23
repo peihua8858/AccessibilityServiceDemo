@@ -23,17 +23,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.file.fetchFileName
-import com.peihua.compose.file.mimeTypeFromFilePath
-import com.peihua.compose.utils.LogCat
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.isLandscape
-import com.peihua.compose.utils.shareCertainFiles
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.fileProvider
+import com.peihua8858.tools.file.fetchFileName
+import com.peihua8858.tools.file.mimeTypeFromFilePath
+import com.peihua8858.tools.log.Logcat
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.isLandscape
+import com.peihua8858.tools.utils.shareCertainFiles
 import java.io.File
 
 private class ShareModel(val name: String, val icon: Drawable, val packageName: String)
@@ -97,7 +97,7 @@ fun Context.shareFile(filePath: String, packageName: String) {
     try {
         val fileAPK = File(filePath)
         if (!fileAPK.exists()) {
-            LogCat.d("shareFile: fileAPK not exists")
+            dLog { "shareFile: fileAPK not exists" }
             return
         }
         val uri = fileAPK.fileProvider
@@ -108,9 +108,9 @@ fun Context.shareFile(filePath: String, packageName: String) {
         intent.setPackage(packageName)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        LogCat.d("shareFile: startActivity success  appDir$fileAPK\n uri:$uri")
+        Logcat.d("shareFile: startActivity success  appDir$fileAPK\n uri:$uri")
     } catch (e: java.lang.Exception) {
-        LogCat.d("shareFile: e $e")
+        Logcat.d("shareFile: e $e")
         e.printStackTrace()
     }
 }

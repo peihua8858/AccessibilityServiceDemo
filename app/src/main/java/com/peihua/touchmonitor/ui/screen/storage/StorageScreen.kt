@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.peihua.compose.utils.openWithFile
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaData
 import com.peihua.touchmonitor.ui.Dialog
@@ -34,6 +33,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.StorageViewModel
+import com.peihua8858.tools.utils.openWithFile
 
 @Composable
 fun StorageScreen(

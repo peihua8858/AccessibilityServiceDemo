@@ -24,7 +24,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.AppInfo
 import com.peihua.touchmonitor.ui.components.ErrorView
@@ -35,6 +34,7 @@ import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.ApplicationsViewModel
+import com.peihua8858.tools.utils.isLandscape
 
 @Composable
 fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = viewModel()) {

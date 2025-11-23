@@ -25,8 +25,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import com.peihua.compose.utils.dLog
-import com.peihua.compose.utils.isLandscape
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.ApkModel
 import com.peihua.touchmonitor.ui.Dialog
@@ -39,6 +37,8 @@ import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.installApk
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.ApkViewModel
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.isLandscape
 
 @Composable
 fun ApkScreen(modifier: Modifier = Modifier) {
