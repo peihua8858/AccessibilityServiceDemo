@@ -19,10 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
@@ -45,9 +48,7 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
-import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.rememberSaveableList
-import com.peihua.touchmonitor.utils.toDp
 import com.peihua8858.compose.tools.rememberState
 import com.peihua8858.tools.collections.toArrayList
 import com.peihua8858.tools.file.createFileName
@@ -71,8 +72,13 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
     val selectedUris = rememberSaveableList<Uri>()
     val showLoadingDialog = rememberShowProgressDialog()
     val drawables = rememberSaveableList<BitmapDrawable>()
-    val sketchBitmapDrawable = rememberSaveable<BitmapDrawable?>(null)
+    val gapState = rememberState("2")
+    val columnsState = rememberState("3")
+    val rowsState = rememberState("3")
     val bitmapSlicer = NinePicBitmapSlicer(3, 3)
+    bitmapSlicer.gap = gapState.value.ifEmpty { "2" }.toInt()
+    bitmapSlicer.columns = columnsState.value.ifEmpty { "3" }.toInt()
+    bitmapSlicer.rows = rowsState.value.ifEmpty { "3" }.toInt()
     val context = LocalContext.current
     val resources = LocalResources.current
     val scope = rememberCoroutineScope { Dispatchers.IO }
@@ -91,8 +97,6 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                         bitmaps.add(result)
                     }
                 }
-//                val bitmap = bitmapSlicer.mergeBitmaps(bitmaps, 2048, 2048)
-//                sketchBitmapDrawable.value = bitmap.toDrawable(resources)
             }
         }
     }
@@ -103,7 +107,7 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
             cropImageLauncher.launch(
                 PhotoCropVisualMediaRequestBuilder(it.toArrayList(), outputUri)
                     .withAspectRatio(1f, 1f)
-                    .withMaxResultSize(1024, 1024)
+                    .withMaxResultSize(bitmapSlicer.widthRate, bitmapSlicer.heightRate)
                     .build()
             )
         }
@@ -140,8 +144,8 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                     state = state.gridState,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .width(bitmapSlicer.widthRate.toDp)
-                        .height(bitmapSlicer.heightRate.toDp)
+                        .width(360.dp)
+                        .height(360.dp)
                         .reorderable(state)
                         .detectReorderAfterLongPress(state),
                     columns = GridCells.Fixed(bitmapSlicer.columns),
@@ -151,7 +155,9 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                     items(drawables, { it.hashCode() }) { item ->
                         ReorderableItem(
                             state = state, key = item.hashCode(),
-                            modifier = Modifier.animateItem()
+                            modifier = Modifier
+                                .size(120.dp)
+                                .animateItem()
                         ) { isDragging ->
                             AsyncImage(
                                 modifier = Modifier.aspectRatio(1f),
@@ -165,6 +171,68 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                 }
             }
             HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier,
+                    value = rowsState.value.toString(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { ScaleText(text = stringResource(id = R.string.text_rows)) },
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            rowsState.value = ""
+                            return@OutlinedTextField
+                        }
+                        if (it.toInt() < 1) {
+                            rowsState.value = "1"
+                        } else if (it.toInt() > 9) {
+                            rowsState.value = "9"
+                        } else {
+                            rowsState.value = it
+                        }
+                    })
+                OutlinedTextField(
+                    modifier = Modifier.padding(start = 4.dp),
+                    value = columnsState.value.toString(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { ScaleText(text = stringResource(id = R.string.text_columns)) },
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            columnsState.value = ""
+                            return@OutlinedTextField
+                        }
+                        if (it.toInt() < 1) {
+                            columnsState.value = "1"
+                        } else if (it.toInt() > 9) {
+                            columnsState.value = "9"
+                        } else {
+                            columnsState.value = it
+                        }
+                    })
+                OutlinedTextField(
+                    modifier = Modifier.padding(start = 4.dp),
+                    value = gapState.value.toString(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { ScaleText(text = stringResource(id = R.string.text_gap)) },
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            gapState.value = ""
+                            return@OutlinedTextField
+                        }
+                        if (it.toInt() > 50) {
+                            gapState.value = "50"
+                        } else if (it.toInt() < 0) {
+                            gapState.value = "0"
+                        } else {
+                            gapState.value = it
+                        }
+                    })
+            }
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -187,15 +255,14 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                 Button(modifier = Modifier.weight(1f), onClick = {
                     scope.launch {
                         showLoadingDialog.value = true
-                        sketchBitmapDrawable.value?.let {
-                            val contentResolver = context.contentResolver
-                            val outFileName = "pixel_".createFileName("jpg")
-                            contentResolver.saveBitmapToGallery(
-                                source = it.bitmap,
-                                title = outFileName,
-                                description = ""
-                            )
-                        }
+                        val bitmap = bitmapSlicer.mergeBitmaps(drawables.map { it.bitmap }, bitmapSlicer.widthRate, bitmapSlicer.heightRate)
+                        val contentResolver = context.contentResolver
+                        val outFileName = "nineComp_".createFileName("jpg")
+                        contentResolver.saveBitmapToGallery(
+                            source = bitmap,
+                            title = outFileName,
+                            description = ""
+                        )
                         showLoadingDialog.value = false
                     }
                 }) {

@@ -106,7 +106,7 @@
     <!--  九宫格切图  -->
     <string name="text_nine_grid_cut">九宫格切图</string>
     <!--  九宫格图片合成  -->
-    <string name="text_nine_grid_picture_composite">九宫格图片合成</string>
+    <string name="text_nine_grid_picture_composite">多宫格图片合成</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">图片水印</string>
     <!--    视频转gif-->
@@ -226,4 +226,9 @@
     <string name="app_exit_tips">点击两次退出应用程序</string>
     <string name="text_pixel_size">像素块大小</string>
     <string name="text_decompose_gif">分解GIF</string>
+    <string name="text_rows">行数</string>
+    <string name="text_columns">列数</string>
+    <string name="text_gap">间距</string>
+
+
 </resources>

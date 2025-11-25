@@ -97,7 +97,7 @@
     <!--  九宫格切图  -->
     <string name="text_nine_grid_cut">Nine palace grid cut diagram</string>
     <!--  九宫格图片合成  -->
-    <string name="text_nine_grid_picture_composite">Nine-square grid picture synthesis</string>
+    <string name="text_nine_grid_picture_composite">Multi-grid picture synthesis</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">Picture watermark</string>
     <!--    视频转gif-->
@@ -212,4 +212,8 @@
     <string name="app_exit_tips">Double tap to exit the app</string>
     <string name="text_pixel_size">Pixel block size</string>
     <string name="text_decompose_gif">Explode GIF</string>
+
+    <string name="text_rows">Number of lines</string>
+    <string name="text_columns">Number of columns</string>
+    <string name="text_gap">Space</string>
 </resources>

@@ -93,7 +93,7 @@ fun NineGridCutImageScreen(modifier: Modifier = Modifier) {
             cropImageLauncher.launch(
                 PhotoCropVisualMediaRequestBuilder(it, outputUri)
                     .withAspectRatio(1f, 1f)
-                    .withMaxResultSize(1024, 1024)
+                    .withMaxResultSize(bitmapSlicer.widthRate, bitmapSlicer.heightRate)
                     .build()
             )
             selectedUri.value = it
@@ -110,6 +110,7 @@ fun NineGridCutImageScreen(modifier: Modifier = Modifier) {
             Box(
                 modifier = modifier
                     .padding(top = 16.dp)
+                    .fillMaxWidth()
                     .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
@@ -125,8 +126,8 @@ fun NineGridCutImageScreen(modifier: Modifier = Modifier) {
                 LazyVerticalGrid(
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .width(bitmapSlicer.widthRate.toDp)
-                        .height(bitmapSlicer.heightRate.toDp),
+                        .width(360.dp)
+                        .height(360.dp),
                     columns = GridCells.Fixed(bitmapSlicer.columns),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
