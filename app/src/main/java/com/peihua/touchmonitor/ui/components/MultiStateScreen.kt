@@ -170,6 +170,7 @@ fun <T : Any> MultiStatePagingScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    footer: (@Composable () -> Unit)? = null,
     emptyContent: @Composable () -> Unit = {
         EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
     },
@@ -185,6 +186,7 @@ fun <T : Any> MultiStatePagingScreen(
         actions = actions,
         hostState = hostState,
         header = header,
+        footer = footer,
         emptyContent = emptyContent,
         content = content
     )
@@ -203,6 +205,7 @@ fun <T : Any> MultiStatePagingScreen(
     actions: @Composable RowScope.() -> Unit = {},
     hostState: SnackbarHostState = remember { snackbarHostState },
     header: (@Composable () -> Unit)? = null,
+    footer: (@Composable () -> Unit)? = null,
     emptyContent: @Composable () -> Unit = {
         EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
     },
@@ -221,6 +224,7 @@ fun <T : Any> MultiStatePagingScreen(
             result = result,
             isUserRefresh = isUserRefresh,
             header = header,
+            footer = footer,
             emptyContent = emptyContent,
             content = content
         )
@@ -233,6 +237,7 @@ fun <T : Any> MultiStatePagingScreen(
     result: LazyPagingItems<T>,
     isUserRefresh: MutableState<Boolean> = remember { mutableStateOf(false) },
     header: (@Composable () -> Unit)? = null,
+    footer: (@Composable () -> Unit)? = null,
     emptyContent: @Composable () -> Unit = {
         EmptyView(modifier.verticalScroll(rememberScrollState()), retry = result::refresh)
     },
@@ -256,7 +261,8 @@ fun <T : Any> MultiStatePagingScreen(
                 result.refresh()
             },
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .weight(1f)
                 .padding(
                     start = dp16,
                     top = if (header == null) dp16 else 0.dp,
@@ -293,6 +299,9 @@ fun <T : Any> MultiStatePagingScreen(
             } else {
                 content(result)
             }
+        }
+        if (footer != null) {
+            footer()
         }
     }
 }

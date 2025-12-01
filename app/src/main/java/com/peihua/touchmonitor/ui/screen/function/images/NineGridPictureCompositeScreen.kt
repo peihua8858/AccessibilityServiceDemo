@@ -179,7 +179,7 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
-                    modifier = Modifier,
+                    modifier = Modifier.weight(1f),
                     value = rowsState.value.toString(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { ScaleText(text = stringResource(id = R.string.text_rows)) },

@@ -14,20 +14,26 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.execSQL
 import com.peihua.touchmonitor.ServiceApplication
+import com.peihua.touchmonitor.data.db.dao.DownloadTaskDao
 import com.peihua.touchmonitor.data.db.dao.HistoryDao
+import com.peihua.touchmonitor.data.db.dao.MediaSegmentDao
 import com.peihua.touchmonitor.data.db.dao.SettingsDao
+import com.peihua.touchmonitor.model.DownloadTask
+import com.peihua.touchmonitor.model.MediaSegment
 import com.peihua.touchmonitor.ui.History
 import com.peihua.touchmonitor.ui.ListToStringConverter
 import com.peihua.touchmonitor.ui.Settings
 import kotlinx.coroutines.Dispatchers
 
-@Database(entities = [Settings::class, History::class], version = 3, autoMigrations = [
+@Database(entities = [Settings::class, History::class, DownloadTask::class, MediaSegment::class], version = 3, autoMigrations = [
     AutoMigration(from = 1, to = 2, spec = V1ToV2Migration::class),
 ])
 @TypeConverters(ListToStringConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun settingsDao(): SettingsDao
     abstract fun historyDao(): HistoryDao
+    abstract fun downloadTaskDao(): DownloadTaskDao
+    abstract fun mediaSegmentDao(): MediaSegmentDao
 }
 
 internal const val dbFileName = "AppStore.db"

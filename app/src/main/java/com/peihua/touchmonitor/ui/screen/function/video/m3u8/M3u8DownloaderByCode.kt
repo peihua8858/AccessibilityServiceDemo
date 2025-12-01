@@ -25,11 +25,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.viewmodel.M3u8DownloadViewModel
 import com.peihua8858.compose.tools.rememberState
 
 @Composable
-fun M3u8DownloaderByCode(modifier: Modifier = Modifier) {
+fun M3u8DownloaderByCode(modifier: Modifier = Modifier, viewModel: M3u8DownloadViewModel = viewModel()) {
     val m3u8Url = rememberState("")
     val headers = arrayOf("ID", "保存文件名", "创建时间", "下载地址", "进度", "速率", "操作")
     val data = arrayOf(
@@ -38,8 +42,8 @@ fun M3u8DownloaderByCode(modifier: Modifier = Modifier) {
         DataModel("3", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
         DataModel("4", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
     )
-
-    Column(modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
+    MultiStatePagingScreen(modifier = modifier, result = result, header = {
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(value = m3u8Url.value, onValueChange = {
                 m3u8Url.value = it
@@ -55,9 +59,9 @@ fun M3u8DownloaderByCode(modifier: Modifier = Modifier) {
             }
         }
         HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
+    }) {
         LazyColumn(
             modifier = Modifier
-                .align(Alignment.Start)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center
         ) {
@@ -90,6 +94,13 @@ fun M3u8DownloaderByCode(modifier: Modifier = Modifier) {
             }
         }
     }
+//
+//
+//
+//    Column(modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+//
+//
+//    }
 }
 
 @Composable
@@ -173,13 +184,21 @@ private fun DataItem(modifier: Modifier = Modifier, model: DataModel) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(onClick = {},modifier = Modifier.weight(1f).wrapContentHeight()) {
+            TextButton(
+                onClick = {}, modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight()
+            ) {
                 Text(
                     text = "暂停",
                     autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
                 )
             }
-            TextButton(onClick = {},modifier = Modifier.weight(1f).wrapContentHeight()) {
+            TextButton(
+                onClick = {}, modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight()
+            ) {
                 Text(
                     text = "删除",
                     autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),

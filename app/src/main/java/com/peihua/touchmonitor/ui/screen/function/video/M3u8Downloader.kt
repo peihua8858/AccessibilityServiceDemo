@@ -50,14 +50,8 @@ private fun M3u8DownloaderByWebView(modifier: Modifier) {
         .addPathHandler("/assets/", AssetsPathHandler(context))
         .addPathHandler("/res/", ResourcesPathHandler(context))
         .build()
-//    val webContent = rememberSaveable("")
     val navigator = rememberWebViewNavigator()
-//    context.assets.open("m3u8/downloader/index.html").use {
-//        webContent.value = it.readBytes().toString(Charsets.UTF_8)
-//    }
-    val state =
-        rememberWebViewState(url = "file:///android_asset/m3u8/downloader/index.html")
-//    state.content= WebContent.Data(webContent.value)
+    val state = rememberWebViewState(url = "file:///android_asset/m3u8/downloader/index.html")
     WebView(
         modifier = modifier, state = state,
         navigator = navigator,
