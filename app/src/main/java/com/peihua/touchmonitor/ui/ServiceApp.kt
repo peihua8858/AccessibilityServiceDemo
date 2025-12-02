@@ -17,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.toLong
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
@@ -31,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.ui.screen.function.images.NineGridCutImageScreen
@@ -163,7 +166,27 @@ fun popBackStack(
 val stackEntry: NavBackStackEntry?
     @SuppressLint("UnrememberedGetBackStackEntry")
     get() = appRouter.currentBackStackEntry
+object CoilPlaceholderImage {
+    @get:Composable
+    val placeholderLarge: Painter
+        get() = painterResource(R.drawable.c_placeholder_default)
 
+    @get:Composable
+    val placeholderRound: Painter
+        get() = painterResource(R.drawable.c_placeholder_default)
+
+    @get:Composable
+    val placeholderStandard: Painter
+        get() = painterResource(R.drawable.c_placeholder_default)
+
+    @get:Composable
+    val placeholderSmall: Painter
+        get() = painterResource(R.drawable.c_placeholder_default)
+
+    @get:Composable
+    val placeholderSmallStroke: Painter
+        get() = painterResource(R.drawable.c_placeholder_default)
+}
 /**
  * 返回指定的route并回调参数
  */

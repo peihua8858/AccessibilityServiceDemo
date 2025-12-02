@@ -11,13 +11,13 @@ import com.peihua.touchmonitor.model.MediaSegment
 @Dao
 interface MediaSegmentDao : IDao<MediaSegment, Long> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insert(entity: MediaSegment): Int
+    override suspend fun insert(entity: MediaSegment)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun updateById(entity: MediaSegment): Int
 
     @Delete(entity = MediaSegment::class)
-    override suspend fun deleteById(id: Long): Int
+    override suspend fun deleteById(entity: MediaSegment): Int
 
     @Query("SELECT * FROM media_segment WHERE id = :id")
     override suspend fun selectById(id: Long): MediaSegment?

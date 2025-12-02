@@ -27,7 +27,7 @@ val downloadStore: DataStore<DownloadConfig> by lazy {
  */
 @Entity(tableName = "download_task")
 data class DownloadTask(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Long,
     val url: String,
     val filePath: String,
@@ -56,7 +56,7 @@ data class DownloadTask(
  */
 @Entity(tableName = "media_segment")
 data class MediaSegment(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Long,
     val taskId: Long,
     val url: String,

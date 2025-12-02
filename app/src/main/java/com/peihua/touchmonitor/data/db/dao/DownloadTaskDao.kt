@@ -11,12 +11,12 @@ import com.peihua.touchmonitor.model.DownloadTask
 @Dao
 interface DownloadTaskDao : IDao<DownloadTask, Long> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insert(entity: DownloadTask): Int
+    override suspend fun insert(entity: DownloadTask)
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun updateById(entity: DownloadTask): Int
 
     @Delete(entity = DownloadTask::class)
-    override suspend fun deleteById(id: Long): Int
+    override suspend fun deleteById(entity: DownloadTask): Int
 
     @Query("SELECT * FROM download_task WHERE id = :id")
     override suspend fun selectById(id: Long): DownloadTask?
