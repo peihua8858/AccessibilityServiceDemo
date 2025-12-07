@@ -47,19 +47,19 @@ fun M3u8DownloaderByCode(modifier: Modifier = Modifier, viewModel: M3u8DownloadV
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(value = m3u8Url.value, onValueChange = {
                 m3u8Url.value = it
-            }, modifier = Modifier.weight(1f), label = {
+            }, modifier = Modifier.weight(1f).padding(16.dp), label = {
                 Text(text = "m3u8 url")
             })
             Button(
-                modifier = Modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = 8.dp, end = 16.dp),
                 onClick = {
-
+                    viewModel.downloadM3u8(m3u8Url.value)
                 }) {
                 Text(text = "下载")
             }
         }
-        HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
-    }) {
+        HorizontalDivider(modifier = Modifier)
+    }, emptyContent = {}) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),

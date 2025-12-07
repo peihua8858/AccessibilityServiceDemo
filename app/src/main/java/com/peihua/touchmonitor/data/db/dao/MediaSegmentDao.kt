@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.peihua.touchmonitor.model.MediaSegment
+
 @Dao
 interface MediaSegmentDao : IDao<MediaSegment, Long> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,4 +28,11 @@ interface MediaSegmentDao : IDao<MediaSegment, Long> {
 
     @Query("SELECT * FROM media_segment LIMIT :pageSize OFFSET :pageNum")
     override fun selectPage(pageNum: Int, pageSize: Int): PagingSource<Int, MediaSegment>?
+
+    @Query("select * from media_segment where taskId= :tid and finished= :isFinished")
+    suspend fun selectByTaskIdAndFinished(tid: Long, isFinished: Boolean): MutableList<MediaSegment>
+
+    @Query("select * from media_segment where taskId= :tid and finished= :isFinished limit :size")
+    suspend fun selectByTaskIdAndFinished(tid: Long, isFinished: Boolean, size: Int): MutableList<MediaSegment>
+
 }

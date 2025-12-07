@@ -1,9 +1,10 @@
+package com.peihua.touchmonitor.utils
 import android.net.Uri
 import com.peihua.touchmonitor.ServiceApplication
-import com.peihua.touchmonitor.utils.fileProvider
 import java.io.InputStream
+import java.net.MalformedURLException
+import java.net.URL
 
-//package com.peihua.touchmonitor.utils
 //
 //import android.content.ContentValues
 //import android.content.Context
@@ -88,3 +89,25 @@ import java.io.InputStream
 fun Uri.openInputStream(): InputStream? {
     return ServiceApplication.application.contentResolver.openInputStream(this)
 }
+
+fun String.addUrlSchemePrefixIfNeed(baseUrl: String): String {
+    if (startsWith("http://") || startsWith("https://")) return this
+    return baseUrl + this
+}
+
+@get:Throws(MalformedURLException::class)
+val String.baseUrl: String
+    get() {
+        val url1 = URL(this)
+        var path = url1.path
+        val i = path.lastIndexOf('/')
+        if (i != -1) {
+            path = path.take(i + 1)
+        } else {
+            path = "/"
+        }
+        return url1.protocol + "://" +
+                url1.host + ":" +
+                (if (url1.port == -1) url1.defaultPort else url1.port) +
+                path
+    }

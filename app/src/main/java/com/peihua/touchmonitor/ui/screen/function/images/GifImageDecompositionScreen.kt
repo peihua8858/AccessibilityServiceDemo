@@ -43,6 +43,7 @@ import com.peihua.touchmonitor.ui.screen.dialog.rememberShowProgressDialog
 import com.peihua.touchmonitor.utils.getFileFromContentUri
 import com.peihua.touchmonitor.utils.isLandscape
 import com.peihua.touchmonitor.utils.items
+import com.peihua.touchmonitor.utils.openInputStream
 import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.rememberSaveableList
 import com.peihua.touchmonitor.utils.rememberState
@@ -50,7 +51,6 @@ import com.peihua.touchmonitor.utils.saveBitmapToGallery
 import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import openInputStream
 
 /**
  * gif图片分解

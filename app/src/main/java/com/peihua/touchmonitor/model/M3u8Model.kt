@@ -30,23 +30,24 @@ data class DownloadTask(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val url: String,
-    val filePath: String,
-    val saveFileName: String,
-    val totalMediaSegment: Long,
-    val finishMediaSegment: Long,
-    val downloadDuration: Long,
+    var filePath: String,
+    var saveFileName: String,
+    var totalMediaSegment: Long,
+    var finishMediaSegment: Long,
+    var downloadDuration: Long,
     /**
      * 任务状态，是停止还是运行中
      */
-    val status: String,
+    var status: String,
     val resolution: String,
     /**
      * 下载所处的阶段
      *
-     * @see DownloadTaskStageEnum
+     * @see DownloadTaskStage
      */
-    val stage: String,
+    var stage: String,
     val maxThreadCount: Int,
+    var finishedTime: Long,
     val createTime: Long,
     val updateTime: Long,
 )
@@ -58,12 +59,12 @@ data class DownloadTask(
 data class MediaSegment(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val taskId: Long,
+    var taskId: Long,
     val url: String,
-    val finished: Boolean,
-    val duration: Long,
-    val downloadDuration: Long,
-    val filePath: String,
+    var finished: Boolean,
+    var duration: Long,
+    var downloadDuration: Long,
+    var filePath: String,
 )
 
 
@@ -78,7 +79,7 @@ data class MediaSegment(
  * @author dingpeihua
  * @date 2025/12/1 11:28
  **/
-enum class DownloadTaskStageEnum(val status: String) {
+enum class DownloadTaskStage(val status: String) {
     NEW("新建"),
     M3U8_PARSING("m3u8 解析中"),
     M3U8_PARSED("m3u8 已经解析完成"),
@@ -93,7 +94,7 @@ enum class DownloadTaskStageEnum(val status: String) {
     FINISHED("完成");
 
     companion object {
-        fun isRunning(statusEnum: DownloadTaskStageEnum): Boolean {
+        fun isRunning(statusEnum: DownloadTaskStage): Boolean {
             return statusEnum != NEW && statusEnum != FINISHED && statusEnum != M3U8_PARSE_FAILED && statusEnum != DOWNLOAD_FAILED
         }
     }
@@ -106,12 +107,12 @@ enum class DownloadTaskStageEnum(val status: String) {
  *
  *
  * 下载任务状态分为 3 个：新建，运行中，手动停止和异常停止，
- * 该枚举与 [DownloadTaskStageEnum] 作用不同，
- * [DownloadTaskStageEnum] 用于记录下载处于哪个阶段，而该枚举记录任务的状态
+ * 该枚举与 [DownloadTaskStage] 作用不同，
+ * [DownloadTaskStage] 用于记录下载处于哪个阶段，而该枚举记录任务的状态
  * @author dingpeihua
  * @date 2025/12/1 11:28
  **/
-enum class DownloadTaskStatusEnum(val status: String) {
+enum class DownloadTaskStatus(val status: String) {
     NEW("新建"),
     RUNNING("运行中"),
     STOPPED_MANUAL("停止"),

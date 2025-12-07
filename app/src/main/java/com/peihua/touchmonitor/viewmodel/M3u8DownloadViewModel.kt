@@ -16,6 +16,7 @@ import com.peihua.touchmonitor.data.db.FactoryImpl
 import com.peihua.touchmonitor.data.db.dao.DownloadTaskDao
 import com.peihua.touchmonitor.data.db.dao.MediaSegmentDao
 import com.peihua.touchmonitor.model.DownloadTask
+import com.peihua.touchmonitor.model.MediaSegment
 import com.peihua.touchmonitor.paging3.PagingSourceImpl
 import com.peihua.touchmonitor.ui.screen.function.video.m3u8.DataModel
 import com.peihua8858.tools.utils.dLog
@@ -39,14 +40,7 @@ class M3u8DownloadViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle,
 ) : AndroidViewModel(application) {
-    val factory: Factory
-        get() = FactoryImpl()
-    val database: AppDatabase
-        get() = factory.createRoomDatabase()
-    val downloadTaskDao: DownloadTaskDao
-        get() = database.downloadTaskDao()
-    val mediaSegmentDao: MediaSegmentDao
-        get() = database.mediaSegmentDao()
+    private val repository = M3u8Repository()
     private val pagingConfig = PagingConfig(
         pageSize = 20,
         initialLoadSize = 20,  // 可根据需要调整
@@ -84,7 +78,7 @@ class M3u8DownloadViewModel(
                 MediaUiState(sortType = initialSortType, currentSortType = initialSortType)
             )
         pagingDataFlow = searchAction.flatMapLatest {
-            requestVideos(it.sortType)
+            requestDownloadFile(it.sortType)
         }
             .flowOn(Dispatchers.IO)
             .cachedIn(viewModelScope)
@@ -94,7 +88,7 @@ class M3u8DownloadViewModel(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    fun requestVideos(sortType: Int): Flow<PagingData<DownloadTask>> {
+    fun requestDownloadFile(sortType: Int): Flow<PagingData<DownloadTask>> {
         val bundle = Bundle()
         bundle.putInt("SORT_TYPE", sortType)
         dLog { "sortType:$sortType" }
@@ -118,13 +112,48 @@ class M3u8DownloadViewModel(
         return 1 to ArrayList()
     }
 
+    fun downloadM3u8(value: String) {
+
+    }
+
     companion object {
         private const val LAST_SORT_TYPE: String = "last_sort_type"
     }
 }
 
+class M3u8Repository() {
+    private val factory: Factory
+        get() = FactoryImpl()
+    private val database: AppDatabase
+        get() = factory.createRoomDatabase()
+    private val downloadTaskDao: DownloadTaskDao
+        get() = database.downloadTaskDao()
+    private val mediaSegmentDao: MediaSegmentDao
+        get() = database.mediaSegmentDao()
+
+    suspend fun updateId(task: DownloadTask) {
+        downloadTaskDao.updateById(entity = task)
+    }
+    suspend fun updateById(task: DownloadTask){
+
+    }
+
+    suspend fun saveAllMediaSegments(taskId: Long, task: MediaSegment) {
+        task.taskId = taskId
+        mediaSegmentDao.insert(task)
+    }
+
+    suspend fun getByTaskId(tid: Long, isFinished: Boolean, size: Int): MutableList<MediaSegment> {
+        return mediaSegmentDao.selectByTaskIdAndFinished(tid, isFinished, size)
+    }
+    suspend fun getByTaskId(tid: Long, isFinished: Boolean): MutableList<MediaSegment> {
+        return mediaSegmentDao.selectByTaskIdAndFinished(tid, isFinished)
+    }
+}
+
+
 sealed class M3u8UiAction {
-    data class Sort(val sortType: Int) : MediaUiAction()
+    data class Download(val sortType: Int) : MediaUiAction()
     data class Scroll(val sortType: Int) : MediaUiAction()
 }
 

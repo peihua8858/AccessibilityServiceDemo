@@ -7,7 +7,7 @@ interface IDao<E : Any, ID> {
 
     suspend fun updateById(entity: E): Int
 
-    suspend fun deleteById(id: E): Int
+    suspend fun deleteById(entity: E): Int
 
     suspend fun selectById(id: ID): E?
 
