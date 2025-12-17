@@ -310,4 +310,7 @@ fun autoSystemBarStyle(
 }
 
 val Context.isSystemDarkMode: Boolean
-    get() = ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
+    get() = resources.isSystemDarkMode
+
+val Resources.isSystemDarkMode: Boolean
+    get() = ((configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
