@@ -2,6 +2,8 @@ package com.peihua.touchmonitor.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -18,6 +20,7 @@ import androidx.compose.runtime.toLong
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -36,6 +39,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
+import com.peihua.touchmonitor.model.ThemeModel
 import com.peihua.touchmonitor.ui.screen.function.images.NineGridCutImageScreen
 import com.peihua.touchmonitor.ui.screen.function.images.NineGridPictureCompositeScreen
 import com.peihua.touchmonitor.ui.applications.AppScreen
@@ -78,6 +82,8 @@ import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.screen.share.ShareScreen
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
+import com.peihua.touchmonitor.ui.theme.ThemeMode
+import com.peihua.touchmonitor.utils.autoSystemBarStyle
 import com.peihua8858.tools.utils.dLog
 import kotlin.text.toLong
 
@@ -166,6 +172,7 @@ fun popBackStack(
 val stackEntry: NavBackStackEntry?
     @SuppressLint("UnrememberedGetBackStackEntry")
     get() = appRouter.currentBackStackEntry
+
 object CoilPlaceholderImage {
     @get:Composable
     val placeholderLarge: Painter
@@ -187,6 +194,7 @@ object CoilPlaceholderImage {
     val placeholderSmallStroke: Painter
         get() = painterResource(R.drawable.c_placeholder_default)
 }
+
 /**
  * 返回指定的route并回调参数
  */
@@ -227,6 +235,7 @@ fun NavHostController.popBackStack(
 fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter.Home) {
     val navController = rememberNavController()
     appRouter = navController
+    val context = LocalContext.current
     val settings = remember { mutableStateOf(SystemSettings.default) }
     LaunchedEffect(settings.value) {
         SystemSettingsStore.getSystemSettingsFlow().collect {
@@ -238,6 +247,7 @@ fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter
     val systemUiController = rememberSystemUiController()
     systemUiController.setNavigationBarColor(Color.Black)
     AppTheme(settings.value.theme) { model, colorScheme ->
+        (context as ComponentActivity).enableEdgeToEdge(autoSystemBarStyle { model == ThemeMode.Dark })
         AppNavHost(navController = navController, modifier = modifier, defaultPage)
     }
 }

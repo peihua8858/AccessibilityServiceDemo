@@ -3,8 +3,14 @@ package com.peihua.touchmonitor.utils
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
+import androidx.activity.SystemBarStyle
+import androidx.annotation.ColorInt
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.peihua.touchmonitor.activity.FileViewerActivity
 import com.peihua8858.tools.file.mimeTypeFromFilePath
 import com.peihua8858.tools.utils.dLog
@@ -290,3 +296,18 @@ val Context.assetsManager : AssetManager
 //    startActivity(Intent.createChooser(intent, "Open with"))
 //    dLog { "openWithFile mimeType:$mimeType, file:${filePath}" }
 //}
+
+
+fun autoSystemBarStyle(
+    @ColorInt lightScrim: Color = Color.Transparent,
+    @ColorInt darkScrim: Color = Color.Transparent,
+    detectDarkMode: (Resources) -> Boolean = { resources ->
+        (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+    },
+): SystemBarStyle {
+    return SystemBarStyle.auto(lightScrim.toArgb(), darkScrim.toArgb(), detectDarkMode)
+}
+
+val Context.isSystemDarkMode: Boolean
+    get() = ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
