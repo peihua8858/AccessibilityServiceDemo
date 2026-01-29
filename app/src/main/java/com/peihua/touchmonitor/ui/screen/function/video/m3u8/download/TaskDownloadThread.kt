@@ -111,7 +111,7 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
         }
     }
 
-    private fun mergerMediaSegment(task: DownloadTask) {
+    private suspend fun mergerMediaSegment(task: DownloadTask) {
         task.stage = DownloadTaskStage.SEGMENT_MERGING.name
         task.status = DownloadTaskStatus.RUNNING.name
         repository.updateById(task)
@@ -143,7 +143,7 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
         }
     }
 
-    private fun downloadMediaSegments(task: DownloadTask) {
+    private suspend fun downloadMediaSegments(task: DownloadTask) {
         task.stage = DownloadTaskStage.DOWNLOADING.name
         task.status = DownloadTaskStatus.RUNNING.name
         startDownloadRateUpdateThread()
