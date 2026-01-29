@@ -1,6 +1,5 @@
 package com.peihua.touchmonitor.activity
 
-import android.R
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Rect
@@ -139,7 +138,7 @@ class SortKeyBoardStateHelper(
         val Activity.activityRoot: View
             get() = contentRoot.rootView
         val Activity.contentRoot: ViewGroup
-            get() = findViewById(R.id.content)
+            get() = findViewById(android.R.id.content)
 
         private fun checkSortInputMode(activity: Activity) {
             val softInputAdjust =
