@@ -171,7 +171,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:5.0.5'
     implementation "com.github.bumptech.glide:compose:1.0.0-beta08"
     implementation "io.github.kevinnzou:compose-webview:0.33.6"
-    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+    implementation project(':dragswap')
     implementation 'com.github.peihua8858.KotlinTools:tools-android:1.0.1'
 }
 

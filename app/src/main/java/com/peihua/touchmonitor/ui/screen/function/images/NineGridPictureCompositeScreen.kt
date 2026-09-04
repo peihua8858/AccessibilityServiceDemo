@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +39,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
+import com.peihua.dragswap.DragMode
+import com.peihua.dragswap.DragSwapItem
+import com.peihua.dragswap.applyDragMove
+import com.peihua.dragswap.dragSwapContainer
+import com.peihua.dragswap.rememberDragSwapGridState
 import com.peihua.selector.result.PhotoCropVisualMediaRequestBuilder
 import com.peihua.selector.result.PhotoVisualMediaRequestBuilder
 import com.peihua.selector.result.contract.PhotoCropVisualMedia
@@ -58,10 +65,7 @@ import com.peihua8858.tools.utils.getParcelableArrayListExtraCompat
 import com.peihua8858.tools.utils.saveBitmapToGallery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.burnoutcrew.reorderable.ReorderableItem
-import org.burnoutcrew.reorderable.detectReorderAfterLongPress
-import org.burnoutcrew.reorderable.rememberReorderableLazyGridState
-import org.burnoutcrew.reorderable.reorderable
+
 
 /**
  * 九宫格图片合成
@@ -112,11 +116,10 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
             )
         }
     }
-    val state = rememberReorderableLazyGridState(onMove = { from, to ->
-        drawables.apply {
-            add(to.index, removeAt(from.index))
-        }
-    })
+    val gridState = rememberLazyGridState()
+    val dragState = rememberDragSwapGridState(gridState, DragMode.Swap) { from, to ->
+        drawables.applyDragMove(DragMode.Swap, from, to)
+    }
     Toolbar(
         modifier = modifier,
         navigateUp = {
@@ -141,26 +144,31 @@ fun NineGridPictureCompositeScreen(modifier: Modifier = Modifier) {
                     )
                 }
                 LazyVerticalGrid(
-                    state = state.gridState,
+                    state = gridState,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .width(360.dp)
                         .height(360.dp)
-                        .reorderable(state)
-                        .detectReorderAfterLongPress(state),
+                        .dragSwapContainer(dragState),
                     columns = GridCells.Fixed(bitmapSlicer.columns),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     items(drawables, { it.hashCode() }) { item ->
-                        ReorderableItem(
-                            state = state, key = item.hashCode(),
-                            modifier = Modifier
-                                .size(120.dp)
-                                .animateItem()
-                        ) { isDragging ->
+                        DragSwapItem(
+                            state = dragState, key = item.hashCode(),
+                            modifier = Modifier.size(120.dp)
+                        ) { _, isTarget ->
                             AsyncImage(
-                                modifier = Modifier.aspectRatio(1f),
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .then(
+                                        if (isTarget) {
+                                            Modifier.border(2.dp, MaterialTheme.colorScheme.primary)
+                                        } else {
+                                            Modifier
+                                        }
+                                    ),
                                 contentScale = ContentScale.Crop,
                                 model = item,
                                 contentDescription = "",
