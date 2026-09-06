@@ -11,8 +11,6 @@ import io.lindstrom.m3u8.model.Variant
 import io.lindstrom.m3u8.parser.MasterPlaylistParser
 import io.lindstrom.m3u8.parser.MediaPlaylistParser
 import io.lindstrom.m3u8.parser.PlaylistParserException
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.util.function.Consumer
@@ -24,7 +22,6 @@ import java.util.function.Consumer
  * @since 2.0.0
  */
 class M3U8Parser {
-    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun playlistParse(url: String): MutableList<MediaSegment> {
         var masterPlaylist: MutableList<String>

@@ -5,10 +5,12 @@ import com.peihua.touchmonitor.model.DownloadTaskStage
 import com.peihua.touchmonitor.model.DownloadTaskStatus
 import com.peihua.touchmonitor.model.MediaSegment
 import com.peihua.touchmonitor.ui.screen.function.video.m3u8.M3U8Parser
+import com.peihua.touchmonitor.utils.FfmpegUtil
 import com.peihua.touchmonitor.utils.HttpClientUtil.getAsInputStream
+import com.peihua.touchmonitor.utils.copy
+import com.peihua.touchmonitor.utils.ensureDirExist
 import com.peihua.touchmonitor.viewmodel.M3u8Repository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.peihua8858.tools.utils.dLog
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Date
@@ -30,7 +32,6 @@ import java.util.stream.Collectors
  * @since 2025/06/30 16:50
  */
 class TaskDownloadThread(private val task: DownloadTask) : Thread() {
-    private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val m3U8Parser = M3U8Parser()
     private val repository = M3u8Repository()
 
@@ -47,7 +48,7 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
         setName("TaskDownloadManageThread " + task.id)
     }
 
-    override fun run() {
+    suspend override fun run() {
         isStopped.set(false)
         try {
             val beginTime = System.currentTimeMillis()
@@ -107,7 +108,7 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
             publishStatus(DownloadTaskStatus.FINISHED, 100.0, DownloadTaskStage.FINISHED)
         } finally {
             val reason = if (isStopped.get()) "手动停止" else "下载完成"
-            logger.info("任务(ID:{})下载线程终止退出({})！", task.id, reason)
+            dLog { "任务(ID:${task.id})下载线程终止退出($reason)！" }
         }
     }
 
@@ -119,11 +120,11 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
         val tid = task.id
         try {
             // 合并媒体片段
-            val list: MutableList<MediaSegment?>? = repository.getByTaskId(tid, true)
-            val fileSegments = list!!.stream().map<String>(MediaSegment::filePath).collect(Collectors.toList())
+            val list: MutableList<MediaSegment> = repository.getByTaskId(tid, true)
+            val fileSegments = list.stream().map(MediaSegment::filePath).collect(Collectors.toList())
             val downloadDir: String? = ApplicationStore.getSystemConfig().getDownloadDir()
             var saveFilename = task.saveFileName
-            if (saveFilename == null || saveFilename.trim { it <= ' ' }.isEmpty()) {
+            if (saveFilename.trim { it <= ' ' }.isEmpty()) {
                 saveFilename = tid.toString()
             }
             saveFilename = saveFilename.replace(" ", "") + ".mp4" // windows 打开文件时，文件名不能有空格
@@ -160,40 +161,33 @@ class TaskDownloadThread(private val task: DownloadTask) : Thread() {
             var maxThreadCount = task.maxThreadCount
             maxThreadCount =
                 if (maxThreadCount == 0) ApplicationStore.getSystemConfig().getDefaultThreadCount() else maxThreadCount
-            logger.info("使用最大{}个线程去下载任务（ID:{}）", maxThreadCount, tid)
+            dLog { "使用最大${maxThreadCount}个线程去下载任务（ID:$tid）" }
             while (true) {
                 if (isStopped.get()) {
                     return
                 }
-                val mediaSegmentEntities: MutableList<MediaSegment>? =
-                    repository.getByTaskId(tid, false, maxThreadCount.toBoolean())
-                if (mediaSegmentEntities!!.isEmpty()) break
+                val mediaSegmentEntities: MutableList<MediaSegment> =
+                    repository.getByTaskId(tid, false, maxThreadCount)
+                if (mediaSegmentEntities.isEmpty()) break
                 futures.clear()
                 for (mediaSegmentEntity in mediaSegmentEntities) {
                     val future: Future<MediaSegment?>? = threadPool.submit<MediaSegment?>(Callable {
                         val staterTime = System.currentTimeMillis()
                         val url = mediaSegmentEntity.url
-                        if (logger.isInfoEnabled()) {
-                            logger.info("开始下载任务(ID:{})媒体片段{}", mediaSegmentEntity.taskId, url)
-                        }
+                        dLog { "开始下载任务(ID:${mediaSegmentEntity.taskId})媒体片段${url}" }
                         val inputStream = getAsInputStream(url)
-                        val tempDir: File = File(
-                            ApplicationStore.getTmpDir(),
-                            "m3u8_" + task.createTime.getTime()
-                        )
-                        FileUtil.ensureDirExist(tempDir)
+                        val tempDir = File("ApplicationStore.getTmpDir()", "m3u8_" + task.createTime.getTime())
+                        tempDir.ensureDirExist
                         val tempFile = File(tempDir, mediaSegmentEntity.id.toString() + ".ts")
                         val fos = FileOutputStream(tempFile)
-                        DataStreamUtil.copy(inputStream, fos, true, true, bytesCounter)
+                        inputStream.copy(fos, bytesCounter)
                         mediaSegmentEntity.finished = true
-                        mediaSegmentEntity.filePath = tempFile.getAbsolutePath()
+                        mediaSegmentEntity.filePath = tempFile.absolutePath
                         val endTime = System.currentTimeMillis()
                         val duration = endTime - staterTime
                         mediaSegmentEntity.downloadDuration = duration
                         repository.updateById(mediaSegmentEntity)
-                        if (logger.isInfoEnabled()) {
-                            logger.info("任务(ID:{})媒体片段下载完成{}", mediaSegmentEntity.taskId, url)
-                        }
+                        dLog { "任务(ID:${mediaSegmentEntity.taskId})媒体片段下载完成${url}" }
                         mediaSegmentEntity
                     })
                     futures.add(future!!)

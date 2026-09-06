@@ -85,6 +85,7 @@ android {
 //}
 dependencies {
     implementation files('libs/GsonAdapter-1.0.5.aar')
+    implementation files('libs/ffmpeg-kit-full-gpl-6.0-2.LTS-16k.aar')
     implementation(libs.androidx.compose.navigation)
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
@@ -173,5 +174,8 @@ dependencies {
     implementation "io.github.kevinnzou:compose-webview:0.33.6"
     implementation project(':dragswap')
     implementation 'com.github.peihua8858.KotlinTools:tools-android:1.0.1'
+//    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
+//    implementation("io.github.sor2171:ffmpeg-kit-kmp:0.11.3")
+//    implementation("io.github.sor2171:ffmpeg-kit-kmp-android:0.11.3")
 }
 

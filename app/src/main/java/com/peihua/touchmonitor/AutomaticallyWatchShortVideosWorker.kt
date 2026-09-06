@@ -75,7 +75,7 @@ class AutomaticallyWatchShortVideosWorker(
         maxTime = mDelayTimes.max()
     }
 
-    override fun run() {
+    override suspend fun run() {
         launch {
             dLog { "Service start>>>>" }
             while (isProcesserRunning) {
