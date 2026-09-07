@@ -378,7 +378,7 @@ class M3u8DownloadEngine(
     }
 
     private companion object {
-        const val MAX_GLOBAL_CONCURRENCY = 8
+        const val MAX_GLOBAL_CONCURRENCY = 16
         const val MAX_RETRY = 5
         const val ALLOW_SKIP_SEGMENTS = 0
         const val BASE_BACKOFF_MS = 500L
