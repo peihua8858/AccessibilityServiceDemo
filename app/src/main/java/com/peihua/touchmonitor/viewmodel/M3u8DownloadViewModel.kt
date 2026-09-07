@@ -149,18 +149,17 @@ private fun DownloadTask.toCard(progress: TaskProgress?): DownloadCard {
     // 字节级进度：分片下载过程中进度条也能平滑推进，不必等整个分片下完才跳
     val finishedBytes = totalBytes.coerceAtLeast(0L)
     val inProgressBytes = ((progress?.downloadedBytes ?: 0L) - finishedBytes).coerceAtLeast(0L)
-    val totalExpected = progress?.totalExpectedBytes?.takeIf { it > 0 }
     val fraction = when {
         stageEnum == DownloadTaskStage.FINISHED -> 1f
-        // 有总字节估算：用字节级进度平滑推进（第一个分片完成后立即可用）
-        totalExpected != null && totalExpected > 0 -> {
-            ((finishedBytes + inProgressBytes).toFloat() / totalExpected).coerceIn(0f, 1f)
-        }
-        // 无总字节估算但有已完成分片：用平均分片大小估算
+        // 有已完成分片：用实际平均值估算总大小（自动修正 HEAD 探测误差）
         total > 0 && done > 0 && finishedBytes > 0 -> {
             val avgSegSize = finishedBytes / done.toLong()
-            val estimated = avgSegSize * total
-            ((finishedBytes + inProgressBytes).toFloat() / estimated).coerceIn(0f, 1f)
+            val estimatedTotal = avgSegSize * total
+            ((finishedBytes + inProgressBytes).toFloat() / estimatedTotal).coerceIn(0f, 1f)
+        }
+        // 无已完成分片但有 HEAD 探测估算：用字节级进度
+        total > 0 && (progress?.totalExpectedBytes ?: 0L) > 0 -> {
+            ((finishedBytes + inProgressBytes).toFloat() / (progress?.totalExpectedBytes ?: 1L)).coerceIn(0f, 1f)
         }
         total > 0 -> (done.toFloat() / total).coerceIn(0f, 1f)
         else -> 0f
