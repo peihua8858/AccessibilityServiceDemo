@@ -71,6 +71,7 @@ material3Adaptive = "1.0.0-alpha06"
 adaptive = "1.1.0"
 adaptiveNavgationSuite = "1.4.0"
 material3Version = "1.4.0"
+desugarJdkLibs = "2.1.5"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -177,6 +178,7 @@ androidx-compose-adaptive-navigation = { group = "androidx.compose.material3.ada
 #androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0
 androidx-compose-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite-android", version.ref = "adaptiveNavgationSuite" }
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -38,10 +38,8 @@ class SettingsViewModel(
     private val _settings = mutableStateListOf<AppModel>()
     val settingsState: MutableState<ResultData<List<AppModel>>> =
         mutableStateOf(ResultData.Initialize())
-    val factory: Factory
-        get() = FactoryImpl()
-    val database: AppDatabase
-        get() = factory.createRoomDatabase()
+    val factory: Factory = FactoryImpl()
+    val database: AppDatabase = factory.database
     val historyDao: HistoryDao
         get() = database.historyDao()
     val settingsDao: SettingsDao

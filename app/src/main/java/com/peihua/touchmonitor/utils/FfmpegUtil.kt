@@ -1,62 +1,136 @@
 package com.peihua.touchmonitor.utils
 
 import com.arthenica.ffmpegkit.FFmpegKit
-import com.github.cloudgyb.m3u8downloader.conf.ApplicationConfig
-import com.peihua8858.tools.file.deleteFileOrDir
-import com.peihua8858.tools.utils.getAssetsFiles
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.arthenica.ffmpegkit.FFmpegSession
+import com.arthenica.ffmpegkit.FFprobeKit
+import com.peihua.touchmonitor.data.download.M3u8Exception
+import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.eLog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.IOException
-import java.io.PrintWriter
-import java.nio.charset.StandardCharsets
+import kotlin.coroutines.resume
+import kotlin.math.abs
 
 /**
- * FFMPEG 工具类
- * 
- * @author geng
- * @since 2023/03/23 10:59:13
+ * ffmpeg 封装。只做一件事：把有序的明文 TS 分片 concat 成 mp4。
  */
 object FfmpegUtil {
-    private val logger: Logger = LoggerFactory.getLogger(FfmpegUtil::class.java)
 
-    @Throws(IOException::class)
-    fun mergeTS(sourceFiles: MutableList<String>, targetFile: String, deleteSourceFiles: Boolean) {
-        val tsFileList = File.createTempFile("m3u8_ts_list", ".txt")
-        PrintWriter(tsFileList, StandardCharsets.UTF_8).use { fileWriter ->
-            for (sourceFile in sourceFiles) {
-                val file = File(sourceFile)
-                if (file.length() == 0L) {
-                    continue
+    /**
+     * @param sourceFiles 已按媒体序号排好序的分片绝对路径
+     * @param onProgress 已合并的媒体时间，单位毫秒
+     */
+    suspend fun mergeTs(
+        sourceFiles: List<String>,
+        targetFile: File,
+        workDir: File,
+        onProgress: (Long) -> Unit = {},
+    ) {
+        if (sourceFiles.isEmpty()) {
+            throw M3u8Exception.MergeFailed("没有可合并的分片")
+        }
+        // 0 字节分片不能静默跳过：那正是"合并成功但视频少一段"的来源
+        sourceFiles.forEach { path ->
+            val f = File(path)
+            if (!f.isFile || f.length() == 0L) {
+                throw M3u8Exception.MergeFailed("分片文件缺失或为空，无法合并：$path")
+            }
+        }
+
+        // 清单放 workDir 而不是 createTempFile：Android 上 java.io.tmpdir 在部分设备
+        // 指向不可写的 /data/local/tmp
+        val listFile = File(workDir, CONCAT_LIST_NAME)
+        listFile.writeText(sourceFiles.joinToString("\n") { "file '${it.escapeForConcat()}'" })
+
+        targetFile.parentFile?.let { it.ensureDirExist }
+
+        try {
+            // AAC 在 TS 里是 ADTS 封装，-c copy 进 MP4 必须转 ASC，否则报错或无声。
+            // 但流里没有 AAC 时这个 bsf 自身会报错，所以失败后不带它重试一次。
+            val first = runFfmpeg(buildArgs(listFile, targetFile, adtsToAsc = true), onProgress)
+            if (!first.returnCode.isValueSuccess) {
+                eLog { "合并失败（code=${first.returnCode}），去掉 aac_adtstoasc 重试" }
+                val second = runFfmpeg(buildArgs(listFile, targetFile, adtsToAsc = false), onProgress)
+                if (!second.returnCode.isValueSuccess) {
+                    throw M3u8Exception.MergeFailed(
+                        "ffmpeg 合并失败（code=${second.returnCode}）",
+                        RuntimeException(second.allLogsAsString.takeLast(MAX_LOG_CHARS)),
+                    )
                 }
-                fileWriter.println("file '$sourceFile'")
             }
+        } finally {
+            listFile.delete()
         }
-        val file = File(targetFile)
-        file.deleteOnExit()
-        val command = arrayOf<String?>( "-f", "concat", "-safe", "0", "-i", tsFileList.getAbsolutePath(),
-            "-c", "copy", file.getAbsolutePath()
-        )
-       val fFmpegSession= FFmpegKit.execute(command.joinToString(" "))
-        val exitCode = fFmpegSession.returnCode
-        if (exitCode.isValueSuccess) {
-            logger.info("以成功合并 ts 文件到 {}", targetFile)
-        } else {
-            logger.info("合并 ts 文件到 {} 可能失败（code：{}）", targetFile, exitCode)
+
+        if (!targetFile.isFile || targetFile.length() == 0L) {
+            throw M3u8Exception.MergeFailed("ffmpeg 返回成功但没有产出文件")
         }
-        val delete = tsFileList.delete()
-        if (delete) {
-            logger.info("临时生成的 ts 列表文件已删除！")
-        } else {
-            logger.warn("临时生成的 ts 列表文件删除失败！")
-        }
-        if (deleteSourceFiles && !sourceFiles.isEmpty()) {
-            val parentFile = File(sourceFiles.get(0)).getParentFile()
-            for (sourceFile in sourceFiles) {
-                val file1 = File(sourceFile)
-                file1.deleteOnExit()
-            }
-            parentFile.deleteFileOrDir()
-        }
+        dLog { "合并完成：${targetFile.absolutePath}（${targetFile.length().toHumanReadableBytes()}）" }
     }
+
+    /**
+     * 用产出文件的实际时长与分片时长之和交叉校验，能抓住"concat 成功但只拼出几秒"。
+     *
+     * @return 时长毫秒，探测失败返回 null（探测失败本身不该让任务失败）
+     */
+    suspend fun probeDurationMs(file: File): Long? = withContext(Dispatchers.IO) {
+        runCatching {
+            val session = FFprobeKit.getMediaInformation(file.absolutePath)
+            session.mediaInformation?.duration?.toDoubleOrNull()?.times(1000)?.toLong()
+        }.getOrNull()
+    }
+
+    /** 偏差是否在容忍范围内。[expectedMs] <= 0 时无从比较，直接放过。 */
+    fun durationWithinTolerance(actualMs: Long, expectedMs: Long): Boolean {
+        if (expectedMs <= 0L || actualMs <= 0L) return true
+        return abs(actualMs - expectedMs).toDouble() / expectedMs <= DURATION_TOLERANCE
+    }
+
+    private fun buildArgs(listFile: File, target: File, adtsToAsc: Boolean): Array<String> =
+        buildList {
+            // -y 必须有：否则输出文件已存在时 ffmpeg 会等交互式确认，在无 stdin 环境里永久挂住
+            add("-y")
+            add("-f"); add("concat")
+            add("-safe"); add("0")
+            add("-i"); add(listFile.absolutePath)
+            add("-c"); add("copy")
+            if (adtsToAsc) {
+                add("-bsf:a"); add("aac_adtstoasc")
+            }
+            add("-movflags"); add("+faststart")
+            add(target.absolutePath)
+        }.toTypedArray()
+
+    /**
+     * 必须用 `executeWithArgumentsAsync` 而不是 `execute(cmd)`：后者把 argv 拼成字符串再按
+     * 空白切分，路径含空格就散架；而且阻塞版对协程取消完全无效。
+     */
+    private suspend fun runFfmpeg(
+        args: Array<String>,
+        onProgress: (Long) -> Unit,
+    ): FFmpegSession = suspendCancellableCoroutine { cont ->
+        // sessionId 只能在 async 调用返回后拿到，先注册取消回调再读 holder，缩小竞态窗口
+        val holder = arrayOfNulls<FFmpegSession>(1)
+        cont.invokeOnCancellation {
+            holder[0]?.let { FFmpegKit.cancel(it.sessionId) }
+        }
+        dLog { "ffmpeg ${args.joinToString(" ")}" }
+        val session = FFmpegKit.executeWithArgumentsAsync(
+            args,
+            { completed -> if (cont.isActive) cont.resume(completed) },
+            null,
+            { stats -> onProgress(stats.time.toLong()) },
+        )
+        holder[0] = session
+        if (cont.isCancelled) FFmpegKit.cancel(session.sessionId)
+    }
+
+    /** concat demuxer 的 `file '...'` 语法里单引号要转义成 `'\''` */
+    private fun String.escapeForConcat(): String = replace("'", "'\\''")
+
+    private const val CONCAT_LIST_NAME = "concat_list.txt"
+    private const val MAX_LOG_CHARS = 4000
+    private const val DURATION_TOLERANCE = 0.05
 }

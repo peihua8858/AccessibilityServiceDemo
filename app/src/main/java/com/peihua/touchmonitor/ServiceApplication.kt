@@ -6,10 +6,15 @@ import android.content.Context
 import android.os.Build
 import android.os.LocaleList
 import com.fz.imageloader.glide.ImageGlideFetcher
+import com.peihua.touchmonitor.data.download.DownloadContainer
 import com.peihua.touchmonitor.model.LanguageModel
 import com.peihua8858.tools.log.Logcat
 import com.peihua8858.tools.utils.dLog
+import com.peihua8858.tools.utils.eLog
 import com.peihua8858.tools.utils.writeLog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ServiceApplication : Application() {
     companion object {
@@ -54,6 +59,11 @@ class ServiceApplication : Application() {
             Logcat.writeLog(this, "", e.stackTraceToString())
             e.printStackTrace()
             oldDefaultExceptionHandler?.uncaughtException(t, e)
+        }
+        // 进程被杀后 DB 里残留的 RUNNING 是脏状态，否则 UI 会显示一堆假的"运行中"
+        CoroutineScope(Dispatchers.IO).launch {
+            runCatching { DownloadContainer.repository.markAllInterrupted() }
+                .onFailure { eLog { "重置中断任务状态失败：${it.message}" } }
         }
 //        AppContext.apply { set(applicationContext) }
     }

@@ -10,6 +10,15 @@ plugins {
 //    id("org.jetbrains.kotlin.plugin.parcelize") version "2.2.20"
 }
 
+apply from: rootProject.file('gradle/ffmpeg-relro-patch.gradle')
+
+// 原始 aar 里 libavdevice.so 的 GNU_RELRO 越界，Android 14 及以下 dlopen 必失败，
+// 所以依赖的是构建期修补后的产物而不是 libs/ 下的原始文件
+def ffmpegKitSourceAar = file('libs/ffmpeg-kit-full-gpl-6.0-2.LTS-16k.aar')
+def ffmpegKitPatchedAar = layout.buildDirectory
+        .file('patched-libs/ffmpeg-kit-full-gpl-6.0-2.LTS-16k-relro-patched.aar').get().asFile
+registerFfmpegRelroPatch(ffmpegKitSourceAar, ffmpegKitPatchedAar)
+
 android {
     namespace 'com.peihua.touchmonitor'
     compileSdk 36
@@ -22,6 +31,10 @@ android {
         versionName "1.0.3-alpha9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
     }
     signingConfigs {
         Release {
@@ -48,6 +61,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
@@ -58,9 +72,12 @@ android {
         compose true
         buildConfig true
     }
+    testOptions {
+        // 解析层单测会走到 dLog（android.util.Log），否则报 "not mocked"
+        unitTests.returnDefaultValues = true
+    }
     room {
         schemaDirectory("$projectDir/schemas")
-        version 2
     }
 
     android.applicationVariants.all {
@@ -84,8 +101,14 @@ android {
 //    }
 //}
 dependencies {
+    coreLibraryDesugaring libs.desugar.jdk.libs
+    implementation libs.okhttp
+    implementation libs.androidx.compose.lifecycle.runtime
     implementation files('libs/GsonAdapter-1.0.5.aar')
-    implementation files('libs/ffmpeg-kit-full-gpl-6.0-2.LTS-16k.aar')
+    implementation files(ffmpegKitPatchedAar) { builtBy 'patchFfmpegKitRelro' }
+    // 本地 aar 没有 POM，ffmpeg-kit 对 smart-exception 的传递依赖会丢失，
+    // 不手工补上则第一次调用 FFmpegKit 就抛 NoClassDefFoundError
+    implementation 'com.arthenica:smart-exception-java:0.2.1'
     implementation(libs.androidx.compose.navigation)
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx

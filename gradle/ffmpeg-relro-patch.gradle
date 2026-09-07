@@ -1,0 +1,152 @@
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+
+/**
+ * 修补 ffmpeg-kit 16k aar 里 GNU_RELRO 越界的 .so。
+ *
+ * 那个 aar 的 .so 是按 16KB 段对齐重链的，其中 libavdevice.so 的 GNU_RELRO 覆盖到
+ * 0x14000，但最后一个 PT_LOAD 只到 0x11008。Android 15+ 的加载器按 p_align(16KB)
+ * 算映射长度，取整到 0x14000 刚好装得下；Android 14 及以下按 4KB 页取整只到 0x12000，
+ * 于是 phdr_table_protect_gnu_relro 的 mprotect 落在未映射区间上，dlopen 直接失败：
+ *   can't enable GNU RELRO protection for "libavdevice.so": Out of memory
+ *
+ * 修法是把包含 RELRO 的那个 PT_LOAD 的 p_memsz 撑到覆盖整个 RELRO 区间——等价于
+ * 16KB 加载器的实际效果。只动 p_memsz 不动 p_filesz，多出来的部分是全零 .bss，
+ * RELRO 保护范围也一点没减少。
+ */
+
+// bionic 在 4KB 页设备上按这个粒度取整
+ext.ELF_PAGE_SIZE = 4096L
+ext.PT_LOAD = 1L
+ext.PT_GNU_RELRO = 0x6474e552L
+
+long alignUp(long value, long alignment) {
+    return ((value + alignment - 1) / alignment).longValue() * alignment
+}
+
+/** @return 修补后的字节数组，无需修补时返回 null */
+byte[] patchGnuRelro(byte[] so, String name) {
+    if (so.length < 64 || so[0] != (byte) 0x7f || so[1] != (byte) 0x45
+            || so[2] != (byte) 0x4c || so[3] != (byte) 0x46) {
+        return null
+    }
+    boolean is64 = so[4] == (byte) 2
+    ByteBuffer buf = ByteBuffer.wrap(so)
+    buf.order(so[5] == (byte) 2 ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN)
+
+    long phoff
+    int phentsize, phnum
+    if (is64) {
+        phoff = buf.getLong(0x20)
+        phentsize = buf.getShort(0x36) & 0xffff
+        phnum = buf.getShort(0x38) & 0xffff
+    } else {
+        phoff = buf.getInt(0x1c) & 0xffffffffL
+        phentsize = buf.getShort(0x2a) & 0xffff
+        phnum = buf.getShort(0x2c) & 0xffff
+    }
+    if (phoff <= 0 || phnum <= 0 || phoff + (long) phnum * phentsize > so.length) return null
+
+    int vaddrOff = is64 ? 16 : 8
+    int memszOff = is64 ? 40 : 20
+
+    long relroStart = -1L
+    long relroEnd = -1L
+    long mapEnd = 0L
+    List<Integer> loadBases = []
+    for (int i = 0; i < phnum; i++) {
+        int base = (int) (phoff + (long) i * phentsize)
+        long type = buf.getInt(base) & 0xffffffffL
+        long vaddr = is64 ? buf.getLong(base + vaddrOff) : (buf.getInt(base + vaddrOff) & 0xffffffffL)
+        long memsz = is64 ? buf.getLong(base + memszOff) : (buf.getInt(base + memszOff) & 0xffffffffL)
+        if (type == PT_LOAD) {
+            loadBases.add(base)
+            mapEnd = Math.max(mapEnd, alignUp(vaddr + memsz, ELF_PAGE_SIZE))
+        } else if (type == PT_GNU_RELRO) {
+            relroStart = vaddr
+            relroEnd = alignUp(vaddr + memsz, ELF_PAGE_SIZE)
+        }
+    }
+    if (relroStart < 0 || relroEnd <= mapEnd) return null
+
+    // 找到包含 RELRO 起点的那个 PT_LOAD
+    int target = -1
+    for (int base : loadBases) {
+        long vaddr = is64 ? buf.getLong(base + vaddrOff) : (buf.getInt(base + vaddrOff) & 0xffffffffL)
+        long memsz = is64 ? buf.getLong(base + memszOff) : (buf.getInt(base + memszOff) & 0xffffffffL)
+        if (relroStart >= vaddr && relroStart < vaddr + memsz) {
+            target = base
+            break
+        }
+    }
+    if (target < 0) {
+        throw new GradleException("$name: GNU_RELRO 越界但找不到包含它的 PT_LOAD，不敢乱改")
+    }
+
+    long targetVaddr = is64 ? buf.getLong(target + vaddrOff) : (buf.getInt(target + vaddrOff) & 0xffffffffL)
+    long oldMemsz = is64 ? buf.getLong(target + memszOff) : (buf.getInt(target + memszOff) & 0xffffffffL)
+    long newMemsz = relroEnd - targetVaddr
+    if (newMemsz <= oldMemsz) return null
+
+    // 撑大这个 LOAD 不能压到别的 LOAD 头上
+    for (int base : loadBases) {
+        if (base == target) continue
+        long vaddr = is64 ? buf.getLong(base + vaddrOff) : (buf.getInt(base + vaddrOff) & 0xffffffffL)
+        if (vaddr > targetVaddr && vaddr < targetVaddr + newMemsz) {
+            throw new GradleException(
+                    "$name: 撑大 p_memsz 会与 vaddr 0x${Long.toHexString(vaddr)} 的 PT_LOAD 重叠")
+        }
+    }
+
+    if (is64) {
+        buf.putLong(target + memszOff, newMemsz)
+    } else {
+        buf.putInt(target + memszOff, (int) newMemsz)
+    }
+    project.logger.lifecycle("[ffmpeg-relro] 修补 $name: p_memsz 0x${Long.toHexString(oldMemsz)}" +
+            " -> 0x${Long.toHexString(newMemsz)}")
+    return so
+}
+
+ext.registerFfmpegRelroPatch = { File sourceAar, File targetAar ->
+    return tasks.register('patchFfmpegKitRelro') {
+        description = '修补 ffmpeg-kit 16k aar 里 GNU_RELRO 越界的 .so，否则 Android 14 及以下 dlopen 失败'
+        inputs.file(sourceAar)
+        inputs.file(rootProject.file('gradle/ffmpeg-relro-patch.gradle'))
+        outputs.file(targetAar)
+        doLast {
+            targetAar.parentFile.mkdirs()
+            int patched = 0
+            new ZipFile(sourceAar).withCloseable { zip ->
+                new ZipOutputStream(targetAar.newOutputStream()).withCloseable { out ->
+                    for (ZipEntry entry : zip.entries()) {
+                        if (entry.directory) continue
+                        byte[] bytes = zip.getInputStream(entry).bytes
+                        if (entry.name.endsWith('.so')) {
+                            byte[] fixed = patchGnuRelro(bytes, entry.name)
+                            if (fixed != null) {
+                                bytes = fixed
+                                patched++
+                            }
+                        }
+                        // 时间戳固定，保证任务输出可复现
+                        def copy = new ZipEntry(entry.name)
+                        copy.time = 0L
+                        out.putNextEntry(copy)
+                        out.write(bytes)
+                        out.closeEntry()
+                    }
+                }
+            }
+            if (patched == 0) {
+                throw new GradleException(
+                        "没有任何 .so 需要修补：${sourceAar.name} 可能已经换成 4KB 对齐版本了，" +
+                        "此时应该直接依赖原始 aar 并删掉这个补丁任务")
+            }
+            logger.lifecycle("[ffmpeg-relro] 共修补 $patched 个 .so -> ${targetAar.name}")
+        }
+    }
+}

@@ -1,214 +1,162 @@
 package com.peihua.touchmonitor.ui.screen.function.video.m3u8
 
-import androidx.compose.foundation.background
+import android.Manifest
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.content.getSystemService
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
-import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.utils.getUriForFileByFileProvider
+import com.peihua.touchmonitor.utils.isAtLeastT
+import com.peihua.touchmonitor.utils.isGrantedPermission
+import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.viewmodel.M3u8DownloadViewModel
 import com.peihua8858.compose.tools.rememberState
+import java.io.File
 
 @Composable
-fun M3u8DownloaderByCode(modifier: Modifier = Modifier, viewModel: M3u8DownloadViewModel = viewModel()) {
+fun M3u8DownloaderByCode(
+    modifier: Modifier = Modifier,
+    viewModel: M3u8DownloadViewModel = viewModel(),
+) {
+    val context = LocalContext.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val m3u8Url = rememberState("")
-    val headers = arrayOf("ID", "保存文件名", "创建时间", "下载地址", "进度", "速率", "操作")
-    val data = arrayOf(
-        DataModel("1", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
-        DataModel("2", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
-        DataModel("3", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
-        DataModel("4", "test", "2022-01-01 00:00:00", "https://test.com", "3%", "400kb/s"),
-    )
-    val result = viewModel.pagingDataFlow.collectAsLazyPagingItems()
-    MultiStatePagingScreen(modifier = modifier, result = result, header = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(value = m3u8Url.value, onValueChange = {
-                m3u8Url.value = it
-            }, modifier = Modifier.weight(1f).padding(16.dp), label = {
-                Text(text = "m3u8 url")
-            })
-            Button(
-                modifier = Modifier.padding(start = 8.dp, end = 16.dp),
-                onClick = {
-                    viewModel.downloadM3u8(m3u8Url.value)
-                }) {
-                Text(text = "下载")
+    val notificationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) showToast("未授予通知权限，下载会继续但看不到进度通知")
+    }
+
+    Column(modifier = modifier) {
+        UrlInputBar(
+            url = m3u8Url.value,
+            onUrlChange = { m3u8Url.value = it },
+            onPaste = { m3u8Url.value = context.readClipboardText() ?: m3u8Url.value },
+            onDownload = {
+                // 未授权时服务仍能跑，只是通知不可见，用户会以为"没反应"。
+                // 权限结果异步返回，授权后下一次 1s 刷新就会把通知补上，所以不阻塞下载。
+                if (isAtLeastT && !context.isGrantedPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+                    notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                viewModel.enqueue(m3u8Url.value)
+                m3u8Url.value = ""
+            },
+        )
+        HorizontalDivider()
+
+        if (state.cards.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "还没有下载任务，粘贴 m3u8 地址开始",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            return@Column
+        }
+
+        if (state.hasActive) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(text = "总速率 ${state.totalRateText}", style = MaterialTheme.typography.bodySmall)
+                TextButton(onClick = viewModel::pauseAll) { Text(text = "全部暂停") }
             }
         }
-        HorizontalDivider(modifier = Modifier)
-    }, emptyContent = {}) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .height(48.dp)
-                        .background(color = Colors.Grey[300]),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    VerticalDivider()
-                    headers.forEachIndexed { index, item ->
-                        Text(
-                            text = item,
-                            modifier = modifier
-                                .wrapContentHeight()
-                                .weight(1f),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        VerticalDivider()
-                    }
-                }
-            }
-            items(data) {
-                DataItem(model = it)
-                HorizontalDivider()
+
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            // key 必须有：每秒都有进度更新，没有 key 会让 item 复用错乱
+            items(state.cards, key = { it.id }) { card ->
+                DownloadTaskCard(
+                    card = card,
+                    onResume = { viewModel.resume(card.id) },
+                    onPause = { viewModel.pause(card.id) },
+                    onRetry = { viewModel.retry(card.id) },
+                    onOpen = { context.openVideo(card.filePath) },
+                    onExport = { viewModel.exportToGallery(card.id) },
+                    onDelete = { deleteFile -> viewModel.delete(card.id, deleteFile) },
+                )
             }
         }
     }
-//
-//
-//
-//    Column(modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-//
-//
-//    }
 }
 
 @Composable
-private fun DataItem(modifier: Modifier = Modifier, model: DataModel) {
+private fun UrlInputBar(
+    url: String,
+    onUrlChange: (String) -> Unit,
+    onPaste: () -> Unit,
+    onDownload: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .height(64.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        VerticalDivider()
-        Text(
-            text = model.id,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
+        OutlinedTextField(
+            value = url,
+            onValueChange = onUrlChange,
+            modifier = Modifier.weight(1f),
+            singleLine = true,
+            label = { Text(text = "m3u8 地址") },
+            trailingIcon = { TextButton(onClick = onPaste) { Text(text = "粘贴") } },
         )
-        VerticalDivider()
-        Text(
-            text = model.fileName,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
-        )
-        VerticalDivider()
-        Text(
-            text = model.createTime,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
-        )
-        VerticalDivider()
-        Text(
-            text = model.url,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
-        )
-        VerticalDivider()
-        Text(
-            text = model.progress,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
-        )
-        VerticalDivider()
-        Text(
-            text = model.rate,
-            modifier = modifier
-                .wrapContentHeight()
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-            overflow = TextOverflow.Ellipsis
-        )
-        VerticalDivider()
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Button(
+            modifier = Modifier.padding(start = 8.dp),
+            enabled = url.isNotBlank(),
+            onClick = onDownload,
         ) {
-            TextButton(
-                onClick = {}, modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = "暂停",
-                    autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-                )
-            }
-            TextButton(
-                onClick = {}, modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = "删除",
-                    autoSize = TextAutoSize.StepBased(maxFontSize = 14.sp, minFontSize = 10.sp),
-                )
-            }
-
+            Text(text = "下载")
         }
-        VerticalDivider()
     }
-
 }
 
-data class DataModel(val id: String, val fileName: String, val createTime: String, val url: String, val progress: String, val rate: String)
+private fun Context.readClipboardText(): String? =
+    getSystemService<ClipboardManager>()
+        ?.primaryClip
+        ?.takeIf { it.itemCount > 0 }
+        ?.getItemAt(0)
+        ?.coerceToText(this)
+        ?.toString()
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+
+private fun Context.openVideo(filePath: String) {
+    val file = File(filePath)
+    if (!file.isFile) {
+        showToast("文件不存在")
+        return
+    }
+    val uri = getUriForFileByFileProvider(file) ?: return
+    val intent = Intent(Intent.ACTION_VIEW)
+        .setDataAndType(uri, "video/mp4")
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+    runCatching { startActivity(intent) }
+        .onFailure { showToast("没有可用的播放器") }
+}

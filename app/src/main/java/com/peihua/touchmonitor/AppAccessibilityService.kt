@@ -3,8 +3,6 @@ package com.peihua.touchmonitor
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -17,11 +15,11 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.peihua.touchmonitor.notification.NotificationChannels
 import com.peihua.touchmonitor.ui.Settings
 import com.peihua.touchmonitor.ui.settingsStore
 import com.peihua.touchmonitor.utils.CommonDeviceLocks
 import com.peihua.touchmonitor.utils.WorkScope
-import com.peihua.touchmonitor.utils.isAtLeastO
 import com.peihua.touchmonitor.utils.isAtLeastS
 import com.peihua.touchmonitor.utils.isUpsideDownCake
 import com.peihua8858.permissions.core.checkPermission
@@ -73,29 +71,22 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
     @SuppressLint("LaunchActivityFromNotification")
     private fun sendNotificationServerStop() {
         if (checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
-            var channelName = getString(R.string.app_name)
+            val appName = getString(R.string.app_name)
             val notificationManager = NotificationManagerCompat.from(this)
-            channelName = if (isAtLeastO) {
-                val notificationChannels = notificationManager.notificationChannelsCompat
-                if (notificationChannels.isEmpty()) {
-                    val notificationChannel = NotificationChannel(channelName, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-                    notificationManager.createNotificationChannel(notificationChannel)
-                }
-                notificationManager.notificationChannelsCompat.first().id
-            } else channelName
+            NotificationChannels.ensureAccessibilityChannel(this)
             val intent = Intent(this, AccessibilityBootReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 this, 0,
                 intent, if (isAtLeastS) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 else PendingIntent.FLAG_UPDATE_CURRENT
             );
-            val notification = NotificationCompat.Builder(this, channelName)
-                .setContentText(channelName + getString(R.string.text_stop_running))
+            val notification = NotificationCompat.Builder(this, NotificationChannels.ACCESSIBILITY)
+                .setContentText(appName + getString(R.string.text_stop_running))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .build()
-            notificationManager.notify(0x195288, notification)
+            notificationManager.notify(NotificationChannels.ID_ACCESSIBILITY, notification)
         }
     }
 
@@ -267,26 +258,24 @@ class AppAccessibilityService : AccessibilityService(), CoroutineScope by WorkSc
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createForegroundNotification() {
-        val channelName = getString(R.string.app_name)
-        val notificationManager = NotificationManagerCompat.from(this)
-        val notificationChannels = notificationManager.notificationChannelsCompat
-        if (notificationChannels.isEmpty()) {
-            val notificationChannel = NotificationChannel(channelName, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
-        val channel = notificationManager.notificationChannelsCompat.first()
-        val notification = NotificationCompat.Builder(this, channel.id)
-            .setContentText(channelName + getString(R.string.text_running))
+        val appName = getString(R.string.app_name)
+        NotificationChannels.ensureAccessibilityChannel(this)
+        val notification = NotificationCompat.Builder(this, NotificationChannels.ACCESSIBILITY)
+            .setContentText(appName + getString(R.string.text_running))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
         if (isUpsideDownCake) {
             dLog { "startForeground isUpsideDownCake:true" }
             if (checkPermission(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK)) {
                 dLog { "startForeground ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK" }
-                startForeground(0x195288, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                startForeground(
+                    NotificationChannels.ID_ACCESSIBILITY,
+                    notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                )
             }
         } else {
-            startForeground(0x195288, notification)
+            startForeground(NotificationChannels.ID_ACCESSIBILITY, notification)
         }
     }
 }

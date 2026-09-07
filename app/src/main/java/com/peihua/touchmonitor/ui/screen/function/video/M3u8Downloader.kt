@@ -59,6 +59,12 @@ private fun M3u8DownloaderByWebView(modifier: Modifier) {
         client = WarpAccompanistWebViewClient(WebViewClient(assetLoader)),
         onCreated = {
             it.settings.javaScriptEnabled = true
+            // m3u8 下载页从 file:///android_asset/ 加载，页面内 XHR 需要请求外部 m3u8/TS 地址，
+            // 不打开此开关会被 CORS 策略阻断，表现为"下载无进度"
+            it.settings.allowUniversalAccessFromFileURLs = true
+            it.settings.domStorageEnabled = true
+            // 允许 http:// 混合内容，部分 m3u8 源仅支持 http
+            it.settings.mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         })
 }
 

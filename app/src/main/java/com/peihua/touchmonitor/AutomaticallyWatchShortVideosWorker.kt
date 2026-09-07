@@ -21,8 +21,7 @@ import kotlinx.coroutines.launch
 class AutomaticallyWatchShortVideosWorker(
     private val service: AppAccessibilityService,
     private var settings: Settings,
-) :
-    Runnable, CoroutineScope by WorkScope() {
+) : CoroutineScope by WorkScope() {
     private var isProcesserRunning = false
     private val times = arrayOf(
         7,//7秒
@@ -75,7 +74,7 @@ class AutomaticallyWatchShortVideosWorker(
         maxTime = mDelayTimes.max()
     }
 
-    override suspend fun run() {
+    fun run() {
         launch {
             dLog { "Service start>>>>" }
             while (isProcesserRunning) {

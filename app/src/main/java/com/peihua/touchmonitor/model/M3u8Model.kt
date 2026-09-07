@@ -1,6 +1,8 @@
 package com.peihua.touchmonitor.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.reflect.TypeToken
 import com.peihua.touchmonitor.ServiceApplication
@@ -50,21 +52,55 @@ data class DownloadTask(
     var finishedTime: Long,
     val createTime: Long,
     val updateTime: Long,
+    var errorMessage: String? = null,
+    /**
+     * 部分 CDN 会校验 Referer，从网页嗅探到的地址必须带上来源页
+     */
+    val referer: String? = null,
+    @ColumnInfo(defaultValue = "0")
+    var totalBytes: Long = 0L,
 )
 
 /**
  * 媒体分片信息存储实体类
  */
-@Entity(tableName = "media_segment")
+@Entity(
+    tableName = "media_segment",
+    indices = [Index(value = ["taskId", "seq"], unique = true)]
+)
 data class MediaSegment(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     var taskId: Long,
     val url: String,
     var finished: Boolean,
+    /**
+     * 分片时长，单位毫秒
+     */
     var duration: Long,
     var downloadDuration: Long,
     var filePath: String,
+    /**
+     * 绝对媒体序号（`#EXT-X-MEDIA-SEQUENCE` + 下标），既是排序键也是 AES 缺省 IV 的来源
+     */
+    @ColumnInfo(defaultValue = "0")
+    var seq: Long = 0L,
+    /**
+     * null 表示该分片未加密
+     */
+    val keyMethod: String? = null,
+    /**
+     * 已 resolve 成绝对地址的密钥 URL
+     */
+    val keyUri: String? = null,
+    /**
+     * `#EXT-X-KEY` 里的 IV 原文（0x...），null 表示按 [seq] 推导
+     */
+    val keyIv: String? = null,
+    @ColumnInfo(defaultValue = "0")
+    var byteSize: Long = 0L,
+    @ColumnInfo(defaultValue = "0")
+    var retryCount: Int = 0,
 )
 
 

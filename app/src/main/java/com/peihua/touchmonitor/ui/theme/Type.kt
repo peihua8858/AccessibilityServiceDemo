@@ -72,7 +72,7 @@ fun Typography(scale: Float = 1f): Typography {
         ),
         bodySmall = typography.bodySmall.copy(
             fontSize = dimensionSpResource(R.dimen.sp_12) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_0_1),
+            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
             letterSpacing = dimensionSpResource(id = R.dimen.sp_0_4)
         ),
         labelLarge = typography.labelLarge.copy(

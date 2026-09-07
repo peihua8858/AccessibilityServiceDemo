@@ -24,10 +24,8 @@ import kotlinx.coroutines.delay
 class ApplicationsViewModel(application: Application) : AndroidViewModel(application) {
     val applications: MutableState<ResultData<List<AppInfo>>> =
         mutableStateOf(ResultData.Initialize())
-    val factory: Factory
-        get() = FactoryImpl()
-    val database: AppDatabase
-        get() = factory.createRoomDatabase()
+    val factory: Factory = FactoryImpl()
+    val database: AppDatabase = factory.database
     val historyDao: HistoryDao
         get() = database.historyDao()
     val settingsDao: SettingsDao

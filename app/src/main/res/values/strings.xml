@@ -182,6 +182,16 @@
     <string name="text_stop_running">已经停止运行</string>
     <string name="text_running">正在运行</string>
 
+    <string name="channel_name_accessibility">无障碍服务</string>
+    <string name="channel_name_download">视频下载</string>
+    <string name="download_notification_title">正在下载视频</string>
+    <string name="download_notification_title_multi">正在下载 %1$d 个视频</string>
+    <string name="download_notification_pause_all">全部暂停</string>
+    <string name="download_notification_complete">下载完成</string>
+    <string name="download_notification_complete_count">%1$d 个视频已下载完成</string>
+    <string name="download_paused_manual">已手动暂停，可继续</string>
+    <string name="download_paused_timeout">前台服务时长超限，已暂停，可继续</string>
+
     <string name="cptr_pull_to_refresh">下拉刷新</string>
     <string name="cptr_release_to_refresh">松开刷新</string>
     <string name="cptr_refreshing">刷新中…</string>
