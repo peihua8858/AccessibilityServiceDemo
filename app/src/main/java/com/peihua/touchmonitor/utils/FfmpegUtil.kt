@@ -71,6 +71,66 @@ object FfmpegUtil {
     }
 
     /**
+     * fMP4 合并：init segment（ftyp + moov）+ 所有媒体分片（moof + mdat）
+     * 按序二进制拼接即为合法 ISO BMFF 文件，再用 ffmpeg remux 加 faststart。
+     */
+    suspend fun mergeFmp4(
+        initSegment: File,
+        sourceFiles: List<String>,
+        targetFile: File,
+        workDir: File,
+        onProgress: (Long) -> Unit = {},
+    ) {
+        if (!initSegment.isFile || initSegment.length() == 0L) {
+            throw M3u8Exception.MergeFailed("fMP4 init segment 缺失或为空")
+        }
+        if (sourceFiles.isEmpty()) {
+            throw M3u8Exception.MergeFailed("没有可合并的分片")
+        }
+        sourceFiles.forEach { path ->
+            val f = File(path)
+            if (!f.isFile || f.length() == 0L) {
+                throw M3u8Exception.MergeFailed("分片文件缺失或为空，无法合并：$path")
+            }
+        }
+
+        targetFile.parentFile?.let { it.ensureDirExist }
+
+        val combined = File(workDir, "combined_fmp4.mp4")
+        try {
+            combined.outputStream().buffered(64 * 1024).use { out ->
+                initSegment.inputStream().use { it.copyTo(out) }
+                sourceFiles.forEach { path ->
+                    File(path).inputStream().use { it.copyTo(out) }
+                }
+            }
+            dLog { "fMP4 拼接完成：${combined.length().toHumanReadableBytes()}，开始 remux" }
+
+            val args = arrayOf(
+                "-y",
+                "-i", combined.absolutePath,
+                "-c", "copy",
+                "-movflags", "+faststart",
+                targetFile.absolutePath,
+            )
+            val session = runFfmpeg(args, onProgress)
+            if (!session.returnCode.isValueSuccess) {
+                throw M3u8Exception.MergeFailed(
+                    "fMP4 remux 失败（code=${session.returnCode}）",
+                    RuntimeException(session.allLogsAsString.takeLast(MAX_LOG_CHARS)),
+                )
+            }
+        } finally {
+            combined.delete()
+        }
+
+        if (!targetFile.isFile || targetFile.length() == 0L) {
+            throw M3u8Exception.MergeFailed("fMP4 remux 返回成功但没有产出文件")
+        }
+        dLog { "fMP4 合并完成：${targetFile.absolutePath}（${targetFile.length().toHumanReadableBytes()}）" }
+    }
+
+    /**
      * 用产出文件的实际时长与分片时长之和交叉校验，能抓住"concat 成功但只拼出几秒"。
      *
      * @return 时长毫秒，探测失败返回 null（探测失败本身不该让任务失败）

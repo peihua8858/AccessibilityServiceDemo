@@ -5,6 +5,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -31,12 +32,15 @@ object HttpClientUtil {
         .writeTimeout(15, TimeUnit.SECONDS)
         // 单次调用不设总时限，大分片在弱网下可能远超 30s
         .callTimeout(0, TimeUnit.MILLISECONDS)
+        // 强制 HTTP/1.1：HTTP/2 的 HPACK 压缩和流控缓冲在每个连接上消耗大量内存，
+        // 在 256MB 堆限制的设备上容易触发 OOM（crash 线程是 OkHttp HTTP/2 连接线程）
+        .protocols(listOf(Protocol.HTTP_1_1))
         .dispatcher(
             // 默认 maxRequestsPerHost 只有 5，而分片几乎全在同一 host，
             // 不放开的话上层写多少路信号量都只能跑 5 路
             Dispatcher().apply {
-                maxRequests = 64
-                maxRequestsPerHost = 16
+                maxRequests = 32
+                maxRequestsPerHost = 8
             }
         )
         .build()

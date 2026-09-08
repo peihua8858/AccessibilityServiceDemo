@@ -21,6 +21,12 @@ class DownloadPaths(private val app: Context) {
 
     fun keyDir(taskId: Long): File = File(tmpDir(taskId), "keys").also { it.ensureDirExist }
 
+    /** fMP4: 保存 init segment 的 URL（文本文件），供续传时恢复 */
+    fun initUrlFile(taskId: Long): File = File(tmpDir(taskId), "init_url.txt")
+
+    /** fMP4: 下载后的 init segment 二进制文件（ftyp + moov） */
+    fun initSegmentFile(taskId: Long): File = File(tmpDir(taskId), "init.mp4")
+
     /** ffmpeg 输出必须是真实文件路径，不能是 content:// */
     fun outputDir(): File =
         File(app.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: root, "m3u8")

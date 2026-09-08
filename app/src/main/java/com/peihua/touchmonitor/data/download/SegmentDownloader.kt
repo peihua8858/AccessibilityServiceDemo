@@ -29,9 +29,11 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
         segment: MediaSegment,
         dir: File,
         bytesCounter: AtomicLong,
+        isFmp4: Boolean = false,
     ): DownloadedSegment {
         val startedAt = System.currentTimeMillis()
-        val target = File(dir, TS_NAME_FORMAT.format(segment.seq))
+        val suffix = if (isFmp4) ".m4s" else ".ts"
+        val target = File(dir, "%09d%s".format(segment.seq, suffix))
         val part = File(dir, target.name + PART_SUFFIX)
 
         val response = HttpClientUtil.get(segment.url, task.referer)
@@ -41,7 +43,7 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
             val networkBytes = if (segment.keyUri != null) {
                 writeDecrypted(task, segment, response, part, bytesCounter)
             } else {
-                writePlain(segment, response, part, bytesCounter)
+                writePlain(segment, response, part, bytesCounter, isFmp4)
             }
             // 字节数比对是检测截断响应的唯一可靠手段
             if (expected >= 0 && networkBytes != expected) {
@@ -65,6 +67,7 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
         response: Response,
         part: File,
         bytesCounter: AtomicLong,
+        isFmp4: Boolean = false,
     ): Long = withContext(Dispatchers.IO) {
         var head: ByteArray? = null
         val written = response.body.byteStream().use { input ->
@@ -72,7 +75,7 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
                 input.copyToCancellable(output, bytesCounter) { head = it }
             }
         }
-        validateContent(segment, response, head, written, part)
+        validateContent(segment, response, head, written, part, isFmp4)
         written
     }
 
@@ -129,6 +132,7 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
         head: ByteArray?,
         written: Long,
         part: File,
+        isFmp4: Boolean = false,
     ) {
         if (written == 0L) {
             part.delete()
@@ -143,8 +147,7 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
             part.delete()
             throw M3u8Exception.SegmentCorrupted(segment.url, "CDN 返回了错误页而非视频分片")
         }
-        if (segment.keyUri == null && !sample.hasMediaSyncByte()) {
-            // 只告警不判失败：fMP4 等格式首字节合法地既不是 TS 也不是 ADTS
+        if (!isFmp4 && segment.keyUri == null && !sample.hasMediaSyncByte()) {
             wLog { "分片首字节不像 TS/ADTS：${segment.url}" }
         }
     }
@@ -158,7 +161,6 @@ class SegmentDownloader(private val keyProvider: M3u8KeyProvider) {
     }
 
     private companion object {
-        const val TS_NAME_FORMAT = "%09d.ts"
         const val PART_SUFFIX = ".part"
         const val TS_SYNC_BYTE: Byte = 0x47
         const val ADTS_SYNC_BYTE: Byte = 0xFF.toByte()

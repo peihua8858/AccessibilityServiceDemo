@@ -162,7 +162,10 @@ class M3u8DownloadEngine(
 
         setStage(rt, DownloadTaskStage.M3U8_PARSING, DownloadTaskStatus.RUNNING)
         val parsed = parser.parse(task.url, task.resolution, task.referer)
-        if (parsed.isFmp4) throw M3u8Exception.UnsupportedFmp4()
+        if (parsed.isFmp4 && parsed.initSegmentUrl != null) {
+            paths.initUrlFile(task.id).writeText(parsed.initSegmentUrl)
+            dLog { "任务 ${task.id} 检测到 fMP4，init segment: ${parsed.initSegmentUrl}" }
+        }
 
         repo.replaceSegments(task.id, parsed.segments.map { it.toEntity(task.id) })
         rt.total = parsed.segments.size
@@ -185,6 +188,12 @@ class M3u8DownloadEngine(
             throw M3u8Exception.ParseFailed("m3u8 解析结果为空")
         }
 
+        // fMP4: 下载 init segment（ftyp + moov），续传时跳过已下载的
+        val isFmp4 = paths.initUrlFile(task.id).exists()
+        if (isFmp4) {
+            downloadInitSegment(task, dir)
+        }
+
         // 桌面版是 ThreadPoolExecutor(cores*10, cores*20)，8 核手机就是 80~160 线程：
         // 几十 MB 纯栈、被 CDN 判异常 429、移动网络下吞吐反而下降。上限 8。
         val perTask = (
@@ -192,7 +201,7 @@ class M3u8DownloadEngine(
                 ?: downloadStore.data.first().defaultThreadCount
             ).coerceIn(1, MAX_GLOBAL_CONCURRENCY)
         val gate = Semaphore(perTask)
-        dLog { "任务 ${task.id} 开始下载：待下 ${pending.size} 片，并发 $perTask" }
+        dLog { "任务 ${task.id} 开始下载：待下 ${pending.size} 片，并发 $perTask，fMP4=$isFmp4" }
 
         // 用 HEAD 请求探测第一个分片大小，立即估算总字节数，让进度条从第一秒就能动
         if (pending.isNotEmpty()) {
@@ -210,7 +219,9 @@ class M3u8DownloadEngine(
             pending.map { segment ->
                 async(Dispatchers.IO) {
                     globalGate.withPermit {
-                        gate.withPermit { downloadWithRetry(task, segment, dir, rt) }
+                        gate.withPermit {
+                            downloadWithRetry(task, segment, dir, rt, isFmp4)
+                        }
                     }
                 }
             }.awaitAll()
@@ -228,9 +239,18 @@ class M3u8DownloadEngine(
         setStage(rt, DownloadTaskStage.SEGMENT_MERGING, DownloadTaskStatus.RUNNING)
         val segmentPaths = repo.finishedPathsOrdered(task.id)
         val output = paths.uniqueOutputFile(task.saveFileName.ifBlank { "video_${task.id}" })
+        val tmpDir = paths.tmpDir(task.id)
 
-        FfmpegUtil.mergeTs(segmentPaths, output, paths.tmpDir(task.id)) { mergedMs ->
-            rt.mergedMs = mergedMs
+        val initFile = paths.initSegmentFile(task.id)
+        if (initFile.exists()) {
+            dLog { "任务 ${task.id} 使用 fMP4 合并模式" }
+            FfmpegUtil.mergeFmp4(initFile, segmentPaths, output, tmpDir) { mergedMs ->
+                rt.mergedMs = mergedMs
+            }
+        } else {
+            FfmpegUtil.mergeTs(segmentPaths, output, tmpDir) { mergedMs ->
+                rt.mergedMs = mergedMs
+            }
         }
 
         // 交叉校验时长，能抓住"concat 成功但只拼出几秒"
@@ -248,6 +268,41 @@ class M3u8DownloadEngine(
         setStage(rt, DownloadTaskStage.FINISHED, DownloadTaskStatus.FINISHED, warning)
     }
 
+    // ------------------------------------------------------------ fMP4 init segment
+
+    /**
+     * 下载 fMP4 init segment（#EXT-X-MAP 指向的初始化分片）。
+     * init segment 通常只有几 KB（含 ftyp + moov），不需要重试机制：
+     * 失败直接抛异常让任务报错，用户重试即可。
+     */
+    private suspend fun downloadInitSegment(task: DownloadTask, dir: File) {
+        val initFile = paths.initSegmentFile(task.id)
+        if (initFile.exists() && initFile.length() > 0L) {
+            dLog { "任务 ${task.id} init segment 已存在，跳过下载" }
+            return
+        }
+        val initUrl = paths.initUrlFile(task.id).readText()
+        dLog { "任务 ${task.id} 下载 fMP4 init segment: $initUrl" }
+        val response = HttpClientUtil.get(initUrl, task.referer)
+        try {
+            // 流式写入磁盘，避免 response.body.bytes() 把整个响应加载到堆上
+            val body = response.body
+            val contentLength = body.contentLength()
+            if (contentLength == 0L) {
+                throw M3u8Exception.ParseFailed("fMP4 init segment 响应为空")
+            }
+            initFile.outputStream().buffered(8 * 1024).use { out ->
+                body.byteStream().copyTo(out, 8 * 1024)
+            }
+            if (!initFile.isFile || initFile.length() == 0L) {
+                throw M3u8Exception.ParseFailed("fMP4 init segment 写入失败")
+            }
+            dLog { "init segment 下载完成：${initFile.length()} bytes" }
+        } finally {
+            response.close()
+        }
+    }
+
     // ------------------------------------------------------------ 单分片重试
 
     private suspend fun downloadWithRetry(
@@ -255,12 +310,13 @@ class M3u8DownloadEngine(
         segment: MediaSegment,
         dir: File,
         rt: TaskRuntime,
+        isFmp4: Boolean = false,
     ) {
         var attempt = 0
         while (true) {
             try {
                 dLog { "开始下载分片 seq=${segment.seq}, url=${segment.url.take(80)}" }
-                val result = downloader.download(task, segment, dir, rt.meter.counter)
+                val result = downloader.download(task, segment, dir, rt.meter.counter, isFmp4)
                 dLog { "分片完成 seq=${segment.seq}, size=${result.byteSize}, cost=${result.costMillis}ms" }
                 repo.markSegmentFinished(
                     segment.id,
@@ -378,7 +434,7 @@ class M3u8DownloadEngine(
     }
 
     private companion object {
-        const val MAX_GLOBAL_CONCURRENCY = 16
+        const val MAX_GLOBAL_CONCURRENCY = 8
         const val MAX_RETRY = 5
         const val ALLOW_SKIP_SEGMENTS = 0
         const val BASE_BACKOFF_MS = 500L
