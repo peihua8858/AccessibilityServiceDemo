@@ -80,6 +80,17 @@
     <string name="text_daily_tools">Daily Tools</string>
     <string name="text_scale_ruler">Ruler</string>
     <string name="text_compass">Compass</string>
+    <string-array name="compass_directions">
+        <item>N</item>
+        <item>NE</item>
+        <item>E</item>
+        <item>SE</item>
+        <item>S</item>
+        <item>SW</item>
+        <item>W</item>
+        <item>NW</item>
+    </string-array>
+    <string name="text_compass_unavailable">This device has no orientation sensor</string>
     <string name="text_horizon">Level Gauge</string>
     <string name="text_angle_meter">Protractor</string>
     <string name="text_simple_paint">Simple Paintboard</string>

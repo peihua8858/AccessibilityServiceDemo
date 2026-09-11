@@ -82,6 +82,18 @@
     <string name="text_scale_ruler">刻度尺</string>
     <!--    指南针-->
     <string name="text_compass">指南针</string>
+    <!--    指南针方位，从正北开始顺时针每 45 度一个-->
+    <string-array name="compass_directions">
+        <item>北</item>
+        <item>东北</item>
+        <item>东</item>
+        <item>东南</item>
+        <item>南</item>
+        <item>西南</item>
+        <item>西</item>
+        <item>西北</item>
+    </string-array>
+    <string name="text_compass_unavailable">当前设备不支持方向传感器</string>
     <!--    水平仪-->
     <string name="text_horizon">水平仪</string>
     <!--    量角器-->
