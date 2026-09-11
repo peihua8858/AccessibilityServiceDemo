@@ -39,7 +39,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
-import com.peihua.touchmonitor.model.ThemeModel
 import com.peihua.touchmonitor.ui.screen.function.images.NineGridCutImageScreen
 import com.peihua.touchmonitor.ui.screen.function.images.NineGridPictureCompositeScreen
 import com.peihua.touchmonitor.ui.applications.AppScreen
@@ -48,7 +47,13 @@ import com.peihua.touchmonitor.ui.logcat.LogScreen
 import com.peihua.touchmonitor.ui.screen.dialog.ColorPickerDialog
 import com.peihua.touchmonitor.ui.screen.dialog.MessageDialog
 import com.peihua.touchmonitor.ui.screen.dialog.ProgressDialogScreen
+import com.peihua.touchmonitor.ui.screen.function.AngleMeterScreen
 import com.peihua.touchmonitor.ui.screen.function.DayNewsScreen
+import com.peihua.touchmonitor.ui.screen.function.DesktopVideoScreen
+import com.peihua.touchmonitor.ui.screen.function.HorizonScreen
+import com.peihua.touchmonitor.ui.screen.function.LedScreen
+import com.peihua.touchmonitor.ui.screen.function.SimplePaintScreen
+import com.peihua.touchmonitor.ui.screen.function.SystemFontSizeAdjustmentScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.AppDetailScreen
 import com.peihua.touchmonitor.ui.screen.function.appmanager.MainAppExtractorScreen
@@ -56,6 +61,7 @@ import com.peihua.touchmonitor.ui.screen.function.audio.AudioPlayerScreen
 import com.peihua.touchmonitor.ui.screen.function.audio.AudioScreen
 import com.peihua.touchmonitor.ui.screen.function.autoScroller.ShortVideoScreen
 import com.peihua.touchmonitor.ui.screen.function.collect.CollectScreen
+import com.peihua.touchmonitor.ui.screen.function.compass.CompassScreen
 import com.peihua.touchmonitor.ui.screen.function.devices.DeviceInfoScreen
 import com.peihua.touchmonitor.ui.screen.function.devices.ScreenDeadPixelsScreen
 import com.peihua.touchmonitor.ui.screen.function.devices.ScreenTimeScreen
@@ -70,6 +76,7 @@ import com.peihua.touchmonitor.ui.screen.function.images.QrCodeGeneratorScreen
 import com.peihua.touchmonitor.ui.screen.function.images.VideoToGifScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PhotoPreviewScreen
 import com.peihua.touchmonitor.ui.screen.function.picture.PictureScreen
+import com.peihua.touchmonitor.ui.screen.function.scaleruler.ScaleRulerScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchScreen
 import com.peihua.touchmonitor.ui.screen.function.search.SearchType
 import com.peihua.touchmonitor.ui.screen.function.video.M3u8Downloader
@@ -423,6 +430,32 @@ fun AppNavHost(
         composable(route = AppRouter.NineGridPictureCompositeScreen.route) {
             NineGridPictureCompositeScreen(modifier)
         }
+        composable(route = AppRouter.ScaleRulerScreen.route) {
+            ScaleRulerScreen(modifier)
+        }
+        composable(route = AppRouter.CompassScreen.route) {
+            CompassScreen(modifier)
+        }
+        composable(route = AppRouter.HorizonScreen.route) {
+            HorizonScreen(modifier)
+        }
+        composable(route = AppRouter.AngleMeterScreen.route) {
+            AngleMeterScreen(modifier)
+        }
+        composable(route = AppRouter.SimplePaintScreen.route) {
+            SimplePaintScreen(modifier)
+        }
+        composable(route = AppRouter.LedScreen.route) {
+            LedScreen(modifier)
+        }
+        composable(route = AppRouter.DesktopVideoScreen.route) {
+            DesktopVideoScreen(modifier)
+        }
+        composable(route = AppRouter.SystemFontSizeAdjustmentScreen.route) {
+            SystemFontSizeAdjustmentScreen(modifier)
+        }
+
+
         dialog(route = Dialog.ShareDialog.route) {
             val filePath = it.savedStateHandle.get<String>(Dialog.ShareDialog.KEY_FILE_PATH) ?: ""
             dLog { "ShareScreen>>>>>>>filePath:$filePath" }

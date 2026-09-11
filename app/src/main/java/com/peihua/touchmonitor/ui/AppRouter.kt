@@ -140,6 +140,14 @@ sealed class AppRouter(
     }
     data object NineGridCutImageScreen: AppRouter("mineGridCutImage")
     data object NineGridPictureCompositeScreen: AppRouter("nineGridPictureComposite")
+    data object ScaleRulerScreen: AppRouter("scaleRulerScreen")
+    data object CompassScreen: AppRouter("compassScreen")
+    data object HorizonScreen: AppRouter("horizonScreen")
+    data object AngleMeterScreen: AppRouter("angleMeterScreen")
+    data object SimplePaintScreen: AppRouter("simplePaintScreen")
+    data object LedScreen: AppRouter("ledScreen")
+    data object DesktopVideoScreen: AppRouter("desktopVideoScreen")
+    data object SystemFontSizeAdjustmentScreen: AppRouter("systemFontSizeAdjustmentScreen")
 }
 
 /**
