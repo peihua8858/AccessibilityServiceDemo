@@ -1,13 +1,5 @@
 package com.peihua.touchmonitor.ui.screen.function.compass
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.os.Build
-import android.view.Surface
-import android.view.WindowManager
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,11 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,8 +21,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -43,14 +28,12 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.dimensionSpResource
+import com.peihua.touchmonitor.utils.rememberDeviceOrientation
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -65,11 +48,11 @@ fun CompassScreen(modifier: Modifier) {
             popBackStack()
         },
         title = stringResource(R.string.text_compass)) {
-        val heading = rememberCompassHeading()
+        val heading = rememberDeviceOrientation()?.azimuth
         if (heading == null) {
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 ScaleText(
-                    text = stringResource(R.string.text_compass_unavailable),
+                    text = stringResource(R.string.text_orientation_sensor_unavailable),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = dimensionSpResource(R.dimen.sp_14)
                 )
@@ -249,86 +232,11 @@ private fun DrawScope.trianglePath(
     close()
 }
 
-/**
- * 当前设备朝向，单位为度（0 表示正北，顺时针增大）。
- * 返回 null 表示设备没有可用的方向传感器。
- */
-@Composable
-private fun rememberCompassHeading(): Float? {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val configuration = LocalConfiguration.current
-    val sensorManager = remember(context) { context.getSystemService(SensorManager::class.java) }
-    val sensor = remember(sensorManager) {
-        sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-            ?: sensorManager?.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR)
-    }
-    var heading by remember { mutableFloatStateOf(0f) }
-    val displayRotation = remember(configuration) { context.displayRotation() }
-    DisposableEffect(lifecycleOwner, sensorManager, sensor, displayRotation) {
-        if (sensorManager == null || sensor == null) {
-            return@DisposableEffect onDispose { }
-        }
-        val rotationMatrix = FloatArray(9)
-        val remappedMatrix = FloatArray(9)
-        val orientation = FloatArray(3)
-        val (axisX, axisY) = displayAxes(displayRotation)
-        val listener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent) {
-                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-                SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix)
-                SensorManager.getOrientation(remappedMatrix, orientation)
-                val azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
-                heading = smoothHeading(heading, (azimuth + 360f) % 360f)
-            }
-
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
-        }
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START ->
-                    sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
-
-                Lifecycle.Event.ON_STOP -> sensorManager.unregisterListener(listener)
-                else -> Unit
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            sensorManager.unregisterListener(listener)
-        }
-    }
-    return if (sensor == null) null else heading
-}
-
-/** 沿最短路径向目标角度靠近，抑制磁力计读数抖动 */
-private fun smoothHeading(current: Float, target: Float): Float {
-    val delta = ((target - current + 540f) % 360f) - 180f
-    return (current + delta * HEADING_SMOOTHING + 360f) % 360f
-}
-
 private fun headingToDirectionIndex(heading: Float): Int =
     ((heading + 22.5f) / 45f).toInt() % 8
 
-private fun displayAxes(displayRotation: Int): Pair<Int, Int> = when (displayRotation) {
-    Surface.ROTATION_90 -> SensorManager.AXIS_Y to SensorManager.AXIS_MINUS_X
-    Surface.ROTATION_180 -> SensorManager.AXIS_MINUS_X to SensorManager.AXIS_MINUS_Y
-    Surface.ROTATION_270 -> SensorManager.AXIS_MINUS_Y to SensorManager.AXIS_X
-    else -> SensorManager.AXIS_X to SensorManager.AXIS_Y
-}
-
-private fun Context.displayRotation(): Int =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        display?.rotation ?: Surface.ROTATION_0
-    } else {
-        @Suppress("DEPRECATION")
-        getSystemService(WindowManager::class.java).defaultDisplay.rotation
-    }
-
 private val NorthColor = Color(0xFFFF3D00)
 
-private const val HEADING_SMOOTHING = 0.25f
 private const val TICK_STEP_DEGREES = 2
 private const val LABEL_STEP_DEGREES = 30
 

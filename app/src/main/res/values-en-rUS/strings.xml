@@ -90,7 +90,7 @@
         <item>W</item>
         <item>NW</item>
     </string-array>
-    <string name="text_compass_unavailable">This device has no orientation sensor</string>
+    <string name="text_orientation_sensor_unavailable">This device has no orientation sensor</string>
     <string name="text_horizon">Level Gauge</string>
     <string name="text_angle_meter">Protractor</string>
     <string name="text_simple_paint">Simple Paintboard</string>

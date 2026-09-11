@@ -93,7 +93,7 @@
         <item>西</item>
         <item>西北</item>
     </string-array>
-    <string name="text_compass_unavailable">当前设备不支持方向传感器</string>
+    <string name="text_orientation_sensor_unavailable">当前设备不支持方向传感器</string>
     <!--    水平仪-->
     <string name="text_horizon">水平仪</string>
     <!--    量角器-->
