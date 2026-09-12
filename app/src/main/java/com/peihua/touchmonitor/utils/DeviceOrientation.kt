@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.peihua8858.tools.utils.dLog
 
 /**
  * 设备姿态，单位为度。
@@ -55,12 +56,19 @@ fun rememberDeviceOrientation(): DeviceOrientation? {
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
+                dLog { "remappedMatrix:${remappedMatrix.joinToString(",")}" }
                 SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix)
+                dLog { "axisX:${axisX},axisY:$axisY" }
+                dLog { "remappedMatrix:${remappedMatrix.joinToString(",")}" }
+                dLog { "remappedMatrix.length:${remappedMatrix.size}" }
+                dLog { "rotationMatrix:${rotationMatrix.joinToString(",")}" }
                 SensorManager.getOrientation(remappedMatrix, angles)
                 val current = orientation
+
+                dLog { "current:$current,angles:${angles.joinToString(",")}" }
                 orientation = DeviceOrientation(
                     azimuth = smoothAzimuth(current.azimuth, (angles[0].toDegrees() + 360f) % 360f),
-                    pitch = smoothAngle(current.pitch, angles[1].toDegrees()),
+                    pitch = smoothAngle(current.pitch, (if(angles[1].isNaN())1f else angles[1]).toDegrees()),
                     roll = smoothAngle(current.roll, angles[2].toDegrees())
                 )
             }
