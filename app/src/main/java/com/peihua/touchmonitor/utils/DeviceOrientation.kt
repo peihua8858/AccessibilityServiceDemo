@@ -64,7 +64,6 @@ fun rememberDeviceOrientation(): DeviceOrientation? {
                 dLog { "rotationMatrix:${rotationMatrix.joinToString(",")}" }
                 SensorManager.getOrientation(remappedMatrix, angles)
                 val current = orientation
-
                 dLog { "current:$current,angles:${angles.joinToString(",")}" }
                 orientation = DeviceOrientation(
                     azimuth = smoothAzimuth(current.azimuth, (angles[0].toDegrees() + 360f) % 360f),
