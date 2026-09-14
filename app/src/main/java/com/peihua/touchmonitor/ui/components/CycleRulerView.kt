@@ -20,6 +20,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import androidx.core.graphics.withTranslation
 
 /**
  * 圆形角度尺（Jetpack Compose 版）
@@ -147,16 +148,20 @@ fun CycleRulerView(
 
             // 每隔 10 度画数字
             if (deg % 10 == 0) {
-                val textRadius = radius - tickLengthPx - tickTextSizePx * 0.6f
+                val label = deg.toString()
+                val rotation = (180 - deg - 90).toFloat()
+                // 文字旋转后仍可能向外溢出，按实际外扩量内移，避免压到刻度线
+                val gap = tickTextSizePx * 0.3f
+                val textRadius = radius - tickLengthPx - gap -
+                        tickTextPaint.radialOverflow(label, rotation, deg)
                 val textX = cx + cosA * textRadius
                 val textY = cy - sinA * textRadius
 
-                nativeCanvas.save()
-                nativeCanvas.translate(textX, textY)
-                // 让文字始终沿半径方向可读
-                nativeCanvas.rotate((180 - deg - 90).toFloat())
-                nativeCanvas.drawText(deg.toString(), 0f, 0f, tickTextPaint)
-                nativeCanvas.restore()
+                nativeCanvas.withTranslation(textX, textY) {
+                    // 让文字始终沿半径方向可读
+                    rotate(rotation)
+                    drawText(label, 0f, 0f, tickTextPaint)
+                }
             }
         }
 
@@ -210,6 +215,33 @@ fun CycleRulerView(
             strokeWidth = tickStrokeWidthPx * 2f,
         )
     }
+}
+
+/**
+ * 居中绘制的文字绕锚点旋转后，其包围盒沿该刻度向外半径方向的最大溢出量。
+ *
+ * @param rotationDeg 绘制时施加的顺时针旋转角
+ * @param tickDeg 刻度值（0 在左，180 在右）
+ */
+private fun Paint.radialOverflow(text: String, rotationDeg: Float, tickDeg: Int): Float {
+    val fm = fontMetrics
+    val halfWidth = measureText(text) / 2f
+    val rotationRad = Math.toRadians(rotationDeg.toDouble())
+    val cosR = cos(rotationRad).toFloat()
+    val sinR = sin(rotationRad).toFloat()
+    // 该刻度处向外的单位半径向量（屏幕坐标，y 轴向下）
+    val tickRad = Math.toRadians(tickDeg.toDouble())
+    val outwardX = -cos(tickRad).toFloat()
+    val outwardY = -sin(tickRad).toFloat()
+    var overflow = 0f
+    for (x in floatArrayOf(-halfWidth, halfWidth)) {
+        for (y in floatArrayOf(fm.ascent, fm.descent)) {
+            val screenX = x * cosR - y * sinR
+            val screenY = x * sinR + y * cosR
+            overflow = maxOf(overflow, screenX * outwardX + screenY * outwardY)
+        }
+    }
+    return overflow
 }
 
 /**

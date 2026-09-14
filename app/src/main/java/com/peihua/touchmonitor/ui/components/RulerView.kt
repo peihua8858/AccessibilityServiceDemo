@@ -14,11 +14,14 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.abs
+import androidx.core.graphics.withTranslation
+import androidx.core.graphics.withRotation
 
 /** 单位：英寸 */
 const val UNIT_INCH = 0
@@ -64,10 +67,11 @@ fun RulerView(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val resources = LocalResources.current
 
     // 物理屏幕的纵向 DPI，用于换算英寸/厘米
     val ydpi = remember(context, density) {
-        val real = context.resources.displayMetrics.ydpi
+        val real = resources.displayMetrics.ydpi
         if (real.isFinite() && real > 0f) real else density.density * 160f
     }
 
@@ -157,14 +161,13 @@ fun RulerView(
                     val label = if (unitType == UNIT_INCH) (index / 4).toString()
                     else (index / 10).toString()
 
-                    nativeCanvas.save()
-                    nativeCanvas.translate(
+                    nativeCanvas.withTranslation(
                         x - tickTextSizePx,
                         y - tickPaint.measureText(label) / 2f,
-                    )
-                    nativeCanvas.rotate(90f)
-                    nativeCanvas.drawText(label, 0f, 0f, tickPaint)
-                    nativeCanvas.restore()
+                    ) {
+                        rotate(90f)
+                        drawText(label, 0f, 0f, tickPaint)
+                    }
                 }
                 index++
             }
@@ -174,8 +177,8 @@ fun RulerView(
         var topPoint: Offset? = null
         var bottomPoint: Offset? = null
         touches.values.forEach { p ->
-            if (topPoint == null || topPoint!!.y < p.y) topPoint = p
-            if (bottomPoint == null || bottomPoint!!.y > p.y) bottomPoint = p
+            if (topPoint == null || topPoint.y < p.y) topPoint = p
+            if (bottomPoint == null || bottomPoint.y > p.y) bottomPoint = p
         }
 
         // 画圆圈
@@ -208,16 +211,15 @@ fun RulerView(
 
         // ---------- 中间的测量结果 ----------
         val text = if (topPoint != null && bottomPoint != null) {
-            val distance = abs(topPoint!!.y - bottomPoint!!.y) / pxPerUnit
+            val distance = abs(topPoint.y - bottomPoint.y) / pxPerUnit
             formatMeasure(distance, unitType)
         } else {
             defaultText
         }
 
-        nativeCanvas.save()
-        nativeCanvas.rotate(90f, w / 2f, h / 2f)
-        nativeCanvas.drawText(text, w / 2f, h / 2f, measurePaint)
-        nativeCanvas.restore()
+        nativeCanvas.withRotation(90f, w / 2f, h / 2f) {
+            drawText(text, w / 2f, h / 2f, measurePaint)
+        }
     }
 }
 
