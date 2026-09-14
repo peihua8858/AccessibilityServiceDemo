@@ -100,6 +100,13 @@
     <string name="text_angle_meter">量角器</string>
     <!--    简易画板-->
     <string name="text_simple_paint">简易画板</string>
+    <string name="text_paint_undo">撤销</string>
+    <string name="text_paint_redo">恢复</string>
+    <string name="text_paint_pen">画笔</string>
+    <string name="text_paint_eraser">橡皮擦</string>
+    <string name="text_paint_stroke_width">画笔粗细</string>
+    <string name="text_paint_color">画笔颜色</string>
+    <string name="text_paint_empty">画板是空的</string>
     <!--    LED手机字幕-->
     <string name="text_led_subtitle">LED手机字幕</string>
     <!--    时间屏幕-->
