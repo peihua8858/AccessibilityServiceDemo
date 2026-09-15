@@ -109,6 +109,14 @@
     <string name="text_paint_empty">画板是空的</string>
     <!--    LED手机字幕-->
     <string name="text_led_subtitle">LED手机字幕</string>
+    <string name="text_led_input_hint">请输入文本内容</string>
+    <string name="text_led_normal_mode">普通模式</string>
+    <string name="text_led_scrolling_mode">滚动模式</string>
+    <string name="text_led_background_color">背景颜色</string>
+    <string name="text_led_text_color">字幕颜色</string>
+    <string name="text_led_font_size">字幕大小</string>
+    <string name="text_led_scrolling_speed">滚动速度</string>
+    <string name="text_led_empty">请输入字幕内容</string>
     <!--    时间屏幕-->
     <string name="text_time_screen">时间屏幕</string>
     <!--    每日60秒早报-->

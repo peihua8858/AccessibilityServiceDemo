@@ -102,6 +102,14 @@
     <string name="text_paint_color">Pen color</string>
     <string name="text_paint_empty">The board is empty</string>
     <string name="text_led_subtitle">LED Subtitle</string>
+    <string name="text_led_input_hint">Enter subtitle text</string>
+    <string name="text_led_normal_mode">Normal</string>
+    <string name="text_led_scrolling_mode">Scrolling</string>
+    <string name="text_led_background_color">Background color</string>
+    <string name="text_led_text_color">Text color</string>
+    <string name="text_led_font_size">Text size</string>
+    <string name="text_led_scrolling_speed">Scrolling speed</string>
+    <string name="text_led_empty">Enter subtitle text</string>
     <string name="text_time_screen">Time Screen</string>
     <string name="text_daily_60_seconds_early_report">Daily 60-second Early Report</string>
     <string name="text_calculator">Calculator</string>
