@@ -202,7 +202,6 @@ fun SimplePaintScreen(modifier: Modifier) {
             Canvas(modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(BoardColor)
                 .capturable(captureController)
                 .pointerInput(Unit) {
                     awaitEachGesture {
@@ -224,6 +223,7 @@ fun SimplePaintScreen(modifier: Modifier) {
                         drawingPoints.clear()
                     }
                 }) {
+                drawRect(color = BoardColor)
                 strokes.value.forEach { drawStroke(it) }
                 if (drawingPoints.isNotEmpty()) {
                     drawStroke(PaintStroke(drawingPoints.toList(), activeColor, activeWidth.value))
