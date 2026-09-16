@@ -49,7 +49,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +71,7 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.rememberColorSaveable
+import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.utils.toHex
 import kotlinx.coroutines.isActive
@@ -81,20 +81,18 @@ private enum class LedMode { Normal, Scrolling }
 
 @Composable
 fun LedScreen(modifier: Modifier) {
-    var text by rememberSaveable { mutableStateOf("") }
-    var mode by rememberSaveable { mutableStateOf(LedMode.Normal) }
+    var text by rememberSaveable("")
+    var mode by rememberSaveable(LedMode.Normal)
     val backgroundColor = rememberColorSaveable(Color.Black)
     val textColor = rememberColorSaveable(Color.White)
-    var fontSize by rememberSaveable { mutableFloatStateOf(112f) }
-    var scrollingSpeed by rememberSaveable { mutableFloatStateOf(100f) }
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
+    var fontSize by rememberSaveable(112f)
+    var scrollingSpeed by rememberSaveable(100f)
+    var isPlaying by rememberSaveable(false)
 
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
     val view = LocalView.current
-    var originalOrientation by rememberSaveable {
-        mutableIntStateOf(activity?.requestedOrientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-    }
+    var originalOrientation by rememberSaveable(activity?.requestedOrientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
 
     DisposableEffect(isPlaying, activity, view) {
         val window = activity?.window
@@ -110,12 +108,10 @@ fun LedScreen(modifier: Modifier) {
             view.keepScreenOn = false
         }
         onDispose {
-            if (isPlaying) {
-                insetsController?.show(WindowInsetsCompat.Type.systemBars())
-                view.keepScreenOn = false
-                if (activity?.isChangingConfigurations != true) {
-                    activity?.requestedOrientation = originalOrientation
-                }
+            insetsController?.show(WindowInsetsCompat.Type.systemBars())
+            view.keepScreenOn = false
+            if (activity?.isChangingConfigurations != true) {
+                activity?.requestedOrientation = originalOrientation
             }
         }
     }
@@ -264,7 +260,7 @@ fun LedScreen(modifier: Modifier) {
 @Composable
 private fun LedModeSelector(
     mode: LedMode,
-    onModeChange: (LedMode) -> Unit
+    onModeChange: (LedMode) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -293,7 +289,7 @@ private fun LedModeItem(
     modifier: Modifier,
     text: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val selectedColor = MaterialTheme.colorScheme.primary
     Box(
@@ -321,7 +317,7 @@ private fun LedModeItem(
 private fun ColorSettingRow(
     label: String,
     color: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         modifier = Modifier
@@ -353,7 +349,7 @@ private fun SliderSettingRow(
     label: String,
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
 ) {
     Surface(
         modifier = Modifier
@@ -389,7 +385,7 @@ private fun LedPlayback(
     backgroundColor: Color,
     textColor: Color,
     fontSize: Float,
-    scrollingSpeed: Float
+    scrollingSpeed: Float,
 ) {
     Box(
         modifier = modifier
@@ -423,7 +419,7 @@ private fun ScrollingLedText(
     text: String,
     color: Color,
     fontSize: Float,
-    speed: Float
+    speed: Float,
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
@@ -437,7 +433,7 @@ private fun ScrollingLedText(
         LaunchedEffect(screenWidth, textWidth, speed, text) {
             if (textWidth == 0) return@LaunchedEffect
             val pixelsPerSecond = with(density) { speed.dp.toPx() }
-            val duration = (((screenWidth + textWidth) / pixelsPerSecond) * 1_000)
+            val duration = (((screenWidth + textWidth) / pixelsPerSecond) * 300)
                 .roundToInt()
                 .coerceAtLeast(500)
             while (isActive) {
