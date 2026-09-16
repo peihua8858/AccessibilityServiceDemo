@@ -218,8 +218,9 @@ class M3u8DownloadEngine(
         coroutineScope {
             pending.map { segment ->
                 async(Dispatchers.IO) {
-                    globalGate.withPermit {
-                        gate.withPermit {
+                    // 先限制单任务排队数量，避免先启动的任务把全局信号量等待队列全部占满
+                    gate.withPermit {
+                        globalGate.withPermit {
                             downloadWithRetry(task, segment, dir, rt, isFmp4)
                         }
                     }

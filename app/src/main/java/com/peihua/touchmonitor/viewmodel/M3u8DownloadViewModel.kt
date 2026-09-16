@@ -198,9 +198,14 @@ private val RETRYABLE_STAGES = setOf(
 private fun formatEta(millis: Long): String {
     if (millis <= 0L) return ""
     val totalSeconds = millis / 1000
-    val minutes = totalSeconds / 60
+    val hours = totalSeconds / 3_600
+    val minutes = totalSeconds % 3_600 / 60
     val seconds = totalSeconds % 60
-    return if (minutes > 0) "剩余 ${minutes}分${seconds}秒" else "剩余 ${seconds}秒"
+    return when {
+        hours > 0 -> "剩余 ${hours}小时${minutes}分${seconds}秒"
+        minutes > 0 -> "剩余 ${minutes}分${seconds}秒"
+        else -> "剩余 ${seconds}秒"
+    }
 }
 
 /** 用 m3u8 的文件名（去掉 .m3u8）作为默认标题，拿不到就用时间戳 */

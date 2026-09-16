@@ -8,9 +8,6 @@ import androidx.activity.compose.BackHandler
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +20,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -50,10 +46,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -62,7 +61,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
@@ -74,8 +72,8 @@ import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.showToast
 import com.peihua.touchmonitor.utils.toHex
+import com.peihua8858.tools.activity.findActivity
 import kotlinx.coroutines.isActive
-import kotlin.math.roundToInt
 
 private enum class LedMode { Normal, Scrolling }
 
@@ -427,27 +425,35 @@ private fun ScrollingLedText(
     ) {
         val density = LocalDensity.current
         val screenWidth = with(density) { maxWidth.toPx() }
-        var textWidth by remember(text, fontSize) { mutableIntStateOf(0) }
-        val offset = remember { Animatable(screenWidth) }
+        var textWidth by remember { mutableIntStateOf(0) }
+        val offset = remember { mutableFloatStateOf(screenWidth) }
 
-        LaunchedEffect(screenWidth, textWidth, speed, text) {
-            if (textWidth == 0) return@LaunchedEffect
-            val pixelsPerSecond = with(density) { speed.dp.toPx() }
-            val duration = (((screenWidth + textWidth) / pixelsPerSecond) * 300)
-                .roundToInt()
-                .coerceAtLeast(500)
+        LaunchedEffect(screenWidth, speed, text, fontSize) {
+            // 与旧 tween 时长换算保持一致的实际滚动速度
+            val pixelsPerSecond = with(density) { speed.dp.toPx() } / 0.3f
+            offset.floatValue = screenWidth
+            var lastFrame = 0L
             while (isActive) {
-                offset.snapTo(screenWidth)
-                offset.animateTo(
-                    targetValue = -textWidth.toFloat(),
-                    animationSpec = tween(durationMillis = duration, easing = LinearEasing)
-                )
+                withFrameNanos { frame ->
+                    val width = textWidth
+                    val elapsed = if (lastFrame == 0L) 0f else (frame - lastFrame) / 1_000_000_000f
+                    lastFrame = frame
+                    if (width > 0) {
+                        var next = offset.floatValue - pixelsPerSecond * elapsed.coerceAtMost(0.05f)
+                        if (next <= -width) next += screenWidth + width
+                        offset.floatValue = next
+                    }
+                }
             }
         }
 
         Text(
             text = text,
-            modifier = Modifier.offset { IntOffset(offset.value.roundToInt(), 0) },
+            modifier = Modifier.graphicsLayer {
+                translationX = offset.floatValue
+                // 超大字号的字形每帧重新光栅化会掉帧，这里让文字缓存成离屏图层，逐帧只做位移
+                compositingStrategy = CompositingStrategy.Offscreen
+            },
             color = color,
             fontSize = fontSize.sp,
             fontWeight = FontWeight.Medium,
