@@ -181,7 +181,6 @@ fun SettingsScreen(
                 },
                 itemColors = menuItemColors,
                 itemText = { isSelected, item ->
-                    dLog { "themeModels>>>>>isSelected:$isSelected, item:${item.theme.name}, systemSettings.value.theme:${ systemSettings.value.themeModel.theme.name}" }
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
