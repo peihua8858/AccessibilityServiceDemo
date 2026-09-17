@@ -187,7 +187,7 @@ fun CustomSlider(
                     )
                 ),
 
-            color = Color.White
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

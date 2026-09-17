@@ -26,21 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.icons.AppIcons
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
     title: String,
-    elevation: Dp = dimensionResource(id = R.dimen.dp_1),
+    elevation: Dp = 1.dp,
     navigateUp: () -> Unit = { popBackStack() },
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -55,7 +52,7 @@ fun Toolbar(
 fun Toolbar(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
-    elevation: Dp = dimensionResource(id = R.dimen.dp_1),
+    elevation: Dp = 1.dp,
     navigateUp: () -> Unit = {popBackStack()},
     navigationIcon: @Composable () -> Unit = {
         NavigationIcon(navigateUp = navigateUp)
@@ -144,9 +141,8 @@ fun AppTopBar(
                 text = title,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
+                    .wrapContentWidth(Alignment.CenterHorizontally)
                     .align(Alignment.Center),
-                fontSize = dimensionSpResource(id = R.dimen.sp_18),
             )
         }
     }, navigationIcon, actions)
@@ -161,7 +157,13 @@ fun AppTopBar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    val colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors()
+    val colorScheme = MaterialTheme.colorScheme
+    val colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
+        containerColor = colorScheme.surface,
+        titleContentColor = colorScheme.onSurface,
+        navigationIconContentColor = colorScheme.primary,
+        actionIconContentColor = colorScheme.primary,
+    )
     TopAppBar(
         title = title,
         navigationIcon = navigationIcon,
@@ -182,8 +184,8 @@ fun NavigationIcon(
 ) {
     NavigationIcon2(
         modifier
-            .size(dimensionResource(id = R.dimen.dp_32))
-            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))),
+            .size(32.dp)
+            .clip(shape = RoundedCornerShape(8.dp)),
         imageVector, navigateUp = navigateUp
     )
 }
@@ -206,7 +208,7 @@ fun NavigationIcon2(
     ) {
         Icon(
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.dp_4))
+                .padding(4.dp)
                 .aspectRatio(1f)
                 .fillMaxSize(),
             imageVector = imageVector,

@@ -69,7 +69,7 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                 model = R.drawable.ic_user_avatar,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .border(dimensionResource(id = R.dimen.dp_2), Color.White, CircleShape)
+                    .border(dimensionResource(id = R.dimen.dp_2), colorScheme.onPrimaryContainer, CircleShape)
                     .clip(CircleShape)
                     .size(dimensionResource(id = R.dimen.dp_64)),
                 contentDescription = null

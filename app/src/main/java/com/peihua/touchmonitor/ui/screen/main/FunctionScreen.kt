@@ -2,12 +2,12 @@ package com.peihua.touchmonitor.ui.screen.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowOverflow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -26,13 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.Dialog
+import com.peihua.touchmonitor.ui.components.AdaptiveContent
 import com.peihua.touchmonitor.ui.components.ExtendedListTileNoBorder
 import com.peihua.touchmonitor.ui.components.RotatingView
 import com.peihua.touchmonitor.ui.components.Toolbar
@@ -40,7 +41,6 @@ import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.navigateTo2
-import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
 import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.showToast
@@ -52,28 +52,30 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         title = stringResource(id = R.string.text_function)
     ) {
-        Column(
-            modifier = modifier
-                .verticalScroll(rememberScrollState())
-                .padding(dimensionResource(id = R.dimen.dp_16))
-        ) {
-            val isDarkTheme = isSystemInDarkTheme()
-            val textColor = if (isDarkTheme) Colors.Grey[300] else Colors.Red[300]
-            val textBgColor = if (isDarkTheme) Colors.Grey[700] else Colors.Red[50]
-            val bgContainerColor = if (isDarkTheme) Colors.Grey[900] else Color.White
+        AdaptiveContent {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp)
+            ) {
+            val colorScheme = MaterialTheme.colorScheme
+            val textColor = colorScheme.onSecondaryContainer
+            val textBgColor = colorScheme.secondaryContainer
+            val bgContainerColor = colorScheme.surfaceContainerLow
             ExtendedListTileNoBorder(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .clip(RoundedCornerShape(16.dp))
                     .background(
                         bgContainerColor,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                        shape = RoundedCornerShape(16.dp)
                     ),
                 isExtended = true,
                 title = { isExtended ->
                     TitleView(
                         text = stringResource(R.string.text_daily_tools),
                         painter = painterResource(id = R.drawable.ic_daily_tools),
-                        tintColor = Colors.Red[400],
+                        tintColor = colorScheme.primary,
                         isExtended = isExtended
                     )
                 }) {
@@ -95,18 +97,18 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
             }
             ExtendedListTileNoBorder(
                 modifier = Modifier
-                    .padding(top = dimensionResource(id = R.dimen.dp_16))
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(
                         bgContainerColor,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                        shape = RoundedCornerShape(16.dp)
                     ),
                 isExtended = true,
                 title = { isExtended ->
                     TitleView(
                         text = stringResource(R.string.text_system_tool),
                         painter = painterResource(id = R.drawable.ic_system_tools),
-                        tintColor = Colors.Indigo[600],
+                        tintColor = colorScheme.secondary,
                         isExtended = isExtended
                     )
                 }) {
@@ -125,18 +127,18 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
             }
             ExtendedListTileNoBorder(
                 modifier = Modifier
-                    .padding(top = dimensionResource(id = R.dimen.dp_16))
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(
                         bgContainerColor,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                        shape = RoundedCornerShape(16.dp)
                     ),
                 isExtended = true,
                 title = { isExtended ->
                     TitleView(
                         text = stringResource(R.string.text_photo_tools),
                         painter = painterResource(id = R.drawable.ic_photo_tools),
-                        tintColor = Colors.Green[600],
+                        tintColor = colorScheme.tertiary,
                         isExtended = isExtended
                     )
                 }) {
@@ -159,18 +161,18 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
             }
             ExtendedListTileNoBorder(
                 modifier = Modifier
-                    .padding(top = dimensionResource(id = R.dimen.dp_16))
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(
                         bgContainerColor,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))
+                        shape = RoundedCornerShape(16.dp)
                     ),
                 isExtended = true,
                 title = { isExtended ->
                     TitleView(
                         text = stringResource(R.string.text_video_tools),
                         painter = rememberVectorPainter(Icons.Default.VideoLibrary),
-                        tintColor = Colors.Blue[600],
+                        tintColor = colorScheme.primaryContainer,
                         isExtended = isExtended
                     )
                 }) {
@@ -189,6 +191,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
         }
     }
 }
+}
 
 @Composable
 private fun ItemTextView(
@@ -206,21 +209,21 @@ private fun ItemTextView(
         maxLines = 1,
         modifier = modifier
             .padding(
-                top = dimensionResource(id = R.dimen.dp_8),
-                start = dimensionResource(id = R.dimen.dp_8),
-                end = dimensionResource(id = R.dimen.dp_8)
+                top = 8.dp,
+                start = 8.dp,
+                end = 8.dp
             )
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)))
+            .clip(RoundedCornerShape(16.dp))
             .background(
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_16)),
+                shape = RoundedCornerShape(16.dp),
                 color = backgroundColor
             )
             .clickable(onClick = onClick)
             .padding(
-                start = dimensionResource(id = R.dimen.dp_8),
-                top = dimensionResource(id = R.dimen.dp_4),
-                end = dimensionResource(id = R.dimen.dp_8),
-                bottom = dimensionResource(id = R.dimen.dp_4)
+                start = 8.dp,
+                top = 4.dp,
+                end = 8.dp,
+                bottom = 4.dp
             )
     )
 }
@@ -230,10 +233,10 @@ private fun TitleView(text: String, painter: Painter, tintColor: Color, isExtend
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = dimensionResource(id = R.dimen.dp_56))
+            .heightIn(min = 56.dp)
             .padding(
-                start = dimensionResource(id = R.dimen.dp_8),
-                end = dimensionResource(id = R.dimen.dp_8)
+                start = 8.dp,
+                end = 8.dp
             ),
         verticalAlignment = Alignment.CenterVertically
 
@@ -241,14 +244,14 @@ private fun TitleView(text: String, painter: Painter, tintColor: Color, isExtend
         Image(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .size(dimensionResource(id = R.dimen.dp_24)),
+                .size(24.dp),
             painter = painter,
             colorFilter = ColorFilter.tint(tintColor),
             contentDescription = null
         )
         ScaleText(
             modifier = Modifier
-                .padding(start = dimensionResource(id = R.dimen.dp_8))
+                .padding(start = 8.dp)
                 .align(Alignment.CenterVertically)
                 .weight(1f),
             style = MaterialTheme.typography.labelLargeNormal,
@@ -278,9 +281,9 @@ private fun FlowRowList(
 ) {
     FlowRow(
         modifier = modifier.padding(
-            start = dimensionResource(id = R.dimen.dp_8),
-            end = dimensionResource(id = R.dimen.dp_8),
-            bottom = dimensionResource(id = R.dimen.dp_8)
+            start = 8.dp,
+            end = 8.dp,
+            bottom = 8.dp
         ),
         maxItemsInEachRow = maxItemsInEachRow,
         maxLines = maxLines,

@@ -22,8 +22,6 @@ import com.peihua.touchmonitor.ui.components.DynamicAsyncImage
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.components.text.ScaleText
-import com.peihua.touchmonitor.ui.theme.Colors
-import com.peihua.touchmonitor.ui.theme.color_ff5187f4
 import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.DayNewsViewModel
 import com.peihua8858.tools.utils.dLog
@@ -38,6 +36,7 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
         modifier = modifier, R.string.text_daily_60_seconds_early_report,
         result = result, refresh = refresh
     ) {
+        val colorScheme = MaterialTheme.colorScheme
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -65,19 +64,19 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
                         text = stringResource(R.string.understand_the_world_60_seconds),
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = color_ff5187f4, fontSize = dimensionSpResource(id = R.dimen.sp_18)),
+                            .copy(color = colorScheme.primary, fontSize = dimensionSpResource(id = R.dimen.sp_18)),
                     )
                     ScaleText(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
                         text = it.date,
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = Colors.Grey[700], fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                            .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
                     )
                     ScaleText(
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
                         text = it.weiyu,
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = Colors.Grey[700], fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                            .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
                     )
                 }
             }
@@ -87,7 +86,7 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
                     modifier = Modifier.fillMaxWidth(),
                     text = item,
                     style = MaterialTheme.typography.titleLarge
-                        .copy(color = Colors.Grey[700], fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                        .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
                 )
             }
         }

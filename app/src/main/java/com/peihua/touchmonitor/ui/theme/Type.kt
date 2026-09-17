@@ -1,116 +1,39 @@
 package com.peihua.touchmonitor.ui.theme
 
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import androidx.compose.ui.unit.sp
 
+val AppTypography = Typography(
+    displayLarge = TextStyle(fontSize = 57.sp, lineHeight = 64.sp),
+    displayMedium = TextStyle(fontSize = 45.sp, lineHeight = 52.sp),
+    displaySmall = TextStyle(fontSize = 36.sp, lineHeight = 44.sp),
+    headlineLarge = TextStyle(fontSize = 32.sp, lineHeight = 40.sp),
+    headlineMedium = TextStyle(fontSize = 28.sp, lineHeight = 36.sp),
+    headlineSmall = TextStyle(fontSize = 24.sp, lineHeight = 32.sp),
+    titleLarge = TextStyle(fontSize = 22.sp, lineHeight = 28.sp),
+    titleMedium = TextStyle(fontSize = 16.sp, lineHeight = 24.sp, letterSpacing = 0.2.sp),
+    titleSmall = TextStyle(fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.1.sp),
+    bodyLarge = TextStyle(fontSize = 16.sp, lineHeight = 24.sp, letterSpacing = 0.5.sp),
+    bodyMedium = TextStyle(fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.2.sp),
+    bodySmall = TextStyle(fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.4.sp),
+    labelLarge = TextStyle(fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.1.sp),
+    labelMedium = TextStyle(fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.5.sp),
+    labelSmall = TextStyle(fontSize = 11.sp, lineHeight = 16.sp, letterSpacing = 0.5.sp),
+)
 
-internal val LocalTypography = staticCompositionLocalOf { Typography() }
-
-@Composable
-fun Typography(scale: Float = 1f): Typography {
-    val typography = LocalTypography.current
-    return MaterialTheme.typography.copy(
-        displayLarge = typography.displayLarge.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_57) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_64),
-            //-0.2.sp
-//            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_0)
-        ),
-        displayMedium = typography.displayMedium.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_45) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_52),
-        ),
-        displaySmall = typography.displaySmall.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_36) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_44),
-        ),
-        headlineLarge = typography.headlineLarge.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_32) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_40),
-        ),
-        headlineMedium = typography.headlineMedium.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_28) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_36),
-//            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_0)
-        ),
-        headlineSmall = typography.headlineSmall.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_24) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_32),
-//            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_0)
-        ),
-        titleLarge = typography.titleLarge.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_22) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_28),
-//            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_0)
-        ),
-        titleMedium = typography.titleMedium.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_16) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_24),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_2)
-        ),
-        titleSmall = typography.titleSmall.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_14) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_20),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_1)
-        ),
-        bodyLarge = typography.bodyLarge.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_16) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_24),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_5)
-        ),
-        bodyMedium = typography.bodyMedium.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_14) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_20),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_2)
-        ),
-        bodySmall = typography.bodySmall.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_12) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_4)
-        ),
-        labelLarge = typography.labelLarge.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_14) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_20),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_1)
-        ),
-        labelMedium = typography.labelMedium.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_12) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_5)
-        ),
-        labelSmall = typography.labelSmall.copy(
-            fontSize = dimensionSpResource(R.dimen.sp_11) * scale,
-            lineHeight = dimensionSpResource(id = R.dimen.sp_16),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_5)
-        ),
-    )
-}
-
-//@get:Composable
 val Typography.labelSmallNormal: TextStyle
     get() = labelSmall.copy(fontWeight = FontWeight.Normal)
 
-//@get:Composable
 val Typography.labelMediumNormal: TextStyle
     get() = labelMedium.copy(fontWeight = FontWeight.Normal)
-//@get:Composable
+
 val Typography.labelLargeNormal: TextStyle
     get() = labelLarge.copy(fontWeight = FontWeight.Normal)
 
 @get:Composable
 val DefaultTextStyle: TextStyle
-    get() {
-        return LocalTextStyle.current.copy(
-            fontWeight = FontWeight.Normal,
-            fontSize = dimensionSpResource(id = R.dimen.sp_14),
-            lineHeight = dimensionSpResource(id = R.dimen.sp_20),
-            letterSpacing = dimensionSpResource(id = R.dimen.sp_0_1)
-        )
-    }
+    get() = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal)

@@ -57,7 +57,7 @@ data class ApkModel(
 }
 
 data class SystemSettings(
-    val theme: ThemeModel = ThemeModel(),
+    val themeModel: ThemeModel = ThemeModel(),
     val language: LanguageModel = LanguageModel.default,
     val exportPath: String = Constants.EXTERNAL_EXPORT_PATH,
 ) {
@@ -78,8 +78,6 @@ data class ThemeModel(
     @get:StringRes
     val nameIds: Int
         get() = theme.nameIds
-    val model: ThemeMode
-        get() = theme
 }
 
 data class LanguageModel(

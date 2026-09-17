@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -32,7 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -40,6 +40,7 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.CycleRulerView
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 import com.peihua.touchmonitor.utils.isGrantedPermission
 import com.peihua.touchmonitor.utils.rememberIntState
 import com.peihua.touchmonitor.utils.showToast
@@ -61,6 +62,7 @@ fun AngleMeterScreen(modifier: Modifier) {
         title = stringResource(R.string.text_angle_meter)
     ) {
         val angle = rememberIntState(0)
+        val toolColors = LocalToolColors.current
         var cameraEnabled by remember { mutableStateOf(false) }
         BoxWithConstraints(
             modifier = Modifier
@@ -97,6 +99,7 @@ fun AngleMeterScreen(modifier: Modifier) {
                     modifier = Modifier.fillMaxSize(),
                     angle = angle.intValue,
                     onAngleChange = { angle.intValue = it },
+                    tickColor = toolColors.rulerTick,
                     backgroundColor = Color.Transparent,
                 )
                 CameraToggle(
@@ -118,6 +121,7 @@ private fun CameraToggle(
     onToggle: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
     val accentLine = with(LocalDensity.current) { 3.dp.toPx() }
     Box(
         modifier = modifier
@@ -132,10 +136,10 @@ private fun CameraToggle(
                     }
                 }
             }
-            .background(color = Color(0x99FFFFFF))
+            .background(color = colorScheme.surfaceContainerHigh)
             .drawBehind {
                 drawRect(
-                    color = Color(0xFF3C7FEC),
+                    color = colorScheme.primary,
                     topLeft = Offset(0f, size.height - accentLine),
                     size = Size(size.width, accentLine)
                 )
@@ -144,8 +148,8 @@ private fun CameraToggle(
     ) {
         Text(
             text = stringResource(if (enabled) R.string.text_camera_on else R.string.text_camera_off),
-            color = Color.White,
-            fontSize = 16.sp,
+            color = colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

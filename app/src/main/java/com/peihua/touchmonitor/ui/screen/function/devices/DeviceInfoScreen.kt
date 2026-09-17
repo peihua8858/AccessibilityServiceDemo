@@ -21,7 +21,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -56,7 +55,7 @@ fun DeviceInfoScreen(modifier: Modifier) {
             "用户：${Build.USER}"
     Column(
         modifier = modifier
-            .background(Color.White, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .background(colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
             .fillMaxWidth()
 
     ) {

@@ -14,6 +14,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
+import com.peihua.touchmonitor.ui.components.scrollbar.LocalScrollbarStyle
+import com.peihua.touchmonitor.ui.components.scrollbar.ScrollbarStyle
 import com.peihua.touchmonitor.model.SystemSettings
 import com.peihua.touchmonitor.model.ThemeModel
 
@@ -261,10 +265,9 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun Theme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
-    content: @Composable() (ThemeMode, colorScheme: ColorScheme) -> Unit,
+    darkTheme: Boolean,
+    dynamicColor: Boolean,
+    content: @Composable (isDark: Boolean, colorScheme: ColorScheme) -> Unit,
 ) {
     val dynamicColorScheme = if (dynamicColor) dynamicColorScheme(darkTheme) else null
     val colorScheme = when {
@@ -272,21 +275,29 @@ fun Theme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-    CompositionLocalProvider(
-//        LocalGradientColors provides gradientColors,
-//        LocalBackgroundTheme provides backgroundTheme,
-//        LocalTintTheme provides tintTheme,
-    ) {
+    CompositionLocalProvider(LocalToolColors provides DefaultToolColors) {
         MaterialTheme(
             shapes = customShapes,
             colorScheme = colorScheme,
-            typography = Typography(1f),
-            content = {
+            typography = AppTypography,
+        ) {
+            CompositionLocalProvider(
+                LocalScrollbarStyle provides ScrollbarStyle(
+                    minimalHeight = 16.dp,
+                    thickness = 8.dp,
+                    scrollbarPadding = 16.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    hoverDurationMillis = 500,
+                    hideDelayMillis = 2000,
+                    unhoverColor = colorScheme.outlineVariant,
+                    hoverColor = colorScheme.outline,
+                )
+            ) {
                 ProvideTextStyle(value = DefaultTextStyle) {
-                    content(if (darkTheme) ThemeMode.Dark else ThemeMode.Light, colorScheme)
+                    content(darkTheme, colorScheme)
                 }
             }
-        )
+        }
     }
 }
 
@@ -301,23 +312,17 @@ private fun dynamicColorScheme(isDarkTheme: Boolean): ColorScheme? {
 @Composable
 fun AppTheme(
     config: ThemeModel,
-    // Dynamic color is available on Android 12+
-    content: @Composable() (ThemeMode, colorScheme: ColorScheme) -> Unit,
+    content: @Composable (isDark: Boolean, colorScheme: ColorScheme) -> Unit,
 ) {
-    val themeMode = config.theme
-
-    when (themeMode) {
-        ThemeMode.Dark -> {
-            Theme(darkTheme = true, content = content)
-        }
-
-        ThemeMode.Light -> {
-            Theme(darkTheme = false, content = content)
-        }
-
-        ThemeMode.System -> {
-            Theme(darkTheme = isSystemInDarkTheme(),config.dynamicColor, content = content)
-        }
+    val isDark = when (config.theme) {
+        ThemeMode.System -> isSystemInDarkTheme()
+        ThemeMode.Light -> false
+        ThemeMode.Dark -> true
     }
+    Theme(
+        darkTheme = isDark,
+        dynamicColor = config.dynamicColor,
+        content = content,
+    )
 }
 

@@ -30,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -52,7 +51,6 @@ import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.appmanager.task.ExtortWorker
-import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.ResultData
 import com.peihua.touchmonitor.utils.copyToClipBoard
 import com.peihua.touchmonitor.utils.showToast
@@ -115,6 +113,7 @@ private fun AppInfoScreenContent(
     model: AppInfoModel,
 ) {
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
     val exportAppPkg = remember { mutableStateOf(false to false) }
     if (exportAppPkg.value.first) {
         val isShare = exportAppPkg.value.second
@@ -154,13 +153,13 @@ private fun AppInfoScreenContent(
                     bottom = dimensionResource(id = R.dimen.dp_8)
                 ),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
             elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
         ) {
             IconText(
                 text = stringResource(id = R.string.text_run),
                 painter = painterResource(id = R.drawable.ic_play_arrow_24),
-                tint = Colors.Cyan[800]
+                tint = colorScheme.primary
             ) {
                 // 打开应用
                 try {
@@ -173,7 +172,7 @@ private fun AppInfoScreenContent(
             IconText(
                 text = stringResource(id = R.string.text_export),
                 painter = painterResource(id = R.drawable.ic_download_24),
-                tint = Colors.Cyan[800]
+                tint = colorScheme.primary
             ) {
                 // 导出应用
                 exportAppPkg.value = true to false
@@ -181,7 +180,7 @@ private fun AppInfoScreenContent(
             IconText(
                 text = stringResource(id = R.string.text_share),
                 painter = painterResource(id = R.drawable.ic_share_24),
-                tint = Colors.Cyan[600]
+                tint = colorScheme.secondary
             ) {
                 // 分享应用
                 exportAppPkg.value = true to true
@@ -189,7 +188,7 @@ private fun AppInfoScreenContent(
             IconText(
                 text = stringResource(id = R.string.text_app_detail),
                 painter = painterResource(id = R.drawable.ic_info_24),
-                tint = Colors.Cyan[600]
+                tint = colorScheme.secondary
             ) {
                 // 查看信息
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -216,7 +215,7 @@ private fun AppInfoScreenContent(
             IconText(
                 text = stringResource(id = R.string.text_app_uninstall),
                 painter = painterResource(id = R.drawable.ic_delete_24),
-                tint = Colors.Grey[800]
+                tint = colorScheme.error
             ) {
                 // 卸载应用
                 try {
@@ -236,7 +235,7 @@ private fun AppInfoScreenContent(
                     bottom = dimensionResource(id = R.dimen.dp_8)
                 ),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
             elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
         ) {
             TitleValueView(
@@ -314,7 +313,7 @@ private fun AppInfoScreenContent(
                     bottom = dimensionResource(id = R.dimen.dp_8)
                 ),
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
             elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
         ) {
             TitleValueView(

@@ -68,6 +68,7 @@ import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
 import com.peihua.touchmonitor.utils.showToast
@@ -81,8 +82,9 @@ private enum class LedMode { Normal, Scrolling }
 fun LedScreen(modifier: Modifier) {
     var text by rememberSaveable("")
     var mode by rememberSaveable(LedMode.Normal)
-    val backgroundColor = rememberColorSaveable(Color.Black)
-    val textColor = rememberColorSaveable(Color.White)
+    val toolColors = LocalToolColors.current
+    val backgroundColor = rememberColorSaveable(toolColors.ledDefaultBackground)
+    val textColor = rememberColorSaveable(toolColors.ledDefaultText)
     var fontSize by rememberSaveable(112f)
     var scrollingSpeed by rememberSaveable(100f)
     var isPlaying by rememberSaveable(false)

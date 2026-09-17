@@ -27,7 +27,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -94,7 +93,7 @@ fun BaseDialogScreen(
     Column(
         modifier = modifier
             .background(
-                Color.White,
+                colorScheme.surfaceContainerHigh,
                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
             )
             .fillMaxWidth()
@@ -230,7 +229,7 @@ fun ProgressDialog(
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(dimensionResource(id = R.dimen.dp_16))
         ) {
             if (title.isNonEmpty()) {
@@ -261,7 +260,7 @@ fun ProgressDialogScreen(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .padding(dimensionResource(id = R.dimen.dp_16))
     ) {
         if (title.isNonEmpty()) {

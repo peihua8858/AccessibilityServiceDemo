@@ -46,6 +46,7 @@ fun <T : Any> DropdownMenuBox(
     textColors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     placeholder: @Composable (() -> Unit)? = null,
     itemColors: MenuItemColors = DropdownMenuBoxDefaults.itemColors(),
+    isSelected: (Int,T) -> Boolean = {index,item-> item ==defaultSelectedItem },
     itemText: @Composable (Boolean, T) -> Unit = { isSelected, item ->
         ScaleText(
             item.toString(),
@@ -72,6 +73,7 @@ fun <T : Any> DropdownMenuBox(
         placeholder = placeholder,
         data = data,
         defaultSelectedItem = defaultSelectedItem,
+        isSelected = isSelected,
         itemColors = itemColors,
         itemText = itemText,
         onItemClick = onItemClick
@@ -99,6 +101,7 @@ fun <T : Any> DropdownMenuBox(
     textColors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     placeholder: @Composable (() -> Unit)? = null,
     itemColors: MenuItemColors = DropdownMenuBoxDefaults.itemColors(),
+    isSelected: (Int,T) -> Boolean = {index,item-> item ==defaultSelectedItem },
     inputBox: @Composable ExposedDropdownMenuBoxScope.() -> Unit = {
         OutlinedTextField(
             value = value,
@@ -140,8 +143,8 @@ fun <T : Any> DropdownMenuBox(
             expanded = isExpanded.value,
             onDismissRequest = { isExpanded.value = false },
         ) {
-            data.forEach { item ->
-                val isSelected = selectedItem.value == item
+            for ((index,item) in data.withIndex() ) {
+                val isSelected = isSelected(index,item)
                 DropdownMenuItem(
                     modifier = Modifier
                         .fillMaxSize()
@@ -156,6 +159,10 @@ fun <T : Any> DropdownMenuBox(
                         onItemClick(item)
                     },
                 )
+            }
+            data.forEach { item ->
+                val isSelected = selectedItem.value == item
+
             }
         }
     }

@@ -85,6 +85,7 @@ private class PaintStroke(val points: List<Offset>, val color: Color, val width:
 @Composable
 fun SimplePaintScreen(modifier: Modifier) {
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
     val scope = rememberCoroutineScope()
     val captureController = rememberCaptureController()
 
@@ -132,7 +133,7 @@ fun SimplePaintScreen(modifier: Modifier) {
                                     modifier = Modifier
                                         .size(if (width < 4.dp) 4.dp else width)
                                         .clip(CircleShape)
-                                        .background(if (tool.value == PaintTool.Pen) penColor.value else Color.Gray)
+                                        .background(if (tool.value == PaintTool.Pen) penColor.value else colorScheme.outline)
                                 )
                             },
                             trailingIcon = {

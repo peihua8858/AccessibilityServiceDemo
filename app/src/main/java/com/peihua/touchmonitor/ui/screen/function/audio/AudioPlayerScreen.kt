@@ -18,9 +18,11 @@ import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.AudioPlayer
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 
 @Composable
 fun AudioPlayerScreen(modifier: Modifier, audioPath: String) {
+    val toolColors = LocalToolColors.current
     Box(
         modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -37,7 +39,7 @@ fun AudioPlayerScreen(modifier: Modifier, audioPath: String) {
             modifier = Modifier
                 .padding(top = dimensionResource(id = R.dimen.dp_16), start = dimensionResource(id = R.dimen.dp_16))
                 .size(dimensionResource(id = R.dimen.dp_24))
-                .background(Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .background(toolColors.mediaScrim, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
                 .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
                 .align(Alignment.TopStart),
             tintColor = Color.White

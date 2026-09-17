@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -30,7 +31,6 @@ import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.ui.theme.Colors
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.StorageViewModel
 import com.peihua8858.tools.utils.openWithFile
@@ -67,7 +67,7 @@ fun StorageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dimensionResource(R.dimen.dp_48))
-                    .background(Colors.Grey[100])
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .padding(start = dimensionResource(R.dimen.dp_16), end = dimensionResource(R.dimen.dp_16)),
                 verticalAlignment = Alignment.CenterVertically
             ) { StorageScreenHeader(result = headerResult, changeFolder = changeFolder) }

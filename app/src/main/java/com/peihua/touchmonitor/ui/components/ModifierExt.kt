@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -49,13 +50,14 @@ import kotlin.times
 /**
  * 圆角卡片+ 阴影
  */
+@Composable
 fun Modifier.surface(
     topStart: Dp = 0.dp,
     topEnd: Dp = 0.dp,
     bottomEnd: Dp = 0.dp,
     bottomStart: Dp = 0.dp,
     elevation: Dp = 0.dp,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     border: BorderStroke? = null,
 ) = surface(
     RoundedCornerShape(topStart, topEnd, bottomEnd, bottomStart),
@@ -65,10 +67,11 @@ fun Modifier.surface(
 /**
  * 圆角卡片+ 阴影
  */
+@Composable
 fun Modifier.surface(
     radius: Dp = 0.dp,
     elevation: Dp = 0.dp,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     border: BorderStroke? = null,
 ) = surface(
     RoundedCornerShape(radius),
@@ -78,10 +81,11 @@ fun Modifier.surface(
 /**
  * 圆角卡片+ 阴影
  */
+@Composable
 fun Modifier.surface(
     radius: CornerSize = CornerSize(0.dp),
     elevation: Dp = 0.dp,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     border: BorderStroke? = null,
 ) = surface(
     RoundedCornerShape(radius),
@@ -91,9 +95,10 @@ fun Modifier.surface(
 /**
  * 圆角卡片+ 阴影
  */
+@Composable
 fun Modifier.surface(
     shape: Shape = RoundedCornerShape(8.dp),
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     border: BorderStroke? = null,
     elevation: Dp = 0.dp,
 ) = this
@@ -180,7 +185,7 @@ internal fun Modifier.defaultErrorSemantics(
 fun Modifier.topFadeMask(
     alpha: Float = 1f,
     height: Dp = 20.dp,
-    colors: List<Color> = listOf(Color.White, Color.Transparent),
+    colors: List<Color> = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
     durationMillis: Int = 400,
 ): Modifier {
     val alphaAnim by animateFloatAsState(
@@ -219,7 +224,7 @@ fun Modifier.topFadeMask(
 fun Modifier.bottomFadeMask(
     alpha: Float = 1f,
     height: Dp = 20.dp,
-    colors: List<Color> = listOf(Color.Transparent, Color.White),
+    colors: List<Color> = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
     durationMillis: Int = 400,
 ): Modifier {
     val alphaAnim by animateFloatAsState(
@@ -253,7 +258,7 @@ fun Modifier.bottomFadeMask(
 fun Modifier.topFadeMask(
     visible: Boolean = true,
     height: Dp = 20.dp,
-    colors: List<Color> = listOf(Color.White, Color.Transparent),
+    colors: List<Color> = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
     durationMillis: Int = 400,
 ): Modifier {
     val alphaAnim by animateFloatAsStateWithDelay(
@@ -288,7 +293,7 @@ fun Modifier.topFadeMask(
 fun Modifier.bottomFadeMask(
     visible: Boolean = true,
     height: Dp = 20.dp,
-    colors: List<Color> = listOf(Color.Transparent, Color.White),
+    colors: List<Color> = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
     durationMillis: Int = 400,
 ): Modifier {
     val alphaAnim by animateFloatAsStateWithDelay(

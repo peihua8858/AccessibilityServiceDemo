@@ -3,6 +3,7 @@ package com.peihua.touchmonitor.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -14,12 +15,14 @@ import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toLong
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +38,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
 import com.peihua.touchmonitor.model.SystemSettings
@@ -89,8 +91,6 @@ import com.peihua.touchmonitor.ui.screen.settings.SystemSettingsStore
 import com.peihua.touchmonitor.ui.screen.share.ShareScreen
 import com.peihua.touchmonitor.ui.screen.storage.StorageScreen
 import com.peihua.touchmonitor.ui.theme.AppTheme
-import com.peihua.touchmonitor.ui.theme.ThemeMode
-import com.peihua.touchmonitor.utils.autoSystemBarStyle
 import com.peihua8858.tools.utils.dLog
 import kotlin.text.toLong
 
@@ -242,7 +242,6 @@ fun NavHostController.popBackStack(
 fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter.Home) {
     val navController = rememberNavController()
     appRouter = navController
-    val context = LocalContext.current
     val settings = remember { mutableStateOf(SystemSettings.default) }
     LaunchedEffect(settings.value) {
         SystemSettingsStore.getSystemSettingsFlow().collect {
@@ -251,11 +250,26 @@ fun ServiceApp(modifier: Modifier = Modifier, defaultPage: AppRouter = AppRouter
             ServiceApplication.updateLanguage(it.language)
         }
     }
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setNavigationBarColor(Color.Black)
-    AppTheme(settings.value.theme) { model, colorScheme ->
-        (context as ComponentActivity).enableEdgeToEdge(autoSystemBarStyle { model == ThemeMode.Dark })
+    AppTheme(settings.value.themeModel) { isDark, _ ->
+        ApplySystemBars(isDark)
         AppNavHost(navController = navController, modifier = modifier, defaultPage)
+    }
+}
+
+@Composable
+private fun ApplySystemBars(isDark: Boolean) {
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity ?: return
+    SideEffect {
+        val style = SystemBarStyle.auto(
+            lightScrim = Color.Transparent.toArgb(),
+            darkScrim = Color.Transparent.toArgb(),
+            detectDarkMode = { isDark },
+        )
+        activity.enableEdgeToEdge(
+            statusBarStyle = style,
+            navigationBarStyle = style,
+        )
     }
 }
 

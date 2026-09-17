@@ -21,9 +21,11 @@ import androidx.media3.ui.PlayerView
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 
 @Composable
 fun VideoPlayerScreen(modifier: Modifier, videoPath: String) {
+    val toolColors = LocalToolColors.current
     Scaffold(
         modifier = modifier
     ) {
@@ -55,7 +57,7 @@ fun VideoPlayerScreen(modifier: Modifier, videoPath: String) {
                     )
                     .size(dimensionResource(id = R.dimen.dp_24))
                     .background(
-                        Color.Black.copy(alpha = 0.5f),
+                        toolColors.mediaScrim,
                         shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
                     )
                     .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))

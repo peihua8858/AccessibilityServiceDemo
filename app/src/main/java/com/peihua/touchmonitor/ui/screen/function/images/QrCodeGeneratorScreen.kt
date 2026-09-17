@@ -56,7 +56,7 @@ import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.dialog.BaseDialog
 import com.peihua.touchmonitor.ui.screen.dialog.ProgressDialog
-import com.peihua.touchmonitor.ui.theme.Colors
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 import com.peihua.touchmonitor.utils.ifEmptyOrBlank
 import com.peihua.touchmonitor.utils.rememberColorSaveable
 import com.peihua.touchmonitor.utils.rememberSaveable
@@ -90,11 +90,13 @@ import qrgenerator.qrkitpainter.solidBrush
 @Composable
 fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
+    val toolColors = LocalToolColors.current
     val qrData = rememberSaveable("")
     val logoPath = rememberSaveable(Uri.EMPTY)
     val logoDrawable = rememberSaveable<Drawable?>(null)
-    val foregroundColor = rememberColorSaveable(Color.Black)
-    val backgroundColor = rememberColorSaveable(Color.White)
+    val foregroundColor = rememberColorSaveable(toolColors.qrForeground)
+    val backgroundColor = rememberColorSaveable(toolColors.qrBackground)
     val qrCodeImgSize = rememberSaveable(128f)
     val showQrCode = rememberSaveable(false)
     val saveQrCode = rememberSaveable(false)
@@ -150,7 +152,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                    .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
                     .padding(dimensionResource(id = R.dimen.dp_8))
             ) {
                 val (button, label, hint) = createRefs()
@@ -165,7 +167,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     })
                 Text(
                     text = logoPath.value.path.ifEmptyOrBlank { context.getString(R.string.text_qr_code_log_hint) },
-                    style = MaterialTheme.typography.bodySmall.copy(color = Colors.Grey[700]),
+                    style = MaterialTheme.typography.bodySmall.copy(color = colorScheme.onSurfaceVariant),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     modifier = Modifier.constrainAs(hint) {
@@ -196,7 +198,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                    .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
                     .clickable {
                         val colorLong = foregroundColor.value.value.toLong()
                         dLog {
@@ -236,7 +238,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                             end.linkTo(parent.end)
                         }
                         .clip(CircleShape)
-                        .border(1.dp, Color.Gray, CircleShape)
+                        .border(1.dp, colorScheme.outline, CircleShape)
                 )
             }
 
@@ -245,7 +247,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                    .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
                     .clickable {
                         navigateTo2(
                             Dialog.ColorPickerDialog.route,
@@ -273,7 +275,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                         .padding(dimensionResource(id = R.dimen.dp_8))
                         .size(20.dp)
                         .clip(CircleShape)
-                        .border(1.dp, Color.Gray, CircleShape)
+                        .border(1.dp, colorScheme.outline, CircleShape)
                         .constrainAs(image) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -286,7 +288,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                    .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
                     .padding(dimensionResource(id = R.dimen.dp_8)),
                 verticalAlignment = Alignment.CenterVertically
             ) {

@@ -48,7 +48,9 @@ import com.peihua.touchmonitor.ui.theme.DefaultTextStyle
 import com.peihua.touchmonitor.ui.theme.ThemeMode
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.isAtLeastS
+import com.peihua.touchmonitor.utils.rememberState
 import com.peihua.touchmonitor.viewmodel.SystemSettingsViewModel
+import com.peihua8858.tools.utils.dLog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,9 +68,8 @@ fun SettingsScreen(
         )
     }
     val defaultLanguageModel = LanguageModel.default.copy(name = languageNames[0])
-    val systemSettings =
-        remember { mutableStateOf(SystemSettings(language = defaultLanguageModel)) }
-    LaunchedEffect(null) {
+    val systemSettings = rememberState(SystemSettings(language = defaultLanguageModel))
+    LaunchedEffect(systemSettings) {
         val settings = SystemSettingsStore.getSystemSettings()
         for ((index, item) in languages.withIndex()) {
             if (item.langCode == settings.language.langCode) {
@@ -79,7 +80,6 @@ fun SettingsScreen(
     }
     val colorScheme = MaterialTheme.colorScheme
     val themeModels = ThemeMode.entries.mapIndexed { index, mode -> ThemeModel(theme = mode) }
-    val radius = dimensionResource(id = R.dimen.dp_10)
     val menuItemColors = DropdownMenuBoxDefaults.itemColors().copy(
         textColor = colorScheme.onSurfaceVariant,
         selectedTextColor = colorScheme.onSecondaryContainer,
@@ -93,20 +93,20 @@ fun SettingsScreen(
         }) {
         Column(
             modifier = Modifier.padding(
-                top = dimensionResource(id = R.dimen.dp_16),
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp
             )
         ) {
             DropdownMenuBox(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .surface(radius, radius, 0.dp, 0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
+                    .surface(10.dp, 10.dp, 0.dp, 0.dp, elevation =1.dp)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_8),
-                        top = dimensionResource(id = R.dimen.dp_8),
-                        end = dimensionResource(id = R.dimen.dp_8),
-                        bottom = dimensionResource(id = R.dimen.dp_8)
+                        start = 8.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp
                     ),
                 data = languages.toMutableList(),
                 value = systemSettings.value.language.name,
@@ -116,13 +116,16 @@ fun SettingsScreen(
                             painterResource(R.drawable.ic_language_32),
                             "",
                             modifier = Modifier
-                                .size(dimensionResource(id = R.dimen.dp_16))
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                                .size(16.dp)
+                                .clip(RoundedCornerShape(4.dp))
                         )
                         ScaleText(stringResource(R.string.txt_language))
                     }
                 },
                 defaultSelectedItem = systemSettings.value.language,
+                isSelected = { index, item ->
+                    item.langCode == systemSettings.value.language.langCode
+                },
                 itemColors = menuItemColors,
                 itemText = { isSelected, item ->
                     ScaleText(
@@ -142,36 +145,49 @@ fun SettingsScreen(
             DropdownMenuBox(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .surface(radius, radius, 0.dp, 0.dp, elevation = dimensionResource(id = R.dimen.dp_1))
+                    .surface(10.dp, 10.dp, 0.dp, 0.dp, elevation =1.dp)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_8),
-                        top = dimensionResource(id = R.dimen.dp_8),
-                        end = dimensionResource(id = R.dimen.dp_8),
-                        bottom = dimensionResource(id = R.dimen.dp_8)
+                        start = 8.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp
                     ),
                 data = themeModels.toMutableList(),
-                value = stringResource(systemSettings.value.theme.nameIds),
+                value = stringResource(systemSettings.value.themeModel.nameIds),
                 label = {
                     Row {
                         Icon(
                             painterResource(R.drawable.ic_theme_32),
                             "",
                             modifier = Modifier
-                                .size(dimensionResource(id = R.dimen.dp_16))
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                                .size(16.dp)
+                                .clip(RoundedCornerShape(4.dp))
                         )
                         ScaleText(stringResource(R.string.theme))
                     }
                 },
-                defaultSelectedItem = systemSettings.value.theme,
+                defaultSelectedItem = systemSettings.value.themeModel,
+                isSelected = { index, item ->
+                    item.theme == systemSettings.value.themeModel.theme
+                },
+                prefix = {
+                    Icon(
+                        systemSettings.value.themeModel.theme.image,
+                        "",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+                },
                 itemColors = menuItemColors,
                 itemText = { isSelected, item ->
+                    dLog { "themeModels>>>>>isSelected:$isSelected, item:${item.theme.name}, systemSettings.value.theme:${ systemSettings.value.themeModel.theme.name}" }
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                top = dimensionResource(id = R.dimen.dp_4),
-                                bottom = dimensionResource(id = R.dimen.dp_4)
+                                top = 4.dp,
+                                bottom = 4.dp
                             )
                     ) {
                         val (icon, title) = createRefs()
@@ -183,8 +199,8 @@ fun SettingsScreen(
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .size(dimensionResource(id = R.dimen.dp_16))
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                                .size(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
                         )
 
                         ScaleText(
@@ -194,15 +210,15 @@ fun SettingsScreen(
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                                .padding(start = 8.dp),
                             text = stringResource(item.theme.nameIds),
                             style = DefaultTextStyle,
-                            color = if (systemSettings.value.theme.model == item.theme) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
+                            color = menuItemColors.textColor(isSelected)
                         )
                     }
                 },
                 onItemClick = {
-                    systemSettings.value = systemSettings.value.copy(theme = it)
+                    systemSettings.value = systemSettings.value.copy(themeModel = it)
                     SystemSettingsStore.updateSystemSettings(
                         systemSettings.value
                     )
@@ -212,14 +228,14 @@ fun SettingsScreen(
                 SettingsCheckBox(
                     modifier = Modifier,
                     title = stringResource(R.string.text_dynamic_color),
-                    selected = systemSettings.value.theme.dynamicColor,
+                    selected = systemSettings.value.themeModel.dynamicColor,
                     showTopLine = false,
                     showBottomLine = false,
                     onCheckedChange = {
-                        val theme = systemSettings.value.theme.copy(dynamicColor = it)
-                        systemSettings.value = systemSettings.value.copy(theme = theme)
+                        val themeModel = systemSettings.value.themeModel.copy(dynamicColor = it)
+                        systemSettings.value = systemSettings.value.copy(themeModel = themeModel)
                         SystemSettingsStore.updateSystemSettings(
-                            systemSettings.value.copy(theme = theme)
+                            systemSettings.value.copy(themeModel = themeModel)
                         )
                     }
                 )
@@ -252,16 +268,15 @@ private fun SettingsCheckBox(
     showBottomLine: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit),
 ) {
-    val radius = dimensionResource(id = R.dimen.dp_10)
     Column(
         modifier = modifier
             .fillMaxWidth()
             .surface(
-                if (showTopLine) radius else 0.dp,
-                if (showTopLine) radius else 0.dp,
-                if (showBottomLine) radius else 0.dp,
-                if (showBottomLine) radius else 0.dp,
-                elevation = dimensionResource(id = R.dimen.dp_1)
+                if (showTopLine) 10.dp else 0.dp,
+                if (showTopLine) 10.dp else 0.dp,
+                if (showBottomLine) 10.dp else 0.dp,
+                if (showBottomLine) 10.dp else 0.dp,
+                elevation =1.dp
             )
             .clickable {
                 onCheckedChange(!selected)
@@ -275,8 +290,8 @@ private fun SettingsCheckBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = dimensionResource(id = R.dimen.dp_16),
-                    bottom = dimensionResource(id = R.dimen.dp_16)
+                    top = 16.dp,
+                    bottom = 16.dp
                 ),
             indication = null,
             checked = selected,
@@ -301,16 +316,15 @@ private fun SettingsItemView(
     showBottomLine: Boolean = true,
     onclick: () -> Unit = {},
 ) {
-    val radius = dimensionResource(id = R.dimen.dp_10)
     Column(
         modifier = modifier
             .fillMaxWidth()
             .surface(
-                if (showTopLine) radius else 0.dp,
-                if (showTopLine) radius else 0.dp,
-                if (showBottomLine) radius else 0.dp,
-                if (showBottomLine) radius else 0.dp,
-                elevation = dimensionResource(id = R.dimen.dp_1)
+                if (showTopLine) 10.dp else 0.dp,
+                if (showTopLine) 10.dp else 0.dp,
+                if (showBottomLine) 10.dp else 0.dp,
+                if (showBottomLine) 10.dp else 0.dp,
+                elevation =1.dp
             )
             .clickable(onClick = onclick),
         verticalArrangement = Arrangement.Center
@@ -322,16 +336,16 @@ private fun SettingsItemView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_16),
-                    end = dimensionResource(id = R.dimen.dp_8),
-                    bottom = dimensionResource(id = R.dimen.dp_16)
+                    start = 8.dp,
+                    top = 16.dp,
+                    end = 8.dp,
+                    bottom = 16.dp
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ScaleText(
                 modifier = Modifier
-                    .padding(end = dimensionResource(id = R.dimen.dp_8)),
+                    .padding(end = 8.dp),
                 textAlign = TextAlign.Start,
                 text = title,
                 maxLines = 1
@@ -353,8 +367,8 @@ private fun SettingsItemView(
             }
             Icon(
                 modifier = Modifier
-                    .padding(start = dimensionResource(id = R.dimen.dp_8))
-                    .size(dimensionResource(id = R.dimen.dp_24)),
+                    .padding(start = 8.dp)
+                    .size(24.dp),
                 painter = painterResource(id = R.drawable.ic_arrow_right_24),
                 tint = if (tint != Color.Unspecified) {
                     tint

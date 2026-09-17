@@ -15,8 +15,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isUnspecified
-import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import androidx.compose.ui.unit.sp
 
 
 @Composable
@@ -39,7 +38,7 @@ fun ScaleText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
+    val defaultFontSize = 14.sp
     val textScale = 1
     val fontSize = when {
         fontSize.isUnspecified -> if (style.fontSize.isUnspecified) defaultFontSize else style.fontSize
@@ -87,7 +86,7 @@ fun AutoLineHeightScaleText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val defaultFontSize = dimensionSpResource(id = R.dimen.sp_14)
+    val defaultFontSize = 14.sp
     val textScale = 1
     val fontSize = when {
         fontSize.isUnspecified -> if (style.fontSize.isUnspecified) defaultFontSize else style.fontSize
