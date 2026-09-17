@@ -195,7 +195,7 @@ fun NavigationIcon(
 fun NavigationIcon2(
     modifier: Modifier = Modifier,
     imageVector: ImageVector = AppIcons.IosArrowBack,
-    tintColor: Color = Color.Black,
+    tintColor: Color = MaterialTheme.colorScheme.primary,
     navigateUp: () -> Unit = {},
 ) {
     Box(
