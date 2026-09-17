@@ -47,7 +47,7 @@ fun RulerView(
     /** 刻度数字的文字大小（对应原 tickTextSize） */
     tickTextSize: TextUnit = 40.sp,
     /** 刻度线宽（对应原 tickStrokeWidth） */
-    tickStrokeWidth: Dp = 4.dp,
+    tickStrokeWidth: Dp = 1.dp,
     /** 最长刻度线的长度（对应原 tickMaxLength） */
     maxTickLength: Dp = 100.dp,
     /** 刻度线 / 刻度数字的颜色 */
@@ -63,7 +63,7 @@ fun RulerView(
     /** 手指圆圈半径 */
     dotRadius: Dp = 60.dp,
     /** 手指圆圈、连接线的线宽 */
-    dotStrokeWidth: Dp = 8.dp,
+    dotStrokeWidth: Dp = 2.dp,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
