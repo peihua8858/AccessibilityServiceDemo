@@ -46,13 +46,10 @@ import com.peihua.touchmonitor.utils.showToast
 import com.peihua8858.permissions.core.requestPermission
 
 /**
- * 内容顺时针旋转的角度：Activity 保持竖屏不动，量角器底边落在屏幕最左侧，
- * 用户把手机向左侧倒过来即可正着看到横屏量角器。
+ * 容器竖着时内容需要顺时针旋转的角度：Activity 不跟着转，用户把手机向左侧倒过来即可正着看。
+ * 容器本身已是横向（横屏设备、大屏分屏）时不需要旋转。
  */
 private const val CONTENT_ROTATION = 90f
-
-/** 内容旋转 90° 后，相机取景需要按同样的量补偿，等价于系统未锁定方向时的 ROTATION_90 */
-private const val PREVIEW_ROTATION = Surface.ROTATION_90
 
 @Composable
 fun AngleMeterScreen(modifier: Modifier) {
@@ -70,16 +67,26 @@ fun AngleMeterScreen(modifier: Modifier) {
                 .fillMaxSize()
                 .background(color = Color.Black)
         ) {
-            // 旋转不改变布局尺寸，所以按宽高互换来量：旋转后的包围盒正好铺满整屏
+            // 内容盒子始终以长边为宽（即量角器底边方向），容器竖着时再整体旋转 90°：
+            // 旋转不改变布局尺寸，宽高互换后的包围盒正好铺满整屏
+            val rotation = if (maxHeight > maxWidth) CONTENT_ROTATION else 0f
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .requiredSize(width = maxHeight, height = maxWidth)
-                    .rotate(CONTENT_ROTATION)
+                    .requiredSize(
+                        width = maxOf(maxWidth, maxHeight),
+                        height = minOf(maxWidth, maxHeight)
+                    )
+                    .rotate(rotation)
             ) {
                 if (cameraEnabled) {
                     CameraPreview(
                         modifier = Modifier.matchParentSize(),
+                        targetRotation = if (rotation == 0f) {
+                            Surface.ROTATION_0
+                        } else {
+                            Surface.ROTATION_90
+                        },
                         onUnavailable = {
                             cameraEnabled = false
                             showToast(R.string.text_camera_unavailable)
@@ -144,7 +151,11 @@ private fun CameraToggle(
 }
 
 @Composable
-private fun CameraPreview(modifier: Modifier = Modifier, onUnavailable: () -> Unit) {
+private fun CameraPreview(
+    modifier: Modifier = Modifier,
+    targetRotation: Int,
+    onUnavailable: () -> Unit,
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember(context) {
@@ -154,7 +165,7 @@ private fun CameraPreview(modifier: Modifier = Modifier, onUnavailable: () -> Un
             scaleType = PreviewView.ScaleType.FILL_CENTER
         }
     }
-    DisposableEffect(previewView, lifecycleOwner) {
+    DisposableEffect(previewView, lifecycleOwner, targetRotation) {
         var provider: ProcessCameraProvider? = null
         val future = ProcessCameraProvider.getInstance(context)
         future.addListener({
@@ -165,7 +176,7 @@ private fun CameraPreview(modifier: Modifier = Modifier, onUnavailable: () -> Un
             }
             provider = cameraProvider
             val preview = Preview.Builder()
-                .setTargetRotation(PREVIEW_ROTATION)
+                .setTargetRotation(targetRotation)
                 .build()
                 .apply { surfaceProvider = previewView.surfaceProvider }
             runCatching {
