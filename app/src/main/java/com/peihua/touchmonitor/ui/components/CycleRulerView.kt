@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
@@ -86,7 +87,7 @@ fun CycleRulerView(
             while (true) {
                 val event = awaitPointerEvent()
                 event.changes.forEach { change ->
-                    if (change.pressed) {
+                    if (change.pressed && !change.isConsumed) {
                         val newAngle = calculateAngle(
                             position = change.position,
                             width = size.width.toFloat(),
@@ -103,10 +104,11 @@ fun CycleRulerView(
     Canvas(modifier = modifier.then(pointerModifier)) {
         val w = size.width
         val h = size.height
-        val offset = (h - w / 2f) / 2f
         val cx = w / 2f
-        val cy = h - offset
-        val radius = w / 2f
+        // 圆心贴在底边，半圆的平边正好与控件下边界重合
+        val cy = h
+        // 半径尽量撑满控件高度，同时保证直径不超过宽度，避免半圆两端被大量裁掉
+        val radius = minOf(h, w / 2f) - tickStrokeWidthPx / 2f
 
         // ---------- 背景 ----------
         drawRect(color = backgroundColor, size = size)
@@ -156,7 +158,6 @@ fun CycleRulerView(
                         tickTextPaint.radialOverflow(label, rotation, deg)
                 val textX = cx + cosA * textRadius
                 val textY = cy - sinA * textRadius
-
                 nativeCanvas.withTranslation(textX, textY) {
                     // 让文字始终沿半径方向可读
                     rotate(rotation)
@@ -166,8 +167,8 @@ fun CycleRulerView(
         }
 
         // ---------- 中心圆环 ----------
-        // 原实现中心圆在 (width/2, height*3/5) 位置
-        val centerCircleY = h * 3f / 5f
+        // 读数圆按半径比例定位，保证始终落在半圆内部
+        val centerCircleY = cy - radius * 0.4f
 
         drawCircle(
             color = centerFillColor,
@@ -252,9 +253,8 @@ private fun Paint.radialOverflow(text: String, rotationDeg: Float, tickDeg: Int)
  *  - 触摸点在圆心下方时钳制到最近的一端
  */
 private fun calculateAngle(position: Offset, width: Float, height: Float): Int {
-    val offset = (height - width / 2f) / 2f
     val cx = width / 2f
-    val cy = height - offset
+    val cy = height
 
     val dx = position.x - cx
     val dy = position.y - cy

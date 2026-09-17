@@ -98,6 +98,10 @@
     <string name="text_horizon">水平仪</string>
     <!--    量角器-->
     <string name="text_angle_meter">量角器</string>
+    <string name="text_camera_on">相机 开</string>
+    <string name="text_camera_off">相机 关</string>
+    <string name="text_camera_permission_tips">需要相机权限才能开启取景背景</string>
+    <string name="text_camera_unavailable">当前设备没有可用的相机</string>
     <!--    简易画板-->
     <string name="text_simple_paint">简易画板</string>
     <string name="text_paint_undo">撤销</string>

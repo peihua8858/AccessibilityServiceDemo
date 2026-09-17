@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 量角器可选的相机取景背景 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
     <!-- 添加权限 -->
     <!--   获取安装应用列表 -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />

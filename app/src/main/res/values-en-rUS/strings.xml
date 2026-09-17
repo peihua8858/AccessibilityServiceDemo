@@ -93,6 +93,10 @@
     <string name="text_orientation_sensor_unavailable">This device has no orientation sensor</string>
     <string name="text_horizon">Level Gauge</string>
     <string name="text_angle_meter">Protractor</string>
+    <string name="text_camera_on">Camera On</string>
+    <string name="text_camera_off">Camera Off</string>
+    <string name="text_camera_permission_tips">Camera permission is required for the viewfinder background</string>
+    <string name="text_camera_unavailable">No camera is available on this device</string>
     <string name="text_simple_paint">Simple Paintboard</string>
     <string name="text_paint_undo">Undo</string>
     <string name="text_paint_redo">Redo</string>
