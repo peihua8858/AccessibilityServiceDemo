@@ -117,7 +117,7 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         stringResource(R.string.text_check_screen_bad_point) to { navigateTo(AppRouter.ScreenDeadPixelsScreen) },
                         stringResource(R.string.text_see_device_info) to { navigateTo(Dialog.DeviceInfoScreen) },
                         stringResource(R.string.text_desktop_video_wallpaper) to { navigateTo(AppRouter.DesktopVideoScreen) },
-                        stringResource(R.string.text_system_font_size_adjustment) to { navigateTo(AppRouter.SystemFontSizeAdjustmentScreen) },
+                        //stringResource(R.string.text_system_font_size_adjustment) to { navigateTo(AppRouter.SystemFontSizeAdjustmentScreen) },
                     ),
                     textColor = textColor,
                     backgroundColor = textBgColor
