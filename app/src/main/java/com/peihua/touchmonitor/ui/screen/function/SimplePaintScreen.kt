@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -234,7 +233,7 @@ fun SimplePaintScreen(modifier: Modifier) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.dp_64)),
+                    .height(64.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -303,7 +302,7 @@ private fun ToolIconButton(
     IconButton(
         onClick = onClick,
         modifier = Modifier
-            .clip(RoundedCornerShape(dimensionResource(R.dimen.dp_8)))
+            .clip(RoundedCornerShape(8.dp))
             .background(if (selected) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent),
         content = content
     )

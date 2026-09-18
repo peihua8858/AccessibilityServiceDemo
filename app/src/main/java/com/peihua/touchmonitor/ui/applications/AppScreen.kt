@@ -17,9 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -32,7 +33,6 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.ApplicationsViewModel
 import com.peihua8858.tools.utils.isLandscape
 
@@ -53,8 +53,8 @@ fun AppScreen(modifier: Modifier = Modifier, viewModel: ApplicationsViewModel = 
             modifier
                 .fillMaxSize()
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_16),
-                    end = dimensionResource(id = R.dimen.dp_16)
+                    start = 16.dp,
+                    end = 16.dp
                 )
         ) {
             when (result) {
@@ -88,13 +88,12 @@ private fun AppScreenContent(
 ) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape
-    val iconSize =
-        if (isLandscape) dimensionResource(id = R.dimen.dp_96) else dimensionResource(id = R.dimen.dp_96)
+    val iconSize =96.dp
     LazyVerticalGrid(
         modifier = modifier,
         //如果是平板或者大屏则使用4列，否则2列
         columns = GridCells.Fixed(if (isLandscape) 4 else 2),
-        contentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.dp_16))
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
         items(models) { item ->
             AppItemView(Modifier.clickable {
@@ -112,7 +111,7 @@ private fun AppScreenContent(
 private fun AppItemView(
     modifier: Modifier,
     item: AppInfo,
-    iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
+    iconSize: Dp = 96.dp,
 ) {
     val colorScheme = MaterialTheme.colorScheme
     ConstraintLayout(modifier = modifier) {
@@ -129,7 +128,7 @@ private fun AppItemView(
                     end.linkTo(title.end)
                 }
                 .size(iconSize)
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .clip(RoundedCornerShape(8.dp))
         )
 
         ScaleText(
@@ -140,11 +139,10 @@ private fun AppItemView(
                     end.linkTo(parent.end)
                     horizontalChainWeight = 1f
                 }
-                .padding(top = dimensionResource(id = R.dimen.dp_4)),
+                .padding(top = 4.dp),
             text = item.name,
-            fontSize = dimensionSpResource(id = R.dimen.sp_20),
+            fontSize = 20.sp,
             color = if (item.isHistory) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium
         )
         val ids = if (item.isHistory) desc else title
         if (item.isHistory) {
@@ -156,16 +154,15 @@ private fun AppItemView(
                         end.linkTo(title.end)
                         horizontalChainWeight = 1f
                     }
-                    .padding(top = dimensionResource(id = R.dimen.dp_4)),
+                    .padding(top = 4.dp),
                 text = "最近使用",
-                fontSize = dimensionSpResource(id = R.dimen.sp_16),
+                fontSize = 16.sp,
                 color = colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.labelMedium
             )
         }
         Spacer(
             Modifier
-                .size(dimensionResource(id = R.dimen.dp_20))
+                .size(20.dp)
                 .constrainAs(line) {
                     start.linkTo(parent.start)
                     top.linkTo(ids.bottom)

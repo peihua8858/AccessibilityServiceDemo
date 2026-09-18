@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.MediaData
@@ -66,9 +66,9 @@ fun StorageScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.dp_48))
+                    .height(48.dp)
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .padding(start = dimensionResource(R.dimen.dp_16), end = dimensionResource(R.dimen.dp_16)),
+                    .padding(start = 16.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) { StorageScreenHeader(result = headerResult, changeFolder = changeFolder) }
         }) {
@@ -90,7 +90,7 @@ fun StorageScreenContent(
     result: MutableList<MediaData>,
     changeFolder: (String) -> Unit,
 ) {
-    val dp8 = dimensionResource(R.dimen.dp_8)
+    val dp8 = 8.dp
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
         LazyColumn(
@@ -124,7 +124,7 @@ fun StorageScreenContent(
                 ) {
                     Image(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_32)),
+                            .size(32.dp),
                         painter = painterResource(R.mipmap.ic_zip_file),
                         contentDescription = "",
                         contentScale = ContentScale.Crop

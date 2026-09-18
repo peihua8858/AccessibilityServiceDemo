@@ -23,14 +23,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -43,18 +38,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppModel
 import com.peihua.touchmonitor.ui.components.DropdownMenuBox
 import com.peihua.touchmonitor.ui.components.DropdownMenuBoxDefaults
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelMediumNormal
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.rememberStateSet
 import com.peihua8858.tools.utils.dLog
 import kotlinx.coroutines.launch
@@ -140,7 +134,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
         DropdownMenuBox(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = dimensionResource(id = R.dimen.dp_8)),
+                .padding(top = 8.dp),
             data = models.toMutableList(),
             value = selectedOption.value.displayName,
             label = stringResource(R.string.scroll_orientation),
@@ -160,7 +154,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 modelChange(model)
             },
         )
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+        Spacer(Modifier.size(16.dp))
         OutlinedTextField(
             value = slidingSpeed.value,
             onValueChange = {
@@ -186,12 +180,12 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                     Icon(
                         imageVector = Icons.Default.Info,
                         tint = colorScheme.error,
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.dp_18)),
+                        modifier = Modifier.size(18.dp),
                         contentDescription = null
                     )
                     ScaleText(
                         text = stringResource(R.string.sliding_speed_tips),
-                        fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                        fontSize = 12.sp,
                         textAlign = TextAlign.Start,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -204,13 +198,13 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
             textStyle = MaterialTheme.typography.labelMediumNormal,
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_8)))
+        Spacer(Modifier.size(8.dp))
         DelayTimesFlowRow(
             modifier = Modifier,
             timeState = delayTimes,
             changeValues = saveDelayTimesClick
         )
-        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+        Spacer(Modifier.size(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,14 +219,14 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 color = colorScheme.onSurface,
                 text = stringResource(R.string.double_click_like),
             )
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+            Spacer(Modifier.size(4.dp))
             Checkbox(
                 doubleSaver.value,
                 onCheckedChange = {
                     saveDoubleClick(it)
                 })
         }
-//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -247,14 +241,14 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 color = colorScheme.onSurface,
                 text = stringResource(R.string.skip_ad_or_live),
             )
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+            Spacer(Modifier.size(4.dp))
             Checkbox(
                 skipAdOrLive.value,
                 onCheckedChange = {
                     saveSkipAdOrLiveClick(it)
                 })
         }
-//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -269,14 +263,14 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 color = colorScheme.onSurface,
                 text = stringResource(R.string.brightness_min),
             )
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+            Spacer(Modifier.size(4.dp))
             Checkbox(
                 isBrightnessMin.value,
                 onCheckedChange = {
                     saveBrightnessMinClick(it)
                 })
         }
-//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -291,14 +285,14 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 color = colorScheme.onSurface,
                 text = stringResource(R.string.sound_mute),
             )
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+            Spacer(Modifier.size(4.dp))
             Checkbox(
                 isSoundMute.value,
                 onCheckedChange = {
                     saveSoundMute(it)
                 })
         }
-//        Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+//        Spacer(Modifier.size(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -313,7 +307,7 @@ fun AllSettings(modifier: Modifier, model: AppModel, modelChange: (AppModel) -> 
                 color = colorScheme.onSurface,
                 text = stringResource(R.string.random_reverse),
             )
-            Spacer(Modifier.size(dimensionResource(id = R.dimen.dp_4)))
+            Spacer(Modifier.size(4.dp))
             Checkbox(
                 isRandomReverse.value,
                 onCheckedChange = {
@@ -334,7 +328,7 @@ private fun DelayTimesFlowRow(
     Column(modifier = modifier.fillMaxWidth()) {
         ScaleText(stringResource(R.string.delay_time))
         FlowRow(
-            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_4)),
+            modifier = Modifier.padding(top = 4.dp),
             maxItemsInEachRow = 4
         ) {
             key(timeState) {
@@ -352,16 +346,16 @@ private fun DelayTimesFlowRow(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(
-                                bottom = if (30 - index > 4) dimensionResource(id = R.dimen.dp_16) else 0.dp,
-                                start = dimensionResource(id = R.dimen.dp_8),
-                                end = dimensionResource(id = R.dimen.dp_8)
+                                bottom = if (30 - index > 4) 16.dp else 0.dp,
+                                start = 8.dp,
+                                end = 8.dp
                             )
                             .border(
-                                dimensionResource(id = R.dimen.dp_1),
+                                1.dp,
                                 borderColor,
-                                RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                                RoundedCornerShape(8.dp)
                             )
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                            .clip(RoundedCornerShape(8.dp))
                             .background(shape = RectangleShape, color = backgroundColor)
                             .clickable {
                                 if (timeState.contains(index)) {
@@ -372,10 +366,10 @@ private fun DelayTimesFlowRow(
                                 changeValues(timeState.toList())
                             }
                             .padding(
-                                start = dimensionResource(id = R.dimen.dp_16),
-                                top = dimensionResource(id = R.dimen.dp_8),
-                                end = dimensionResource(id = R.dimen.dp_16),
-                                bottom = dimensionResource(id = R.dimen.dp_8)
+                                start = 16.dp,
+                                top = 8.dp,
+                                end = 16.dp,
+                                bottom = 8.dp
                             )
                             .weight(1f)
                     )

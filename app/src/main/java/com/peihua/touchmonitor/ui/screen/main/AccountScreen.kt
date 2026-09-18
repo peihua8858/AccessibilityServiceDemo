@@ -27,10 +27,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.peihua.touchmonitor.R
@@ -59,25 +59,25 @@ fun AccountScreen(modifier: Modifier = Modifier, viewModel: AccountViewModel = v
                 .align(Alignment.CenterHorizontally)
                 .background(colorScheme.primaryContainer)
                 .padding(
-                    top = dimensionResource(id = R.dimen.dp_64),
-                    start = dimensionResource(id = R.dimen.dp_32),
-                    end = dimensionResource(id = R.dimen.dp_32),
-                    bottom = dimensionResource(id = R.dimen.dp_32)
+                    top = 64.dp,
+                    start = 32.dp,
+                    end = 32.dp,
+                    bottom = 32.dp
                 )
         ) {
             AsyncImage(
                 model = R.drawable.ic_user_avatar,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .border(dimensionResource(id = R.dimen.dp_2), colorScheme.onPrimaryContainer, CircleShape)
+                    .border(2.dp, colorScheme.onPrimaryContainer, CircleShape)
                     .clip(CircleShape)
-                    .size(dimensionResource(id = R.dimen.dp_64)),
+                    .size(64.dp),
                 contentDescription = null
             )
             ScaleText(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                    .padding(start = 8.dp),
                 text = stringResource(id = R.string.text_not_login),
                 style = MaterialTheme.typography.titleMedium
             )
@@ -125,13 +125,13 @@ private fun AccountItemView(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(dimensionResource(id = R.dimen.dp_48)),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             modifier = Modifier
-                .padding(start = dimensionResource(id = R.dimen.dp_16))
-                .size(dimensionResource(id = R.dimen.dp_24)),
+                .padding(start = 16.dp)
+                .size(24.dp),
             painter = painter,
             colorFilter = if (tint != Color.Unspecified) {
                 ColorFilter.tint(tint)
@@ -143,14 +143,14 @@ private fun AccountItemView(
         ScaleText(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                .padding(start = 8.dp),
             textAlign = TextAlign.Start,
             text = title
         )
         Icon(
             modifier = Modifier
-                .padding(end = dimensionResource(id = R.dimen.dp_16))
-                .size(dimensionResource(id = R.dimen.dp_24)),
+                .padding(end = 16.dp)
+                .size(24.dp),
             painter = painterResource(id = R.drawable.ic_arrow_right_24),
             tint = if (tint != Color.Unspecified) {
                 tint

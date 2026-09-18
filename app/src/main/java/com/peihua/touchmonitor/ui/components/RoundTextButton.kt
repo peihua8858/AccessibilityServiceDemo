@@ -7,8 +7,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import com.peihua.touchmonitor.R
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 
 
@@ -21,11 +20,11 @@ fun RoundTextButton(
     TextButton(
         modifier = modifier
             .border(
-                dimensionResource(id = R.dimen.dp_1),
+                1.dp,
                 MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.medium
             )
-            .widthIn(min = dimensionResource(id = R.dimen.dp_128)),
+            .widthIn(min = 128.dp),
         onClick = onClick) {
         ScaleText(
             text = text,

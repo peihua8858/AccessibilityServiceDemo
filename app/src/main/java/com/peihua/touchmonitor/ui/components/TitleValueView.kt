@@ -11,17 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
-import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
 fun TitleValueView(
@@ -37,7 +36,7 @@ fun TitleValueView(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = { onClick(title, value) })
-            .heightIn(min = dimensionResource(id = R.dimen.dp_28)),
+            .heightIn(min = 28.dp),
     ) {
         val (vTitle, vValue) = createRefs()
         if (orientation == Orientation.Horizontal) {
@@ -60,8 +59,8 @@ fun TitleValueView(
                     }
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    end = dimensionResource(id = R.dimen.dp_8)
+                    start = 8.dp,
+                    end = 8.dp
                 ),
             style = titleStyle,
             textAlign = TextAlign.Start,
@@ -86,13 +85,13 @@ fun TitleValueView(
                 }
                 .basicMarquee(animationMode = MarqueeAnimationMode.Immediately)
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    end = dimensionResource(id = R.dimen.dp_8)
+                    start = 8.dp,
+                    end = 8.dp
                 ),
             style = valueStyle,
             maxLines = 1,
             overflow = TextOverflow.Visible,
-            fontSize = dimensionSpResource(id = R.dimen.sp_10),
+            fontSize = 10.sp,
             textAlign = TextAlign.End,
             text = value
         )

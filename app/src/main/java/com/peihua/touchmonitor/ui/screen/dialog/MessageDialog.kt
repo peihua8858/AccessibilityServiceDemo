@@ -21,7 +21,6 @@
 //import androidx.compose.ui.Alignment
 //import androidx.compose.ui.Modifier
 //import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.res.dimensionResource
 //import androidx.compose.ui.res.stringResource
 //import com.peihua.touchmonitor.R
 //import com.peihua.touchmonitor.ui.popBackStack
@@ -44,7 +43,7 @@
 //        modifier = modifier
 //            .background(
 //                Color.White,
-//                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+//                shape = RoundedCornerShape(8.dp)
 //            )
 //            .fillMaxWidth()
 //
@@ -52,7 +51,7 @@
 //        Text(
 //            text = title,
 //            style = MaterialTheme.typography.titleLarge,
-//            modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16))
+//            modifier = Modifier.padding(16.dp)
 //        )
 //        HorizontalDivider(
 //            modifier = Modifier
@@ -64,7 +63,7 @@
 //                .weight(1f)
 //                .verticalScroll(rememberScrollState())
 //        ) {
-//            Text(text = content, modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16)))
+//            Text(text = content, modifier = Modifier.padding(16.dp))
 //        }
 //        HorizontalDivider(
 //            modifier = Modifier
@@ -73,7 +72,7 @@
 //        Row(
 //            modifier = Modifier
 //                .fillMaxWidth()
-//                .height(dimensionResource(id = R.dimen.dp_56)),
+//                .height(56.dp),
 //            horizontalArrangement = Arrangement.Center,
 //            verticalAlignment = Alignment.CenterVertically
 //        ) {
@@ -83,7 +82,7 @@
 //                    .fillMaxHeight(),
 //                colors = ButtonDefaults.textButtonColors()
 //                    .copy(contentColor = colorScheme.secondary),
-//                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+//                shape = RoundedCornerShape(8.dp),
 //                onClick = negative.second
 //            ) {
 //                Text(text = negative.first)
@@ -93,7 +92,7 @@
 //                modifier = Modifier
 //                    .weight(1f)
 //                    .fillMaxHeight(),
-//                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+//                shape = RoundedCornerShape(8.dp),
 //                onClick = positive.second
 //            ) {
 //                Text(text = positive.first)

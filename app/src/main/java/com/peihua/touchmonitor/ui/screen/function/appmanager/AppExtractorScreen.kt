@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,7 +42,8 @@ import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreenContent
 import com.peihua.touchmonitor.ui.screen.function.search.SearchType
-import com.peihua.touchmonitor.ui.theme.labelSmallNormal
+import com.peihua.touchmonitor.ui.theme.labelLargeNormal
+import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.AppExtractorViewModel
 import com.peihua8858.tools.utils.dLog
@@ -129,19 +129,17 @@ private fun AppListScreenContent(
 ) {
     val context = LocalContext.current
     val isLandscape = context.isLandscape
-    val iconSize =
-        if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
     LazyColumn(modifier = modifier) {
         items(models) { item ->
             AppItemView(
                 Modifier
-                    .padding(bottom = dimensionResource(id = R.dimen.dp_16))
+                    .padding(bottom = 16.dp)
                     .clickable {
                         navigateTo(
                             AppRouter.AppDetailScreen.route,
                             "packageName" to item.packageName
                         )
-                    }, item, iconSize
+                    }, item
             )
         }
     }
@@ -151,7 +149,7 @@ private fun AppListScreenContent(
 private fun AppItemView(
     modifier: Modifier,
     item: AppInfoModel,
-    iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
+    iconSize: Dp = 64.dp,
 ) {
     val context = LocalContext.current
     val textStyle = LocalTextStyle.current
@@ -170,7 +168,7 @@ private fun AppItemView(
                     bottom.linkTo(parent.bottom)
                 }
                 .size(iconSize)
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .clip(RoundedCornerShape(8.dp))
         )
         ScaleText(
             modifier = Modifier
@@ -181,10 +179,9 @@ private fun AppItemView(
                     horizontalBias = 0f
                     horizontalChainWeight = 1f
                 }
-                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                .padding(start = 8.dp),
             text = stringResource(R.string.text_name, item.name),
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
         )
         ScaleText(
             modifier = Modifier
@@ -196,12 +193,11 @@ private fun AppItemView(
                     horizontalChainWeight = 1f
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
+                    start = 8.dp,
+                    top = 4.dp
                 ),
             text = stringResource(R.string.text_package, item.packageName),
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
         )
         ScaleText(
             modifier = Modifier
@@ -213,12 +209,11 @@ private fun AppItemView(
                     horizontalChainWeight = 1f
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
+                    start = 8.dp,
+                    top = 4.dp
                 ),
             text = stringResource(R.string.text_version, item.versionName),
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
         )
         ScaleText(
             modifier = Modifier
@@ -230,19 +225,18 @@ private fun AppItemView(
                     horizontalChainWeight = 1f
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
+                    start = 8.dp,
+                    top = 4.dp
                 ),
             text = stringResource(
                 R.string.text_file_size,
                 Formatter.formatFileSize(context, item.fileSize)
             ),
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
         )
         Spacer(
             Modifier
-                .size(dimensionResource(id = R.dimen.dp_20))
+                .size(20.dp)
                 .constrainAs(line) {
                     start.linkTo(parent.start)
                     top.linkTo(version.bottom)

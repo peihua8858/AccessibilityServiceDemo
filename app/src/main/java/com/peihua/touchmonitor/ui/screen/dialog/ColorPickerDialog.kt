@@ -16,8 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.godaddy.android.colorpicker.ClassicColorPicker
 import com.godaddy.android.colorpicker.HsvColor
 import com.godaddy.android.colorpicker.rememberColorSaveable
@@ -72,7 +72,7 @@ fun ColorPickerDialog(
     }, onDismissRequest = onDismissRequest, onNegative = onNegative) {
         Column(
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.dp_16))
+                .padding(16.dp)
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +80,7 @@ fun ColorPickerDialog(
         ) {
             dLog { "colorInput:${colorInput.value}, colorState.value:${colorState.value}" }
             ClassicColorPicker(
-                modifier = Modifier.size(dimensionResource(id = R.dimen.dp_200)),
+                modifier = Modifier.size(200.dp),
                 colorState = colorState,
                 showAlphaBar = false,
                 onColorChanged = {
@@ -100,7 +100,7 @@ fun ColorPickerDialog(
                 leadingIcon = {
                     Text(text = "#")
                 },
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16))
+                modifier = Modifier.padding(16.dp)
             )
         }
 

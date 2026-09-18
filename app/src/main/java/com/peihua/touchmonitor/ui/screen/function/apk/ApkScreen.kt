@@ -16,10 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,7 +33,7 @@ import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.ui.theme.labelSmallNormal
+import com.peihua.touchmonitor.ui.theme.labelLargeNormal
 import com.peihua.touchmonitor.utils.installApk
 import com.peihua.touchmonitor.utils.items
 import com.peihua.touchmonitor.viewmodel.ApkViewModel
@@ -71,20 +71,17 @@ private fun ApkListScreenContent(
     models: List<ApkModel>,
 ) {
     val context = LocalContext.current
-    val isLandscape = context.isLandscape
-    val iconSize =
-        if (isLandscape) dimensionResource(id = R.dimen.dp_48) else dimensionResource(id = R.dimen.dp_48)
     LazyColumn(modifier = modifier) {
         items(models) { item ->
             ApkItemView(
                 Modifier
-                    .padding(bottom = dimensionResource(id = R.dimen.dp_16))
+                    .padding(bottom = 16.dp)
                     .combinedClickable(onClick = {
                         context.installApk(item.path)
                     }, onLongClick = {
 //                        context.shareCertainFiles(item.path)
                         navigateTo2(Dialog.ShareDialog.route, ("filePath" to item.path))
-                    }), item, iconSize
+                    }), item
             )
         }
     }
@@ -94,7 +91,7 @@ private fun ApkListScreenContent(
 private fun ApkItemView(
     modifier: Modifier,
     item: ApkModel,
-    iconSize: Dp = dimensionResource(id = R.dimen.dp_96),
+    iconSize: Dp = 64.dp,
 ) {
     val context = LocalContext.current
     val textStyle = LocalTextStyle.current
@@ -113,7 +110,7 @@ private fun ApkItemView(
                     bottom.linkTo(parent.bottom)
                 }
                 .size(iconSize)
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .clip(RoundedCornerShape(8.dp))
         )
         val hasDisplayName = item.displayName.isNotEmpty()
         if (hasDisplayName) {
@@ -127,10 +124,10 @@ private fun ApkItemView(
                         horizontalBias = 0f
                         horizontalChainWeight = 1f
                     }
-                    .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                    .padding(start = 8.dp),
                 text = stringResource(R.string.text_app_name, item.displayName),
                 maxLines = 1,
-                style = MaterialTheme.typography.labelSmallNormal
+                style = MaterialTheme.typography.labelLargeNormal
             )
         }
         ScaleText(
@@ -144,13 +141,13 @@ private fun ApkItemView(
                     horizontalChainWeight = 1f
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
+                    start = 8.dp,
+                    top = 4.dp
                 ),
             text = stringResource(R.string.text_file_name, item.apkName),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.labelSmallNormal
+            style = MaterialTheme.typography.labelLargeNormal
         )
         val hasVersion = item.versionName.isNotEmpty()
         if (hasVersion) {
@@ -164,12 +161,12 @@ private fun ApkItemView(
                         horizontalChainWeight = 1f
                     }
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_8),
-                        top = dimensionResource(id = R.dimen.dp_4)
+                        start = 8.dp,
+                        top = 4.dp
                     ),
                 text = stringResource(R.string.text_version, item.versionName),
                 maxLines = 1,
-                style = MaterialTheme.typography.labelSmallNormal
+                style = MaterialTheme.typography.labelLargeNormal
             )
         }
         ScaleText(
@@ -182,19 +179,19 @@ private fun ApkItemView(
                     horizontalChainWeight = 1f
                 }
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_8),
-                    top = dimensionResource(id = R.dimen.dp_4)
+                    start = 8.dp,
+                    top = 4.dp
                 ),
             text = stringResource(
                 R.string.text_file_size,
                 Formatter.formatFileSize(context, item.fileSize)
             ),
             maxLines = 1,
-            style = MaterialTheme.typography.labelSmallNormal
+            style = MaterialTheme.typography.labelLargeNormal
         )
         Spacer(
             Modifier
-                .size(dimensionResource(id = R.dimen.dp_20))
+                .size(20.dp)
                 .constrainAs(line) {
                     start.linkTo(parent.start)
                     top.linkTo(version.bottom)

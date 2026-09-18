@@ -7,8 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.ErrorView
@@ -40,8 +40,8 @@ fun LogDetailScreen(
             modifier
                 .fillMaxSize()
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_16),
-                    end = dimensionResource(id = R.dimen.dp_16)
+                    start = 16.dp,
+                    end = 16.dp
                 )
         ) {
             when (result) {

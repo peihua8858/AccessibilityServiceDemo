@@ -25,8 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -112,7 +112,7 @@ fun SearchScreenContent(
     state: LazyListState = rememberLazyListState(),
     result: LazyPagingItems<SearchModel>,
 ) {
-    val dp8 = dimensionResource(R.dimen.dp_8)
+    val dp8 = 8.dp
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -134,7 +134,7 @@ fun SearchScreenContent(
                 Image(
                     modifier = Modifier
                         .padding(end = dp8)
-                        .size(dimensionResource(id = R.dimen.dp_32)),
+                        .size(32.dp),
                     painter = if (model.icon == null) painterResource(R.drawable.ic_audio_file_24)
                     else rememberDrawablePainter(model.icon),
                     contentDescription = "",

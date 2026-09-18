@@ -18,8 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
-import com.peihua.touchmonitor.R
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun ExtendedListTile(
@@ -35,11 +34,11 @@ fun ExtendedListTile(
     Column(
         modifier = modifier
             .border(
-                dimensionResource(id = R.dimen.dp_1),
+                1.dp,
                 borderColor,
-                RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                RoundedCornerShape(8.dp)
             )
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .clip(RoundedCornerShape(8.dp))
     ) {
         Box(
             modifier = Modifier

@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,7 @@ fun LogcatScreen(
     val isRunning = remember { mutableStateOf(false) }
     Column(modifier = modifier) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_32)))
+            Spacer(modifier = Modifier.size(32.dp))
             IconButton(onClick = {
                 if (isPaused.value) {
                     viewModel.onPause()
@@ -56,7 +55,7 @@ fun LogcatScreen(
                     contentDescription = stringResource(if (isPaused.value) R.string.text_resume else R.string.text_pause)
                 )
             }
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+            Spacer(modifier = Modifier.size(16.dp))
             IconButton(onClick = {
                 viewModel.clearLog()
             }) {
@@ -65,7 +64,7 @@ fun LogcatScreen(
                     contentDescription = stringResource(R.string.text_clear)
                 )
             }
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+            Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
                 if (isRunning.value) {
                     viewModel.onStop()
@@ -76,7 +75,7 @@ fun LogcatScreen(
             }) {
                 Text(text = stringResource(if (isRunning.value) R.string.text_stop else R.string.text_start))
             }
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_32)))
+            Spacer(modifier = Modifier.size(32.dp))
         }
         LazyColumn(
             reverseLayout = true,
@@ -87,7 +86,7 @@ fun LogcatScreen(
             items(viewModel._messages) { item ->
                 Text(text = item, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = dimensionResource(id = R.dimen.dp_16) , end = dimensionResource(id = R.dimen.dp_16)))
+                    .padding(start = 16.dp , end = 16.dp))
             }
         }
     }

@@ -5,14 +5,10 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,12 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
@@ -55,7 +48,7 @@ fun <T : IMenuItem> ActionDropMenu(
         changeValue = changeValue,
     ) {
         Icon(
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
+            modifier = Modifier.size(24.dp),
             painter = painterResource(id = iconRes),
             contentDescription = ""
         )
@@ -80,7 +73,7 @@ fun <T : IMenuItem> ActionDropMenu(
         modifier = modifier
             .width(expandedHeight)
             .height(expandedHeight)
-            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .clip(shape = RoundedCornerShape(8.dp))
             .clickable {
                 isExtended.value = !isExtended.value
             },

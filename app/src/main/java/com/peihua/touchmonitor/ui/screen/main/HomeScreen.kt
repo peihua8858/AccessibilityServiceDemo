@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
@@ -35,7 +35,6 @@ import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.theme.AppColor
 import com.peihua.touchmonitor.utils.checkStorgePermission
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -49,7 +48,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(dimensionResource(id = R.dimen.dp_16))
+                .padding(16.dp)
         ) {
             HomeHorList(
                 modifier = Modifier,
@@ -122,7 +121,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 painters = listOf(painterResource(id = R.drawable.ic_home_app_manager_24)),
                 iconBgColors = listOf(AppColor.color_e30b5a)
             )
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.dp_16)))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -136,7 +135,7 @@ private fun HomeHorList(
     onItemClick: (Pair<String, AppRouter?>, Int) -> Boolean = { _, _ -> false },
 ) {
     val context = LocalContext.current
-    Row(modifier = modifier.padding(top = dimensionResource(id = R.dimen.dp_16))) {
+    Row(modifier = modifier.padding(top = 16.dp)) {
         for ((index, item) in titles.withIndex()) {
             if (item.first.isEmpty()) {
                 Spacer(Modifier.weight(1f))
@@ -172,17 +171,17 @@ private fun HomeCard(
 ) {
     CardViewItem(
         modifier = modifier
-            .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
+            .clip(shape = RoundedCornerShape(10.dp))
             .clickable(onClick = onClick),
         icon = {
-            Card(modifier = Modifier, elevation = dimensionResource(id = R.dimen.dp_3)) {
+            Card(modifier = Modifier, elevation = 3.dp) {
                 Icon(
                     modifier = Modifier
                         .wrapContentHeight()
                         .wrapContentWidth()
-                        .size(dimensionResource(id = R.dimen.dp_48))
+                        .size(48.dp)
                         .background(iconBgColor, shape = RectangleShape)
-                        .padding(dimensionResource(id = R.dimen.dp_8)),
+                        .padding(8.dp),
                     tint = Color.White,
                     painter = painter,
                     contentDescription = title
@@ -190,8 +189,8 @@ private fun HomeCard(
             }
         }, title = {
             Text(
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_8)),
-                fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                modifier = Modifier.padding(top = 8.dp),
+                fontSize = 12.sp,
                 text = title
             )
         })

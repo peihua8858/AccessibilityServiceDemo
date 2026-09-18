@@ -22,8 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.utils.copyToClipBoard
@@ -55,13 +55,13 @@ fun DeviceInfoScreen(modifier: Modifier) {
             "用户：${Build.USER}"
     Column(
         modifier = modifier
-            .background(colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .background(colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(8.dp))
             .fillMaxWidth()
 
     ) {
         Text(
             text = "设备信息",
-            style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16))
+            style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp)
         )
         HorizontalDivider(
             modifier = Modifier
@@ -73,7 +73,7 @@ fun DeviceInfoScreen(modifier: Modifier) {
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
-            DeviceInfoItem(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16)), key = "主板", value = Build.BOARD)
+            DeviceInfoItem(modifier = Modifier.padding(top = 16.dp), key = "主板", value = Build.BOARD)
             DeviceInfoItem(key = "系统版本", value = Build.VERSION.RELEASE)
             DeviceInfoItem(key = "系统启动程序版本号", value = Build.BOOTLOADER)
             DeviceInfoItem(key = "系统定制商", value = Build.BRAND)
@@ -101,7 +101,7 @@ fun DeviceInfoScreen(modifier: Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dp_56)),
+                .height(56.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -110,7 +110,7 @@ fun DeviceInfoScreen(modifier: Modifier) {
                     .weight(1f)
                     .fillMaxHeight(),
                 colors = ButtonDefaults.textButtonColors().copy(contentColor = colorScheme.secondary),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     popBackStack()
                 }) {
@@ -121,7 +121,7 @@ fun DeviceInfoScreen(modifier: Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     context.copyToClipBoard(text)
                 }) {
@@ -136,9 +136,9 @@ private fun DeviceInfoItem(modifier: Modifier = Modifier, key: String, value: St
     Text(
         text = "$key：$value",
         modifier = modifier.padding(
-            start = dimensionResource(id = R.dimen.dp_16),
-            end = dimensionResource(id = R.dimen.dp_16),
-            bottom = dimensionResource(id = R.dimen.dp_16)
+            start = 16.dp,
+            end = 16.dp,
+            bottom = 16.dp
         )
     )
 }

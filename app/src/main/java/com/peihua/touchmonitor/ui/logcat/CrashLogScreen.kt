@@ -10,9 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.model.LogModel
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.EmptyView
@@ -21,7 +21,6 @@ import com.peihua.touchmonitor.ui.components.LoadingViewFillMaxSize
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.ResultData
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.LogViewModel
 
 @Composable
@@ -35,8 +34,8 @@ fun CrashLogScreen(modifier: Modifier = Modifier, viewModel: LogViewModel = view
         modifier
             .fillMaxSize()
             .padding(
-                start = dimensionResource(id = R.dimen.dp_16),
-                end = dimensionResource(id = R.dimen.dp_16)
+                start = 16.dp,
+                end = 16.dp
             )
     ) {
 
@@ -71,11 +70,11 @@ private fun LogScreenContent(modifier: Modifier, models: List<LogModel>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = dimensionResource(id = R.dimen.dp_8))
+                    .padding(bottom =8.dp)
                     .clickable {
                         navigateTo2(AppRouter.LogDetail.route, "filePath" to item.path)
                     }) {
-                ScaleText(text = item.content, fontSize = dimensionSpResource(id = R.dimen.sp_16))
+                ScaleText(text = item.content, fontSize = 16.sp)
             }
         }
     }

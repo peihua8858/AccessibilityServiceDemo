@@ -10,10 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 
 
@@ -28,7 +26,7 @@ fun <T> TabView(
     val colorScheme= MaterialTheme.colorScheme
     Tab(
         modifier = modifier
-            .heightIn(min = dimensionResource(id = R.dimen.dp_32))
+            .heightIn(min = 32.dp)
             .background(Color.Transparent),
         selected = isSelected,
         selectedContentColor = colorScheme.primary,
@@ -41,7 +39,7 @@ fun <T> TabView(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .wrapContentWidth(Alignment.CenterHorizontally)
-                .padding(horizontal = dimensionResource(id = R.dimen.dp_16)),
+                .padding(horizontal = 16.dp),
         )
     }
 }

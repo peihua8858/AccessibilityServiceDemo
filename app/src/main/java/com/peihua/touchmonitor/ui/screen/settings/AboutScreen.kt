@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.dimensionSpResource
 
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
@@ -120,10 +120,10 @@ fun AboutScreen(modifier: Modifier = Modifier) {
     Toolbar(modifier = modifier, title = stringResource(id = R.string.text_about), navigateUp = {
         popBackStack()
     }) {
-        Box(modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16))) {
+        Box(modifier = Modifier.padding(16.dp)) {
             ScaleText(
                 text = sb.toString(),
-                fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                fontSize = 12.sp,
             )
         }
     }

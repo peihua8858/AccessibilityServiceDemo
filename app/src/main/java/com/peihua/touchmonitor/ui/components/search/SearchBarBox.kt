@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -142,7 +141,7 @@ fun TopSearchBar(
     expanded: Boolean = true,
     query: MutableState<String> = rememberState(""),
     onExpandedChange: (Boolean) -> Unit = {},
-    shape: Shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+    shape: Shape = RoundedCornerShape(8.dp),
     colors: SearchBarColors = androidx.compose.material3.SearchBarDefaults.colors(),
     tonalElevation: Dp = androidx.compose.material3.SearchBarDefaults.TonalElevation,
     shadowElevation: Dp = androidx.compose.material3.SearchBarDefaults.ShadowElevation,
@@ -152,7 +151,7 @@ fun TopSearchBar(
     leadingIcon: @Composable (() -> Unit)? = {
         Icon(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_24))
+                .size(24.dp)
                 .clickable {
                     onSearch(query.value)
                 },
@@ -163,7 +162,7 @@ fun TopSearchBar(
     trailingIcon: @Composable (() -> Unit)? = {
         Icon(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_24))
+                .size(24.dp)
                 .clickable {
                     query.value = ""
                 },
@@ -236,14 +235,14 @@ fun SearchBarTitle(
                 .align(Alignment.CenterEnd)
                 .width(TopAppBarDefaults.TopAppBarExpandedHeight)
                 .height(TopAppBarDefaults.TopAppBarExpandedHeight)
-                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .clip(shape = RoundedCornerShape(8.dp))
                 .clickable {
                     isExtended.value = !isExtended.value
                 },
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                modifier = Modifier.size(dimensionResource(id = R.dimen.dp_24)),
+                modifier = Modifier.size(24.dp),
                 painter = painterResource(id = R.drawable.ic_search_24),
                 contentDescription = ""
             )

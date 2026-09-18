@@ -31,9 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -82,8 +82,8 @@ fun AppDetailScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_16),
-                    end = dimensionResource(id = R.dimen.dp_16)
+                    start = 16.dp,
+                    end = 16.dp
                 )
         ) {
             when (result) {
@@ -139,8 +139,8 @@ private fun AppInfoScreenContent(
             else rememberDrawablePainter(drawable), "",
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
-                .size(dimensionResource(id = R.dimen.dp_128))
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .size(128.dp)
+                .clip(RoundedCornerShape(8.dp))
         )
         ScaleText(
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
@@ -149,12 +149,12 @@ private fun AppInfoScreenContent(
         Card(
             modifier = Modifier
                 .padding(
-                    top = dimensionResource(id = R.dimen.dp_8),
-                    bottom = dimensionResource(id = R.dimen.dp_8)
+                    top = 8.dp,
+                    bottom = 8.dp
                 ),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+            shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
-            elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             IconText(
                 text = stringResource(id = R.string.text_run),
@@ -231,12 +231,12 @@ private fun AppInfoScreenContent(
         Card(
             modifier = Modifier
                 .padding(
-                    top = dimensionResource(id = R.dimen.dp_8),
-                    bottom = dimensionResource(id = R.dimen.dp_8)
+                    top = 8.dp,
+                    bottom = 8.dp
                 ),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+            shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
-            elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             TitleValueView(
                 title = stringResource(id = R.string.text_package_name),
@@ -304,17 +304,17 @@ private fun AppInfoScreenContent(
                 onClick = onClickInfo
             )
         }
-        Spacer(Modifier.height(dimensionResource(id = R.dimen.dp_8)))
+        Spacer(Modifier.height(8.dp))
         ScaleText(text = stringResource(id = R.string.app_signature))
         Card(
             modifier = Modifier
                 .padding(
-                    top = dimensionResource(id = R.dimen.dp_8),
-                    bottom = dimensionResource(id = R.dimen.dp_8)
+                    top = 8.dp,
+                    bottom = 8.dp
                 ),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+            shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerLow),
-            elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.dp_2))
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             TitleValueView(
                 title = stringResource(id = R.string.app_signature_issuer),

@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -50,7 +48,7 @@ fun PictureScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
     val isUserRefresh = remember { mutableStateOf(false) }
     MultiStatePagingScreen(modifier, R.string.text_images, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus, selected ={
+            modifier = Modifier.padding(end = 16.dp), models = menus, selected ={
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
@@ -70,8 +68,8 @@ fun PictureScreenContent(
     state: LazyGridState = rememberLazyGridState(),
     result: LazyPagingItems<MediaModel>,
 ) {
-    val dp16 = dimensionResource(R.dimen.dp_16)
-    val dp8 = dimensionResource(R.dimen.dp_8)
+    val dp16 = 16.dp
+    val dp8 = 8.dp
     val context = LocalContext.current
     val isLandscape = context.isLandscape
     val columns = if (isLandscape) 6 else 3

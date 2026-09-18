@@ -1,7 +1,5 @@
 package com.peihua.touchmonitor.ui.screen.function.audio
 
-import android.widget.MediaController
-import android.widget.VideoView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
-import com.peihua.touchmonitor.R
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.AudioPlayer
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.popBackStack
@@ -37,10 +34,10 @@ fun AudioPlayerScreen(modifier: Modifier, audioPath: String) {
         AudioPlayer(audioPath,"")
         NavigationIcon2(
             modifier = Modifier
-                .padding(top = dimensionResource(id = R.dimen.dp_16), start = dimensionResource(id = R.dimen.dp_16))
-                .size(dimensionResource(id = R.dimen.dp_24))
-                .background(toolColors.mediaScrim, shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
-                .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .padding(top = 16.dp, start = 16.dp)
+                .size(24.dp)
+                .background(toolColors.mediaScrim, shape = RoundedCornerShape(8.dp))
+                .clip(shape = RoundedCornerShape(8.dp))
                 .align(Alignment.TopStart),
             tintColor = Color.White
         ) {

@@ -20,13 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.fileProvider
 import com.peihua8858.tools.file.fetchFileName
 import com.peihua8858.tools.file.mimeTypeFromFilePath
@@ -65,14 +65,14 @@ fun ShareScreen(modifier: Modifier, filePath: String) {
             popBackStack()
         }) {
         Column(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16)),
+            modifier = Modifier.padding(16.dp),
         ) {
-            Text(text = stringResource(R.string.text_share_file, filePath.fetchFileName() ?: ""), fontSize = dimensionSpResource(id = R.dimen.sp_18))
+            Text(text = stringResource(R.string.text_share_file, filePath.fetchFileName() ?: ""), fontSize = 18.sp)
             LazyVerticalGrid(
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_16)),
+                modifier = Modifier.padding(top = 16.dp),
                 columns = GridCells.Fixed(if (context.isLandscape) 6 else 3),
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dp_16)),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dp_16))
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 itemsIndexed(shareDatas) { index, item ->
                     ShareItem(index, item) {
@@ -124,7 +124,7 @@ private fun ShareItem(index: Int, item: ShareModel, click: (ShareModel) -> Unit)
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dp_48)),
+            modifier = Modifier.size(48.dp),
             painter = rememberDrawablePainter(item.icon), contentDescription = ""
         )
         Text(text = item.name)

@@ -25,8 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
@@ -105,7 +105,7 @@ fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.dp_56)),
+                    .height(56.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -115,7 +115,7 @@ fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
                         .fillMaxHeight(),
                     colors = ButtonDefaults.textButtonColors()
                         .copy(contentColor = colorScheme.secondary),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                    shape = RoundedCornerShape(8.dp),
                     onClick = {
                         launcher.launch(PhotoVisualMediaRequest(PhotoVisualMedia.ImageOnly))
                     }
@@ -127,7 +127,7 @@ fun PhotoToBlackAndWhiteScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                    shape = RoundedCornerShape(8.dp),
                     onClick = {
                         scope.launch {
                             try {

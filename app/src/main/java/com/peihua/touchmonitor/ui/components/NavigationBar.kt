@@ -33,11 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import androidx.compose.ui.unit.sp
 import com.peihua8858.tools.utils.dLog
 
 @Composable
@@ -61,7 +59,7 @@ fun NavigationBar(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .windowInsetsPadding(windowInsets)
-                    .defaultMinSize(minHeight = dimensionResource(id = R.dimen.dp_64))
+                    .defaultMinSize(minHeight = 64.dp)
                     .selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -90,14 +88,14 @@ fun NavigationBarItem(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
+                    .clip(RoundedCornerShape(10.dp))
                     .clickable(onClick = onClick),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
                     modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dp_20)),
+                        .size(20.dp),
                     painter = painter,
                     tint = if (selected) colors.selectedIconColor else colors.unselectedIconColor,
                     contentDescription = title
@@ -105,7 +103,7 @@ fun NavigationBarItem(
                 Text(
                     modifier = Modifier,
                     text = title,
-                    fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                    fontSize = 12.sp,
                     color = if (selected) colors.selectedTextColor else colors.unselectedTextColor,
                 )
             }
@@ -113,11 +111,11 @@ fun NavigationBarItem(
 
         NavigationSuiteType.WideNavigationRailExpanded,
         NavigationSuiteType.NavigationDrawer,-> {
-            val dp56 = dimensionResource(id = R.dimen.dp_24)
+            val dp56 = 24.dp
             Row(
                 modifier = modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.dp_36))
+                    .height(36.dp)
                     .clickable(onClick = onClick),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
@@ -130,9 +128,9 @@ fun NavigationBarItem(
                     contentDescription = title
                 )
                 Text(
-                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.dp_8)),
+                    modifier = Modifier.padding(start = 8.dp),
                     text = title,
-                    fontSize = dimensionSpResource(id = R.dimen.sp_16),
+                    fontSize = 16.sp,
                     color = if (selected) colors.selectedTextColor else colors.unselectedTextColor,
                 )
             }
@@ -143,11 +141,11 @@ fun NavigationBarItem(
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
+                    .clip(RoundedCornerShape(10.dp))
                     .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
-                val dp24 = dimensionResource(id = R.dimen.dp_20)
+                val dp24 = 20.dp
                 if (this.maxWidth < 56.dp) {
                     Icon(
                         modifier = Modifier
@@ -173,7 +171,7 @@ fun NavigationBarItem(
                         Text(
                             modifier = Modifier,
                             text = title,
-                            fontSize = dimensionSpResource(id = R.dimen.sp_12),
+                            fontSize = 12.sp,
                             color = if (selected) colors.selectedTextColor else colors.unselectedTextColor,
                         )
                     }
@@ -196,15 +194,15 @@ fun RowScope.NavigationBarItem(
         modifier = modifier
             .weight(1f)
             .align(Alignment.CenterVertically)
-            .defaultMinSize(minHeight = dimensionResource(id = R.dimen.dp_64))
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
+            .defaultMinSize(minHeight = 64.dp)
+            .clip(RoundedCornerShape(10.dp))
             .clickable(onClick = onClick),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_24))
+                .size(24.dp)
                 .align(Alignment.CenterHorizontally),
             painter = painter,
             tint = if (selected) colors.selectedIconColor else colors.unselectedIconColor,
@@ -213,7 +211,7 @@ fun RowScope.NavigationBarItem(
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = title,
-            fontSize = dimensionSpResource(id = R.dimen.sp_12),
+            fontSize = 12.sp,
             color = if (selected) colors.selectedTextColor else colors.unselectedTextColor,
         )
     }

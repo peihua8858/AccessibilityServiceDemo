@@ -12,8 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
-import com.peihua.touchmonitor.R
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.components.ZoomableImage
 import com.peihua.touchmonitor.ui.popBackStack
@@ -30,13 +29,13 @@ fun PhotoPreviewScreen(modifier: Modifier, photoPath: String) {
             ZoomableImage(model = photoPath, modifier = Modifier.fillMaxSize())
             NavigationIcon2(
                 modifier = Modifier
-                    .padding(top = dimensionResource(id = R.dimen.dp_16), start = dimensionResource(id = R.dimen.dp_16))
-                    .size(dimensionResource(id = R.dimen.dp_24))
+                    .padding(top = 16.dp, start = 16.dp)
+                    .size(24.dp)
                     .background(
                         Color.Black.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                        shape = RoundedCornerShape(8.dp)
                     )
-                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                    .clip(shape = RoundedCornerShape(8.dp))
                     .align(Alignment.TopStart),
                 tintColor = Color.White
             ) {

@@ -202,3 +202,30 @@
 ### 验证结果
 
 - `./gradlew :app:compileDebugKotlin`：通过，无新增错误。
+
+## 大屏尺寸适配：删除 sw 线性表 + 全局密度缩放
+
+### 问题根因
+
+去掉 Typography 的 sw 缩放后，`values-sw*dp/dimens.xml` 仍然存在（18 个目录、纯 dp_/sp_ 线性表），`dimensionResource`/`dimensionSpResource` 每次调用仍读到 2x/3x/4x 放大值。结果：
+
+- 导航栏（`NavigationBar.kt`，使用 `dimensionResource`/`dimensionSpResource`）在 sw720dp 上被放大 2 倍（图标 24→48dp、标签 16→32sp）。
+- 内容区（已迁移固定 Typography）保持基准尺寸。
+- 两套字号系统并存，大屏上导航巨大、内容偏小，观感失衡且留白多。
+
+### 本次实现
+
+1. **删除全部 `values-sw*dp/` 目录**（含两个 `-land` 变体），令 `dimensionResource`/`dimensionSpResource` 回落到基准 `values/dimens.xml`，消除 2x 放大与双系统不一致。
+2. **在 `Theme.kt` 根部覆盖 `LocalDensity`**：按 `LocalConfiguration.smallestScreenWidthDp` 计算温和且封顶的全局系数（`uiScaleForWidth`：<600→1.0，600–672→1.20，672–768→1.30，768–960→1.40，≥960→1.50），保留用户 `fontScale`。字体、间距、圆角、图标等所有 dp/sp 尺寸随之统一按比例放大，避免老式线性表的失衡。
+   - 用 `smallestScreenWidthDp`（设备物理最小宽度，横竖屏一致）而非 `screenWidthDp`：后者随方向变化，会导致同一平板竖屏（如 720dp）落入较低档位、字体偏小。改用最小宽度后横竖屏缩放稳定一致。
+3. **修正 `dimensionSpResource` 的反向抵消**：旧实现使用已覆盖的 `LocalDensity` 把 Android 资源 px 转回 sp，会除掉全局缩放系数，导致 40 处资源字号保持原大小。新实现使用 `Resources.displayMetrics.scaledDensity` 还原资源的原始 sp 数值，再由 Compose 的 `LocalDensity` 统一缩放。
+4. 导航底部 vs 左侧栏由 `NavigationSuiteScaffoldDefaults.navigationSuiteType(currentWindowAdaptiveInfo())` 决定，使用真实窗口指标，不受密度覆盖影响，切换逻辑保持不变。
+
+### 验证结果
+
+- `./gradlew :app:compileDebugKotlin` 与 `:app:installDebug`：通过。
+- 真机（AILABS_FG01，smallestWidth=720dp，1.30x）截图对比：导航栏、资源字号、Typography、图标和间距按同一比例放大。
+
+### 待办
+
+- 宽屏下左侧导航栏与内容区之间仍有较大留白，可后续收紧导航栏宽度或调整 `AdaptiveContent` 的居中/边距策略。

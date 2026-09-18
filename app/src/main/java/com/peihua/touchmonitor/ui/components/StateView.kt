@@ -12,21 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.utils.toDp
@@ -37,7 +35,7 @@ fun ErrorView(
     retry: () -> Unit,
     content: @Composable () -> Unit = {
         Icon(
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dp_128)),
+            modifier = Modifier.size(128.dp),
             painter = painterResource(id = R.drawable.ic_load_fail),
             contentDescription = null
         )
@@ -61,7 +59,7 @@ fun ErrorView(
             verticalArrangement = Arrangement.Center
         ) {
             content()
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+            Spacer(modifier = Modifier.size(16.dp))
             //text 下划线
             RoundTextButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -77,7 +75,7 @@ fun LoadingView(modifier: Modifier = Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_36))
+                .size(36.dp)
                 .align(Alignment.Center)
         )
     }
@@ -88,7 +86,7 @@ fun LoadingViewFillMaxSize(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_36))
+                .size(36.dp)
                 .align(Alignment.Center)
         )
     }
@@ -100,13 +98,13 @@ fun LoadingRoundView(modifier: Modifier = Modifier) {
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
             .defaultMinSize(
-                minWidth = dimensionResource(id = R.dimen.dp_64),
-                minHeight = dimensionResource(id = R.dimen.dp_64)
+                minWidth = 64.dp,
+                minHeight = 64.dp
             )
     ) {
         CircularProgressIndicator(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.dp_32))
+                .size(32.dp)
                 .align(Alignment.Center)
         )
     }
@@ -119,7 +117,7 @@ fun EmptyView(
     retry: () -> Unit,
     content: @Composable () -> Unit = {
         Icon(
-            modifier = Modifier.size(dimensionResource(id = R.dimen.dp_128)),
+            modifier = Modifier.size(128.dp),
             painter = painterResource(id = R.drawable.ic_empty_data),
             contentDescription = null
         )
@@ -145,16 +143,16 @@ fun EmptyView(
             verticalArrangement = Arrangement.Center
         ) {
             content()
-            Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.dp_16)))
+            Spacer(modifier = Modifier.size(16.dp))
             //text 下划线
             RoundTextButton(
                 modifier = Modifier
                     .border(
-                        dimensionResource(id = R.dimen.dp_1),
+                        1.dp,
                         MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.medium
                     )
-                    .width(width = dimensionResource(id = R.dimen.dp_128)),
+                    .width(width = 128.dp),
                 text = stringResource(id = R.string.text_retry),
                 onClick = { retry() })
         }

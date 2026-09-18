@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,8 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -43,7 +43,6 @@ import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.viewmodel.MediaModel
 import com.peihua.touchmonitor.viewmodel.MediaUiAction
@@ -64,7 +63,7 @@ fun VideoScreen(modifier: Modifier, viewModel: MediaViewModel = viewModel()) {
     val isUserRefresh = remember { mutableStateOf(false) }
     MultiStatePagingScreen(modifier, R.string.text_videos, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus,selected = {
+            modifier = Modifier.padding(end = 16.dp), models = menus,selected = {
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
@@ -84,10 +83,10 @@ fun VideoScreenContent(
     state: LazyGridState = rememberLazyGridState(),
     result: LazyPagingItems<MediaModel>,
 ) {
-    val dp16 = dimensionResource(R.dimen.dp_16)
-    val dp8 = dimensionResource(R.dimen.dp_8)
-    val dp2 = dimensionResource(R.dimen.dp_2)
-    val bottomMargin = dimensionResource(R.dimen.dp_4)
+    val dp16 =16.dp
+    val dp8 = 8.dp
+    val dp2 = 2.dp
+    val bottomMargin = 4.dp
     val context = LocalContext.current
     val isLandscape = context.isLandscape
     val columns = if (isLandscape) 6 else 3
@@ -153,14 +152,14 @@ fun VideoScreenContent(
                                 text = mediaData.fileName,
                                 maxLines = 1,
                                 color = Color.White,
-                                fontSize = dimensionSpResource(id = R.dimen.sp_6)
+                                fontSize = 6.sp
                             )
                             AutoLineHeightScaleText(
                                 modifier = Modifier,
                                 text = mediaData.fileSize ?: "",
                                 maxLines = 1,
                                 color = Color.White,
-                                fontSize = dimensionSpResource(id = R.dimen.sp_6)
+                                fontSize = 6.sp
                             )
                         }
                     }

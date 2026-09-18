@@ -13,12 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.popBackStack
 import com.peihua.touchmonitor.ui.theme.LocalToolColors
@@ -52,15 +51,15 @@ fun VideoPlayerScreen(modifier: Modifier, videoPath: String) {
             NavigationIcon2(
                 modifier = Modifier
                     .padding(
-                        top = dimensionResource(id = R.dimen.dp_16),
-                        start = dimensionResource(id = R.dimen.dp_16)
+                        top = 16.dp,
+                        start = 16.dp
                     )
-                    .size(dimensionResource(id = R.dimen.dp_24))
+                    .size(24.dp)
                     .background(
                         toolColors.mediaScrim,
-                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                        shape = RoundedCornerShape(8.dp)
                     )
-                    .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                    .clip(shape = RoundedCornerShape(8.dp))
                     .align(Alignment.TopStart),
                 tintColor = Color.White
             ) {

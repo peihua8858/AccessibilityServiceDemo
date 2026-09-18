@@ -9,21 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
-import com.peihua.touchmonitor.R
+import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.theme.labelLargeNormal
 
@@ -31,7 +25,7 @@ import com.peihua.touchmonitor.ui.theme.labelLargeNormal
 fun IconText(
     modifier: Modifier = Modifier
         .fillMaxWidth()
-        .heightIn(min = dimensionResource(id = R.dimen.dp_28)),
+        .heightIn(min = 28.dp),
     painter: Painter,
     text: String,
     tint: Color? = null,
@@ -43,16 +37,16 @@ fun IconText(
     if (orientation == Orientation.Horizontal) {
         Row(
             modifier = modifier
-                .heightIn(min = dimensionResource(id = R.dimen.dp_28))
+                .heightIn(min = 28.dp)
                 .clickable(onClick = clickable),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dp_36))
+                    .size(36.dp)
                     .padding(
-                        start = dimensionResource(id = R.dimen.dp_8),
-                        end = dimensionResource(id = R.dimen.dp_8)
+                        start = 8.dp,
+                        end = 8.dp
                     ),
                 painter = painter,
                 colorFilter = if (tint != null) ColorFilter.tint(tint) else null,
@@ -68,8 +62,8 @@ fun IconText(
         ) {
             Image(
                 modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dp_32))
-                    .padding(dimensionResource(id = R.dimen.dp_8)),
+                    .size(32.dp)
+                    .padding(8.dp),
                 painter = painter,
                 colorFilter = if (tint != null) ColorFilter.tint(tint) else null,
                 contentDescription = text

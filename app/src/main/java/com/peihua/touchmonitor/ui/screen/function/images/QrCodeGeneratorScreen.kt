@@ -24,8 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -133,7 +130,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(dimensionResource(id = R.dimen.dp_16))
+                .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -153,7 +150,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
-                    .padding(dimensionResource(id = R.dimen.dp_8))
+                    .padding(8.dp)
             ) {
                 val (button, label, hint) = createRefs()
                 Text(
@@ -220,7 +217,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                 val (image, label) = createRefs()
                 Text(
                     text = stringResource(id = R.string.text_qr_code_foreground_color), modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8))
+                        .padding(8.dp)
                         .constrainAs(label) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
@@ -230,7 +227,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     painter = rememberDrawablePainter(drawable = foregroundColor.value.toDrawable()),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8))
+                        .padding(8.dp)
                         .size(20.dp)
                         .constrainAs(image) {
                             top.linkTo(parent.top)
@@ -262,7 +259,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                 val (image, label) = createRefs()
                 Text(
                     text = stringResource(id = R.string.text_qr_code_background_color), Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8))
+                        .padding(8.dp)
                         .constrainAs(label) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
@@ -272,7 +269,7 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     painter = rememberDrawablePainter(drawable = backgroundColor.value.toDrawable()),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8))
+                        .padding(8.dp)
                         .size(20.dp)
                         .clip(CircleShape)
                         .border(1.dp, colorScheme.outline, CircleShape)
@@ -289,16 +286,16 @@ fun QrCodeGeneratorScreen(modifier: Modifier = Modifier) {
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .border(1.dp, colorScheme.outline, RoundedCornerShape(10.dp))
-                    .padding(dimensionResource(id = R.dimen.dp_8)),
+                    .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(R.string.text_qr_code_size), modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8))
+                        .padding(8.dp)
                 )
                 CustomSlider(
                     modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8)),
+                        .padding(8.dp),
                     value = qrCodeImgSize.value,
                     thumbText = { it.toInt().toString() },
                     valueRange = 96f..960f

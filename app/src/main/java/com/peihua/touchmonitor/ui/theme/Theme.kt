@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.scrollbar.LocalScrollbarStyle
@@ -261,6 +264,21 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+/**
+ * 按设备最小宽度（smallestScreenWidthDp）返回温和且封顶的全局 UI 缩放系数。
+ *
+ * 用 smallestScreenWidthDp 而非 screenWidthDp：前者反映设备物理尺寸、横竖屏一致，
+ * 后者会随方向变化导致竖屏偏小。覆盖 LocalDensity 后，字体、间距、圆角、图标等
+ * dp/sp 尺寸按此比例统一放大——大屏协调放大，且避免老式 values-sw*dp 线性表的失衡。
+ */
+private fun uiScaleForWidth(smallestWidthDp: Int): Float = when {
+    smallestWidthDp < 600 -> 1.0f   // 手机
+    smallestWidthDp < 672 -> 1.20f  // 小平板 / 折叠展开
+    smallestWidthDp < 768 -> 1.30f  // 7~8 寸平板（本机 720dp）
+    smallestWidthDp < 960 -> 1.40f  // 10 寸平板
+    else -> 1.50f                    // 超大屏封顶
+}
+
 
 
 @Composable
@@ -275,7 +293,16 @@ fun Theme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-    CompositionLocalProvider(LocalToolColors provides DefaultToolColors) {
+    val baseDensity = LocalDensity.current
+    val uiScale = uiScaleForWidth(LocalConfiguration.current.smallestScreenWidthDp)
+    val scaledDensity = Density(
+        density = baseDensity.density * uiScale,
+        fontScale = baseDensity.fontScale,
+    )
+    CompositionLocalProvider(
+        LocalDensity provides scaledDensity,
+        LocalToolColors provides DefaultToolColors,
+    ) {
         MaterialTheme(
             shapes = customShapes,
             colorScheme = colorScheme,

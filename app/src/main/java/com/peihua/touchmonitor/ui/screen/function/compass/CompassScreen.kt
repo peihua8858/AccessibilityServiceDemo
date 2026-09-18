@@ -21,18 +21,18 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.rememberDeviceOrientation
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -54,7 +54,7 @@ fun CompassScreen(modifier: Modifier) {
                 ScaleText(
                     text = stringResource(R.string.text_orientation_sensor_unavailable),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = dimensionSpResource(R.dimen.sp_14)
+                    fontSize = 14.sp
                 )
             }
             return@Toolbar
@@ -63,16 +63,16 @@ fun CompassScreen(modifier: Modifier) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = dimensionResource(R.dimen.dp_24)),
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             ScaleText(
                 text = directions[headingToDirectionIndex(heading)],
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = dimensionSpResource(R.dimen.sp_34)
+                fontSize = 34.sp
             )
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dp_24)))
+            Spacer(modifier = Modifier.height(24.dp))
             CompassDial(
                 heading = heading,
                 directions = directions,

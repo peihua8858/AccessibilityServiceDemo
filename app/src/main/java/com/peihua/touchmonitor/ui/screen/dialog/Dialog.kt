@@ -27,9 +27,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.text.ScaleText
@@ -94,7 +94,7 @@ fun BaseDialogScreen(
         modifier = modifier
             .background(
                 colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8))
+                shape = RoundedCornerShape(8.dp)
             )
             .fillMaxWidth()
             .wrapContentHeight()
@@ -106,7 +106,7 @@ fun BaseDialogScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.dp_16))
+                .padding(16.dp)
         )
         HorizontalDivider(
             modifier = Modifier
@@ -120,7 +120,7 @@ fun BaseDialogScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.dp_56)),
+                .height(56.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -130,7 +130,7 @@ fun BaseDialogScreen(
                     .fillMaxHeight(),
                 colors = ButtonDefaults.textButtonColors()
                     .copy(contentColor = colorScheme.secondary),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                shape = RoundedCornerShape(8.dp),
                 onClick = negative.second
             ) {
                 Text(
@@ -145,7 +145,7 @@ fun BaseDialogScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                    shape = RoundedCornerShape(8.dp),
                     onClick = onNeutral.second
                 ) {
                     Text(
@@ -159,7 +159,7 @@ fun BaseDialogScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)),
+                shape = RoundedCornerShape(8.dp),
                 onClick = positive.second
             ) {
                 Text(
@@ -186,7 +186,7 @@ fun MessageDialog(
     onNegative: Pair<String, () -> Unit>? = stringResource(id = R.string.text_cancel) to { onDismissRequest() },
 ) {
     BaseDialogScreen(modifier, title, onDismissRequest, onPositive, onNegative) {
-        Text(text = content, modifier = Modifier.padding(dimensionResource(id = R.dimen.dp_16)))
+        Text(text = content, modifier = Modifier.padding(16.dp))
     }
 }
 
@@ -228,9 +228,9 @@ fun ProgressDialog(
     }) {
         Column(
             modifier = modifier
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+                .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(dimensionResource(id = R.dimen.dp_16))
+                .padding(16.dp)
         ) {
             if (title.isNonEmpty()) {
                 ScaleText(text = title)
@@ -238,7 +238,7 @@ fun ProgressDialog(
             if (progress < 0f) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.dp_32))
+                        .size(32.dp)
                         .align(Alignment.CenterHorizontally)
                 )
             } else {
@@ -259,9 +259,9 @@ fun ProgressDialogScreen(
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_8)))
+            .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(dimensionResource(id = R.dimen.dp_16))
+            .padding(16.dp)
     ) {
         if (title.isNonEmpty()) {
             ScaleText(text = title)
@@ -269,7 +269,7 @@ fun ProgressDialogScreen(
         if (progress < 0f) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.dp_32))
+                    .size(32.dp)
                     .align(Alignment.CenterHorizontally)
             )
         } else {

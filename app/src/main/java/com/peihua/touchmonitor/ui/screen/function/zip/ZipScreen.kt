@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -49,7 +49,7 @@ fun ZipScreen(modifier: Modifier, viewModel: ZipViewModel = viewModel()) {
     val isUserRefresh = remember { mutableStateOf(false) }
     MultiStatePagingScreen(modifier, R.string.text_compression, result, isUserRefresh, actions = {
         ActionDropMenu(
-            modifier = Modifier.padding(end = dimensionResource(id = R.dimen.dp_16)), models = menus, selected ={
+            modifier = Modifier.padding(end = 16.dp), models = menus, selected ={
                 it.value == uiState.value.sortType
             },
             iconRes = R.drawable.ic_sort
@@ -68,7 +68,7 @@ fun ZipScreenContent(
     modifier: Modifier = Modifier, state: LazyListState = rememberLazyListState(),
     result: LazyPagingItems<MediaModel>,
 ) {
-    val dp8 = dimensionResource(R.dimen.dp_8)
+    val dp8 = 8.dp
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -99,7 +99,7 @@ fun ZipScreenContent(
                 ) {
                     Image(
                         modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.dp_32)),
+                            .size(32.dp),
                         painter = painterResource(R.mipmap.ic_zip_file),
                         contentDescription = "",
                         contentScale = ContentScale.Crop

@@ -16,13 +16,10 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -50,7 +47,6 @@ import com.peihua.touchmonitor.ui.theme.labelMediumNormal
 import com.peihua.touchmonitor.utils.isAtLeastS
 import com.peihua.touchmonitor.utils.rememberState
 import com.peihua.touchmonitor.viewmodel.SystemSettingsViewModel
-import com.peihua8858.tools.utils.dLog
 
 
 @OptIn(ExperimentalMaterial3Api::class)

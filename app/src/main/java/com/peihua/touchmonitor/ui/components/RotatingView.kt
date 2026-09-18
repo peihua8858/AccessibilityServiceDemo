@@ -14,10 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
 
 /**
  * 旋转动画组件
@@ -25,7 +23,7 @@ import com.peihua.touchmonitor.R
 @Composable
 fun RotatingView(
     modifier: Modifier = Modifier,
-    size: DpSize = DpSize(dimensionResource(id = R.dimen.dp_24), dimensionResource(id = R.dimen.dp_24)),
+    size: DpSize = DpSize(24.dp, 24.dp),
     tintColor : Color?=null,
     rotationAngle: Float = 0f,
     durationMillis: Int = 800,

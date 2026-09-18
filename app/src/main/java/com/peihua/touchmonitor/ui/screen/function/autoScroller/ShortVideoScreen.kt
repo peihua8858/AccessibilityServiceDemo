@@ -13,12 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,10 +22,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
@@ -100,8 +95,8 @@ fun ShortVideoScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
-                    start = dimensionResource(id = R.dimen.dp_16),
-                    end = dimensionResource(id = R.dimen.dp_16)
+                    start = 16.dp,
+                    end = 16.dp
                 )
 
         ) {
@@ -152,7 +147,7 @@ private fun ShortVideoScreenContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = dimensionResource(id = R.dimen.dp_16))
+            .padding(top = 16.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             //选择的应用
@@ -169,8 +164,8 @@ private fun ShortVideoScreenContent(
                             painter = rememberDrawablePainter(icon),
                             "",
                             modifier = Modifier
-                                .size(dimensionResource(id = R.dimen.dp_16))
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                                .size(16.dp)
+                                .clip(RoundedCornerShape(4.dp))
                         )
                     }
                 },
@@ -179,8 +174,8 @@ private fun ShortVideoScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                top = dimensionResource(id = R.dimen.dp_4),
-                                bottom = dimensionResource(id = R.dimen.dp_4)
+                                top = 4.dp,
+                                bottom = 4.dp
                             )
                     ) {
                         val drawable = item.icon
@@ -195,8 +190,8 @@ private fun ShortVideoScreenContent(
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .size(dimensionResource(id = R.dimen.dp_24))
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_4)))
+                                .size(24.dp)
+                                .clip(RoundedCornerShape(4.dp))
                         )
 
                         ScaleText(
@@ -206,7 +201,7 @@ private fun ShortVideoScreenContent(
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .padding(start = dimensionResource(id = R.dimen.dp_8)),
+                                .padding(start = 8.dp),
                             text = item.displayName,
                             style = DefaultTextStyle,
                             color = if (isSelected) colorScheme.onSecondaryContainer else colorScheme.onSurfaceVariant,
@@ -240,17 +235,17 @@ private fun ShortVideoScreenContent(
 
             ExtendedListTile(
                 modifier = Modifier
-                    .padding(top = dimensionResource(id = R.dimen.dp_16))
+                    .padding(top = 16.dp)
                     .fillMaxWidth(),
                 isExtended = false,
                 title = { isExtended ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = dimensionResource(id = R.dimen.dp_56))
+                            .heightIn(min = 56.dp)
                             .padding(
-                                start = dimensionResource(id = R.dimen.dp_8),
-                                end = dimensionResource(id = R.dimen.dp_8)
+                                start = 8.dp,
+                                end = 8.dp
                             ),
                         verticalAlignment = Alignment.CenterVertically
 
@@ -276,7 +271,7 @@ private fun ShortVideoScreenContent(
                 dLog { "MainScreen>>>AllSettings>>>>111provider:${selectedOption.value.provider}" }
                 selectedOption.value.provider.contentView(
                     Modifier
-                        .padding(dimensionResource(id = R.dimen.dp_8)),
+                        .padding(8.dp),
                     selectedOption.value
                 ) {
                     saveDb(it, false)
@@ -287,7 +282,7 @@ private fun ShortVideoScreenContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = dimensionResource(id = R.dimen.dp_32)),
+                .padding(bottom = 32.dp),
             onClick = {
                 saveDb(selectedOption.value, false)
                 if (isUpsideDownCake) {

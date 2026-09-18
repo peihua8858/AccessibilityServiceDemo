@@ -42,17 +42,16 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.util.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
-import com.peihua.touchmonitor.R
 
 /** Fit a linear 0F - 1F curve to an ease out sine (decelerating) curve.  */
 private fun decInterp(@FloatRange(from = 0.0, to = 1.0) fraction: Float): Float {
@@ -86,8 +85,8 @@ fun PagerTabIndicator(
     tabPositions: List<TabPosition>,
     pagerState: PagerState,
     color: Color = MaterialTheme.colorScheme.primary,
-    radius: Dp = dimensionResource(id = R.dimen.dp_20),
-    height: Dp = dimensionResource(id = R.dimen.dp_4),
+    radius: Dp = 20.dp,
+    height: Dp = 4.dp,
 ) {
     Canvas(
         modifier = Modifier
@@ -177,7 +176,7 @@ fun TabIndicatorScope.FancyAnimatedIndicatorWithModifier(index: Int) {
     var endAnimatable by remember { mutableStateOf<Animatable<Dp, AnimationVector1D>?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val indicatorColor: Color by animateColorAsState(colors[index % colors.size], label = "")
-    val dp5 = dimensionResource(id = R.dimen.dp_5)
+    val dp5 = 5.dp
     Box(
         Modifier
             .tabIndicatorLayout { measurable: Measurable,

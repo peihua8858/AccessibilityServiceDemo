@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.Toolbar
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.popBackStack
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.utils.rememberDeviceOrientation
 import kotlin.math.hypot
 import kotlin.math.roundToInt
@@ -47,7 +47,7 @@ fun HorizonScreen(modifier: Modifier) {
                 ScaleText(
                     text = stringResource(R.string.text_orientation_sensor_unavailable),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = dimensionSpResource(R.dimen.sp_14)
+                    fontSize = 14.sp
                 )
             }
             return@Toolbar
@@ -69,19 +69,19 @@ fun HorizonScreen(modifier: Modifier) {
                     pitch = orientation.pitch,
                     roll = orientation.roll,
                     color = stateColor,
-                    modifier = Modifier.size(dimensionResource(R.dimen.dp_237))
+                    modifier = Modifier.size(237.dp)
                 )
             }
             HorizontalDivider(
-                thickness = dimensionResource(R.dimen.dp_1),
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f)
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = dimensionResource(R.dimen.dp_28),
-                        vertical = dimensionResource(R.dimen.dp_43)
+                        horizontal = 28.dp,
+                        vertical = 43.dp
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -101,13 +101,13 @@ private fun RowScope.Readout(value: Int, label: String) {
         ScaleText(
             text = "$value°",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = dimensionSpResource(R.dimen.sp_34)
+            fontSize = 34.sp
         )
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dp_22)))
+        Spacer(modifier = Modifier.height(22.dp))
         ScaleText(
             text = label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = dimensionSpResource(R.dimen.sp_17)
+            fontSize = 17.sp
         )
     }
 }

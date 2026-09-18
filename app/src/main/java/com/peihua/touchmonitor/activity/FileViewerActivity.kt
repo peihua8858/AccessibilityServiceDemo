@@ -9,15 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.LoadingView
 import com.peihua.touchmonitor.ui.components.surface
 import com.peihua.touchmonitor.utils.WorkScope
@@ -48,8 +44,8 @@ class FileViewerActivity : ComponentActivity(), CoroutineScope by WorkScope() {
                         .size(100.dp)
                         .align(Alignment.Center)
                         .surface(
-                            radius = dimensionResource(id = R.dimen.dp_8),
-                            elevation = dimensionResource(id = R.dimen.dp_3)
+                            radius = 8.dp,
+                            elevation = 3.dp
                         )
                 )
             }

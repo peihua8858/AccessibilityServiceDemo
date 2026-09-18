@@ -14,15 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.components.DynamicAsyncImage
 import com.peihua.touchmonitor.ui.components.MultiStateScreen
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.components.text.ScaleText
-import com.peihua.touchmonitor.utils.dimensionSpResource
 import com.peihua.touchmonitor.viewmodel.DayNewsViewModel
 import com.peihua8858.tools.utils.dLog
 
@@ -40,8 +40,8 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = dimensionResource(id = R.dimen.dp_16)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.dp_8)),
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.Start
         ) {
 
@@ -54,29 +54,29 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
                     DynamicAsyncImage(
                         modifier = Modifier
                             .size(
-                                dimensionResource(id = R.dimen.dp_180),
-                                dimensionResource(id = R.dimen.dp_100)
+                                180.dp,
+                                100.dp
                             )
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.dp_16))),
+                            .clip(RoundedCornerShape(16.dp)),
                         model = it.head_image, contentDescription = ""
                     )
                     ScaleText(
-                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
+                        modifier = Modifier.padding(top = 2.dp),
                         text = stringResource(R.string.understand_the_world_60_seconds),
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = colorScheme.primary, fontSize = dimensionSpResource(id = R.dimen.sp_18)),
+                            .copy(color = colorScheme.primary, fontSize = 18.sp),
                     )
                     ScaleText(
-                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
+                        modifier = Modifier.padding(top = 2.dp),
                         text = it.date,
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                            .copy(color = colorScheme.onSurfaceVariant, fontSize = 12.sp),
                     )
                     ScaleText(
-                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_2)),
+                        modifier = Modifier.padding(top = 2.dp),
                         text = it.weiyu,
                         style = MaterialTheme.typography.titleLarge
-                            .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                            .copy(color = colorScheme.onSurfaceVariant, fontSize = 12.sp),
                     )
                 }
             }
@@ -86,7 +86,7 @@ fun DayNewsScreen(modifier: Modifier = Modifier, viewModel: DayNewsViewModel = v
                     modifier = Modifier.fillMaxWidth(),
                     text = item,
                     style = MaterialTheme.typography.titleLarge
-                        .copy(color = colorScheme.onSurfaceVariant, fontSize = dimensionSpResource(id = R.dimen.sp_12)),
+                        .copy(color = colorScheme.onSurfaceVariant, fontSize = 12.sp),
                 )
             }
         }

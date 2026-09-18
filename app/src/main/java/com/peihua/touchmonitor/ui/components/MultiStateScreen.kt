@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.CombinedLoadStates
@@ -115,7 +114,7 @@ fun <T> MultiStateScreen(
     },
     content: @Composable (T) -> Unit,
 ) {
-    val dp16 = dimensionResource(R.dimen.dp_16)
+    val dp16 = 16.dp
     Column {
         if (header != null) {
             header()
@@ -246,7 +245,7 @@ fun <T : Any> MultiStatePagingScreen(
     val isRefreshing = result.loadState.refresh is LoadState.Loading
     val refreshing =
         rememberPullToRefreshState(isRefreshing = isRefreshing && isUserRefresh.value)
-    val dp16 = dimensionResource(R.dimen.dp_16)
+    val dp16 = 16.dp
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -316,7 +315,7 @@ fun <T : Any> LazyPagingItems<T>.LoadMoreView(modifier: Modifier = Modifier) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.dp_16)),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
@@ -337,7 +336,7 @@ fun <T : Any> LazyPagingItems<T>.LoadMoreView(modifier: Modifier = Modifier) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(dimensionResource(R.dimen.dp_16))
+                    .padding(16.dp)
             )
         }
     }

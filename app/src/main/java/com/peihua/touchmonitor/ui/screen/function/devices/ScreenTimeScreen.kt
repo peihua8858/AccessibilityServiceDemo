@@ -9,16 +9,13 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.peihua.touchmonitor.R
-import com.peihua.touchmonitor.utils.dimensionSpResource
+import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.utils.formatToDate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -27,8 +24,8 @@ import kotlinx.coroutines.isActive
 fun ScreenTimeScreen(modifier: Modifier = Modifier) {
     val times = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val textMeasurer = rememberTextMeasurer()
-    val timeFontSize = dimensionSpResource(R.dimen.sp_48)
-    val dateFontSize = dimensionSpResource(R.dimen.sp_16)
+    val timeFontSize = 48.sp
+    val dateFontSize = 16.sp
     val timeStyle = TextStyle(color = Color.White, fontSize = timeFontSize)
     val dateStyle = TextStyle(color = Color.White, fontSize = dateFontSize)
     val time = times.longValue.formatToDate("HH:mm:ss")
