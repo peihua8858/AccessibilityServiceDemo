@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -112,12 +113,12 @@ fun SearchScreenContent(
     state: LazyListState = rememberLazyListState(),
     result: LazyPagingItems<SearchModel>,
 ) {
-    val dp8 = 8.dp
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         state = state,
-        contentPadding = PaddingValues(dp8),
+        contentPadding = PaddingValues(8.dp),
     ) {
         items(result) { item ->
             val model = item ?: return@items
@@ -128,15 +129,16 @@ fun SearchScreenContent(
                         context.openWithFile(model.filePath)
 //                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
                     }
-                    .padding(vertical = dp8),
+                    .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
                     modifier = Modifier
-                        .padding(end = dp8)
+                        .padding(end = 8.dp)
                         .size(32.dp),
                     painter = if (model.icon == null) painterResource(R.drawable.ic_audio_file_24)
                     else rememberDrawablePainter(model.icon),
+                    colorFilter = ColorFilter.tint(colorScheme.primary),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
                 )

@@ -13,12 +13,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -72,12 +74,12 @@ fun AudioScreenContent(
     state: LazyListState = rememberLazyListState(),
     result: LazyPagingItems<MediaModel>,
 ) {
-    val dp8 = 8.dp
     val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         state = state,
-        contentPadding = PaddingValues(dp8),
+        contentPadding = PaddingValues(8.dp),
     ) {
         items(result) { item ->
             if (item is MediaModel.Header) {
@@ -95,13 +97,14 @@ fun AudioScreenContent(
                             context.openWithFile(audio.filePath)
 //                            navigateTo2(AppRouter.AudioPlayerScreen.route, ("audioPath" to photo.filePath))
                         }
-                        .padding(vertical = dp8),
+                        .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         modifier = Modifier
                             .size(32.dp),
                         painter = painterResource(R.drawable.ic_audio_file_24),
+                        colorFilter = ColorFilter.tint(colorScheme.primary),
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )

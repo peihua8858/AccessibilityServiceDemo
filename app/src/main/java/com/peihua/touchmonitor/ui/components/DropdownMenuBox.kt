@@ -117,7 +117,7 @@ fun <T : Any> DropdownMenuBox(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             colors = textColors,
-            textStyle = MaterialTheme.typography.labelMediumNormal,
+            textStyle = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(anchorType)

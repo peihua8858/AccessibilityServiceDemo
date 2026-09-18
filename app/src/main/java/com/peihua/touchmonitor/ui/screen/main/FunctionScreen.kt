@@ -41,8 +41,6 @@ import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.navigateTo2
-import com.peihua.touchmonitor.ui.theme.labelLargeNormal
-import com.peihua.touchmonitor.ui.theme.labelSmallNormal
 import com.peihua.touchmonitor.utils.showToast
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -205,7 +203,6 @@ private fun ItemTextView(
         text = text,
         textAlign = TextAlign.Center,
         color = textColor,
-        style = MaterialTheme.typography.labelSmallNormal,
         maxLines = 1,
         modifier = modifier
             .padding(
@@ -254,7 +251,7 @@ private fun TitleView(text: String, painter: Painter, tintColor: Color, isExtend
                 .padding(start = 8.dp)
                 .align(Alignment.CenterVertically)
                 .weight(1f),
-            style = MaterialTheme.typography.labelLargeNormal,
+            style = MaterialTheme.typography.titleMedium,
             color = tintColor,
             text = text,
         )

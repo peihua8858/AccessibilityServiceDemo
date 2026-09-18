@@ -207,7 +207,6 @@ fun SettingsScreen(
                                 }
                                 .padding(start = 8.dp),
                             text = stringResource(item.theme.nameIds),
-                            style = DefaultTextStyle,
                             color = menuItemColors.textColor(isSelected)
                         )
                     }

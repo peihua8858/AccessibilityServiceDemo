@@ -137,7 +137,7 @@ fun AppTopBar(
     AppTopBar(modifier, elevation, {
         Box(modifier = Modifier.fillMaxWidth()) {
             ScaleText(
-                style = typography.titleMedium,
+                style = typography.titleLarge,
                 text = title,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

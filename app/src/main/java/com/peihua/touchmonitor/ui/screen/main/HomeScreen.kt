@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.components.Card
@@ -190,7 +189,6 @@ private fun HomeCard(
         }, title = {
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                fontSize = 12.sp,
                 text = title
             )
         })
