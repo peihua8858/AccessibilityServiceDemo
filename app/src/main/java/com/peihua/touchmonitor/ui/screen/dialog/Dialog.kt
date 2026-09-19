@@ -100,10 +100,11 @@ fun BaseDialogScreen(
             .wrapContentHeight()
 
     ) {
-        Text(
+        ScaleText(
             text = title,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
+            color = colorScheme.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)

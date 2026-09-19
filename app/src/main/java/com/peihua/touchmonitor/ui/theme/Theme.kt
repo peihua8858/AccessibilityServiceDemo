@@ -2,6 +2,7 @@ package com.peihua.touchmonitor.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -17,12 +18,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
+import com.peihua.touchmonitor.model.ThemeModel
 import com.peihua.touchmonitor.ui.components.scrollbar.LocalScrollbarStyle
 import com.peihua.touchmonitor.ui.components.scrollbar.ScrollbarStyle
-import com.peihua.touchmonitor.model.SystemSettings
-import com.peihua.touchmonitor.model.ThemeModel
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -333,7 +332,7 @@ private fun dynamicColorScheme(isDarkTheme: Boolean): ColorScheme? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val context = LocalContext.current
         if (isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    } else return null
+    } else null
 }
 
 @Composable
