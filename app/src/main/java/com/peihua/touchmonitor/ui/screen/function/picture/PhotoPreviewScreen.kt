@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.ui.components.NavigationIcon2
 import com.peihua.touchmonitor.ui.components.ZoomableImage
 import com.peihua.touchmonitor.ui.popBackStack
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 
 @Composable
 fun PhotoPreviewScreen(modifier: Modifier, photoPath: String) {
+    val toolColors = LocalToolColors.current
     Scaffold(
         modifier = modifier
     ) {
@@ -32,7 +34,7 @@ fun PhotoPreviewScreen(modifier: Modifier, photoPath: String) {
                     .padding(top = 16.dp, start = 16.dp)
                     .size(24.dp)
                     .background(
-                        Color.Black.copy(alpha = 0.5f),
+                        toolColors.mediaScrim,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clip(shape = RoundedCornerShape(8.dp))

@@ -229,3 +229,29 @@
 ### 待办
 
 - 宽屏下左侧导航栏与内容区之间仍有较大留白，可后续收紧导航栏宽度或调整 `AdaptiveContent` 的居中/边距策略。
+
+## 全局颜色令牌审查与深色模式修复
+
+### 问题根因
+
+主题迁移后仍有零散的硬编码颜色，在深色模式下表现不佳或与已建立的令牌体系不一致：
+
+- **简易画板画笔大小弹窗圆点不可见。** 画笔默认黑色（`penColor = Color.Black`），而 `DropdownMenu` 背景是主题 `surface`（深色模式下为暗色），黑色预览圆点与背景融为一体。
+- **图片/视频遮罩绕过令牌。** `PhotoPreviewScreen`、`VideoScreen` 直接写 `Color.Black.copy(alpha=0.5f)`，与已迁移到 `LocalToolColors.mediaScrim` 的播放器不一致。
+- **下拉刷新文字硬编码灰色。** `PullToRefreshIndicator` 两个重载的 `textStyle` 默认参数用 `Color.Gray`，深色模式下对比度差且不随主题变化。
+
+### 本次实现
+
+1. **画笔圆点加描边环**：`SimplePaintScreen` 预览圆点追加 `.border(1.dp, colorScheme.outline, CircleShape)`，任意画笔颜色在明暗模式下都可辨识。
+2. **遮罩迁移到 `mediaScrim` 令牌**：`PhotoPreviewScreen`、`VideoScreen` 改用 `LocalToolColors.current.mediaScrim`，与播放器统一。
+3. **下拉刷新文字用语义色**：两处默认参数改为 `MaterialTheme.colorScheme.onSurfaceVariant`。
+
+### 保留（内容层颜色，属合理设计）
+
+- `ToolColors.kt` 令牌定义、`RulerView` 白板/黑刻度默认、`ScreenTimeScreen` 全屏黑底白字时钟、`HorizonScreen` 水平/倾斜语义色、`HomeScreen` 彩色图标卡上的白色 tint。
+- `Scrollbar.android.kt` 默认色运行时已被 `Theme.kt` 的 `LocalScrollbarStyle` 覆盖。
+
+### 验证结果
+
+- `./gradlew :app:compileDebugKotlin` 与 `:app:installDebug`：通过（exit 0）。
+- 真机深色模式截图：简易画板画笔大小弹窗 5 档圆点（含默认黑色）均带描边环、清晰可见；宽屏左侧导航栏正常。

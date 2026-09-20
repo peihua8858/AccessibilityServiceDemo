@@ -42,6 +42,7 @@ import com.peihua.touchmonitor.ui.components.LoadMoreView
 import com.peihua.touchmonitor.ui.components.MultiStatePagingScreen
 import com.peihua.touchmonitor.ui.components.text.AutoLineHeightScaleText
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.ui.theme.LocalToolColors
 import com.peihua.touchmonitor.utils.LaunchedLoadMore
 import com.peihua.touchmonitor.utils.forEach
 import com.peihua.touchmonitor.viewmodel.MediaModel
@@ -87,6 +88,7 @@ fun VideoScreenContent(
     val dp8 = 8.dp
     val dp2 = 2.dp
     val bottomMargin = 4.dp
+    val toolColors = LocalToolColors.current
     val context = LocalContext.current
     val isLandscape = context.isLandscape
     val columns = if (isLandscape) 6 else 3
@@ -136,7 +138,7 @@ fun VideoScreenContent(
                                 .align(Alignment.BottomCenter)
                                 .fillMaxWidth()
                                 .background(
-                                    Color.Black.copy(alpha = 0.5f),
+                                    toolColors.mediaScrim,
                                     shape = ShapeDefaults.Small.copy(
                                         topStart = CornerSize(dp2),
                                         topEnd = CornerSize(dp2),

@@ -15,12 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -41,7 +41,10 @@ fun PullToRefreshIndicator(
     refreshTriggerDistance: Dp,
     refreshingOffset: Dp,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TextStyle.Default.copy(color = Color.Gray, fontSize = 14.sp),
+    textStyle: TextStyle = TextStyle.Default.copy(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        fontSize = 14.sp
+    ),
 ) {
     val refreshTriggerPx = with(LocalDensity.current) { refreshTriggerDistance.toPx() }
     val refreshingOffsetPx = with(LocalDensity.current) { refreshingOffset.toPx() }
@@ -121,7 +124,10 @@ fun PullToRefreshIndicator2(
     refreshTriggerDistance: Dp,
     refreshingOffset: Dp,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = TextStyle.Default.copy(color = Color.Gray, fontSize = 14.sp),
+    textStyle: TextStyle = TextStyle.Default.copy(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        fontSize = 14.sp
+    ),
 ) {
     val refreshTriggerPx = with(LocalDensity.current) { refreshTriggerDistance.toPx() }
     val refreshingOffsetPx = with(LocalDensity.current) { refreshingOffset.toPx() }

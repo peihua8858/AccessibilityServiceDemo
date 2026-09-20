@@ -2,6 +2,7 @@ package com.peihua.touchmonitor.ui.screen.function
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
@@ -133,6 +134,7 @@ fun SimplePaintScreen(modifier: Modifier) {
                                         .size(if (width < 4.dp) 4.dp else width)
                                         .clip(CircleShape)
                                         .background(if (tool.value == PaintTool.Pen) penColor.value else colorScheme.outline)
+                                        .border(1.dp, colorScheme.outline, CircleShape)
                                 )
                             },
                             trailingIcon = {
