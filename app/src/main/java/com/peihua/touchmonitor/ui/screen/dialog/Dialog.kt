@@ -63,6 +63,27 @@ fun BaseDialog(
     modifier: Modifier = Modifier,
     title: String,
     onDismissRequest: () -> Unit,
+    onPositive: String = stringResource(id = R.string.text_ok),
+    onNeutral: String? = null,
+    onNegative: String = stringResource(id = R.string.text_cancel),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        BaseDialogScreen(
+            modifier, title, onDismissRequest,
+            onPositive to { onDismissRequest() },
+            if (onNeutral.isNonEmpty()) onNeutral to { onDismissRequest() } else null,
+            onNegative to { onDismissRequest() }) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun BaseDialog(
+    modifier: Modifier = Modifier,
+    title: String,
+    onDismissRequest: () -> Unit,
     onPositive: Pair<Any, () -> Unit>? = stringResource(id = R.string.text_ok) to { onDismissRequest() },
     onNeutral: Pair<Any, () -> Unit>? = null,
     onNegative: Pair<Any, () -> Unit>? = stringResource(id = R.string.text_cancel) to { onDismissRequest() },
@@ -77,7 +98,7 @@ fun BaseDialog(
 
 
 @Composable
-fun BaseDialogScreen(
+private fun BaseDialogScreen(
     modifier: Modifier = Modifier,
     title: String,
     onDismissRequest: () -> Unit,

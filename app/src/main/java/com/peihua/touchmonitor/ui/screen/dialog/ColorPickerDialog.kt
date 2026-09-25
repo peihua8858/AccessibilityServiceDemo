@@ -67,7 +67,7 @@ fun ColorPickerDialog(
     val positive: Pair<Any, (Color) -> Unit> = onPositive ?: (stringResource(id = R.string.text_ok) to { onDismissRequest() })
     val colorState = rememberColorSaveable(HsvColor.from(defaultColor))
     val colorInput = remember { mutableStateOf(defaultColor.toHex()) }
-    BaseDialogScreen(modifier, title, onPositive = positive.first to {
+    BaseDialog(modifier, title, onPositive = positive.first to {
         positive.second(colorState.value.toColor())
     }, onDismissRequest = onDismissRequest, onNegative = onNegative) {
         Column(
