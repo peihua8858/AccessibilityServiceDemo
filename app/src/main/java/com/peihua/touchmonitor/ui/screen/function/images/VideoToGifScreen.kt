@@ -142,41 +142,37 @@ fun VideoToGifScreen(modifier: Modifier = Modifier) {
 
             if (inputFile.value != null) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Text(stringResource(R.string.text_gif_frame_rate), style = MaterialTheme.typography.titleMedium)
                 CustomSliderTips(
                     modifier = Modifier.fillMaxWidth(),
                     value = fps.floatValue,
-                    title = "${stringResource(R.string.text_gif_frame_rate)}: ${fps.floatValue.roundToInt()}",
+                    title = stringResource(R.string.text_gif_frame_rate),
                     steps = 28,
                     thumbText = { "${it.roundToInt()} fps" },
                     valueRange = 1f..30f,
                     onChangValue = { fps.floatValue = it }
                 )
-                Text(stringResource(R.string.text_gif_width), style = MaterialTheme.typography.titleMedium)
                 CustomSliderTips(
                     modifier = Modifier.fillMaxWidth(),
                     value = width.floatValue,
-                    title = "${stringResource(R.string.text_gif_width)}: ${width.floatValue.roundToInt()}",
+                    title = stringResource(R.string.text_gif_width),
                     steps = 47,
                     thumbText = { "${it.roundToInt()} px" },
                     valueRange = 120f..1080f,
                     onChangValue = { width.floatValue = it }
                 )
-                Text(stringResource(R.string.text_gif_start_time), style = MaterialTheme.typography.titleMedium)
                 CustomSliderTips(
                     modifier = Modifier.fillMaxWidth(),
                     value = startTime.floatValue,
-                    title = "${stringResource(R.string.text_gif_start_time)}: ${startTime.floatValue.roundToInt()}",
+                    title = stringResource(R.string.text_gif_start_time),
                     steps = 120,
                     thumbText = { "${it.roundToInt()} s" },
                     valueRange = 0f..120f,
                     onChangValue = { startTime.floatValue = it }
                 )
-                Text(stringResource(R.string.text_gif_duration), style = MaterialTheme.typography.titleMedium)
                 CustomSliderTips(
                     modifier = Modifier.fillMaxWidth(),
                     value = duration.floatValue,
-                    title = "${stringResource(R.string.text_gif_duration)}: ${duration.floatValue.roundToInt()}",
+                    title = stringResource(R.string.text_gif_duration),
                     steps = 29,
                     thumbText = { "${it.roundToInt()} s" },
                     valueRange = 1f..30f,

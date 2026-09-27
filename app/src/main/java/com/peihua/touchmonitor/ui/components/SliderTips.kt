@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -90,11 +91,17 @@ fun CustomSliderTips(
         }
     } else {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            // 让 title 底部与右侧进度条（滑块）底部对齐，而不是垂直居中
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Start,
             modifier = modifier
         ) {
-            ScaleText(text = title, style = MaterialTheme.typography.labelLarge)
+            ScaleText(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                // 滑块内部轨道相对组件底部偏上（含 offset），上移 title 使其贴合轨道可视底部
+                modifier = Modifier.offset(y = (-12).dp)
+            )
             CustomSlider(
                 modifier = Modifier.padding(start = 4.dp),
                 value = value,
@@ -167,16 +174,22 @@ fun CustomSlider(
             },
         )
         val curValue = sliderValue - valueRange.start
-        val startPosition = ((curValue.toFloat() / range) * 100f).roundToInt()
-        val offsetX = (startPosition * ((sliderWidth - 20.dp.toPx()) / 100f) - bubbleOffset).toDp
-        dLog { "startPosition:$startPosition,curValue:$curValue,range:$range,offsetX:$offsetX,sliderWidth:$sliderWidth,sliderValue${sliderValue},valueRange.start:${valueRange.start}" }
+        // 气泡定位：连续浮点比例 + graphicsLayer 平移，二者都不触发布局重排。
+        // 若用 Modifier.offset(x=...) 且值每帧变化，会反复触发 layout 放置，导致拖动时左右晃动。
+        val fraction = (curValue / range).coerceIn(0f, 1f)
+        val offsetXPx = if (sliderWidth > 0) {
+            fraction * (sliderWidth - 20.dp.toPx()) - bubbleOffset
+        } else {
+            -bubbleOffset
+        }
         // 气泡提示
         Text(
             text = thumbText(sliderValue),
             fontSize = 12.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .offset(x = offsetX, y = (-16).dp)
+                .offset(y = (-16).dp)
+                .graphicsLayer { translationX = offsetXPx }
                 .width(bubbleSize.width)
                 .height(bubbleSize.height)
                 .background(
