@@ -130,8 +130,29 @@
     <string name="text_nine_grid_picture_composite">Multi-grid picture synthesis</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">Picture watermark</string>
+    <!--  Text watermark  -->
+    <string name="text_watermark_content_hint">Enter watermark text</string>
+    <string name="text_watermark_color">Watermark color</string>
+    <string name="text_watermark_size">Watermark size</string>
+    <string name="text_watermark_opacity">Opacity</string>
+    <string name="text_watermark_horizontal">Horizontal</string>
+    <string name="text_watermark_vertical">Vertical</string>
+    <string name="text_left">Left</string>
+    <string name="text_center">Center</string>
+    <string name="text_right">Right</string>
+    <string name="text_top">Top</string>
+    <string name="text_bottom">Bottom</string>
     <!--    视频转gif-->
     <string name="text_video_to_gif">Convert video to Gif</string>
+    <!--    Video to gif-->
+    <string name="text_select_video">Select video</string>
+    <string name="text_convert_video_to_gif">Convert to GIF</string>
+    <string name="text_convert_video_to_gif_success">Conversion succeeded</string>
+    <string name="text_convert_video_to_gif_fail">Conversion failed</string>
+    <string name="text_gif_frame_rate">Frame rate (fps)</string>
+    <string name="text_gif_width">Width (pixels)</string>
+    <string name="text_gif_start_time">Start time (seconds)</string>
+    <string name="text_gif_duration">Duration (seconds)</string>
     <!--    Gif 图片分解-->
     <string name="text_gif_image_decomposition">Gif image breakdown</string>
     <!--    图片像素化-->

@@ -140,7 +140,28 @@
     <string name="text_nine_grid_picture_composite">多宫格图片合成</string>
     <!--  图片水印  -->
     <string name="text_photo_watermark">图片水印</string>
+    <!--  文字水印  -->
+    <string name="text_watermark_content_hint">请输入水印文字</string>
+    <string name="text_watermark_color">水印颜色</string>
+    <string name="text_watermark_size">水印大小</string>
+    <string name="text_watermark_opacity">透明度</string>
+    <string name="text_watermark_horizontal">水平位置</string>
+    <string name="text_watermark_vertical">垂直位置</string>
+    <string name="text_left">左</string>
+    <string name="text_center">中</string>
+    <string name="text_right">右</string>
+    <string name="text_top">上</string>
+    <string name="text_bottom">下</string>
     <!--    视频转gif-->
+    <!--    视频转gif-->
+    <string name="text_select_video">选择视频</string>
+    <string name="text_convert_video_to_gif">转换为GIF</string>
+    <string name="text_convert_video_to_gif_success">转换成功</string>
+    <string name="text_convert_video_to_gif_fail">转换失败</string>
+    <string name="text_gif_frame_rate">帧率 (fps)</string>
+    <string name="text_gif_width">宽度 (像素)</string>
+    <string name="text_gif_start_time">开始时间 (秒)</string>
+    <string name="text_gif_duration">时长 (秒)</string>
     <string name="text_video_to_gif">视频转Gif</string>
     <!--    Gif 图片分解-->
     <string name="text_gif_image_decomposition">Gif 图片分解</string>
