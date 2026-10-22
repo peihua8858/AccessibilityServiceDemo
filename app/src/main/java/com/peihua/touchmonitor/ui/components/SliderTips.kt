@@ -69,6 +69,9 @@ fun CustomSliderTips(
         it.toString()
     },
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    bubbleSize: DpSize = DpSize(36.dp, 36.dp),
+    onValueChangeFinished: (() -> Unit)? = null,
+    // 保持 onChangValue 为末位参数：既有调用点以尾随 lambda 传入
     onChangValue: (Float) -> Unit,
 ) {
     if (titleOrientation == Orientation.Vertical) {
@@ -86,7 +89,9 @@ fun CustomSliderTips(
                 steps = steps,
                 thumbText = thumbText,
                 valueRange = valueRange,
-                onChangValue = onChangValue
+                bubbleSize = bubbleSize,
+                onChangValue = onChangValue,
+                onValueChangeFinished = onValueChangeFinished
             )
         }
     } else {
@@ -109,7 +114,9 @@ fun CustomSliderTips(
                 steps = steps,
                 thumbText = thumbText,
                 valueRange = valueRange,
-                onChangValue = onChangValue
+                bubbleSize = bubbleSize,
+                onChangValue = onChangValue,
+                onValueChangeFinished = onValueChangeFinished
             )
         }
     }
@@ -127,6 +134,7 @@ fun CustomSlider(
     },
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     bubbleSize: DpSize = DpSize(36.dp, 36.dp),
+    onValueChangeFinished: (() -> Unit)? = null,
     onChangValue: (Float) -> Unit,
 ) {
     val thumbSize = DpSize(20.dp, 20.dp)
@@ -134,7 +142,8 @@ fun CustomSlider(
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     var sliderWidth by remember { mutableIntStateOf(0) } // 初始化滑块宽度为0
     val bubbleOffset = (sliderWidth - thumbSize.width.toPx()) / 2f // 气泡的水平偏移量
-    val range = (valueRange.endInclusive - valueRange.start).toInt()
+    // 不做 toInt：valueRange 步长小于 1（如 0.85f..1.3f）时 toInt 会归零，比例变 NaN 导致气泡定位失效
+    val range = valueRange.endInclusive - valueRange.start
 
     Box(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -153,6 +162,7 @@ fun CustomSlider(
                 sliderValue = it
                 onChangValue(it)
             },
+            onValueChangeFinished = onValueChangeFinished,
             colors = colors,
             steps = steps,
             valueRange = valueRange,

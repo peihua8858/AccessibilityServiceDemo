@@ -155,6 +155,10 @@
     <!--    视频转gif-->
     <!--    视频转gif-->
     <string name="text_select_video">选择视频</string>
+    <string name="text_set_as_wallpaper">设为桌面壁纸</string>
+    <string name="text_wallpaper_muted">壁纸静音</string>
+    <string name="text_wallpaper_active">当前已启用桌面视频壁纸</string>
+    <string name="text_no_video_selected">未选择视频</string>
     <string name="text_convert_video_to_gif">转换为GIF</string>
     <string name="text_convert_video_to_gif_success">转换成功</string>
     <string name="text_convert_video_to_gif_fail">转换失败</string>
@@ -173,6 +177,14 @@
     <string name="text_photo_to_black_and_white">图片转黑白</string>
     <!--    系统字体大小调节-->
     <string name="text_system_font_size_adjustment">系统字体大小调节</string>
+    <string name="text_font_scale_current">当前字体缩放</string>
+    <string name="font_scale_small">小</string>
+    <string name="font_scale_standard">标准</string>
+    <string name="font_scale_large">大</string>
+    <string name="font_scale_extra_large">超大</string>
+    <string name="text_restore_default">恢复默认</string>
+    <string name="text_write_settings_hint">需要授予“修改系统设置”权限才能调整系统字体大小</string>
+    <string name="text_go_grant">去授权</string>
     <string name="text_photo_tools">图片工具</string>
     <string name="text_video_tools">视频工具</string>
     <string name="text_m3u8_downloader">m3u8 下载</string>

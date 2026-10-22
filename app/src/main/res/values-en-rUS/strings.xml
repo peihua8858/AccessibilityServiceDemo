@@ -146,6 +146,10 @@
     <string name="text_video_to_gif">Convert video to Gif</string>
     <!--    Video to gif-->
     <string name="text_select_video">Select video</string>
+    <string name="text_set_as_wallpaper">Set as wallpaper</string>
+    <string name="text_wallpaper_muted">Mute wallpaper</string>
+    <string name="text_wallpaper_active">Desktop video wallpaper is active</string>
+    <string name="text_no_video_selected">No video selected</string>
     <string name="text_convert_video_to_gif">Convert to GIF</string>
     <string name="text_convert_video_to_gif_success">Conversion succeeded</string>
     <string name="text_convert_video_to_gif_fail">Conversion failed</string>
@@ -162,6 +166,14 @@
     <!--   图片转黑白 -->
     <string name="text_photo_to_black_and_white">Convert picture to black and white</string>
     <string name="text_system_font_size_adjustment">Adjust System Font Size</string>
+    <string name="text_font_scale_current">Current font scale</string>
+    <string name="font_scale_small">Small</string>
+    <string name="font_scale_standard">Standard</string>
+    <string name="font_scale_large">Large</string>
+    <string name="font_scale_extra_large">Extra large</string>
+    <string name="text_restore_default">Restore default</string>
+    <string name="text_write_settings_hint">"Modify system settings" permission is required to change the system font size</string>
+    <string name="text_go_grant">Grant</string>
     <string name="text_photo_tools">Photo Tools</string>
     <string name="text_video_tools">Video tools</string>
     <string name="text_m3u8_downloader">m3u8 download</string>

@@ -88,6 +88,18 @@
             android:name=".service.M3u8DownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.VideoWallpaperService"
+            android:exported="true"
+            android:label="@string/text_desktop_video_wallpaper"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/video_wallpaper" />
+        </service>
         <activity
             android:name=".activity.FileViewerActivity"
             android:exported="true"
