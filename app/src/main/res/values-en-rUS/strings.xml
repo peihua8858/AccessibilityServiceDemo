@@ -289,4 +289,20 @@
     <string name="text_rows">Number of lines</string>
     <string name="text_columns">Number of columns</string>
     <string name="text_gap">Space</string>
+
+    <string name="text_collect_empty_hint">Nothing collected yet\nLong-press a function on the Functions tab to favorite it, or tap + to add a URL</string>
+    <string name="text_collect_function_title">Favorited functions</string>
+    <string name="text_collect_custom_title">Custom favorites</string>
+    <string name="text_collect_add_hint">Enter a name and URL</string>
+    <string name="text_collect_hint_name">Name, e.g. My bookmark</string>
+    <string name="text_collect_hint_url">URL, e.g. https://example.com</string>
+    <string name="text_collect_no_browser">No app available to open this URL</string>
+    <string name="action_add_collect">Add favorite</string>
+    <string name="tip_collect_success">Favorited</string>
+    <string name="tip_uncollect_success">Removed from favorites</string>
+    <string name="dialog_delete_collect_title">Delete favorite</string>
+    <string name="dialog_delete_collect_content">Delete this favorite?</string>
+    <string name="action_confirm_delete">Delete</string>
+    <string name="tip_collect_max_limit">You can favorite at most 5 items</string>
+    <string name="text_collect_count_hint">Favorited %1$d/%2$d</string>
 </resources>

@@ -2,6 +2,7 @@ package com.peihua.touchmonitor.ui.screen.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -17,8 +18,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +37,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.peihua.touchmonitor.R
+import com.peihua.touchmonitor.data.FavoriteItem
+import com.peihua.touchmonitor.data.FavoriteStore
+import com.peihua.touchmonitor.data.FavoriteTypeConstants
+import com.peihua.touchmonitor.data.FavoriteToggleResult
+import com.peihua.touchmonitor.data.FunctionFavoriteMeta
 import com.peihua.touchmonitor.ui.AppRouter
 import com.peihua.touchmonitor.ui.Dialog
 import com.peihua.touchmonitor.ui.components.AdaptiveContent
@@ -41,7 +52,9 @@ import com.peihua.touchmonitor.ui.components.clickable
 import com.peihua.touchmonitor.ui.components.text.ScaleText
 import com.peihua.touchmonitor.ui.navigateTo
 import com.peihua.touchmonitor.ui.navigateTo2
+import com.peihua.touchmonitor.ui.theme.AppColor
 import com.peihua.touchmonitor.utils.showToast
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -61,6 +74,43 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
             val textColor = colorScheme.onSecondaryContainer
             val textBgColor = colorScheme.secondaryContainer
             val bgContainerColor = colorScheme.surfaceContainerLow
+            val favorites by FavoriteStore.itemsFlow.collectAsState(initial = emptyList())
+            val scope = rememberCoroutineScope()
+            val isFavorited = remember(favorites) {
+                favorites.filter { it.type == FavoriteTypeConstants.FUNCTION }
+                    .mapTo(HashSet()) { it.id }
+            }
+            @Composable
+            fun fav(
+                titleRes: Int,
+                route: AppRouter,
+                id: String,
+                nameSuffix: String = "",
+                onClick: () -> Unit,
+            ) : FunctionChip {
+                val meta = FunctionFavoriteMeta(id, stringResource(titleRes), route.route, titleRes)
+                return FunctionChip(
+                    meta = meta,
+                    title = meta.name + nameSuffix,
+                    onClick = onClick,
+                    onLongClick = {
+                        val item = FavoriteItem(
+                            id = id,
+                            type = FavoriteTypeConstants.FUNCTION,
+                            name = meta.name,
+                            route = route.route,
+                        )
+                        scope.launch {
+                            val msgRes = when (FavoriteStore.toggleFunction(item)) {
+                                FavoriteToggleResult.ADDED -> R.string.tip_collect_success
+                                FavoriteToggleResult.REMOVED -> R.string.tip_uncollect_success
+                                FavoriteToggleResult.LIMIT_REACHED -> R.string.tip_collect_max_limit
+                            }
+                            showToast(msgRes)
+                        }
+                    },
+                )
+            }
             ExtendedListTileNoBorder(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
@@ -80,15 +130,32 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_scale_ruler) to { navigateTo(AppRouter.ScaleRulerScreen) },
-                        stringResource(R.string.text_compass) to { navigateTo(AppRouter.CompassScreen) },
-                        stringResource(R.string.text_horizon) to { navigateTo(AppRouter.HorizonScreen) },
-                        stringResource(R.string.text_angle_meter) to { navigateTo(AppRouter.AngleMeterScreen) },
-                        stringResource(R.string.text_simple_paint) to { navigateTo(AppRouter.SimplePaintScreen) },
-                        stringResource(R.string.text_led_subtitle) to { navigateTo(AppRouter.LedScreen) },
-                        stringResource(R.string.text_time_screen) to { navigateTo(AppRouter.ScreenTimeScreen) },
-                        stringResource(R.string.text_daily_60_seconds_early_report) to { navigateTo(AppRouter.DayNewsScreen) },
+                        fav(R.string.text_scale_ruler, AppRouter.ScaleRulerScreen, "scaleRulerScreen") {
+                            navigateTo(AppRouter.ScaleRulerScreen)
+                        },
+                        fav(R.string.text_compass, AppRouter.CompassScreen, "compassScreen") {
+                            navigateTo(AppRouter.CompassScreen)
+                        },
+                        fav(R.string.text_horizon, AppRouter.HorizonScreen, "horizonScreen") {
+                            navigateTo(AppRouter.HorizonScreen)
+                        },
+                        fav(R.string.text_angle_meter, AppRouter.AngleMeterScreen, "angleMeterScreen") {
+                            navigateTo(AppRouter.AngleMeterScreen)
+                        },
+                        fav(R.string.text_simple_paint, AppRouter.SimplePaintScreen, "simplePaintScreen") {
+                            navigateTo(AppRouter.SimplePaintScreen)
+                        },
+                        fav(R.string.text_led_subtitle, AppRouter.LedScreen, "ledScreen") {
+                            navigateTo(AppRouter.LedScreen)
+                        },
+                        fav(R.string.text_time_screen, AppRouter.ScreenTimeScreen, "screenTime") {
+                            navigateTo(AppRouter.ScreenTimeScreen)
+                        },
+                        fav(R.string.text_daily_60_seconds_early_report, AppRouter.DayNewsScreen, "dayNews") {
+                            navigateTo(AppRouter.DayNewsScreen)
+                        },
                     ),
+                    isFavorited = isFavorited,
                     textColor = textColor,
                     backgroundColor = textBgColor
                 )
@@ -113,12 +180,35 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_app_kit) to { navigateTo(AppRouter.AppManagerScreen) },
-                        stringResource(R.string.text_check_screen_bad_point) to { navigateTo(AppRouter.ScreenDeadPixelsScreen) },
-                        stringResource(R.string.text_see_device_info) to { navigateTo(Dialog.DeviceInfoScreen) },
-                        stringResource(R.string.text_desktop_video_wallpaper) to { navigateTo(AppRouter.DesktopVideoScreen) },
-                        stringResource(R.string.text_system_font_size_adjustment) to { navigateTo(AppRouter.SystemFontSizeAdjustmentScreen) },
+                        fav(R.string.text_app_kit, AppRouter.AppManagerScreen, "appManager") {
+                            navigateTo(AppRouter.AppManagerScreen)
+                        },
+                        fav(
+                            R.string.text_check_screen_bad_point,
+                            AppRouter.ScreenDeadPixelsScreen,
+                            "screenDeadPixels"
+                        ) {
+                            navigateTo(AppRouter.ScreenDeadPixelsScreen)
+                        },
+                        fav(R.string.text_see_device_info, Dialog.DeviceInfoScreen, "deviceInfo") {
+                            navigateTo(Dialog.DeviceInfoScreen)
+                        },
+                        fav(
+                            R.string.text_desktop_video_wallpaper,
+                            AppRouter.DesktopVideoScreen,
+                            "desktopVideoScreen"
+                        ) {
+                            navigateTo(AppRouter.DesktopVideoScreen)
+                        },
+                        fav(
+                            R.string.text_system_font_size_adjustment,
+                            AppRouter.SystemFontSizeAdjustmentScreen,
+                            "systemFontSizeAdjustmentScreen"
+                        ) {
+                            navigateTo(AppRouter.SystemFontSizeAdjustmentScreen)
+                        },
                     ),
+                    isFavorited = isFavorited,
                     textColor = textColor,
                     backgroundColor = textBgColor
                 )
@@ -143,16 +233,51 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_qr_code_generator) to { navigateTo(AppRouter.QrCodeGeneratorScreen) },
-                        stringResource(R.string.text_nine_grid_cut) to { navigateTo(AppRouter.NineGridCutImageScreen) },
-                        stringResource(R.string.text_nine_grid_picture_composite) to { navigateTo(AppRouter.NineGridPictureCompositeScreen) },
-                        stringResource(R.string.text_photo_watermark) to { navigateTo(AppRouter.PhotoWatermarkScreen) },
-                        stringResource(R.string.text_video_to_gif) to { navigateTo(AppRouter.VideoToGifScreen) },
-                        stringResource(R.string.text_gif_image_decomposition) to { navigateTo(AppRouter.GifImageDecompositionScreen) },
-                        stringResource(R.string.text_image_pixelization) to { navigateTo(AppRouter.ImagePixelizationScreen) },
-                        stringResource(R.string.text_photo_to_sketch) to { navigateTo(AppRouter.PhotoToSketchScreen) },
-                        stringResource(R.string.text_photo_to_black_and_white) to { navigateTo(AppRouter.PhotoToBlackAndWhiteScreen) },
+                        fav(R.string.text_qr_code_generator, AppRouter.QrCodeGeneratorScreen, "qrCodeGenerator") {
+                            navigateTo(AppRouter.QrCodeGeneratorScreen)
+                        },
+                        fav(R.string.text_nine_grid_cut, AppRouter.NineGridCutImageScreen, "mineGridCutImage") {
+                            navigateTo(AppRouter.NineGridCutImageScreen)
+                        },
+                        fav(
+                            R.string.text_nine_grid_picture_composite,
+                            AppRouter.NineGridPictureCompositeScreen,
+                            "nineGridPictureComposite"
+                        ) {
+                            navigateTo(AppRouter.NineGridPictureCompositeScreen)
+                        },
+                        fav(R.string.text_photo_watermark, AppRouter.PhotoWatermarkScreen, "photoWatermark") {
+                            navigateTo(AppRouter.PhotoWatermarkScreen)
+                        },
+                        fav(R.string.text_video_to_gif, AppRouter.VideoToGifScreen, "videoToGif") {
+                            navigateTo(AppRouter.VideoToGifScreen)
+                        },
+                        fav(
+                            R.string.text_gif_image_decomposition,
+                            AppRouter.GifImageDecompositionScreen,
+                            "gifImageDecomposition"
+                        ) {
+                            navigateTo(AppRouter.GifImageDecompositionScreen)
+                        },
+                        fav(
+                            R.string.text_image_pixelization,
+                            AppRouter.ImagePixelizationScreen,
+                            "imagePixelization"
+                        ) {
+                            navigateTo(AppRouter.ImagePixelizationScreen)
+                        },
+                        fav(R.string.text_photo_to_sketch, AppRouter.PhotoToSketchScreen, "photoToSketch") {
+                            navigateTo(AppRouter.PhotoToSketchScreen)
+                        },
+                        fav(
+                            R.string.text_photo_to_black_and_white,
+                            AppRouter.PhotoToBlackAndWhiteScreen,
+                            "photoToBlackAndWhite"
+                        ) {
+                            navigateTo(AppRouter.PhotoToBlackAndWhiteScreen)
+                        },
                     ),
+                    isFavorited = isFavorited,
                     textColor = textColor,
                     backgroundColor = textBgColor
                 )
@@ -177,11 +302,19 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        stringResource(R.string.text_m3u8_downloader) to { navigateTo(AppRouter.M3u8Downloader) },
-                        stringResource(R.string.text_m3u8_downloader) + "2" to {
+                        fav(R.string.text_m3u8_downloader, AppRouter.M3u8Downloader, "m3u8Downloader") {
+                            navigateTo(AppRouter.M3u8Downloader)
+                        },
+                        fav(
+                            R.string.text_m3u8_downloader,
+                            AppRouter.M3u8Downloader,
+                            "m3u8Downloader_2",
+                            nameSuffix = "2"
+                        ) {
                             navigateTo2(AppRouter.M3u8Downloader, AppRouter.M3u8Downloader.TYPE to 1)
                         },
                     ),
+                    isFavorited = isFavorited,
                     textColor = textColor,
                     backgroundColor = textBgColor
                 )
@@ -197,13 +330,11 @@ private fun ItemTextView(
     text: String,
     textColor: Color,
     backgroundColor: Color,
+    favorited: Boolean,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
-    ScaleText(
-        text = text,
-        textAlign = TextAlign.Center,
-        color = textColor,
-        maxLines = 1,
+    Row(
         modifier = modifier
             .padding(
                 top = 8.dp,
@@ -215,14 +346,32 @@ private fun ItemTextView(
                 shape = RoundedCornerShape(16.dp),
                 color = backgroundColor
             )
-            .clickable(onClick = onClick)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(
                 start = 8.dp,
                 top = 4.dp,
                 end = 8.dp,
                 bottom = 4.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ScaleText(
+            text = text,
+            textAlign = TextAlign.Center,
+            color = textColor,
+            maxLines = 1,
+        )
+        if (favorited) {
+            Icon(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(14.dp),
+                painter = painterResource(id = R.drawable.ic_star),
+                tint = AppColor.color_ffd600,
+                contentDescription = null
             )
-    )
+        }
+    }
 }
 
 @Composable
@@ -269,7 +418,8 @@ private fun TitleView(text: String, painter: Painter, tintColor: Color, isExtend
 @Composable
 private fun FlowRowList(
     modifier: Modifier = Modifier,
-    items: List<Pair<String, (() -> Unit)?>>,
+    items: List<FunctionChip>,
+    isFavorited: Set<String>,
     textColor: Color,
     backgroundColor: Color,
     maxItemsInEachRow: Int = Int.MAX_VALUE,
@@ -286,16 +436,23 @@ private fun FlowRowList(
         maxLines = maxLines,
         overflow = overflow
     ) {
-        for ((index, item) in items.withIndex()) {
+        for (item in items) {
             ItemTextView(
                 modifier = Modifier,
-                text = item.first,
+                text = item.title,
                 textColor = textColor,
                 backgroundColor = backgroundColor,
-                onClick = {
-                    item.second?.invoke() ?: showToast(R.string.text_function_developing)
-                }
+                favorited = item.meta.id in isFavorited,
+                onClick = item.onClick,
+                onLongClick = item.onLongClick,
             )
         }
     }
 }
+
+private class FunctionChip(
+    val meta: FunctionFavoriteMeta,
+    val title: String = meta.name,
+    val onClick: () -> Unit,
+    val onLongClick: () -> Unit,
+)

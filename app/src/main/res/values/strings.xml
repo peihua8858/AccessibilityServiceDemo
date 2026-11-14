@@ -304,5 +304,20 @@
     <string name="text_columns">列数</string>
     <string name="text_gap">间距</string>
 
+    <string name="text_collect_empty_hint">还没有收藏\n在功能页长按功能即可收藏，也可点右上角 + 添加网址</string>
+    <string name="text_collect_function_title">收藏的功能</string>
+    <string name="text_collect_custom_title">自定义收藏</string>
+    <string name="text_collect_add_hint">请输入名称和网址</string>
+    <string name="text_collect_hint_name">名称，如：我的收藏夹</string>
+    <string name="text_collect_hint_url">网址，如：https://example.com</string>
+    <string name="text_collect_no_browser">没有可打开该网址的应用</string>
+    <string name="action_add_collect">添加收藏</string>
+    <string name="tip_collect_success">已收藏</string>
+    <string name="tip_uncollect_success">已取消收藏</string>
+    <string name="dialog_delete_collect_title">删除收藏</string>
+    <string name="dialog_delete_collect_content">确认删除该收藏？</string>
+    <string name="action_confirm_delete">删除</string>
+    <string name="tip_collect_max_limit">最多只能收藏5个</string>
+    <string name="text_collect_count_hint">已收藏 %1$d/%2$d</string>
 
 </resources>
