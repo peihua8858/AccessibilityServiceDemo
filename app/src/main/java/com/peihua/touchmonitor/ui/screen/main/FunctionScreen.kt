@@ -309,9 +309,9 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                 FlowRowList(
                     modifier = Modifier,
                     items = listOf(
-                        fav(R.string.text_m3u8_downloader, AppRouter.M3u8Downloader, "m3u8Downloader") {
-                            navigateTo(AppRouter.M3u8Downloader)
-                        },
+//                        fav(R.string.text_m3u8_downloader, AppRouter.M3u8Downloader, "m3u8Downloader") {
+//                            navigateTo(AppRouter.M3u8Downloader)
+//                        },
                         fav(
                             R.string.text_m3u8_downloader,
                             AppRouter.M3u8Downloader,
