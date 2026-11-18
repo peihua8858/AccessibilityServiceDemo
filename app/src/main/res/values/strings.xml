@@ -320,4 +320,19 @@
     <string name="tip_collect_max_limit">最多只能收藏5个</string>
     <string name="text_collect_count_hint">已收藏 %1$d/%2$d</string>
 
+    <!--    全进制转换-->
+    <string name="text_number_base_converter">全进制转换</string>
+    <string name="text_base_input_radix">输入进制</string>
+    <string name="text_base_radix">进制</string>
+    <string name="text_base_radix_range">可输入 2–64 任意进制</string>
+    <string name="text_base_input_value">输入值</string>
+    <string name="text_base_input_placeholder">请输入该进制下的数值，可带负号</string>
+    <string name="text_base_digits_available">可用字符：%1$s</string>
+    <string name="text_base_invalid_digit">包含当前进制不支持的字符</string>
+    <string name="text_base_results">转换结果</string>
+    <string name="text_base_results_empty">输入有效数值后自动转换</string>
+    <string name="text_base_show_all">全部进制</string>
+    <string name="text_base_show_common">常用进制</string>
+    <string name="text_base_radix_label">%1$d 进制</string>
+
 </resources>

@@ -3,7 +3,6 @@ package com.peihua.touchmonitor.data
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import com.google.gson.reflect.TypeToken
 import com.peihua.touchmonitor.R
 import com.peihua.touchmonitor.ServiceApplication
@@ -14,6 +13,7 @@ import com.peihua.touchmonitor.utils.showToast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
+import androidx.core.net.toUri
 
 /**
  * type 以字符串落盘：项目 GsonFactory 的枚举适配器会把枚举序列化成 {}，
@@ -117,6 +117,11 @@ object FunctionFavoriteCatalog {
             meta("compassScreen", AppRouter.CompassScreen, R.string.text_compass),
             meta("horizonScreen", AppRouter.HorizonScreen, R.string.text_horizon),
             meta("angleMeterScreen", AppRouter.AngleMeterScreen, R.string.text_angle_meter),
+            meta(
+                "numberBaseConverterScreen",
+                AppRouter.NumberBaseConverterScreen,
+                R.string.text_number_base_converter
+            ),
             meta("simplePaintScreen", AppRouter.SimplePaintScreen, R.string.text_simple_paint),
             meta("ledScreen", AppRouter.LedScreen, R.string.text_led_subtitle),
             meta("screenTime", AppRouter.ScreenTimeScreen, R.string.text_time_screen),
@@ -169,7 +174,7 @@ fun openFavorite(context: Context, item: FavoriteItem) {
     } else {
         runCatching {
             context.startActivity(
-                Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                Intent(Intent.ACTION_VIEW, item.url.toUri())
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         }.onFailure {

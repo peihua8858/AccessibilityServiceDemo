@@ -148,6 +148,7 @@ sealed class AppRouter(
     data object LedScreen: AppRouter("ledScreen")
     data object DesktopVideoScreen: AppRouter("desktopVideoScreen")
     data object SystemFontSizeAdjustmentScreen: AppRouter("systemFontSizeAdjustmentScreen")
+    data object NumberBaseConverterScreen: AppRouter("numberBaseConverterScreen")
 }
 
 /**

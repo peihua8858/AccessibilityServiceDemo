@@ -54,6 +54,7 @@ import com.peihua.touchmonitor.ui.screen.function.DayNewsScreen
 import com.peihua.touchmonitor.ui.screen.function.DesktopVideoScreen
 import com.peihua.touchmonitor.ui.screen.function.HorizonScreen
 import com.peihua.touchmonitor.ui.screen.function.LedScreen
+import com.peihua.touchmonitor.ui.screen.function.NumberBaseConverterScreen
 import com.peihua.touchmonitor.ui.screen.function.SimplePaintScreen
 import com.peihua.touchmonitor.ui.screen.function.SystemFontSizeAdjustmentScreen
 import com.peihua.touchmonitor.ui.screen.function.apk.ApkScreen
@@ -467,6 +468,9 @@ fun AppNavHost(
         }
         composable(route = AppRouter.SystemFontSizeAdjustmentScreen.route) {
             SystemFontSizeAdjustmentScreen(modifier)
+        }
+        composable(route = AppRouter.NumberBaseConverterScreen.route) {
+            NumberBaseConverterScreen(modifier)
         }
 
 

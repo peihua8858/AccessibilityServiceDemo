@@ -305,4 +305,19 @@
     <string name="action_confirm_delete">Delete</string>
     <string name="tip_collect_max_limit">You can favorite at most 5 items</string>
     <string name="text_collect_count_hint">Favorited %1$d/%2$d</string>
+
+    <!--    全进制转换-->
+    <string name="text_number_base_converter">Number Base Converter</string>
+    <string name="text_base_input_radix">Input base</string>
+    <string name="text_base_radix">Base</string>
+    <string name="text_base_radix_range">Any base from 2 to 64</string>
+    <string name="text_base_input_value">Value</string>
+    <string name="text_base_input_placeholder">Enter a value in this base, minus sign allowed</string>
+    <string name="text_base_digits_available">Digits: %1$s</string>
+    <string name="text_base_invalid_digit">Contains characters invalid for this base</string>
+    <string name="text_base_results">Results</string>
+    <string name="text_base_results_empty">Results appear once the value is valid</string>
+    <string name="text_base_show_all">All bases</string>
+    <string name="text_base_show_common">Common bases</string>
+    <string name="text_base_radix_label">Base %1$d</string>
 </resources>

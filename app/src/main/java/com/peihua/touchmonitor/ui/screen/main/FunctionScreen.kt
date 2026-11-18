@@ -142,6 +142,13 @@ fun FunctionScreen(modifier: Modifier = Modifier) {
                         fav(R.string.text_angle_meter, AppRouter.AngleMeterScreen, "angleMeterScreen") {
                             navigateTo(AppRouter.AngleMeterScreen)
                         },
+                        fav(
+                            R.string.text_number_base_converter,
+                            AppRouter.NumberBaseConverterScreen,
+                            "numberBaseConverterScreen"
+                        ) {
+                            navigateTo(AppRouter.NumberBaseConverterScreen)
+                        },
                         fav(R.string.text_simple_paint, AppRouter.SimplePaintScreen, "simplePaintScreen") {
                             navigateTo(AppRouter.SimplePaintScreen)
                         },
